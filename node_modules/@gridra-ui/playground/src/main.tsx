@@ -14,11 +14,25 @@ import "./styles.css";
 function Playground() {
   const [theme, setTheme] = useState<"gridra-theme-light" | "gridra-theme-dark">("gridra-theme-dark");
   const [selectedId, setSelectedId] = useState<string | null>("node-input");
+  const [gridColumns, setGridColumns] = useState(24);
+  const [gridRows, setGridRows] = useState(16);
   const nodes = useMemo(
     () => [
-      { id: "node-input", label: "Input", position: { x: 64, y: 72 } },
-      { id: "node-transform", label: "Transform", position: { x: 280, y: 160 } },
-      { id: "node-output", label: "Output", position: { x: 520, y: 92 } }
+      {
+        id: "node-input",
+        label: "Input",
+        placement: { column: 2, row: 2, columnSpan: 4, rowSpan: 2 }
+      },
+      {
+        id: "node-transform",
+        label: "Transform",
+        placement: { column: 8, row: 5, columnSpan: 5, rowSpan: 2 }
+      },
+      {
+        id: "node-output",
+        label: "Output",
+        placement: { column: 16, row: 3, columnSpan: 4, rowSpan: 2 }
+      }
     ],
     []
   );
@@ -44,6 +58,26 @@ function Playground() {
             </button>
           }
         >
+          <div className="playground-grid-controls">
+            <label className="playground-grid-control">
+              Columns
+              <input
+                min={1}
+                onChange={(event) => setGridColumns(Number(event.target.value))}
+                type="number"
+                value={gridColumns}
+              />
+            </label>
+            <label className="playground-grid-control">
+              Rows
+              <input
+                min={1}
+                onChange={(event) => setGridRows(Number(event.target.value))}
+                type="number"
+                value={gridRows}
+              />
+            </label>
+          </div>
           <GridraGrid
             columns={1}
             items={items}
@@ -61,6 +95,8 @@ function Playground() {
         ]}
       />
       <GridraCanvasArea
+        gridColumns={gridColumns}
+        gridRows={gridRows}
         nodes={nodes}
         onSelectionChange={setSelectedId}
         selectedId={selectedId}

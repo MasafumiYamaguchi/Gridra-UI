@@ -125,15 +125,16 @@
 }
 
 .gridra-canvas-area {
-  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--gridra-grid-columns, 12), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--gridra-grid-rows, 8), minmax(56px, 1fr));
+  gap: var(--gridra-space-sm);
   min-height: 360px;
   flex: 1;
   overflow: auto;
-  background:
-    linear-gradient(var(--gridra-color-border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--gridra-color-border) 1px, transparent 1px),
-    var(--gridra-color-background);
-  background-size: 32px 32px;
+  align-items: stretch;
+  background: var(--gridra-color-background);
+  padding: var(--gridra-space-md);
 }
 
 .gridra-grid {
@@ -164,10 +165,9 @@
 }
 
 .gridra-node {
-  position: absolute;
   display: inline-flex;
-  min-width: 120px;
-  min-height: 48px;
+  min-width: 0;
+  min-height: 0;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--gridra-color-border);

@@ -1,16 +1,18 @@
-import type { HTMLAttributes, ReactNode } from "react";
-import type { GridraId, GridraPoint } from "@gridra-ui/core";
-import { GridraNode } from "./GridraNode";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
+import type { GridraId } from "@gridra-ui/core";
+import { GridraNode, type GridraNodePlacement } from "./GridraNode";
 import { useControllableValue } from "./useControllableValue";
 
 export interface GridraCanvasNode {
   id: GridraId;
-  position: GridraPoint;
+  placement: GridraNodePlacement;
   label?: ReactNode;
 }
 
 export interface GridraCanvasAreaProps<TNode extends GridraCanvasNode = GridraCanvasNode>
   extends HTMLAttributes<HTMLDivElement> {
+  gridColumns?: number;
+  gridRows?: number;
   nodes?: TNode[];
   selectedId?: GridraId | null;
   defaultSelectedId?: GridraId | null;
@@ -22,10 +24,13 @@ export function GridraCanvasArea<TNode extends GridraCanvasNode = GridraCanvasNo
   children,
   className,
   defaultSelectedId = null,
+  gridColumns,
+  gridRows,
   nodes = [],
   onSelectionChange,
   renderNode,
   selectedId,
+  style,
   ...props
 }: GridraCanvasAreaProps<TNode>) {
   const [currentSelectedId, setSelectedId] = useControllableValue(
@@ -34,9 +39,18 @@ export function GridraCanvasArea<TNode extends GridraCanvasNode = GridraCanvasNo
     onSelectionChange
   );
   const canvasClassName = ["gridra-canvas-area", className].filter(Boolean).join(" ");
+  const canvasStyle = {
+    ...style,
+    ...(gridColumns
+      ? { "--gridra-grid-columns": normalizeGridCount(gridColumns).toString() }
+      : null),
+    ...(gridRows
+      ? { "--gridra-grid-rows": normalizeGridCount(gridRows).toString() }
+      : null)
+  } as CSSProperties;
 
   return (
-    <div className={canvasClassName} {...props}>
+    <div className={canvasClassName} style={canvasStyle} {...props}>
       {nodes.map((node) => {
         const selected = node.id === currentSelectedId;
 
@@ -49,7 +63,7 @@ export function GridraCanvasArea<TNode extends GridraCanvasNode = GridraCanvasNo
             id={node.id}
             key={node.id}
             onSelect={(nextId) => setSelectedId(selected ? null : nextId)}
-            position={node.position}
+            placement={node.placement}
             selected={selected}
           >
             {node.label ?? node.id}
@@ -59,4 +73,12 @@ export function GridraCanvasArea<TNode extends GridraCanvasNode = GridraCanvasNo
       {children}
     </div>
   );
+}
+
+function normalizeGridCount(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 1;
+  }
+
+  return Math.max(1, Math.floor(value));
 }

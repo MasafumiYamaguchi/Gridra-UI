@@ -19,3 +19,27 @@ body {
   font: inherit;
   padding: 0 var(--gridra-space-sm);
 }
+
+.playground-grid-controls {
+  display: grid;
+  gap: var(--gridra-space-sm);
+  margin-bottom: var(--gridra-space-md);
+}
+
+.playground-grid-control {
+  display: grid;
+  gap: var(--gridra-space-xs);
+  color: var(--gridra-color-muted-text);
+  font-size: 0.82rem;
+}
+
+.playground-grid-control input {
+  min-height: 32px;
+  width: 100%;
+  border: 1px solid var(--gridra-color-border);
+  border-radius: var(--gridra-radius-sm);
+  background: var(--gridra-color-surface-raised);
+  color: var(--gridra-color-text);
+  font: inherit;
+  padding: 0 var(--gridra-space-sm);
+}
