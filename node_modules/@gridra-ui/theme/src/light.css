@@ -1,0 +1,11 @@
+.gridra-theme-light {
+  --gridra-color-background: #f6f7f9;
+  --gridra-color-surface: #ffffff;
+  --gridra-color-surface-raised: #fdfefe;
+  --gridra-color-text: #172026;
+  --gridra-color-muted-text: #607080;
+  --gridra-color-border: #d5dde5;
+  --gridra-color-accent: #2f7d68;
+  --gridra-color-selected: #dff3ed;
+  --gridra-color-focus: #2f7d68;
+}

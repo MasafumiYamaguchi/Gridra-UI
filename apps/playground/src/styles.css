@@ -1,0 +1,21 @@
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #15191d;
+}
+
+.playground-toggle {
+  min-height: 30px;
+  border: 1px solid var(--gridra-color-border);
+  border-radius: var(--gridra-radius-sm);
+  background: var(--gridra-color-surface-raised);
+  color: var(--gridra-color-text);
+  cursor: pointer;
+  font: inherit;
+  padding: 0 var(--gridra-space-sm);
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@gridra-ui/theme",
+  "version": "0.1.0",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    "./base.css": "./src/base.css",
+    "./dark.css": "./src/dark.css",
+    "./light.css": "./src/light.css"
+  }
+}

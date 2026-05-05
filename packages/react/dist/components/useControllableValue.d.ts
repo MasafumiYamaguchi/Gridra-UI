@@ -1,0 +1,2 @@
+export declare function useControllableValue<TValue>(value: TValue | undefined, defaultValue: TValue, onChange: ((value: TValue, previousValue: TValue) => void) | undefined): [TValue, (nextValue: TValue) => void];
+//# sourceMappingURL=useControllableValue.d.ts.map
