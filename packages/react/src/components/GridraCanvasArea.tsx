@@ -50,6 +50,10 @@ export function GridraCanvasArea<
     defaultSelectedId,
     onSelectionChange,
   );
+  const normalizedGridColumns =
+    gridColumns === undefined ? undefined : normalizeGridCount(gridColumns);
+  const normalizedGridRows =
+    gridRows === undefined ? undefined : normalizeGridCount(gridRows);
   // クラス名と結合して、スタイルを定義
   const canvasClassName = ["gridra-canvas-area", className]
     .filter(Boolean)
@@ -57,11 +61,11 @@ export function GridraCanvasArea<
   // グリッドの列数と行数をCSS変数としてスタイルに追加
   const canvasStyle = {
     ...style,
-    ...(gridColumns
-      ? { "--gridra-grid-columns": normalizeGridCount(gridColumns).toString() } // base.cssの129行目でこの変数を使用している
+    ...(normalizedGridColumns
+      ? { "--gridra-grid-columns": normalizedGridColumns.toString() } // base.cssの129行目でこの変数を使用している
       : null),
-    ...(gridRows
-      ? { "--gridra-grid-rows": normalizeGridCount(gridRows).toString() } // base.cssの130行目でこの変数を使用している
+    ...(normalizedGridRows
+      ? { "--gridra-grid-rows": normalizedGridRows.toString() } // base.cssの130行目でこの変数を使用している
       : null),
   } as CSSProperties;
 
@@ -69,10 +73,16 @@ export function GridraCanvasArea<
     <div className={canvasClassName} style={canvasStyle} {...props}>
       {nodes.map((node) => {
         const selected = node.id === currentSelectedId;
+        const placement = normalizeGridPlacement(
+          node.placement,
+          normalizedGridColumns,
+          normalizedGridRows,
+        );
+        const renderableNode = { ...node, placement };
 
         // renderNodeが渡されている場合はそれを使ってノードを描画し、そうでない場合はデフォルトのGridraNodeコンポーネントを使用する
         if (renderNode) {
-          return renderNode(node, { selected });
+          return renderNode(renderableNode, { selected });
         }
 
         // デフォルトの描画方法
@@ -81,14 +91,14 @@ export function GridraCanvasArea<
             id={node.id}
             key={node.id}
             onSelect={(nextId) => setSelectedId(selected ? null : nextId)}
-            placement={node.placement}
+            placement={placement}
             selected={selected}
           >
             {node.label ?? node.id}
           </GridraNode>
         );
       })}
-      {children} // Canvas内に子要素があればそれも描画する
+      {children}
     </div>
   );
 }
@@ -100,4 +110,44 @@ function normalizeGridCount(value: number): number {
   }
 
   return Math.max(1, Math.floor(value));
+}
+
+function normalizeGridPlacement(
+  placement: GridraNodePlacement,
+  maxColumns?: number,
+  maxRows?: number,
+): GridraNodePlacement {
+  const column = normalizeGridLine(placement.column, maxColumns);
+  const row = normalizeGridLine(placement.row, maxRows);
+
+  return {
+    column,
+    row,
+    columnSpan: normalizeGridSpan(placement.columnSpan, maxColumns, column),
+    rowSpan: normalizeGridSpan(placement.rowSpan, maxRows, row),
+  };
+}
+
+function normalizeGridLine(value: number, max?: number): number {
+  if (!Number.isFinite(value)) {
+    return 1;
+  }
+
+  const line = Math.max(1, Math.floor(value));
+
+  return max === undefined ? line : Math.min(line, max);
+}
+
+function normalizeGridSpan(value = 1, max?: number, start = 1): number {
+  if (!Number.isFinite(value)) {
+    return 1;
+  }
+
+  const span = Math.max(1, Math.floor(value));
+
+  if (max === undefined) {
+    return span;
+  }
+
+  return Math.min(span, Math.max(1, max - start + 1));
 }

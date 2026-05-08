@@ -6,6 +6,7 @@ export interface GridraGridItem extends GridraSelectableItem {
   label?: ReactNode;
 }
 
+// グリッドののコンポーネントに必要なプロパティを定義するインターフェース
 export interface GridraGridProps<TItem extends GridraGridItem = GridraGridItem> {
   items: TItem[];
   selectedId?: GridraId | null;
@@ -32,9 +33,10 @@ export function GridraGrid<TItem extends GridraGridItem = GridraGridItem>({
     defaultSelectedId,
     onSelectionChange
   );
-  const gridTemplateColumns = typeof columns === "number" ? `repeat(${columns}, minmax(0, 1fr))` : columns;
-  const gridClassName = ["gridra-grid", className].filter(Boolean).join(" ");
+  const gridTemplateColumns = typeof columns === "number" ? `repeat(${columns}, minmax(0, 1fr))` : columns;// クラス名を結合して、必要なクラスを適用する
+  const gridClassName = ["gridra-grid", className].filter(Boolean).join(" ");// gridのClssnameにくっつけて定義する
 
+  // アイテムが空の場合は、emptyStateを表示する
   if (items.length === 0) {
     return <div className="gridra-grid__empty">{emptyState}</div>;
   }

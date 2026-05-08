@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
+// パネルのコンポーネントに必要なプロパティを定義するインターフェース
 export interface GridraPanelProps extends HTMLAttributes<HTMLElement> {
   heading?: ReactNode;
   position?: "left" | "right";
@@ -16,7 +17,7 @@ export function GridraPanel({
 }: GridraPanelProps) {
   const panelClassName = ["gridra-panel", `gridra-panel--${position}`, className]
     .filter(Boolean)
-    .join(" ");
+    .join(" "); // クラス名を結合して、必要なスタイルを適用する
 
   return (
     <aside className={panelClassName} {...props}>

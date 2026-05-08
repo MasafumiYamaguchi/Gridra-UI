@@ -33,4 +33,31 @@ describe("GridraCanvasArea", () => {
     expect(node?.getAttribute("style")).toContain("grid-column: 2 / span 4");
     expect(node?.getAttribute("style")).toContain("grid-row: 3 / span 2");
   });
+
+  it("does not render implementation comments as canvas content", () => {
+    const { container } = render(<GridraCanvasArea />);
+    const canvas = container.querySelector(".gridra-canvas-area");
+
+    expect(canvas?.textContent).not.toContain("Canvas");
+  });
+
+  it("keeps out-of-range nodes inside the configured grid", () => {
+    render(
+      <GridraCanvasArea
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "overflow",
+            placement: { column: 8, row: 12, columnSpan: 3, rowSpan: 5 }
+          }
+        ]}
+      />
+    );
+
+    const node = document.querySelector(".gridra-node");
+
+    expect(node?.getAttribute("style")).toContain("grid-column: 4 / span 1");
+    expect(node?.getAttribute("style")).toContain("grid-row: 4 / span 1");
+  });
 });

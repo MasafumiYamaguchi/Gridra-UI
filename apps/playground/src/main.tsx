@@ -14,8 +14,8 @@ import "./styles.css";
 function Playground() {
   const [theme, setTheme] = useState<"gridra-theme-light" | "gridra-theme-dark">("gridra-theme-dark");
   const [selectedId, setSelectedId] = useState<string | null>("node-input");
-  const [gridColumns, setGridColumns] = useState(24);
-  const [gridRows, setGridRows] = useState(16);
+  const [gridColumns, setGridColumns] = useState(12);
+  const [gridRows, setGridRows] = useState(6);
   const nodes = useMemo(
     () => [
       {
@@ -31,7 +31,7 @@ function Playground() {
       {
         id: "node-output",
         label: "Output",
-        placement: { column: 16, row: 3, columnSpan: 4, rowSpan: 2 }
+        placement: { column: 8, row: 1, columnSpan: 4, rowSpan: 2 }
       }
     ],
     []

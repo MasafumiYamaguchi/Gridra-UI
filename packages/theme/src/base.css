@@ -1,27 +1,37 @@
 .gridra-root {
-  --gridra-color-background: #f6f7f9;
-  --gridra-color-surface: #ffffff;
-  --gridra-color-surface-raised: #fdfefe;
-  --gridra-color-text: #172026;
-  --gridra-color-muted-text: #607080;
-  --gridra-color-border: #d5dde5;
-  --gridra-color-accent: #2f7d68;
-  --gridra-color-selected: #dff3ed;
-  --gridra-color-focus: #2f7d68;
-  --gridra-radius-sm: 4px;
-  --gridra-radius-md: 8px;
+  --gridra-color-background: #000000;
+  --gridra-color-surface: #050505;
+  --gridra-color-surface-raised: #080808;
+  --gridra-color-surface-input: #0d0d0d;
+  --gridra-color-text: #f8f8f8;
+  --gridra-color-muted-text: #9f9f9f;
+  --gridra-color-border: #2e2e2e;
+  --gridra-color-border-strong: #3a3a3a;
+  --gridra-color-accent: rgba(255, 255, 255, 0.86);
+  --gridra-color-selected: rgba(255, 255, 255, 0.08);
+  --gridra-color-focus: rgba(255, 255, 255, 0.92);
+  --gridra-shadow-selected: 0 0 0 1px rgba(255, 255, 255, 0.18);
+  --gridra-font-mono: "JetBrains Mono", "Fira Code", "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  --gridra-font-brand: ui-monospace, "SFMono-Light", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --gridra-radius-sm: 0;
+  --gridra-radius-md: 0;
   --gridra-space-xs: 4px;
-  --gridra-space-sm: 8px;
-  --gridra-space-md: 12px;
-  --gridra-space-lg: 16px;
+  --gridra-space-sm: 6px;
+  --gridra-space-md: 10px;
+  --gridra-space-lg: 12px;
   --gridra-panel-width: 280px;
 
-  min-height: 100%;
+  width: 100vw;
+  height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: var(--gridra-space-lg);
   color: var(--gridra-color-text);
   background: var(--gridra-color-background);
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: var(--gridra-font-mono);
+  font-size: 12px;
+  letter-spacing: 0;
 }
 
 .gridra-root *,
@@ -33,7 +43,10 @@
 .gridra-root__shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  min-height: inherit;
+  gap: var(--gridra-space-md);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 
 .gridra-root__shell--left {
@@ -48,17 +61,19 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: var(--gridra-space-md);
+  gap: var(--gridra-space-sm);
   border: 1px solid var(--gridra-color-border);
   background: var(--gridra-color-surface);
+  overflow: hidden;
+  padding: var(--gridra-space-md);
 }
 
 .gridra-panel--left {
-  border-width: 0 1px 0 0;
+  border-width: 1px;
 }
 
 .gridra-panel--right {
-  border-width: 0 0 0 1px;
+  border-width: 1px;
 }
 
 .gridra-panel__header {
@@ -66,70 +81,80 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--gridra-space-sm);
-  padding: var(--gridra-space-lg) var(--gridra-space-lg) 0;
 }
 
 .gridra-panel__title {
   margin: 0;
-  font-size: 0.92rem;
-  font-weight: 700;
+  color: var(--gridra-color-muted-text);
+  font-family: var(--gridra-font-brand);
+  font-size: 11px;
+  font-variant-ligatures: none;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  line-height: 1.25;
+  text-transform: uppercase;
 }
 
 .gridra-panel__body {
   min-height: 0;
   flex: 1;
-  padding: 0 var(--gridra-space-lg) var(--gridra-space-lg);
   overflow: auto;
 }
 
 .gridra-main {
   display: flex;
   min-width: 0;
+  min-height: 0;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .gridra-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--gridra-space-sm);
-  border-bottom: 1px solid var(--gridra-color-border);
+  gap: var(--gridra-space-md);
+  border: 1px solid var(--gridra-color-border);
   background: var(--gridra-color-surface-raised);
-  padding: var(--gridra-space-sm) var(--gridra-space-md);
+  padding: var(--gridra-space-sm);
 }
 
 .gridra-toolbar__button {
   display: inline-flex;
-  min-height: 32px;
+  min-height: 28px;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--gridra-color-border);
   border-radius: var(--gridra-radius-sm);
-  background: var(--gridra-color-surface);
+  background: var(--gridra-color-surface-input);
   color: var(--gridra-color-text);
   cursor: pointer;
   font: inherit;
-  padding: 0 var(--gridra-space-md);
+  font-size: 12px;
+  padding: 0 8px;
 }
 
 .gridra-toolbar__button:focus-visible,
 .gridra-grid__item:focus-visible,
 .gridra-node:focus-visible {
-  outline: 2px solid var(--gridra-color-focus);
+  outline: 1px solid var(--gridra-color-focus);
   outline-offset: 2px;
 }
 
 .gridra-toolbar__button[aria-pressed="true"] {
   border-color: var(--gridra-color-accent);
   background: var(--gridra-color-selected);
+  box-shadow: var(--gridra-shadow-selected);
 }
 
 .gridra-canvas-area {
   display: grid;
   grid-template-columns: repeat(var(--gridra-grid-columns, 12), minmax(0, 1fr));
-  grid-template-rows: repeat(var(--gridra-grid-rows, 8), minmax(56px, 1fr));
-  gap: var(--gridra-space-sm);
-  min-height: 360px;
+  grid-template-rows: repeat(var(--gridra-grid-rows, 6), minmax(0, 1fr));
+  gap: var(--gridra-space-md);
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
   flex: 1;
   overflow: auto;
   align-items: stretch;
@@ -139,24 +164,28 @@
 
 .gridra-grid {
   display: grid;
-  gap: var(--gridra-space-md);
-  padding: var(--gridra-space-lg);
+  gap: var(--gridra-space-sm);
 }
 
 .gridra-grid__item {
   min-width: 0;
   border: 1px solid var(--gridra-color-border);
   border-radius: var(--gridra-radius-md);
-  background: var(--gridra-color-surface);
+  background: var(--gridra-color-surface-raised);
   color: var(--gridra-color-text);
   cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.06em;
   padding: var(--gridra-space-md);
   text-align: left;
+  text-transform: uppercase;
 }
 
 .gridra-grid__item[aria-selected="true"] {
   border-color: var(--gridra-color-accent);
   background: var(--gridra-color-selected);
+  box-shadow: var(--gridra-shadow-selected);
 }
 
 .gridra-grid__empty {
@@ -168,17 +197,24 @@
   display: inline-flex;
   min-width: 0;
   min-height: 0;
-  align-items: center;
-  justify-content: center;
   border: 1px solid var(--gridra-color-border);
   border-radius: var(--gridra-radius-md);
-  background: var(--gridra-color-surface);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--gridra-color-text);
   cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.07em;
   padding: var(--gridra-space-sm) var(--gridra-space-md);
+  text-transform: uppercase;
+}
+
+.gridra-node p {
+  background: rgb(230, 221, 221);
 }
 
 .gridra-node[aria-selected="true"] {
   border-color: var(--gridra-color-accent);
   background: var(--gridra-color-selected);
+  box-shadow: var(--gridra-shadow-selected);
 }

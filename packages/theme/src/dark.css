@@ -1,11 +1,14 @@
 .gridra-theme-dark {
-  --gridra-color-background: #15191d;
-  --gridra-color-surface: #20262c;
-  --gridra-color-surface-raised: #252c33;
-  --gridra-color-text: #eef3f6;
-  --gridra-color-muted-text: #a6b4bf;
-  --gridra-color-border: #3a4650;
-  --gridra-color-accent: #75c7ad;
-  --gridra-color-selected: #244c42;
-  --gridra-color-focus: #75c7ad;
+  --gridra-color-background: #000000;
+  --gridra-color-surface: #050505;
+  --gridra-color-surface-raised: #080808;
+  --gridra-color-surface-input: #0d0d0d;
+  --gridra-color-text: #f8f8f8;
+  --gridra-color-muted-text: #9f9f9f;
+  --gridra-color-border: #2e2e2e;
+  --gridra-color-border-strong: #3a3a3a;
+  --gridra-color-accent: rgba(255, 255, 255, 0.86);
+  --gridra-color-selected: rgba(255, 255, 255, 0.08);
+  --gridra-color-focus: rgba(255, 255, 255, 0.92);
+  --gridra-shadow-selected: 0 0 0 1px rgba(255, 255, 255, 0.18);
 }

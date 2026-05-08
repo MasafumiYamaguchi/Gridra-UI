@@ -2,10 +2,13 @@
   --gridra-color-background: #f6f7f9;
   --gridra-color-surface: #ffffff;
   --gridra-color-surface-raised: #fdfefe;
+  --gridra-color-surface-input: #ffffff;
   --gridra-color-text: #172026;
   --gridra-color-muted-text: #607080;
   --gridra-color-border: #d5dde5;
+  --gridra-color-border-strong: #b8c4ce;
   --gridra-color-accent: #2f7d68;
   --gridra-color-selected: #dff3ed;
   --gridra-color-focus: #2f7d68;
+  --gridra-shadow-selected: 0 0 0 1px rgba(47, 125, 104, 0.18);
 }
