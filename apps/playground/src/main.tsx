@@ -1,8 +1,11 @@
 import { StrictMode, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
+  GridraButton,
   GridraCanvasArea,
+  GridraField,
   GridraGrid,
+  GridraInput,
   GridraPanel,
   GridraRoot,
   GridraToolbar
@@ -45,38 +48,37 @@ function Playground() {
         <GridraPanel
           heading="GRIDRA"
           header={
-            <button
-              className="playground-toggle"
+            <GridraButton
               onClick={() =>
                 setTheme((current) =>
                   current === "gridra-theme-dark" ? "gridra-theme-light" : "gridra-theme-dark"
                 )
               }
-              type="button"
+              variant="ghost"
             >
               Theme
-            </button>
+            </GridraButton>
           }
         >
           <div className="playground-grid-controls">
-            <label className="playground-grid-control">
-              Columns
-              <input
+            <GridraField htmlFor="playground-grid-columns" label="Columns">
+              <GridraInput
+                id="playground-grid-columns"
                 min={1}
                 onChange={(event) => setGridColumns(Number(event.target.value))}
                 type="number"
                 value={gridColumns}
               />
-            </label>
-            <label className="playground-grid-control">
-              Rows
-              <input
+            </GridraField>
+            <GridraField htmlFor="playground-grid-rows" label="Rows">
+              <GridraInput
+                id="playground-grid-rows"
                 min={1}
                 onChange={(event) => setGridRows(Number(event.target.value))}
                 type="number"
                 value={gridRows}
               />
-            </label>
+            </GridraField>
           </div>
           <GridraGrid
             columns={1}

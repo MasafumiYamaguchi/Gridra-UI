@@ -34,6 +34,26 @@ describe("GridraCanvasArea", () => {
     expect(node?.getAttribute("style")).toContain("grid-row: 3 / span 2");
   });
 
+  it("renders default nodes as direct grid children", () => {
+    const { container } = render(
+      <GridraCanvasArea
+        nodes={[
+          {
+            id: "input",
+            label: "Input",
+            placement: { column: 2, row: 3 }
+          }
+        ]}
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area");
+    const node = canvas?.firstElementChild;
+
+    expect(node?.classList.contains("gridra-node")).toBe(true);
+    expect(node?.textContent).toBe("Input");
+    expect(node?.firstElementChild?.classList.contains("gridra-node__label")).toBe(true);
+  });
+
   it("does not render implementation comments as canvas content", () => {
     const { container } = render(<GridraCanvasArea />);
     const canvas = container.querySelector(".gridra-canvas-area");

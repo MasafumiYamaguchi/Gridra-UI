@@ -10,41 +10,8 @@ body {
   background: #000000;
 }
 
-.playground-toggle {
-  min-height: 28px;
-  border: 1px solid var(--gridra-color-border);
-  border-radius: var(--gridra-radius-sm);
-  background: var(--gridra-color-surface-input);
-  color: var(--gridra-color-text);
-  cursor: pointer;
-  font: inherit;
-  font-size: 12px;
-  padding: 0 8px;
-}
-
 .playground-grid-controls {
   display: grid;
   gap: var(--gridra-space-sm);
   margin-bottom: var(--gridra-space-md);
-}
-
-.playground-grid-control {
-  display: grid;
-  gap: var(--gridra-space-xs);
-  color: var(--gridra-color-muted-text);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.playground-grid-control input {
-  min-height: 28px;
-  width: 100%;
-  border: 1px solid var(--gridra-color-border-strong);
-  border-radius: var(--gridra-radius-sm);
-  background: var(--gridra-color-surface-input);
-  color: var(--gridra-color-text);
-  font: inherit;
-  font-size: 12px;
-  padding: 0 8px;
 }

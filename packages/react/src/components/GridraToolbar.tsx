@@ -1,4 +1,5 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
+import { GridraButton, type GridraButtonProps } from "./GridraButton";
 
 export interface GridraToolbarAction {
   id: string;
@@ -46,10 +47,9 @@ export function GridraToolbar({
 
 export function GridraToolbarButton({
   className,
-  type = "button",
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement>) {
+}: GridraButtonProps) {
   const buttonClassName = ["gridra-toolbar__button", className].filter(Boolean).join(" ");
 
-  return <button className={buttonClassName} type={type} {...props} />;
+  return <GridraButton className={buttonClassName} {...props} />;
 }

@@ -38,23 +38,21 @@ export function GridraNode({
   } as CSSProperties; // ノードのスタイルを定義する。グリッドの行と列の位置とスパンを計算して適用する
 
   return (
-    <div>
-      <p>{children ?? id}</p>
-      <button
-        aria-selected={selected}
-        className={nodeClassName}
-        onClick={(event) => {
-          onClick?.(event);
-          if (!event.defaultPrevented) {
-            onSelect?.(id);
-          }
-        }}
-        style={nodeStyle}
-        type={type}
-        {...props}
-      >
-      </button>
-    </div>
+    <button
+      aria-selected={selected}
+      className={nodeClassName}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) {
+          onSelect?.(id);
+        }
+      }}
+      style={nodeStyle}
+      type={type}
+      {...props}
+    >
+      <div className="gridra-node__label">{children ?? id}</div>
+    </button>
   );
 }
 

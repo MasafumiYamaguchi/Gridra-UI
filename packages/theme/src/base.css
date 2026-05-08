@@ -3,6 +3,7 @@
   --gridra-color-surface: #050505;
   --gridra-color-surface-raised: #080808;
   --gridra-color-surface-input: #0d0d0d;
+  --gridra-color-node-pattern: rgba(255, 255, 255, 0.11);
   --gridra-color-text: #f8f8f8;
   --gridra-color-muted-text: #9f9f9f;
   --gridra-color-border: #2e2e2e;
@@ -20,6 +21,7 @@
   --gridra-space-md: 10px;
   --gridra-space-lg: 12px;
   --gridra-panel-width: 280px;
+  --gridra-node-pattern-size: 12px;
 
   width: 100vw;
   height: 100vh;
@@ -119,32 +121,93 @@
   padding: var(--gridra-space-sm);
 }
 
-.gridra-toolbar__button {
-  display: inline-flex;
+.gridra-button,
+.gridra-input,
+.gridra-select {
   min-height: 28px;
-  align-items: center;
-  justify-content: center;
   border: 1px solid var(--gridra-color-border);
   border-radius: var(--gridra-radius-sm);
   background: var(--gridra-color-surface-input);
   color: var(--gridra-color-text);
-  cursor: pointer;
   font: inherit;
   font-size: 12px;
+}
+
+.gridra-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   padding: 0 8px;
 }
 
+.gridra-button--ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.gridra-button--primary,
+.gridra-button--pressed,
+.gridra-button[aria-pressed="true"] {
+  border-color: var(--gridra-color-accent);
+  background: var(--gridra-color-selected);
+  box-shadow: var(--gridra-shadow-selected);
+}
+
+.gridra-button:disabled,
+.gridra-input:disabled,
+.gridra-select:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.gridra-input,
+.gridra-select {
+  width: 100%;
+  border-color: var(--gridra-color-border-strong);
+  padding: 0 8px;
+}
+
+.gridra-input[aria-invalid="true"],
+.gridra-select[aria-invalid="true"] {
+  border-color: var(--gridra-color-accent);
+  box-shadow: var(--gridra-shadow-selected);
+}
+
+.gridra-field {
+  display: grid;
+  gap: var(--gridra-space-xs);
+  color: var(--gridra-color-muted-text);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gridra-field__label {
+  color: inherit;
+}
+
+.gridra-field__hint,
+.gridra-field__error {
+  color: var(--gridra-color-muted-text);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.gridra-field__error {
+  color: var(--gridra-color-text);
+}
+
+.gridra-button:focus-visible,
+.gridra-input:focus-visible,
+.gridra-select:focus-visible,
 .gridra-toolbar__button:focus-visible,
 .gridra-grid__item:focus-visible,
 .gridra-node:focus-visible {
   outline: 1px solid var(--gridra-color-focus);
   outline-offset: 2px;
-}
-
-.gridra-toolbar__button[aria-pressed="true"] {
-  border-color: var(--gridra-color-accent);
-  background: var(--gridra-color-selected);
-  box-shadow: var(--gridra-shadow-selected);
 }
 
 .gridra-canvas-area {
@@ -197,24 +260,43 @@
   display: inline-flex;
   min-width: 0;
   min-height: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
   border: 1px solid var(--gridra-color-border);
   border-radius: var(--gridra-radius-md);
-  background: rgba(255, 255, 255, 0.05);
+  background:
+    radial-gradient(circle, var(--gridra-color-node-pattern) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.05);
+  background-position: 0 0;
+  background-size: var(--gridra-node-pattern-size) var(--gridra-node-pattern-size);
   color: var(--gridra-color-text);
   cursor: pointer;
   font: inherit;
-  font-size: 11px;
-  letter-spacing: 0.07em;
   padding: var(--gridra-space-sm) var(--gridra-space-md);
+  text-align: left;
   text-transform: uppercase;
 }
 
-.gridra-node p {
-  background: rgb(230, 221, 221);
+.gridra-node__label {
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--gridra-color-muted-text);
+  font-family: var(--gridra-font-brand);
+  font-size: 11px;
+  font-variant-ligatures: none;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  line-height: 1.25;
+  padding: 2px 6px;
+  text-transform: uppercase;
 }
 
 .gridra-node[aria-selected="true"] {
   border-color: var(--gridra-color-accent);
-  background: var(--gridra-color-selected);
+  background:
+    radial-gradient(circle, var(--gridra-color-node-pattern) 1px, transparent 1px),
+    var(--gridra-color-selected);
+  background-position: 0 0;
+  background-size: var(--gridra-node-pattern-size) var(--gridra-node-pattern-size);
   box-shadow: var(--gridra-shadow-selected);
 }
