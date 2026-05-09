@@ -8,6 +8,8 @@ import {
   GridraInput,
   GridraPanel,
   GridraRoot,
+  GridraSelect,
+  GridraSelectionBox,
   GridraToolbar
 } from "@gridra-ui/react";
 import "@gridra-ui/theme/base.css";
@@ -17,6 +19,7 @@ import "./styles.css";
 function Playground() {
   const [theme, setTheme] = useState<"gridra-theme-light" | "gridra-theme-dark">("gridra-theme-dark");
   const [selectedId, setSelectedId] = useState<string | null>("node-input");
+  const [selectionPreviewVisible, setSelectionPreviewVisible] = useState(true);
   const [gridColumns, setGridColumns] = useState(12);
   const [gridRows, setGridRows] = useState(6);
   const nodes = useMemo(
@@ -40,6 +43,7 @@ function Playground() {
     []
   );
   const items = nodes.map((node) => ({ id: node.id, label: node.label }));
+  const selectedNode = nodes.find((node) => node.id === selectedId);
 
   return (
     <GridraRoot
@@ -61,6 +65,19 @@ function Playground() {
           }
         >
           <div className="playground-grid-controls">
+            <GridraField htmlFor="playground-selected-node" label="Selected Node">
+              <GridraSelect
+                id="playground-selected-node"
+                onChange={(event) => setSelectedId(event.target.value)}
+                value={selectedId ?? ""}
+              >
+                {nodes.map((node) => (
+                  <option key={node.id} value={node.id}>
+                    {node.label}
+                  </option>
+                ))}
+              </GridraSelect>
+            </GridraField>
             <GridraField htmlFor="playground-grid-columns" label="Columns">
               <GridraInput
                 id="playground-grid-columns"
@@ -92,17 +109,28 @@ function Playground() {
       <GridraToolbar
         actions={[
           { id: "select", label: "Select", pressed: true },
+          { id: "selection-box", label: "Box", pressed: selectionPreviewVisible },
           { id: "pan", label: "Pan" },
           { id: "inspect", label: "Inspect" }
         ]}
+        onAction={(id) => {
+          if (id === "selection-box") {
+            setSelectionPreviewVisible((current) => !current);
+          }
+        }}
       />
       <GridraCanvasArea
         gridColumns={gridColumns}
         gridRows={gridRows}
         nodes={nodes}
         onSelectionChange={setSelectedId}
-        selectedId={selectedId}
-      />
+        selectedId={selectionPreviewVisible ? null : selectedId}
+      >
+        <GridraSelectionBox
+          placement={selectedNode?.placement}
+          visible={selectionPreviewVisible}
+        />
+      </GridraCanvasArea>
     </GridraRoot>
   );
 }

@@ -7,4 +7,5 @@ export * from "./components/GridraNode";
 export * from "./components/GridraPanel";
 export * from "./components/GridraRoot";
 export * from "./components/GridraSelect";
+export * from "./components/GridraSelectionBox";
 export * from "./components/GridraToolbar";

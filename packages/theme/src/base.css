@@ -211,6 +211,7 @@
 }
 
 .gridra-canvas-area {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(var(--gridra-grid-columns, 12), minmax(0, 1fr));
   grid-template-rows: repeat(var(--gridra-grid-rows, 6), minmax(0, 1fr));
@@ -223,6 +224,24 @@
   align-items: stretch;
   background: var(--gridra-color-background);
   padding: var(--gridra-space-md);
+}
+
+.gridra-selection-box {
+  z-index: 3;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: 1px solid var(--gridra-color-accent);
+  outline-offset: 3px;
+  pointer-events: none;
+}
+
+.gridra-selection-box--rect {
+  position: absolute;
+}
+
+.gridra-selection-box--placement {
+  position: relative;
 }
 
 .gridra-grid {
