@@ -16,7 +16,7 @@ Use it as the shared memory for what exists, what comes next, and what should wa
 - [x] `GridraGrid`
 - [x] `GridraPanel`
 - [x] `GridraNode`
-- [~] `GridraSelectionBox` visual primitive only
+- [x] `GridraSelectionBox`
 - [x] `GridraToolbar`
 - [x] `GridraButton`
 - [x] `GridraField`
@@ -32,7 +32,7 @@ These components define the library's identity as a dense, panel-based spatial U
 - [x] Grid
 - [x] Panel
 - [x] Node
-- [~] Selection Box visual primitive
+- [x] Selection Box
 - [ ] Drag Handle
 - [ ] Resize Handle
 - [ ] Connection Handle
@@ -156,7 +156,7 @@ These are useful but should wait until the lower-level primitives are stable.
 
 ### GridraSelectionBox
 
-Current status: partial.
+Current status: implemented.
 
 Implemented:
 
@@ -164,25 +164,26 @@ Implemented:
 - Supports pixel-based `rect` placement.
 - Supports grid-based `placement`.
 - Supports `visible` for display toggling.
-- Used in the playground as a selection-frame preview.
+- `GridraCanvasArea` renders it during pointer drag.
+- `GridraCanvasArea` calculates the drag rectangle from pointer start/current positions.
+- `GridraCanvasArea` hit tests nodes inside the selection rectangle.
+- `GridraCanvasArea` supports multi-selection state with `selectedIds`, `defaultSelectedIds`, and `onSelectionIdsChange`.
+- The playground demonstrates range selection by dragging on the canvas background.
 
 Not implemented yet:
 
-- Pointer drag behavior.
-- Rect calculation from pointer start/current positions.
-- Hit testing nodes inside the selection rectangle.
-- Multi-selection state such as `selectedIds`.
 - Keyboard modifiers such as shift-add or command-toggle.
+- Additive range selection. Current drag selection replaces `selectedIds`.
 
 Current data flow:
 
 ```text
-external rect or grid placement
+external rect or grid placement, or CanvasArea drag state
   -> GridraSelectionBox
   -> visual selection frame
 ```
 
-Future interactive data flow:
+Interactive data flow:
 
 ```text
 pointer down

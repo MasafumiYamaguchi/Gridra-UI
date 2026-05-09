@@ -1,4 +1,4 @@
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { GridraCanvasArea } from "./GridraCanvasArea";
 
@@ -80,4 +80,118 @@ describe("GridraCanvasArea", () => {
     expect(node?.getAttribute("style")).toContain("grid-column: 4 / span 1");
     expect(node?.getAttribute("style")).toContain("grid-row: 4 / span 1");
   });
+
+  it("selects nodes inside a dragged selection rectangle", () => {
+    const selectedIdGroups: string[][] = [];
+    const { container } = render(
+      <GridraCanvasArea
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "inside",
+            placement: { column: 1, row: 1 }
+          },
+          {
+            id: "outside",
+            placement: { column: 4, row: 4 }
+          }
+        ]}
+        onSelectionIdsChange={(selectedIds) => selectedIdGroups.push(selectedIds)}
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    firePointerEvent(canvas, "pointerdown", {
+      button: 0,
+      clientX: 0,
+      clientY: 0,
+      pointerId: 1
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 1
+    });
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 1
+    });
+
+    expect(selectedIdGroups).toEqual([["inside"]]);
+  });
+
+  it("renders the active selection box while dragging", () => {
+    const { container } = render(<GridraCanvasArea />);
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    firePointerEvent(canvas, "pointerdown", {
+      button: 0,
+      clientX: 10,
+      clientY: 20,
+      pointerId: 1
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 60,
+      clientY: 90,
+      pointerId: 1
+    });
+
+    const selectionBox = container.querySelector(".gridra-selection-box");
+
+    expect(selectionBox?.getAttribute("style")).toContain("left: 10px");
+    expect(selectionBox?.getAttribute("style")).toContain("top: 20px");
+    expect(selectionBox?.getAttribute("style")).toContain("width: 50px");
+    expect(selectionBox?.getAttribute("style")).toContain("height: 70px");
+  });
 });
+
+function setCanvasGeometry(
+  canvas: HTMLDivElement,
+  size: { width: number; height: number },
+) {
+  Object.defineProperty(canvas, "clientWidth", {
+    configurable: true,
+    value: size.width,
+  });
+  Object.defineProperty(canvas, "clientHeight", {
+    configurable: true,
+    value: size.height,
+  });
+  canvas.getBoundingClientRect = () =>
+    ({
+      bottom: size.height,
+      height: size.height,
+      left: 0,
+      right: size.width,
+      top: 0,
+      width: size.width,
+      x: 0,
+      y: 0,
+      toJSON: () => undefined,
+    }) as DOMRect;
+}
+
+function firePointerEvent(
+  target: HTMLElement,
+  type: "pointerdown" | "pointermove" | "pointerup",
+  init: MouseEventInit & { pointerId: number },
+) {
+  const event = new MouseEvent(type, {
+    bubbles: true,
+    cancelable: true,
+    ...init,
+  });
+
+  Object.defineProperty(event, "pointerId", {
+    configurable: true,
+    value: init.pointerId,
+  });
+
+  fireEvent(target, event);
+}
