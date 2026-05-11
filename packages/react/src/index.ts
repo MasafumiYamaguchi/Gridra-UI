@@ -11,4 +11,5 @@ export * from "./components/GridraResizeHandle";
 export * from "./components/GridraRoot";
 export * from "./components/GridraSelect";
 export * from "./components/GridraSelectionBox";
+export * from "./components/GridraSnapGuide";
 export * from "./components/GridraToolbar";

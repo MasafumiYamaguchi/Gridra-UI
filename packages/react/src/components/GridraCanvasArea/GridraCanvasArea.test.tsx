@@ -213,6 +213,54 @@ describe("GridraCanvasArea", () => {
     expect(movedPlacements.at(-1)).toMatchObject({ column: 2, row: 3 });
   });
 
+  it("renders snap guides while dragging a selected node", () => {
+    const { container } = render(
+      <GridraCanvasArea
+        enableNodeDragging
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "input",
+            placement: { column: 1, row: 1 }
+          }
+        ]}
+        selectedId="input"
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    const handle = container.querySelector(".gridra-drag-handle") as HTMLElement;
+
+    firePointerEvent(handle, "pointerdown", {
+      button: 0,
+      clientX: 20,
+      clientY: 20,
+      pointerId: 12
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 130,
+      clientY: 230,
+      pointerId: 12
+    });
+
+    expect(container.querySelectorAll(".gridra-snap-guide")).toHaveLength(2);
+    expect(canvas.classList.contains("gridra-canvas-area--snap-guides-visible")).toBe(true);
+    expect(container.querySelector(".gridra-snap-guide--vertical")).not.toBeNull();
+    expect(container.querySelector(".gridra-snap-guide--horizontal")).not.toBeNull();
+
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 130,
+      clientY: 230,
+      pointerId: 12
+    });
+
+    expect(container.querySelector(".gridra-snap-guide")).toBeNull();
+    expect(canvas.classList.contains("gridra-canvas-area--snap-guides-visible")).toBe(false);
+  });
+
   it("does not render node resize handles until resizing is enabled", () => {
     const { container } = render(
       <GridraCanvasArea
@@ -277,6 +325,54 @@ describe("GridraCanvasArea", () => {
       columnSpan: 3,
       rowSpan: 2
     });
+  });
+
+  it("renders snap guides while resizing a selected node", () => {
+    const { container } = render(
+      <GridraCanvasArea
+        enableNodeResizing
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "input",
+            placement: { column: 1, row: 1, columnSpan: 1, rowSpan: 1 }
+          }
+        ]}
+        selectedId="input"
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    const handle = container.querySelector(".gridra-resize-handle") as HTMLElement;
+
+    firePointerEvent(handle, "pointerdown", {
+      button: 0,
+      clientX: 20,
+      clientY: 20,
+      pointerId: 13
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 230,
+      clientY: 130,
+      pointerId: 13
+    });
+
+    expect(container.querySelectorAll(".gridra-snap-guide")).toHaveLength(2);
+    expect(canvas.classList.contains("gridra-canvas-area--snap-guides-visible")).toBe(true);
+    expect(container.querySelector(".gridra-snap-guide--vertical")).not.toBeNull();
+    expect(container.querySelector(".gridra-snap-guide--horizontal")).not.toBeNull();
+
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 230,
+      clientY: 130,
+      pointerId: 13
+    });
+
+    expect(container.querySelector(".gridra-snap-guide")).toBeNull();
+    expect(canvas.classList.contains("gridra-canvas-area--snap-guides-visible")).toBe(false);
   });
 
   it("keeps resized node spans inside the configured grid", () => {

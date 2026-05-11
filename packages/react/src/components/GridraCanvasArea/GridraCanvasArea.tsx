@@ -12,6 +12,7 @@ import { GridraDragHandle } from "../GridraDragHandle";
 import { GridraNode } from "../GridraNode";
 import { GridraResizeHandle } from "../GridraResizeHandle";
 import { GridraSelectionBox } from "../GridraSelectionBox";
+import { GridraSnapGuide } from "../GridraSnapGuide";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import { GridraConnectionLayer } from "./GridraConnectionLayer";
 import { getConnectionKey, hasConnection } from "./connectionUtils";
@@ -20,6 +21,7 @@ import {
   formatCssLength,
   getCanvasPoint,
   getGridMetrics,
+  getNodeRect,
   normalizeGridCount,
   normalizeGridPlacement,
   normalizeGridSpan,
@@ -33,6 +35,7 @@ import type {
   NodeConnectionState,
   NodeDragState,
   NodeResizeState,
+  NodeSnapGuide,
 } from "./types";
 
 // ここがコンポーネントの根幹
@@ -108,6 +111,7 @@ export function GridraCanvasArea<
   const [connectingNodeId, setConnectingNodeId] = useState<GridraId | null>(null);
   const [draggingNodeId, setDraggingNodeId] = useState<GridraId | null>(null);
   const [resizingNodeId, setResizingNodeId] = useState<GridraId | null>(null);
+  const [snapGuides, setSnapGuides] = useState<NodeSnapGuide[]>([]);
   const [selectedConnectionKeys, setSelectedConnectionKeys] = useState<string[]>([]);
   const normalizedGridColumns =
     gridColumns === undefined ? undefined : normalizeGridCount(gridColumns);
@@ -126,7 +130,11 @@ export function GridraCanvasArea<
     [currentNodePlacements, nodes, normalizedGridColumns, normalizedGridRows],
   );
   // クラス名と結合して、スタイルを定義
-  const canvasClassName = ["gridra-canvas-area", className]
+  const canvasClassName = [
+    "gridra-canvas-area",
+    snapGuides.length > 0 ? "gridra-canvas-area--snap-guides-visible" : null,
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
   // グリッドの列数と行数をCSS変数としてスタイルに追加
@@ -340,6 +348,7 @@ export function GridraCanvasArea<
       });
       onNodeMove?.(dragState.id, nextPlacement, previousPlacement);
     }
+    setSnapGuides(createNodeDragSnapGuides(nextPlacement, event.currentTarget, gridColumnsForDrag, gridRowsForDrag));
 
     event.preventDefault();
     return true;
@@ -355,6 +364,7 @@ export function GridraCanvasArea<
     updateNodeDrag(event);
     nodeDragStateRef.current = null;
     setDraggingNodeId(null);
+    setSnapGuides([]);
     event.preventDefault();
 
     return true;
@@ -369,6 +379,7 @@ export function GridraCanvasArea<
 
     nodeDragStateRef.current = null;
     setDraggingNodeId(null);
+    setSnapGuides([]);
 
     return true;
   };
@@ -442,6 +453,7 @@ export function GridraCanvasArea<
       });
       onNodeResize?.(resizeState.id, nextPlacement, previousPlacement);
     }
+    setSnapGuides(createNodeResizeSnapGuides(nextPlacement, event.currentTarget, gridColumnsForResize, gridRowsForResize));
 
     event.preventDefault();
     return true;
@@ -457,6 +469,7 @@ export function GridraCanvasArea<
     updateNodeResize(event);
     nodeResizeStateRef.current = null;
     setResizingNodeId(null);
+    setSnapGuides([]);
     event.preventDefault();
 
     return true;
@@ -471,6 +484,7 @@ export function GridraCanvasArea<
 
     nodeResizeStateRef.current = null;
     setResizingNodeId(null);
+    setSnapGuides([]);
 
     return true;
   };
@@ -699,7 +713,70 @@ export function GridraCanvasArea<
         );
       })}
       <GridraSelectionBox rect={selectionRect ?? undefined} />
+      {snapGuides.map((guide) => (
+        <GridraSnapGuide
+          end={guide.end}
+          key={`${guide.orientation}-${guide.position}-${guide.start ?? 0}-${guide.end ?? "full"}`}
+          orientation={guide.orientation}
+          position={guide.position}
+          start={guide.start}
+        />
+      ))}
       {children}
     </div>
   );
+}
+
+function createNodeDragSnapGuides(
+  placement: GridraCanvasNode["placement"],
+  canvas: HTMLDivElement,
+  gridColumns: number,
+  gridRows: number,
+): NodeSnapGuide[] {
+  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
+  const rect = getNodeRect(placement, canvas, gridColumns, gridRows);
+  const verticalStart = metrics.paddingTop;
+  const horizontalStart = metrics.paddingLeft;
+
+  return [
+    {
+      orientation: "vertical",
+      position: rect.x,
+      start: verticalStart,
+      end: verticalStart + metrics.rowStep * gridRows,
+    },
+    {
+      orientation: "horizontal",
+      position: rect.y,
+      start: horizontalStart,
+      end: horizontalStart + metrics.columnStep * gridColumns,
+    },
+  ];
+}
+
+function createNodeResizeSnapGuides(
+  placement: GridraCanvasNode["placement"],
+  canvas: HTMLDivElement,
+  gridColumns: number,
+  gridRows: number,
+): NodeSnapGuide[] {
+  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
+  const rect = getNodeRect(placement, canvas, gridColumns, gridRows);
+  const verticalStart = metrics.paddingTop;
+  const horizontalStart = metrics.paddingLeft;
+
+  return [
+    {
+      orientation: "vertical",
+      position: rect.x + rect.width,
+      start: verticalStart,
+      end: verticalStart + metrics.rowStep * gridRows,
+    },
+    {
+      orientation: "horizontal",
+      position: rect.y + rect.height,
+      start: horizontalStart,
+      end: horizontalStart + metrics.columnStep * gridColumns,
+    },
+  ];
 }

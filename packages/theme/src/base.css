@@ -226,6 +226,63 @@
   padding: var(--gridra-space-md);
 }
 
+.gridra-canvas-area--snap-guides-visible {
+  --gridra-snap-grid-line: rgba(255, 255, 255, 0.14);
+  --gridra-snap-grid-column-size: calc((100% - var(--gridra-space-md) * 2) / var(--gridra-grid-columns, 12));
+  --gridra-snap-grid-row-size: calc((100% - var(--gridra-space-md) * 2) / var(--gridra-grid-rows, 6));
+}
+
+.gridra-canvas-area--snap-guides-visible::before,
+.gridra-canvas-area--snap-guides-visible::after {
+  position: absolute;
+  z-index: 0;
+  inset: var(--gridra-space-md);
+  content: "";
+  pointer-events: none;
+}
+
+.gridra-canvas-area--snap-guides-visible::before {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--gridra-snap-grid-line) 0 1px,
+      transparent 1px var(--gridra-snap-grid-column-size)
+    );
+  mask-image:
+    repeating-linear-gradient(
+      to bottom,
+      #000000 0 2px,
+      transparent 2px 6px
+    );
+  -webkit-mask-image:
+    repeating-linear-gradient(
+      to bottom,
+      #000000 0 2px,
+      transparent 2px 6px
+    );
+}
+
+.gridra-canvas-area--snap-guides-visible::after {
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      var(--gridra-snap-grid-line) 0 1px,
+      transparent 1px var(--gridra-snap-grid-row-size)
+    );
+  mask-image:
+    repeating-linear-gradient(
+      to right,
+      #000000 0 2px,
+      transparent 2px 6px
+    );
+  -webkit-mask-image:
+    repeating-linear-gradient(
+      to right,
+      #000000 0 2px,
+      transparent 2px 6px
+    );
+}
+
 .gridra-selection-box {
   z-index: 3;
   border: 0;
@@ -242,6 +299,40 @@
 
 .gridra-selection-box--placement {
   position: relative;
+}
+
+.gridra-snap-guide {
+  z-index: 4;
+  align-self: stretch;
+  justify-self: stretch;
+  border: 0;
+  background: var(--gridra-color-accent);
+  opacity: 0.88;
+  pointer-events: none;
+}
+
+.gridra-snap-guide--position {
+  position: absolute;
+}
+
+.gridra-snap-guide--placement {
+  position: relative;
+}
+
+.gridra-snap-guide--vertical {
+  width: 1px;
+}
+
+.gridra-snap-guide--horizontal {
+  height: 1px;
+}
+
+.gridra-snap-guide--placement.gridra-snap-guide--vertical {
+  min-height: 100%;
+}
+
+.gridra-snap-guide--placement.gridra-snap-guide--horizontal {
+  min-width: 100%;
 }
 
 .gridra-connection-layer {

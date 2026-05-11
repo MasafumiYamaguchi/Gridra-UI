@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import type { GridraId, GridraPoint } from "@gridra-ui/core";
 import type { GridraNodePlacement } from "../GridraNode";
+import type { GridraSnapGuideOrientation } from "../GridraSnapGuide";
 
 export interface GridraCanvasNode {
   id: GridraId;
@@ -110,4 +111,11 @@ export interface NodeResizeState {
 export interface NodeConnectionState {
   pointerId: number;
   sourceId: GridraId;
+}
+
+export interface NodeSnapGuide {
+  end?: number;
+  orientation: GridraSnapGuideOrientation;
+  position: number;
+  start?: number;
 }

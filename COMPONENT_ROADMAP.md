@@ -22,6 +22,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraDragHandle`
 - [x] `GridraResizeHandle`
 - [x] `GridraConnectionHandle`
+- [x] `GridraSnapGuide`
 - [x] `GridraToolbar`
 - [x] `GridraButton`
 - [x] `GridraField`
@@ -41,7 +42,7 @@ These components define the library's identity as a dense, panel-based spatial U
 - [x] Drag Handle
 - [x] Resize Handle
 - [x] Connection Handle
-- [ ] Snap Guide
+- [x] Snap Guide
 - [ ] Minimap
 - [ ] Inspector Panel
 - [ ] Properties Panel
@@ -305,6 +306,34 @@ output handle pointer down
   -> update nodeConnections
   -> render connection path
   -> emit connection callback
+```
+
+### GridraSnapGuide
+
+Current status: implemented.
+
+Implemented:
+
+- Visual snap guide component exported from `@gridra-ui/react`.
+- Supports vertical and horizontal guide orientation.
+- Supports pixel-based `position`, `start`, and `end` placement for absolute overlays.
+- Supports grid-based `placement` for guide rendering inside grid containers.
+- Supports `active` and `visible` for display toggling.
+- `GridraCanvasArea` renders drag guides while moving selected nodes.
+- `GridraCanvasArea` renders resize guides while resizing selected nodes.
+
+Not implemented yet:
+
+- Multi-guide rendering helper.
+- Snap candidate matching against other nodes or grid landmarks.
+
+Current data flow:
+
+```text
+snap candidate from interaction logic
+  -> orientation plus pixel position or grid placement
+  -> GridraSnapGuide
+  -> visual alignment line
 ```
 
 ## Design Notes To Keep In Mind
