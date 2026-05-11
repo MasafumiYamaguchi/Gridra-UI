@@ -244,6 +244,33 @@
   position: relative;
 }
 
+.gridra-connection-layer {
+  position: absolute;
+  z-index: 1;
+  inset: var(--gridra-space-md);
+  width: calc(100% - var(--gridra-space-md) * 2);
+  height: calc(100% - var(--gridra-space-md) * 2);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.gridra-connection-line {
+  fill: none;
+  pointer-events: stroke;
+  stroke: var(--gridra-color-accent);
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: var(--gridra-connection-line-width, 2px);
+  vector-effect: non-scaling-stroke;
+  opacity: 0.78;
+}
+
+.gridra-connection-line--selected {
+  stroke-width: calc(var(--gridra-connection-line-width, 2px) + 2px);
+  opacity: 1;
+  filter: drop-shadow(0 0 3px var(--gridra-color-accent));
+}
+
 .gridra-grid {
   display: grid;
   gap: var(--gridra-space-sm);
@@ -277,6 +304,7 @@
 
 .gridra-node {
   position: relative;
+  z-index: 2;
   display: inline-flex;
   min-width: 0;
   min-height: 0;
@@ -353,6 +381,128 @@
   background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
   background-position: 0 0;
   background-size: 4px 4px;
+}
+
+.gridra-resize-handle {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gridra-color-border-strong);
+  background: rgba(0, 0, 0, 0.62);
+  color: var(--gridra-color-muted-text);
+  touch-action: none;
+}
+
+.gridra-resize-handle--right,
+.gridra-resize-handle--bottom,
+.gridra-resize-handle--bottom-right {
+  position: absolute;
+  z-index: 2;
+}
+
+.gridra-resize-handle--right {
+  top: 50%;
+  right: var(--gridra-space-sm);
+  cursor: ew-resize;
+  transform: translateY(-50%);
+}
+
+.gridra-resize-handle--bottom {
+  bottom: var(--gridra-space-sm);
+  left: 50%;
+  cursor: ns-resize;
+  transform: translateX(-50%);
+}
+
+.gridra-resize-handle--bottom-right {
+  right: var(--gridra-space-sm);
+  bottom: var(--gridra-space-sm);
+  cursor: nwse-resize;
+}
+
+.gridra-resize-handle--inline {
+  position: relative;
+  flex: 0 0 auto;
+  cursor: nwse-resize;
+}
+
+.gridra-resize-handle__corner {
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+}
+
+.gridra-connection-handle {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gridra-color-border-strong);
+  background: rgba(0, 0, 0, 0.72);
+  color: var(--gridra-color-muted-text);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.gridra-connection-handle--top,
+.gridra-connection-handle--right,
+.gridra-connection-handle--bottom,
+.gridra-connection-handle--left {
+  position: absolute;
+  z-index: 2;
+}
+
+.gridra-connection-handle--top {
+  top: var(--gridra-space-sm);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.gridra-connection-handle--right {
+  top: 50%;
+  right: var(--gridra-space-sm);
+  transform: translateY(-50%);
+}
+
+.gridra-connection-handle--bottom {
+  bottom: var(--gridra-space-sm);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.gridra-connection-handle--left {
+  top: 50%;
+  left: var(--gridra-space-sm);
+  transform: translateY(-50%);
+}
+
+.gridra-connection-handle--inline {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.gridra-connection-handle--input {
+  border-radius: 999px;
+}
+
+.gridra-connection-handle--output {
+  border-radius: 0;
+}
+
+.gridra-connection-handle--active {
+  border-color: var(--gridra-color-accent);
+  color: var(--gridra-color-text);
+  box-shadow: var(--gridra-shadow-selected);
+}
+
+.gridra-connection-handle__dot {
+  width: 4px;
+  height: 4px;
+  background: currentColor;
 }
 
 .gridra-node__label {

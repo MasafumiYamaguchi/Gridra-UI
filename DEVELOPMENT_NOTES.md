@@ -2,26 +2,22 @@
 
 ## Testing Workflow
 
-The user wants to write test code themselves to learn the implementation deeply.
+Codex should add or update tests together with implementation changes when the behavior is meaningful enough to verify.
 
 When adding or changing functionality:
 
 1. Codex implements the production code.
-2. Codex stops before adding new tests.
-3. Codex tells the user: "The implementation is ready for tests."
-4. Codex lists the concrete test targets and expected behavior.
-5. The user writes the test code.
-6. Codex can help read test failures, explain causes, and adjust implementation.
+2. Codex adds focused tests for the changed behavior.
+3. Codex runs the relevant test command.
+4. Codex runs typecheck or build when the change affects exported APIs or application wiring.
+5. Codex summarizes what was tested and any remaining risk.
 
-Codex should not add new test files or new test cases by default.
+Codex may add new test files or new test cases by default when adding a component or behavior.
 
-Allowed Codex support:
+Testing preferences:
 
-- Run existing tests when useful.
-- Explain what should be tested.
-- Provide generalized testing examples that are not copied from project-specific code.
-- Debug failing tests after the user writes them.
-
-Exception:
-
-- If the user explicitly asks Codex to write tests, Codex may do so.
+- Keep tests focused on public behavior and stable DOM/API contracts.
+- Put React component tests under `packages/react/src/__tests__/components`.
+- Avoid over-testing implementation details that would make refactors noisy.
+- Prefer adding narrow regression tests for interaction logic such as selection, dragging, resizing, and connections.
+- If a test would require brittle browser geometry, explain the tradeoff and cover the stable part instead.

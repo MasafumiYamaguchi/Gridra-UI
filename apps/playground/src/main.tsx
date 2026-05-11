@@ -7,6 +7,7 @@ import {
   GridraGrid,
   GridraInput,
   GridraNode,
+  type GridraNodeConnection,
   type GridraNodePlacements,
   GridraPanel,
   GridraRoot,
@@ -22,7 +23,13 @@ function Playground() {
   const [selectedId, setSelectedId] = useState<string | null>("node-input");
   const [selectedIds, setSelectedIds] = useState<string[]>(["node-input"]);
   const [selectionPreviewVisible, setSelectionPreviewVisible] = useState(true);
+  const [nodeConnectingEnabled, setNodeConnectingEnabled] = useState(true);
   const [nodeDraggingEnabled, setNodeDraggingEnabled] = useState(true);
+  const [nodeResizingEnabled, setNodeResizingEnabled] = useState(true);
+  const [nodeConnections, setNodeConnections] = useState<GridraNodeConnection[]>([
+    { sourceId: "node-input", targetId: "node-transform" },
+    { sourceId: "node-transform", targetId: "node-output" }
+  ]);
   const [nodePlacements, setNodePlacements] = useState<GridraNodePlacements>({});
   const [gridColumns, setGridColumns] = useState(12);
   const [gridRows, setGridRows] = useState(6);
@@ -119,7 +126,9 @@ function Playground() {
         actions={[
           { id: "select", label: "Select", pressed: true },
           { id: "selection-box", label: "Box", pressed: selectionPreviewVisible },
+          { id: "connect", label: "Connect", pressed: nodeConnectingEnabled },
           { id: "drag", label: "Drag", pressed: nodeDraggingEnabled },
+          { id: "resize", label: "Resize", pressed: nodeResizingEnabled },
           { id: "pan", label: "Pan" },
           { id: "inspect", label: "Inspect" }
         ]}
@@ -127,18 +136,28 @@ function Playground() {
           if (id === "selection-box") {
             setSelectionPreviewVisible((current) => !current);
           }
+          if (id === "connect") {
+            setNodeConnectingEnabled((current) => !current);
+          }
           if (id === "drag") {
             setNodeDraggingEnabled((current) => !current);
+          }
+          if (id === "resize") {
+            setNodeResizingEnabled((current) => !current);
           }
         }}
       />
       <GridraCanvasArea
+        enableNodeConnecting={nodeConnectingEnabled}
         enableNodeDragging={nodeDraggingEnabled}
+        enableNodeResizing={nodeResizingEnabled}
         enableRangeSelection={selectionPreviewVisible}
         gridColumns={gridColumns}
         gridRows={gridRows}
+        nodeConnections={nodeConnections}
         nodePlacements={nodePlacements}
         nodes={nodes}
+        onNodeConnectionsChange={setNodeConnections}
         onNodePlacementsChange={setNodePlacements}
         onSelectionChange={setSelectedId}
         onSelectionIdsChange={(nextSelectedIds) => {
@@ -147,6 +166,7 @@ function Playground() {
         }}
         renderNode={(node, state) => (
           <GridraNode
+            connectionHandles={state.connectionHandles}
             dragHandle={state.selected ? state.dragHandle : undefined}
             id={node.id}
             key={node.id}
@@ -155,6 +175,7 @@ function Playground() {
               setSelectedIds([nextId]);
             }}
             placement={node.placement}
+            resizeHandle={state.selected ? state.resizeHandle : undefined}
             selected={state.selected}
           >
             {node.label ?? node.id}

@@ -13,7 +13,9 @@ export interface GridraNodePlacement {
 export interface GridraNodeProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "id" | "onSelect"> {
   id: GridraId;
   placement: GridraNodePlacement;
+  connectionHandles?: ReactNode;
   dragHandle?: ReactNode;
+  resizeHandle?: ReactNode;
   selected?: boolean;
   children?: ReactNode;
   onSelect?: (id: GridraId) => void;
@@ -22,11 +24,13 @@ export interface GridraNodeProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
 export function GridraNode({
   children,
   className,
+  connectionHandles,
   dragHandle,
   id,
   onClick,
   onSelect,
   placement,
+  resizeHandle,
   selected = false,
   style,
   type = "button",
@@ -55,6 +59,8 @@ export function GridraNode({
     >
       {dragHandle}
       <div className="gridra-node__label">{children ?? id}</div>
+      {connectionHandles}
+      {resizeHandle}
     </button>
   );
 }

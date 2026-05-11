@@ -20,6 +20,8 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraNode`
 - [x] `GridraSelectionBox`
 - [x] `GridraDragHandle`
+- [x] `GridraResizeHandle`
+- [x] `GridraConnectionHandle`
 - [x] `GridraToolbar`
 - [x] `GridraButton`
 - [x] `GridraField`
@@ -37,8 +39,8 @@ These components define the library's identity as a dense, panel-based spatial U
 - [x] Node
 - [x] Selection Box
 - [x] Drag Handle
-- [ ] Resize Handle
-- [ ] Connection Handle
+- [x] Resize Handle
+- [x] Connection Handle
 - [ ] Snap Guide
 - [ ] Minimap
 - [ ] Inspector Panel
@@ -229,6 +231,80 @@ handle pointer down
   -> normalize placement inside grid bounds
   -> update nodePlacements
   -> render moved node
+```
+
+### GridraResizeHandle
+
+Current status: implemented.
+
+Implemented:
+
+- Resize handle component exported from `@gridra-ui/react`.
+- Supports right, bottom, bottom-right, and inline position classes.
+- `GridraNode` exposes a `resizeHandle` slot.
+- `GridraCanvasArea` can optionally resize selected nodes with `enableNodeResizing`.
+- Resizing updates `columnSpan` and `rowSpan` through the existing `nodePlacements` state.
+- `GridraCanvasArea` emits `onNodeResize`.
+- The playground can toggle node resizing from the toolbar.
+
+Not implemented yet:
+
+- Left/top resizing that changes both origin and span.
+- Keyboard resizing semantics.
+- Multi-node resizing.
+- Min/max span constraints beyond grid bounds.
+
+Current data flow:
+
+```text
+resize handle pointer down
+  -> capture node id and origin placement
+  -> pointer move
+  -> convert pointer delta to grid-span delta
+  -> normalize span inside grid bounds
+  -> update nodePlacements
+  -> render resized node
+```
+
+### GridraConnectionHandle
+
+Current status: implemented.
+
+Implemented:
+
+- Connection handle component exported from `@gridra-ui/react`.
+- Supports top, right, bottom, left, and inline position classes.
+- Supports input and output handle variants.
+- Supports active visual state.
+- `GridraNode` exposes a `connectionHandles` slot.
+- `GridraCanvasArea` can optionally render node connection handles with `enableNodeConnecting`.
+- `GridraCanvasArea` supports controlled or uncontrolled `nodeConnections`.
+- `GridraCanvasArea` emits `onNodeConnectionStart`, `onNodeConnect`, and `onNodeConnectionCancel`.
+- `GridraCanvasArea` renders persisted connections as SVG paths.
+- `GridraCanvasArea` supports `connectionLineWidth` for configurable connection stroke width.
+- Connection lines can be clicked to highlight them.
+- Range selection can highlight multiple connection lines.
+- Highlighted connection lines can be deleted with Delete or Backspace.
+- Highlighted connection lines clear when the canvas background or another node action is used.
+- The playground can toggle node connection handles from the toolbar.
+
+Not implemented yet:
+
+- Connection preview line while dragging.
+- Hit testing beyond direct handle pointer targets.
+- Validation rules for allowed source/target pairs.
+- Keyboard connection semantics.
+
+Current data flow:
+
+```text
+output handle pointer down
+  -> capture source node id
+  -> input handle pointer up
+  -> derive target node id
+  -> update nodeConnections
+  -> render connection path
+  -> emit connection callback
 ```
 
 ## Design Notes To Keep In Mind

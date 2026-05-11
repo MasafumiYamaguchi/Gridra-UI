@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { GridraDragHandle } from "./GridraDragHandle";
-import { GridraNode } from "./GridraNode";
+import { GridraDragHandle } from "../../components/GridraDragHandle";
+import { GridraNode } from "../../components/GridraNode";
 
 afterEach(() => {
   cleanup();
