@@ -1,5 +1,6 @@
 export * from "./components/GridraButton";
 export * from "./components/GridraCanvasArea";
+export * from "./components/GridraDragHandle";
 export * from "./components/GridraField";
 export * from "./components/GridraGrid";
 export * from "./components/GridraInput";

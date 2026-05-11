@@ -3,6 +3,7 @@
 import type { CSSProperties, HTMLAttributes, PointerEvent, ReactNode } from "react";
 import { useMemo, useRef, useState } from "react";
 import type { GridraId, GridraPoint, GridraRect } from "@gridra-ui/core";
+import { GridraDragHandle } from "./GridraDragHandle";
 import { GridraNode, type GridraNodePlacement } from "./GridraNode";
 import { GridraSelectionBox } from "./GridraSelectionBox";
 import { useControllableValue } from "./useControllableValue";
@@ -14,6 +15,15 @@ export interface GridraCanvasNode {
   label?: ReactNode;
 }
 
+export type GridraNodePlacements = Record<string, GridraNodePlacement>;
+
+export interface GridraCanvasRenderNodeState {
+  selected: boolean;
+  dragging: boolean;
+  dragHandleProps: HTMLAttributes<HTMLSpanElement>;
+  dragHandle: ReactNode;
+}
+
 // Canvasに渡すpropsをまとめたインタフェース
 export interface GridraCanvasAreaProps<
   TNode extends GridraCanvasNode = GridraCanvasNode,
@@ -21,11 +31,23 @@ export interface GridraCanvasAreaProps<
   gridColumns?: number;
   gridRows?: number;
   nodes?: TNode[]; // Canvas上に配置されるノードのリスト
+  nodePlacements?: GridraNodePlacements;
+  defaultNodePlacements?: GridraNodePlacements;
   selectedId?: GridraId | null; // 選択されているノードのID（外部から制御する場合）
   defaultSelectedId?: GridraId | null; // 選択されているノードのIDの初期値（内部で制御する場合）
   selectedIds?: GridraId[];
   defaultSelectedIds?: GridraId[];
+  enableNodeDragging?: boolean;
   enableRangeSelection?: boolean;
+  onNodeMove?: (
+    id: GridraId,
+    placement: GridraNodePlacement,
+    previousPlacement: GridraNodePlacement,
+  ) => void;
+  onNodePlacementsChange?: (
+    nodePlacements: GridraNodePlacements,
+    previousNodePlacements: GridraNodePlacements,
+  ) => void;
   onSelectionChange?: (
     selectedId: GridraId | null,
     previousSelectedId: GridraId | null,
@@ -34,7 +56,14 @@ export interface GridraCanvasAreaProps<
     selectedIds: GridraId[],
     previousSelectedIds: GridraId[],
   ) => void;
-  renderNode?: (node: TNode, state: { selected: boolean }) => ReactNode; // ノードの描画をカスタマイズするための関数
+  renderNode?: (node: TNode, state: GridraCanvasRenderNodeState) => ReactNode; // ノードの描画をカスタマイズするための関数
+}
+
+interface NodeDragState {
+  id: GridraId;
+  origin: GridraPoint;
+  pointerId: number;
+  startPlacement: GridraNodePlacement;
 }
 
 // ここがコンポーネントの根幹
@@ -45,10 +74,15 @@ export function GridraCanvasArea<
   className,
   defaultSelectedId = null,
   defaultSelectedIds = [],
+  defaultNodePlacements = {},
+  enableNodeDragging = false,
   enableRangeSelection = true,
   gridColumns,
   gridRows,
+  nodePlacements,
   nodes = [],
+  onNodeMove,
+  onNodePlacementsChange,
   onSelectionChange,
   onSelectionIdsChange,
   onPointerCancel,
@@ -72,9 +106,16 @@ export function GridraCanvasArea<
     defaultSelectedIds,
     onSelectionIdsChange,
   );
+  const [currentNodePlacements, setNodePlacements] = useControllableValue(
+    nodePlacements,
+    defaultNodePlacements,
+    onNodePlacementsChange,
+  );
   const dragOriginRef = useRef<GridraPoint | null>(null);
   const dragPointerIdRef = useRef<number | null>(null);
+  const nodeDragStateRef = useRef<NodeDragState | null>(null);
   const [selectionRect, setSelectionRect] = useState<GridraRect | null>(null);
+  const [draggingNodeId, setDraggingNodeId] = useState<GridraId | null>(null);
   const normalizedGridColumns =
     gridColumns === undefined ? undefined : normalizeGridCount(gridColumns);
   const normalizedGridRows =
@@ -84,12 +125,12 @@ export function GridraCanvasArea<
       nodes.map((node) => ({
         ...node,
         placement: normalizeGridPlacement(
-          node.placement,
+          currentNodePlacements[node.id] ?? node.placement,
           normalizedGridColumns,
           normalizedGridRows,
         ),
       })),
-    [nodes, normalizedGridColumns, normalizedGridRows],
+    [currentNodePlacements, nodes, normalizedGridColumns, normalizedGridRows],
   );
   // クラス名と結合して、スタイルを定義
   const canvasClassName = ["gridra-canvas-area", className]
@@ -111,6 +152,107 @@ export function GridraCanvasArea<
 
     setSelectedId(nextSelectedId);
     setSelectedIds(nextSelectedId ? [nextSelectedId] : []);
+  };
+
+  const startNodeDrag = (
+    event: PointerEvent<HTMLSpanElement>,
+    node: TNode,
+    selected: boolean,
+  ) => {
+    if (
+      !enableNodeDragging ||
+      (event.button !== undefined && event.button !== 0)
+    ) {
+      return;
+    }
+
+    const canvas = event.currentTarget.closest(".gridra-canvas-area");
+
+    if (!(canvas instanceof HTMLDivElement)) {
+      return;
+    }
+
+    nodeDragStateRef.current = {
+      id: node.id,
+      origin: getCanvasPoint(event, canvas),
+      pointerId: event.pointerId,
+      startPlacement: node.placement,
+    };
+    setDraggingNodeId(node.id);
+    if (!selected) {
+      setSelectedId(node.id);
+      setSelectedIds([node.id]);
+    }
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const updateNodeDrag = (event: PointerEvent<HTMLDivElement>): boolean => {
+    const dragState = nodeDragStateRef.current;
+
+    if (dragState === null || dragState.pointerId !== event.pointerId) {
+      return false;
+    }
+
+    const gridColumnsForDrag = normalizedGridColumns ?? 12;
+    const gridRowsForDrag = normalizedGridRows ?? 6;
+    const metrics = getGridMetrics(event.currentTarget, gridColumnsForDrag, gridRowsForDrag);
+    const currentPoint = getCanvasPoint(event, event.currentTarget);
+    const nextPlacement = normalizeGridPlacement(
+      {
+        ...dragState.startPlacement,
+        column:
+          dragState.startPlacement.column +
+          Math.round((currentPoint.x - dragState.origin.x) / metrics.columnStep),
+        row:
+          dragState.startPlacement.row +
+          Math.round((currentPoint.y - dragState.origin.y) / metrics.rowStep),
+      },
+      gridColumnsForDrag,
+      gridRowsForDrag,
+    );
+    const previousPlacement =
+      currentNodePlacements[dragState.id] ?? dragState.startPlacement;
+
+    if (!placementsEqual(previousPlacement, nextPlacement)) {
+      setNodePlacements({
+        ...currentNodePlacements,
+        [dragState.id]: nextPlacement,
+      });
+      onNodeMove?.(dragState.id, nextPlacement, previousPlacement);
+    }
+
+    event.preventDefault();
+    return true;
+  };
+
+  const finishNodeDrag = (event: PointerEvent<HTMLDivElement>): boolean => {
+    const dragState = nodeDragStateRef.current;
+
+    if (dragState === null || dragState.pointerId !== event.pointerId) {
+      return false;
+    }
+
+    updateNodeDrag(event);
+    nodeDragStateRef.current = null;
+    setDraggingNodeId(null);
+    event.preventDefault();
+
+    return true;
+  };
+
+  const cancelNodeDrag = (event: PointerEvent<HTMLDivElement>): boolean => {
+    const dragState = nodeDragStateRef.current;
+
+    if (dragState === null || dragState.pointerId !== event.pointerId) {
+      return false;
+    }
+
+    nodeDragStateRef.current = null;
+    setDraggingNodeId(null);
+
+    return true;
   };
 
   const startRangeSelection = (event: PointerEvent<HTMLDivElement>) => {
@@ -187,7 +329,7 @@ export function GridraCanvasArea<
       className={canvasClassName}
       onPointerCancel={(event) => {
         onPointerCancel?.(event);
-        if (!event.defaultPrevented) {
+        if (!event.defaultPrevented && !cancelNodeDrag(event)) {
           cancelRangeSelection(event);
         }
       }}
@@ -199,13 +341,13 @@ export function GridraCanvasArea<
       }}
       onPointerMove={(event) => {
         onPointerMove?.(event);
-        if (!event.defaultPrevented) {
+        if (!event.defaultPrevented && !updateNodeDrag(event)) {
           updateRangeSelection(event);
         }
       }}
       onPointerUp={(event) => {
         onPointerUp?.(event);
-        if (!event.defaultPrevented) {
+        if (!event.defaultPrevented && !finishNodeDrag(event)) {
           finishRangeSelection(event);
         }
       }}
@@ -216,10 +358,26 @@ export function GridraCanvasArea<
         const selected =
           node.id === currentSelectedId || currentSelectedIds.includes(node.id);
         const renderableNode = node;
+        const dragging = draggingNodeId === node.id;
+        const dragHandleProps = {
+          onPointerDown: (event: PointerEvent<HTMLSpanElement>) =>
+            startNodeDrag(event, renderableNode, selected),
+        };
+        const dragHandle = enableNodeDragging ? (
+          <GridraDragHandle
+            {...dragHandleProps}
+            position="top-right"
+          />
+        ) : null;
 
         // renderNodeが渡されている場合はそれを使ってノードを描画し、そうでない場合はデフォルトのGridraNodeコンポーネントを使用する
         if (renderNode) {
-          return renderNode(renderableNode, { selected });
+          return renderNode(renderableNode, {
+            selected,
+            dragging,
+            dragHandleProps,
+            dragHandle,
+          });
         }
 
         // デフォルトの描画方法
@@ -227,6 +385,7 @@ export function GridraCanvasArea<
           <GridraNode
             id={node.id}
             key={node.id}
+            dragHandle={selected ? dragHandle : null}
             onSelect={(nextId) => selectSingleNode(nextId, selected)}
             placement={node.placement}
             selected={selected}
@@ -291,7 +450,7 @@ function normalizeGridSpan(value = 1, max?: number, start = 1): number {
 }
 
 function getCanvasPoint(
-  event: PointerEvent<HTMLDivElement>,
+  event: PointerEvent<Element>,
   canvas: HTMLDivElement,
 ): GridraPoint {
   const bounds = canvas.getBoundingClientRect();
@@ -341,6 +500,25 @@ function getNodeRect(
   gridColumns: number,
   gridRows: number,
 ): GridraRect {
+  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
+  const column = normalizeGridLine(placement.column, gridColumns);
+  const row = normalizeGridLine(placement.row, gridRows);
+  const columnSpan = normalizeGridSpan(placement.columnSpan, gridColumns, column);
+  const rowSpan = normalizeGridSpan(placement.rowSpan, gridRows, row);
+
+  return {
+    x: metrics.paddingLeft + (column - 1) * metrics.columnStep,
+    y: metrics.paddingTop + (row - 1) * metrics.rowStep,
+    width: metrics.cellWidth * columnSpan + metrics.columnGap * Math.max(0, columnSpan - 1),
+    height: metrics.cellHeight * rowSpan + metrics.rowGap * Math.max(0, rowSpan - 1),
+  };
+}
+
+function getGridMetrics(
+  canvas: HTMLDivElement,
+  gridColumns: number,
+  gridRows: number,
+) {
   const styles = getComputedStyle(canvas);
   const paddingLeft = parseCssPx(styles.paddingLeft);
   const paddingTop = parseCssPx(styles.paddingTop);
@@ -357,16 +535,16 @@ function getNodeRect(
     (contentWidth - columnGap * Math.max(0, gridColumns - 1)) / gridColumns;
   const cellHeight =
     (contentHeight - rowGap * Math.max(0, gridRows - 1)) / gridRows;
-  const column = normalizeGridLine(placement.column, gridColumns);
-  const row = normalizeGridLine(placement.row, gridRows);
-  const columnSpan = normalizeGridSpan(placement.columnSpan, gridColumns, column);
-  const rowSpan = normalizeGridSpan(placement.rowSpan, gridRows, row);
 
   return {
-    x: paddingLeft + (column - 1) * (cellWidth + columnGap),
-    y: paddingTop + (row - 1) * (cellHeight + rowGap),
-    width: cellWidth * columnSpan + columnGap * Math.max(0, columnSpan - 1),
-    height: cellHeight * rowSpan + rowGap * Math.max(0, rowSpan - 1),
+    cellHeight,
+    cellWidth,
+    columnGap,
+    columnStep: Math.max(1, cellWidth + columnGap),
+    paddingLeft,
+    paddingTop,
+    rowGap,
+    rowStep: Math.max(1, cellHeight + rowGap),
   };
 }
 
@@ -382,5 +560,17 @@ function rectsIntersect(first: GridraRect, second: GridraRect): boolean {
     first.x + first.width >= second.x &&
     first.y <= second.y + second.height &&
     first.y + first.height >= second.y
+  );
+}
+
+function placementsEqual(
+  first: GridraNodePlacement,
+  second: GridraNodePlacement,
+): boolean {
+  return (
+    first.column === second.column &&
+    first.row === second.row &&
+    normalizeGridSpan(first.columnSpan) === normalizeGridSpan(second.columnSpan) &&
+    normalizeGridSpan(first.rowSpan) === normalizeGridSpan(second.rowSpan)
   );
 }

@@ -6,6 +6,8 @@ import {
   GridraField,
   GridraGrid,
   GridraInput,
+  GridraNode,
+  type GridraNodePlacements,
   GridraPanel,
   GridraRoot,
   GridraSelect,
@@ -20,6 +22,8 @@ function Playground() {
   const [selectedId, setSelectedId] = useState<string | null>("node-input");
   const [selectedIds, setSelectedIds] = useState<string[]>(["node-input"]);
   const [selectionPreviewVisible, setSelectionPreviewVisible] = useState(true);
+  const [nodeDraggingEnabled, setNodeDraggingEnabled] = useState(true);
+  const [nodePlacements, setNodePlacements] = useState<GridraNodePlacements>({});
   const [gridColumns, setGridColumns] = useState(12);
   const [gridRows, setGridRows] = useState(6);
   const nodes = useMemo(
@@ -115,6 +119,7 @@ function Playground() {
         actions={[
           { id: "select", label: "Select", pressed: true },
           { id: "selection-box", label: "Box", pressed: selectionPreviewVisible },
+          { id: "drag", label: "Drag", pressed: nodeDraggingEnabled },
           { id: "pan", label: "Pan" },
           { id: "inspect", label: "Inspect" }
         ]}
@@ -122,18 +127,39 @@ function Playground() {
           if (id === "selection-box") {
             setSelectionPreviewVisible((current) => !current);
           }
+          if (id === "drag") {
+            setNodeDraggingEnabled((current) => !current);
+          }
         }}
       />
       <GridraCanvasArea
+        enableNodeDragging={nodeDraggingEnabled}
         enableRangeSelection={selectionPreviewVisible}
         gridColumns={gridColumns}
         gridRows={gridRows}
+        nodePlacements={nodePlacements}
         nodes={nodes}
+        onNodePlacementsChange={setNodePlacements}
         onSelectionChange={setSelectedId}
         onSelectionIdsChange={(nextSelectedIds) => {
           setSelectedIds(nextSelectedIds);
           setSelectedId(nextSelectedIds[0] ?? null);
         }}
+        renderNode={(node, state) => (
+          <GridraNode
+            dragHandle={state.selected ? state.dragHandle : undefined}
+            id={node.id}
+            key={node.id}
+            onSelect={(nextId) => {
+              setSelectedId(nextId);
+              setSelectedIds([nextId]);
+            }}
+            placement={node.placement}
+            selected={state.selected}
+          >
+            {node.label ?? node.id}
+          </GridraNode>
+        )}
         selectedId={selectedId}
         selectedIds={selectedIds}
       />

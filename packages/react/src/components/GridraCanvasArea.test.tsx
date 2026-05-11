@@ -149,6 +149,69 @@ describe("GridraCanvasArea", () => {
     expect(selectionBox?.getAttribute("style")).toContain("width: 50px");
     expect(selectionBox?.getAttribute("style")).toContain("height: 70px");
   });
+
+  it("does not render node drag handles until dragging is enabled", () => {
+    const { container } = render(
+      <GridraCanvasArea
+        nodes={[
+          {
+            id: "input",
+            placement: { column: 1, row: 1 }
+          }
+        ]}
+        selectedId="input"
+      />
+    );
+
+    expect(container.querySelector(".gridra-drag-handle")).toBeNull();
+  });
+
+  it("moves a selected node through its drag handle", () => {
+    const movedPlacements: Array<{ column: number; row: number }> = [];
+    const { container } = render(
+      <GridraCanvasArea
+        enableNodeDragging
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "input",
+            placement: { column: 1, row: 1 }
+          }
+        ]}
+        onNodeMove={(_, placement) => movedPlacements.push(placement)}
+        selectedId="input"
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    const handle = container.querySelector(".gridra-drag-handle") as HTMLElement;
+
+    firePointerEvent(handle, "pointerdown", {
+      button: 0,
+      clientX: 20,
+      clientY: 20,
+      pointerId: 2
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 130,
+      clientY: 230,
+      pointerId: 2
+    });
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 130,
+      clientY: 230,
+      pointerId: 2
+    });
+
+    const node = container.querySelector(".gridra-node");
+
+    expect(node?.getAttribute("style")).toContain("grid-column: 2 / span 1");
+    expect(node?.getAttribute("style")).toContain("grid-row: 3 / span 1");
+    expect(movedPlacements.at(-1)).toMatchObject({ column: 2, row: 3 });
+  });
 });
 
 function setCanvasGeometry(

@@ -276,6 +276,7 @@
 }
 
 .gridra-node {
+  position: relative;
   display: inline-flex;
   min-width: 0;
   min-height: 0;
@@ -294,6 +295,64 @@
   padding: var(--gridra-space-sm) var(--gridra-space-md);
   text-align: left;
   text-transform: uppercase;
+}
+
+.gridra-drag-handle {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gridra-color-border-strong);
+  background: rgba(0, 0, 0, 0.62);
+  color: var(--gridra-color-muted-text);
+  cursor: grab;
+  touch-action: none;
+}
+
+.gridra-drag-handle:active {
+  cursor: grabbing;
+}
+
+.gridra-drag-handle--top-left,
+.gridra-drag-handle--top-right,
+.gridra-drag-handle--bottom-left,
+.gridra-drag-handle--bottom-right {
+  position: absolute;
+  z-index: 2;
+}
+
+.gridra-drag-handle--top-left {
+  top: var(--gridra-space-sm);
+  left: var(--gridra-space-sm);
+}
+
+.gridra-drag-handle--top-right {
+  top: var(--gridra-space-sm);
+  right: var(--gridra-space-sm);
+}
+
+.gridra-drag-handle--bottom-left {
+  bottom: var(--gridra-space-sm);
+  left: var(--gridra-space-sm);
+}
+
+.gridra-drag-handle--bottom-right {
+  right: var(--gridra-space-sm);
+  bottom: var(--gridra-space-sm);
+}
+
+.gridra-drag-handle--inline {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.gridra-drag-handle__grip {
+  width: 8px;
+  height: 8px;
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-position: 0 0;
+  background-size: 4px 4px;
 }
 
 .gridra-node__label {

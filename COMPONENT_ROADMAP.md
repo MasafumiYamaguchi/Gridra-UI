@@ -3,6 +3,8 @@
 This file tracks the component surface for Gridra UI before adding more features.
 Use it as the shared memory for what exists, what comes next, and what should wait.
 
+Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPMENT_NOTES.md).
+
 ## Status Legend
 
 - `[x]` Implemented enough to export from `@gridra-ui/react`
@@ -17,6 +19,7 @@ Use it as the shared memory for what exists, what comes next, and what should wa
 - [x] `GridraPanel`
 - [x] `GridraNode`
 - [x] `GridraSelectionBox`
+- [x] `GridraDragHandle`
 - [x] `GridraToolbar`
 - [x] `GridraButton`
 - [x] `GridraField`
@@ -33,7 +36,7 @@ These components define the library's identity as a dense, panel-based spatial U
 - [x] Panel
 - [x] Node
 - [x] Selection Box
-- [ ] Drag Handle
+- [x] Drag Handle
 - [ ] Resize Handle
 - [ ] Connection Handle
 - [ ] Snap Guide
@@ -193,6 +196,39 @@ pointer down
   -> hit test canvas items
   -> update selected ids
   -> render GridraSelectionBox
+```
+
+### GridraDragHandle
+
+Current status: implemented.
+
+Implemented:
+
+- Decorative grip component exported from `@gridra-ui/react`.
+- Supports corner and inline position classes.
+- Forwards span attributes and pointer handlers so consumers can attach drag behavior.
+- `GridraNode` exposes a `dragHandle` slot.
+- `GridraCanvasArea` can optionally move nodes with `enableNodeDragging`.
+- `GridraCanvasArea` supports controlled or uncontrolled `nodePlacements`.
+- `GridraCanvasArea` emits `onNodeMove` and `onNodePlacementsChange`.
+- The playground can toggle node dragging from the toolbar.
+
+Not implemented yet:
+
+- Keyboard repositioning semantics.
+- Multi-node dragging.
+- Snap guide visualization while dragging.
+
+Current data flow:
+
+```text
+handle pointer down
+  -> capture node id and origin placement
+  -> pointer move
+  -> convert pointer delta to grid-cell delta
+  -> normalize placement inside grid bounds
+  -> update nodePlacements
+  -> render moved node
 ```
 
 ## Design Notes To Keep In Mind
