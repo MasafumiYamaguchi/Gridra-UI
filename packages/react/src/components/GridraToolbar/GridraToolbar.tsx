@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { GridraButton, type GridraButtonProps } from "./GridraButton";
+import { GridraButton, type GridraButtonProps } from "../GridraButton";
 
 export interface GridraToolbarAction {
   id: string;

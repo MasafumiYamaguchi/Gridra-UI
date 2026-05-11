@@ -17,7 +17,7 @@ Codex may add new test files or new test cases by default when adding a componen
 Testing preferences:
 
 - Keep tests focused on public behavior and stable DOM/API contracts.
-- Put React component tests under `packages/react/src/__tests__/components`.
+- Put React component tests beside the component implementation, inside `packages/react/src/components/<ComponentName>`.
 - Avoid over-testing implementation details that would make refactors noisy.
 - Prefer adding narrow regression tests for interaction logic such as selection, dragging, resizing, and connections.
 - If a test would require brittle browser geometry, explain the tradeoff and cover the stable part instead.

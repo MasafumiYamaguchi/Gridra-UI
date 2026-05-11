@@ -1,6 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { GridraSelectionBox } from "../../components/GridraSelectionBox";
+import { GridraSelectionBox } from "./GridraSelectionBox";
 
 afterEach(() => {
   cleanup();

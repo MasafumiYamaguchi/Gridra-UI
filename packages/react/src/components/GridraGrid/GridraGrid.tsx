@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { GridraId, GridraSelectableItem } from "@gridra-ui/core";
-import { useControllableValue } from "./useControllableValue";
+import { useControllableValue } from "../../hooks/useControllableValue";
 
 export interface GridraGridItem extends GridraSelectableItem {
   label?: ReactNode;

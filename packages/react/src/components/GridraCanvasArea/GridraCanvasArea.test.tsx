@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { GridraCanvasArea } from "../../components/GridraCanvasArea";
+import { GridraCanvasArea } from "./GridraCanvasArea";
 
 afterEach(() => {
   cleanup();
