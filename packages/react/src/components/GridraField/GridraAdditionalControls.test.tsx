@@ -82,7 +82,7 @@ describe("additional Gridra display primitives", () => {
     render(
       <>
         <GridraLabel htmlFor="density">Density</GridraLabel>
-        <GridraBadge tone="accent">Live</GridraBadge>
+        <GridraBadge shape="pill" size="sm" tone="success">Live</GridraBadge>
         <GridraAvatar fallback="AB" shape="circle" size="lg" />
         <GridraSpinner label="Saving" />
         <GridraDivider orientation="vertical" />
@@ -90,11 +90,31 @@ describe("additional Gridra display primitives", () => {
     );
 
     expect(screen.getByText("Density").className).toContain("gridra-label");
-    expect(screen.getByText("Live").className).toContain("gridra-badge--accent");
+    expect(screen.getByText("Live").className).toContain("gridra-badge--success");
+    expect(screen.getByText("Live").className).toContain("gridra-badge--pill");
+    expect(screen.getByText("Live").className).toContain("gridra-badge--sm");
     expect(screen.getByText("AB").parentElement?.className).toContain("gridra-avatar--circle");
     expect(screen.getByText("AB").parentElement?.className).toContain("gridra-avatar--lg");
     expect(screen.getByRole("status", { name: "Saving" })).toBeTruthy();
     expect(screen.getByRole("separator").getAttribute("aria-orientation")).toBe("vertical");
+  });
+
+  it("supports spinner size, tone, speed, and divider options", () => {
+    render(
+      <>
+        <GridraSpinner label="Syncing" size={32} speed="fast" tone="accent" />
+        <GridraDivider inset spacing="lg" tone="strong" />
+      </>
+    );
+    const spinner = screen.getByRole("status", { name: "Syncing" });
+    const divider = screen.getByRole("separator");
+
+    expect(spinner.className).toContain("gridra-spinner--accent");
+    expect(spinner.className).toContain("gridra-spinner--fast");
+    expect(spinner.getAttribute("style")).toContain("--gridra-spinner-size: 32px");
+    expect(divider.className).toContain("gridra-divider--strong");
+    expect(divider.className).toContain("gridra-divider--lg");
+    expect(divider.className).toContain("gridra-divider--inset");
   });
 
   it("supports avatar image, custom size, and monochrome styling hooks", () => {

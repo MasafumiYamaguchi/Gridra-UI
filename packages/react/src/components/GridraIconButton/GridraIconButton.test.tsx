@@ -24,4 +24,21 @@ describe("GridraIconButton", () => {
     expect(button.className).toContain("gridra-icon-button--pressed");
     expect(onClick).toHaveBeenCalledTimes(1);
   });
+
+  it("supports size and loading state", () => {
+    const onClick = vi.fn();
+
+    render(
+      <GridraIconButton label="Refresh" loading onClick={onClick} size="sm" />
+    );
+    const button = screen.getByRole("button", { name: "Refresh" });
+
+    fireEvent.click(button);
+
+    expect(button.getAttribute("aria-busy")).toBe("true");
+    expect((button as HTMLButtonElement).disabled).toBe(true);
+    expect(button.className).toContain("gridra-icon-button--sm");
+    expect(button.className).toContain("gridra-icon-button--loading");
+    expect(onClick).not.toHaveBeenCalled();
+  });
 });

@@ -184,13 +184,27 @@ export const componentDocs: ComponentDoc[] = [
     category: "Controls",
     name: "GridraButton",
     summary: "Standard text button for dense UI commands.",
-    options: ["variant: default | primary | ghost", "pressed", "All button attributes"],
-    features: ["Defaults type to button.", "Maps pressed state to aria-pressed."],
+    options: [
+      "variant: default | primary | ghost",
+      "size: sm | md | lg",
+      "pressed",
+      "loading",
+      "fullWidth",
+      "All button attributes"
+    ],
+    features: [
+      "Defaults type to button.",
+      "Maps pressed state to aria-pressed.",
+      "Loading state sets aria-busy and disables the button.",
+      "Supports compact, default, and large command densities."
+    ],
     preview: (
       <div className="docs-inline-preview">
-        <GridraButton variant="primary">Primary</GridraButton>
+        <GridraButton size="sm">Small</GridraButton>
         <GridraButton>Default</GridraButton>
-        <GridraButton variant="ghost">Ghost</GridraButton>
+        <GridraButton size="lg" variant="primary">Large</GridraButton>
+        <GridraButton loading>Loading</GridraButton>
+        <GridraButton fullWidth variant="ghost">Full width</GridraButton>
       </div>
     )
   },
@@ -198,16 +212,29 @@ export const componentDocs: ComponentDoc[] = [
     category: "Controls",
     name: "GridraIconButton",
     summary: "Square button for compact icon-only commands.",
-    options: ["label", "variant: default | primary | ghost", "pressed", "title", "All button attributes"],
-    features: ["Requires an accessible label.", "Uses label as fallback title and fallback glyph."],
+    options: [
+      "label",
+      "variant: default | primary | ghost",
+      "size: sm | md | lg",
+      "pressed",
+      "loading",
+      "title",
+      "All button attributes"
+    ],
+    features: [
+      "Requires an accessible label.",
+      "Uses label as fallback title and fallback glyph.",
+      "Loading state swaps the icon for a spinner and disables the button."
+    ],
     preview: (
       <div className="docs-inline-preview">
-        <GridraIconButton label="Preview" pressed>
+        <GridraIconButton label="Preview" pressed size="sm">
           P
         </GridraIconButton>
         <GridraIconButton label="Add" variant="ghost">
           +
         </GridraIconButton>
+        <GridraIconButton label="Refresh" loading size="lg" />
       </div>
     )
   },
@@ -301,13 +328,26 @@ export const componentDocs: ComponentDoc[] = [
     category: "Display",
     name: "GridraBadge",
     summary: "Small status or metadata chip.",
-    options: ["tone: default | accent | muted", "children", "HTML span attributes"],
-    features: ["Supports neutral, accent, and muted tones.", "Uses compact uppercase typography."],
+    options: [
+      "tone: default | accent | muted | success | warning | danger",
+      "size: sm | md",
+      "shape: square | rounded | pill",
+      "children",
+      "HTML span attributes"
+    ],
+    features: [
+      "Supports neutral, accent, muted, success, warning, and danger tones.",
+      "Supports square, rounded, and pill shapes.",
+      "Uses compact uppercase typography."
+    ],
     preview: (
       <div className="docs-inline-preview">
         <GridraBadge>Default</GridraBadge>
         <GridraBadge tone="accent">Accent</GridraBadge>
         <GridraBadge tone="muted">Muted</GridraBadge>
+        <GridraBadge shape="pill" size="sm" tone="success">Success</GridraBadge>
+        <GridraBadge shape="rounded" tone="warning">Warning</GridraBadge>
+        <GridraBadge tone="danger">Danger</GridraBadge>
       </div>
     )
   },
@@ -344,20 +384,49 @@ export const componentDocs: ComponentDoc[] = [
     category: "Display",
     name: "GridraSpinner",
     summary: "Small loading indicator.",
-    options: ["label", "HTML span attributes"],
-    features: ["Sets role status.", "Uses label as the accessible status name."],
-    preview: <GridraSpinner label="Loading" />
+    options: [
+      "label",
+      "size: sm | md | lg | number | string",
+      "tone: default | muted | accent",
+      "speed: slow | normal | fast",
+      "HTML span attributes"
+    ],
+    features: [
+      "Sets role status.",
+      "Uses label as the accessible status name.",
+      "Supports preset and custom CSS sizes.",
+      "Supports muted/accent tone and animation speed changes."
+    ],
+    preview: (
+      <div className="docs-inline-preview">
+        <GridraSpinner label="Loading small" size="sm" tone="muted" />
+        <GridraSpinner label="Loading" />
+        <GridraSpinner label="Loading large" size="lg" speed="slow" tone="accent" />
+        <GridraSpinner label="Loading custom" size={32} speed="fast" />
+      </div>
+    )
   },
   {
     category: "Display",
     name: "GridraDivider",
     summary: "Horizontal or vertical separator.",
-    options: ["orientation: horizontal | vertical", "HTML hr attributes"],
-    features: ["Sets role separator.", "Maps orientation to aria-orientation."],
+    options: [
+      "orientation: horizontal | vertical",
+      "tone: default | strong | muted",
+      "spacing: none | sm | md | lg",
+      "inset",
+      "HTML hr attributes"
+    ],
+    features: [
+      "Sets role separator.",
+      "Maps orientation to aria-orientation.",
+      "Supports spacing, inset, and visual strength options."
+    ],
     preview: (
       <div className="docs-divider-preview">
-        <GridraDivider />
-        <GridraDivider orientation="vertical" />
+        <GridraDivider spacing="none" tone="muted" />
+        <GridraDivider inset spacing="md" tone="strong" />
+        <GridraDivider orientation="vertical" spacing="lg" />
       </div>
     )
   }
