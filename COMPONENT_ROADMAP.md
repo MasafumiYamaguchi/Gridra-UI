@@ -39,6 +39,8 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraSpinner`
 - [x] `GridraSwitch`
 - [x] `GridraTextarea`
+- [x] `GridraBox`
+- [x] `GridraStack`
 
 ## Priority 1: Gridra Core
 
@@ -82,8 +84,8 @@ These should stay small, predictable, and useful both inside Gridra components a
 
 Layout components should support dense application surfaces rather than marketing-style pages.
 
-- [ ] Box
-- [ ] Stack
+- [x] Box
+- [x] Stack
 - [ ] Inline
 - [ ] Cluster
 - [ ] Grid Layout

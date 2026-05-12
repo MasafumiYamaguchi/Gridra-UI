@@ -12,7 +12,8 @@
     "@gridra-ui/react": "0.1.0",
     "@gridra-ui/theme": "0.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "shiki": "^4.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

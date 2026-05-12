@@ -768,6 +768,174 @@
   border-radius: 999px;
 }
 
+.gridra-box {
+  color: var(--gridra-color-text);
+}
+
+.gridra-box--padding-xs {
+  padding: var(--gridra-space-xs);
+}
+
+.gridra-box--padding-sm {
+  padding: var(--gridra-space-sm);
+}
+
+.gridra-box--padding-md {
+  padding: var(--gridra-space-md);
+}
+
+.gridra-box--padding-lg {
+  padding: var(--gridra-space-lg);
+}
+
+.gridra-box--padding-x-none {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.gridra-box--padding-x-xs {
+  padding-right: var(--gridra-space-xs);
+  padding-left: var(--gridra-space-xs);
+}
+
+.gridra-box--padding-x-sm {
+  padding-right: var(--gridra-space-sm);
+  padding-left: var(--gridra-space-sm);
+}
+
+.gridra-box--padding-x-md {
+  padding-right: var(--gridra-space-md);
+  padding-left: var(--gridra-space-md);
+}
+
+.gridra-box--padding-x-lg {
+  padding-right: var(--gridra-space-lg);
+  padding-left: var(--gridra-space-lg);
+}
+
+.gridra-box--padding-y-none {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.gridra-box--padding-y-xs {
+  padding-top: var(--gridra-space-xs);
+  padding-bottom: var(--gridra-space-xs);
+}
+
+.gridra-box--padding-y-sm {
+  padding-top: var(--gridra-space-sm);
+  padding-bottom: var(--gridra-space-sm);
+}
+
+.gridra-box--padding-y-md {
+  padding-top: var(--gridra-space-md);
+  padding-bottom: var(--gridra-space-md);
+}
+
+.gridra-box--padding-y-lg {
+  padding-top: var(--gridra-space-lg);
+  padding-bottom: var(--gridra-space-lg);
+}
+
+.gridra-box--surface-surface {
+  background: var(--gridra-color-surface);
+}
+
+.gridra-box--surface-raised {
+  background: var(--gridra-color-surface-raised);
+}
+
+.gridra-box--surface-input {
+  background: var(--gridra-color-surface-input);
+}
+
+.gridra-box--surface-selected {
+  background: var(--gridra-color-selected);
+}
+
+.gridra-box--border-default {
+  border: 1px solid var(--gridra-color-border);
+}
+
+.gridra-box--border-strong {
+  border: 1px solid var(--gridra-color-border-strong);
+}
+
+.gridra-box--radius-sm {
+  border-radius: var(--gridra-radius-sm);
+}
+
+.gridra-box--radius-md {
+  border-radius: var(--gridra-radius-md);
+}
+
+.gridra-box--display-block {
+  display: block;
+}
+
+.gridra-box--display-flex {
+  display: flex;
+}
+
+.gridra-box--display-grid {
+  display: grid;
+}
+
+.gridra-box--display-inline-flex {
+  display: inline-flex;
+}
+
+.gridra-box--gap-none {
+  gap: 0;
+}
+
+.gridra-box--gap-xs {
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-box--gap-sm {
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-box--gap-md {
+  gap: var(--gridra-space-md);
+}
+
+.gridra-box--gap-lg {
+  gap: var(--gridra-space-lg);
+}
+
+.gridra-box--full-width {
+  width: 100%;
+}
+
+.gridra-box--full-height {
+  height: 100%;
+}
+
+.gridra-box--scroll-auto {
+  overflow: auto;
+}
+
+.gridra-box--scroll-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.gridra-box--scroll-y {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.gridra-box--min-width-zero {
+  min-width: 0;
+}
+
+.gridra-box--min-height-zero {
+  min-height: 0;
+}
+
 .gridra-avatar--monochrome .gridra-avatar__image {
   filter: grayscale(1) contrast(1.08);
 }
@@ -1341,4 +1509,85 @@
   background-position: 0 0;
   background-size: var(--gridra-node-pattern-size) var(--gridra-node-pattern-size);
   box-shadow: var(--gridra-shadow-selected);
+}
+
+.gridra-stack {
+  min-width: 0;
+  min-height: 0;
+}
+
+.gridra-stack--vertical {
+  flex-direction: column;
+}
+
+.gridra-stack--horizontal {
+  flex-direction: row;
+}
+
+.gridra-stack--vertical-reverse {
+  flex-direction: column-reverse;
+}
+
+.gridra-stack--horizontal-reverse {
+  flex-direction: row-reverse;
+}
+
+.gridra-stack--gap-none {
+  gap: 0;
+}
+
+.gridra-stack--gap-xs {
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-stack--gap-sm {
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-stack--gap-md {
+  gap: var(--gridra-space-md);
+}
+
+.gridra-stack--gap-lg {
+  gap: var(--gridra-space-lg);
+}
+
+.gridra-stack--align-start {
+  align-items: flex-start;
+}
+
+.gridra-stack--align-center {
+  align-items: center;
+}
+
+.gridra-stack--align-end {
+  align-items: flex-end;
+}
+
+.gridra-stack--align-stretch {
+  align-items: stretch;
+}
+
+.gridra-stack--align-baseline {
+  align-items: baseline;
+}
+
+.gridra-stack--justify-start {
+  justify-content: flex-start;
+}
+
+.gridra-stack--justify-center {
+  justify-content: center;
+}
+
+.gridra-stack--justify-end {
+  justify-content: flex-end;
+}
+
+.gridra-stack--justify-between {
+  justify-content: space-between;
+}
+
+.gridra-stack--wrap {
+  flex-wrap: wrap;
 }
