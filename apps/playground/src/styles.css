@@ -117,14 +117,53 @@ body {
 }
 
 .docs-page {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: var(--gridra-space-lg);
   width: 100vw;
   height: 100vh;
   min-width: 0;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
   background: var(--gridra-color-background);
   padding: var(--gridra-space-lg);
   scroll-behavior: smooth;
+  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-background);
+  scrollbar-width: thin;
+}
+
+.docs-detail::-webkit-scrollbar,
+.docs-page::-webkit-scrollbar,
+.docs-page__nav::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.docs-detail::-webkit-scrollbar-track,
+.docs-page::-webkit-scrollbar-track,
+.docs-page__nav::-webkit-scrollbar-track {
+  border-left: 1px solid var(--gridra-color-border);
+  background: var(--gridra-color-background);
+}
+
+.docs-detail::-webkit-scrollbar-thumb,
+.docs-page::-webkit-scrollbar-thumb,
+.docs-page__nav::-webkit-scrollbar-thumb {
+  border: 2px solid var(--gridra-color-background);
+  border-radius: 0;
+  background: var(--gridra-color-border-strong);
+}
+
+.docs-detail::-webkit-scrollbar-thumb:hover,
+.docs-page::-webkit-scrollbar-thumb:hover,
+.docs-page__nav::-webkit-scrollbar-thumb:hover {
+  background: var(--gridra-color-accent);
+}
+
+.docs-detail::-webkit-scrollbar-corner,
+.docs-page::-webkit-scrollbar-corner,
+.docs-page__nav::-webkit-scrollbar-corner {
+  background: var(--gridra-color-background);
 }
 
 .docs-page__header,
@@ -141,7 +180,6 @@ body {
 
 .docs-page__header {
   justify-content: space-between;
-  margin-bottom: var(--gridra-space-lg);
 }
 
 .docs-page__title,
@@ -162,13 +200,13 @@ body {
 
 .docs-page__filters {
   flex-wrap: wrap;
-  margin-bottom: var(--gridra-space-lg);
 }
 
 .docs-page__layout {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
   gap: var(--gridra-space-md);
+  min-height: 0;
 }
 
 .docs-page__nav {
@@ -176,8 +214,10 @@ body {
   align-content: start;
   gap: 2px;
   min-width: 0;
-  max-height: calc(100vh - 260px);
+  min-height: 0;
   overflow: auto;
+  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-background);
+  scrollbar-width: thin;
 }
 
 .docs-page__nav-item {
@@ -216,9 +256,13 @@ body {
   align-content: start;
   gap: var(--gridra-space-lg);
   min-width: 0;
+  min-height: 0;
+  overflow: auto;
   border: 1px solid var(--gridra-color-border);
   background: var(--gridra-color-surface);
   padding: var(--gridra-space-lg);
+  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-background);
+  scrollbar-width: thin;
 }
 
 .docs-detail__header {
