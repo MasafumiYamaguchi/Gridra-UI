@@ -83,7 +83,7 @@ describe("additional Gridra display primitives", () => {
       <>
         <GridraLabel htmlFor="density">Density</GridraLabel>
         <GridraBadge tone="accent">Live</GridraBadge>
-        <GridraAvatar fallback="AB" />
+        <GridraAvatar fallback="AB" shape="circle" size="lg" />
         <GridraSpinner label="Saving" />
         <GridraDivider orientation="vertical" />
       </>
@@ -91,8 +91,28 @@ describe("additional Gridra display primitives", () => {
 
     expect(screen.getByText("Density").className).toContain("gridra-label");
     expect(screen.getByText("Live").className).toContain("gridra-badge--accent");
-    expect(screen.getByText("AB").className).toContain("gridra-avatar__fallback");
+    expect(screen.getByText("AB").parentElement?.className).toContain("gridra-avatar--circle");
+    expect(screen.getByText("AB").parentElement?.className).toContain("gridra-avatar--lg");
     expect(screen.getByRole("status", { name: "Saving" })).toBeTruthy();
     expect(screen.getByRole("separator").getAttribute("aria-orientation")).toBe("vertical");
+  });
+
+  it("supports avatar image, custom size, and monochrome styling hooks", () => {
+    render(
+      <GridraAvatar
+        alt="Profile"
+        monochrome
+        shape="rounded"
+        size={36}
+        src="https://example.com/avatar.png"
+      />
+    );
+    const image = screen.getByRole("img", { name: "Profile" });
+    const avatar = image.parentElement;
+
+    expect(image.getAttribute("src")).toBe("https://example.com/avatar.png");
+    expect(avatar?.className).toContain("gridra-avatar--rounded");
+    expect(avatar?.className).toContain("gridra-avatar--monochrome");
+    expect(avatar?.getAttribute("style")).toContain("--gridra-avatar-size: 36px");
   });
 });

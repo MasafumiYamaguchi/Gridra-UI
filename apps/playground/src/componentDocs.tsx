@@ -315,12 +315,28 @@ export const componentDocs: ComponentDoc[] = [
     category: "Display",
     name: "GridraAvatar",
     summary: "Image or fallback avatar for people, agents, or entities.",
-    options: ["src", "alt", "fallback", "HTML span attributes"],
-    features: ["Renders an image when src exists.", "Falls back to initials or the first two alt characters."],
+    options: [
+      "src",
+      "alt",
+      "fallback",
+      "size: sm | md | lg | number | string",
+      "shape: square | rounded | circle",
+      "monochrome",
+      "HTML span attributes"
+    ],
+    features: [
+      "Renders an image when src exists.",
+      "Falls back to initials or the first two alt characters.",
+      "Supports preset and custom CSS sizes.",
+      "Can render square, softly rounded, or circular shapes.",
+      "Can apply monochrome image treatment."
+    ],
     preview: (
       <div className="docs-inline-preview">
-        <GridraAvatar alt="Demo avatar" fallback="UI" src={avatarImageUrl} />
-        <GridraAvatar fallback="UI" />
+        <GridraAvatar alt="Demo avatar" fallback="UI" shape="square" size="sm" src={avatarImageUrl} />
+        <GridraAvatar alt="Demo avatar" fallback="UI" shape="rounded" size="md" src={avatarImageUrl} />
+        <GridraAvatar alt="Demo avatar" fallback="UI" monochrome shape="circle" size="lg" src={avatarImageUrl} />
+        <GridraAvatar fallback="UI" shape="circle" size={34} />
       </div>
     )
   },

@@ -426,24 +426,61 @@
 }
 
 .gridra-avatar {
+  --gridra-avatar-size: 28px;
+  --gridra-avatar-font-size: 10px;
   display: inline-flex;
-  width: 28px;
-  height: 28px;
+  width: var(--gridra-avatar-size);
+  height: var(--gridra-avatar-size);
   align-items: center;
   justify-content: center;
   overflow: hidden;
   border: 1px solid var(--gridra-color-border-strong);
   background: var(--gridra-color-surface-input);
   color: var(--gridra-color-text);
-  font-size: 10px;
+  font-size: var(--gridra-avatar-font-size);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.gridra-avatar--sm {
+  --gridra-avatar-size: 22px;
+  --gridra-avatar-font-size: 9px;
+}
+
+.gridra-avatar--md {
+  --gridra-avatar-size: 28px;
+  --gridra-avatar-font-size: 10px;
+}
+
+.gridra-avatar--lg {
+  --gridra-avatar-size: 40px;
+  --gridra-avatar-font-size: 12px;
+}
+
+.gridra-avatar--square {
+  border-radius: 0;
+}
+
+.gridra-avatar--rounded {
+  border-radius: var(--gridra-radius-md);
+}
+
+.gridra-avatar--circle {
+  border-radius: 999px;
+}
+
+.gridra-avatar--monochrome .gridra-avatar__image {
+  filter: grayscale(1) contrast(1.08);
 }
 
 .gridra-avatar__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.gridra-avatar__fallback {
+  line-height: 1;
 }
 
 .gridra-spinner {

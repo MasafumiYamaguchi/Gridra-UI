@@ -193,7 +193,7 @@ function Playground() {
               <h1 className="playground-component-title">Component Check Surface</h1>
             </div>
             <div className="playground-status-row">
-              <GridraAvatar alt="Demo avatar" fallback="UI" src={avatarImageUrl} />
+              <GridraAvatar alt="Demo avatar" fallback="UI" shape="circle" size="md" src={avatarImageUrl} />
               <GridraBadge tone="accent">{controlOpacity}%</GridraBadge>
               {controlPreviewEnabled ? <GridraSpinner label="Preview running" /> : null}
             </div>
@@ -298,8 +298,10 @@ function Playground() {
                 <GridraBadge tone="muted">Static</GridraBadge>
               </div>
               <div className="playground-control-row">
-                <GridraAvatar alt="Demo avatar" fallback="UI" src={avatarImageUrl} />
-                <GridraAvatar fallback="UI" />
+                <GridraAvatar alt="Demo avatar" fallback="UI" shape="square" size="sm" src={avatarImageUrl} />
+                <GridraAvatar alt="Demo avatar" fallback="UI" shape="rounded" size="md" src={avatarImageUrl} />
+                <GridraAvatar alt="Demo avatar" fallback="UI" monochrome shape="circle" size="lg" src={avatarImageUrl} />
+                <GridraAvatar fallback="UI" shape="circle" size={34} />
                 <GridraBadge>Default</GridraBadge>
                 <GridraBadge tone="accent">Accent</GridraBadge>
                 <GridraBadge tone="muted">Muted</GridraBadge>
