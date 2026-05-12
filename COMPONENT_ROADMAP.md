@@ -24,10 +24,21 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraConnectionHandle`
 - [x] `GridraSnapGuide`
 - [x] `GridraToolbar`
+- [x] `GridraAvatar`
+- [x] `GridraBadge`
 - [x] `GridraButton`
+- [x] `GridraCheckbox`
+- [x] `GridraDivider`
 - [x] `GridraField`
+- [x] `GridraIconButton`
 - [x] `GridraInput`
+- [x] `GridraLabel`
+- [x] `GridraRadio`
 - [x] `GridraSelect`
+- [x] `GridraSlider`
+- [x] `GridraSpinner`
+- [x] `GridraSwitch`
+- [x] `GridraTextarea`
 
 ## Priority 1: Gridra Core
 
@@ -52,20 +63,20 @@ These components define the library's identity as a dense, panel-based spatial U
 These should stay small, predictable, and useful both inside Gridra components and in consumer apps.
 
 - [x] Button
-- [ ] Icon Button
+- [x] Icon Button
 - [x] Input
 - [x] Select
-- [ ] Textarea
-- [ ] Checkbox
-- [ ] Radio
-- [ ] Switch
-- [ ] Slider
+- [x] Textarea
+- [x] Checkbox
+- [x] Radio
+- [x] Switch
+- [x] Slider
 - [x] Field
-- [ ] Label
-- [ ] Badge
-- [ ] Avatar
-- [ ] Spinner / Loader
-- [ ] Divider
+- [x] Label
+- [x] Badge
+- [x] Avatar
+- [x] Spinner / Loader
+- [x] Divider
 
 ## Priority 3: Layout
 

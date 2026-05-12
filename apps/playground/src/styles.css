@@ -10,8 +10,108 @@ body {
   background: #000000;
 }
 
-.playground-grid-controls {
+.playground-panel-section {
   display: grid;
   gap: var(--gridra-space-sm);
-  margin-bottom: var(--gridra-space-md);
+}
+
+.playground-section-heading,
+.playground-control-row,
+.playground-slider-row,
+.playground-status-row,
+.playground-icon-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--gridra-space-sm);
+}
+
+.playground-section-heading {
+  justify-content: space-between;
+}
+
+.playground-control-row {
+  flex-wrap: wrap;
+}
+
+.playground-slider-row {
+  align-items: center;
+}
+
+.playground-slider-row .gridra-slider {
+  min-width: 0;
+  flex: 1;
+}
+
+.playground-status-row {
+  min-height: 28px;
+}
+
+.playground-component-stage {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  border: 1px solid var(--gridra-color-border);
+  background: var(--gridra-color-background);
+  padding: var(--gridra-space-lg);
+}
+
+.playground-component-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--gridra-space-lg);
+  margin-bottom: var(--gridra-space-lg);
+}
+
+.playground-component-title {
+  margin: 4px 0 0;
+  color: var(--gridra-color-text);
+  font-family: var(--gridra-font-brand);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.playground-component-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: var(--gridra-space-md);
+}
+
+.playground-component-group {
+  display: grid;
+  align-content: start;
+  gap: var(--gridra-space-md);
+  min-width: 0;
+  border: 1px solid var(--gridra-color-border);
+  background: var(--gridra-color-surface);
+  padding: var(--gridra-space-md);
+}
+
+.playground-component-group--wide {
+  grid-column: span 2;
+}
+
+@media (max-width: 1100px) {
+  .playground-component-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .playground-component-header {
+    display: grid;
+  }
+
+  .playground-component-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .playground-component-group--wide {
+    grid-column: auto;
+  }
 }
