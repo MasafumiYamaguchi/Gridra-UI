@@ -248,10 +248,41 @@
   padding: 0 8px;
 }
 
+.gridra-input--sm,
+.gridra-select--sm {
+  min-height: 24px;
+  font-size: 11px;
+}
+
+.gridra-input--md,
+.gridra-select--md {
+  min-height: 28px;
+}
+
+.gridra-input--lg,
+.gridra-select--lg {
+  min-height: 34px;
+  font-size: 13px;
+}
+
 .gridra-textarea {
   min-height: 72px;
   padding: 8px;
   resize: vertical;
+}
+
+.gridra-textarea--sm {
+  min-height: 56px;
+  font-size: 11px;
+}
+
+.gridra-textarea--md {
+  min-height: 72px;
+}
+
+.gridra-textarea--lg {
+  min-height: 96px;
+  font-size: 13px;
 }
 
 .gridra-input[aria-invalid="true"],
@@ -278,8 +309,27 @@
   text-transform: uppercase;
 }
 
+.gridra-field--horizontal {
+  grid-template-columns: minmax(96px, 144px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.gridra-field--horizontal .gridra-field__hint,
+.gridra-field--horizontal .gridra-field__error {
+  grid-column: 2;
+}
+
+.gridra-field--disabled {
+  opacity: 0.55;
+}
+
 .gridra-field__label {
   color: inherit;
+}
+
+.gridra-field__required {
+  margin-left: 4px;
+  color: var(--gridra-color-text);
 }
 
 .gridra-field__hint,
@@ -307,6 +357,20 @@
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.gridra-checkbox--sm,
+.gridra-radio--sm,
+.gridra-switch--sm {
+  min-height: 24px;
+  font-size: 10px;
+}
+
+.gridra-checkbox--lg,
+.gridra-radio--lg,
+.gridra-switch--lg {
+  min-height: 34px;
+  font-size: 12px;
 }
 
 .gridra-checkbox,
@@ -337,6 +401,18 @@
   background: var(--gridra-color-surface-input);
 }
 
+.gridra-checkbox--sm .gridra-checkbox__mark,
+.gridra-radio--sm .gridra-radio__mark {
+  width: 14px;
+  height: 14px;
+}
+
+.gridra-checkbox--lg .gridra-checkbox__mark,
+.gridra-radio--lg .gridra-radio__mark {
+  width: 18px;
+  height: 18px;
+}
+
 .gridra-radio__mark {
   border-radius: 999px;
 }
@@ -345,6 +421,14 @@
 .gridra-radio__input:checked + .gridra-radio__mark {
   border-color: var(--gridra-color-accent);
   background: var(--gridra-color-selected);
+  box-shadow: var(--gridra-shadow-selected);
+}
+
+.gridra-checkbox--invalid .gridra-checkbox__mark,
+.gridra-radio--invalid .gridra-radio__mark,
+.gridra-checkbox__input[aria-invalid="true"] + .gridra-checkbox__mark,
+.gridra-radio__input[aria-invalid="true"] + .gridra-radio__mark {
+  border-color: var(--gridra-color-accent);
   box-shadow: var(--gridra-shadow-selected);
 }
 
@@ -367,9 +451,28 @@
 
 .gridra-checkbox__input:disabled + .gridra-checkbox__mark,
 .gridra-radio__input:disabled + .gridra-radio__mark,
+.gridra-checkbox__input:disabled ~ .gridra-checkbox__content,
+.gridra-radio__input:disabled ~ .gridra-radio__content,
 .gridra-checkbox__input:disabled ~ .gridra-checkbox__label,
 .gridra-radio__input:disabled ~ .gridra-radio__label {
   opacity: 0.45;
+}
+
+.gridra-checkbox__content,
+.gridra-radio__content,
+.gridra-switch__content {
+  display: grid;
+  gap: 2px;
+}
+
+.gridra-checkbox__description,
+.gridra-radio__description,
+.gridra-switch__description {
+  color: var(--gridra-color-muted-text);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-transform: none;
 }
 
 .gridra-switch {
@@ -390,12 +493,32 @@
   padding: 2px;
 }
 
+.gridra-switch--sm .gridra-switch__track {
+  width: 30px;
+  height: 16px;
+}
+
+.gridra-switch--lg .gridra-switch__track {
+  width: 42px;
+  height: 22px;
+}
+
 .gridra-switch__thumb {
   width: 12px;
   height: 12px;
   background: var(--gridra-color-muted-text);
   transform: translateX(0);
   transition: transform 120ms ease, background-color 120ms ease;
+}
+
+.gridra-switch--sm .gridra-switch__thumb {
+  width: 10px;
+  height: 10px;
+}
+
+.gridra-switch--lg .gridra-switch__thumb {
+  width: 16px;
+  height: 16px;
 }
 
 .gridra-switch--checked .gridra-switch__track {
@@ -409,6 +532,20 @@
   transform: translateX(16px);
 }
 
+.gridra-switch--sm.gridra-switch--checked .gridra-switch__thumb {
+  transform: translateX(14px);
+}
+
+.gridra-switch--lg.gridra-switch--checked .gridra-switch__thumb {
+  transform: translateX(20px);
+}
+
+.gridra-switch--invalid .gridra-switch__track,
+.gridra-switch[aria-invalid="true"] .gridra-switch__track {
+  border-color: var(--gridra-color-accent);
+  box-shadow: var(--gridra-shadow-selected);
+}
+
 .gridra-slider {
   height: 20px;
   width: 100%;
@@ -418,11 +555,27 @@
   cursor: pointer;
 }
 
+.gridra-slider--sm {
+  height: 16px;
+}
+
+.gridra-slider--lg {
+  height: 24px;
+}
+
 .gridra-slider::-webkit-slider-runnable-track {
   height: 8px;
   border: 1px solid var(--gridra-color-border-strong);
   border-radius: 0;
   background: var(--gridra-color-surface-input);
+}
+
+.gridra-slider--sm::-webkit-slider-runnable-track {
+  height: 6px;
+}
+
+.gridra-slider--lg::-webkit-slider-runnable-track {
+  height: 10px;
 }
 
 .gridra-slider::-webkit-slider-thumb {
@@ -436,11 +589,31 @@
   box-shadow: var(--gridra-shadow-selected);
 }
 
+.gridra-slider--sm::-webkit-slider-thumb {
+  width: 12px;
+  height: 16px;
+  margin-top: -6px;
+}
+
+.gridra-slider--lg::-webkit-slider-thumb {
+  width: 18px;
+  height: 22px;
+  margin-top: -7px;
+}
+
 .gridra-slider::-moz-range-track {
   height: 8px;
   border: 1px solid var(--gridra-color-border-strong);
   border-radius: 0;
   background: var(--gridra-color-surface-input);
+}
+
+.gridra-slider--sm::-moz-range-track {
+  height: 6px;
+}
+
+.gridra-slider--lg::-moz-range-track {
+  height: 10px;
 }
 
 .gridra-slider::-moz-range-thumb {
@@ -452,9 +625,42 @@
   box-shadow: var(--gridra-shadow-selected);
 }
 
+.gridra-slider--sm::-moz-range-thumb {
+  width: 12px;
+  height: 16px;
+}
+
+.gridra-slider--lg::-moz-range-thumb {
+  width: 18px;
+  height: 22px;
+}
+
 .gridra-slider:disabled {
   cursor: default;
   opacity: 0.45;
+}
+
+.gridra-slider-field {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-slider-field .gridra-slider {
+  min-width: 0;
+  flex: 1;
+}
+
+.gridra-slider-field__value {
+  min-width: 36px;
+  border: 1px solid var(--gridra-color-border);
+  color: var(--gridra-color-text);
+  font-size: 10px;
+  line-height: 1;
+  padding: 5px 6px;
+  text-align: right;
 }
 
 .gridra-badge {
@@ -846,6 +1052,10 @@
 
 .gridra-snap-guide--placement.gridra-snap-guide--horizontal {
   min-width: 100%;
+}
+
+.gridra-snap-guides {
+  display: contents;
 }
 
 .gridra-connection-layer {

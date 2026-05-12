@@ -47,6 +47,8 @@ export interface GridraCanvasAreaProps<
   defaultSelectedId?: GridraId | null;
   selectedIds?: GridraId[];
   defaultSelectedIds?: GridraId[];
+  selectionMode?: GridraSelectionMode;
+  selectionModifierKeys?: GridraSelectionModifierKeys;
   enableNodeConnecting?: boolean;
   enableNodeDragging?: boolean;
   enableNodeResizing?: boolean;
@@ -82,6 +84,13 @@ export interface GridraCanvasAreaProps<
     previousSelectedIds: GridraId[],
   ) => void;
   renderNode?: (node: TNode, state: GridraCanvasRenderNodeState) => ReactNode;
+}
+
+export type GridraSelectionMode = "replace" | "additive" | "toggle";
+
+export interface GridraSelectionModifierKeys {
+  additive?: "Shift";
+  toggle?: "Meta" | "Control";
 }
 
 export interface GridraNodeConnection {

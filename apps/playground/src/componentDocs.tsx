@@ -19,7 +19,7 @@ import {
   GridraSelect,
   GridraSelectionBox,
   GridraSlider,
-  GridraSnapGuide,
+  GridraSnapGuides,
   GridraSpinner,
   GridraSwitch,
   GridraTextarea,
@@ -60,6 +60,8 @@ export const componentDocs: ComponentDoc[] = [
       "renderNode",
       "gridColumns / gridRows",
       "selectedId / selectedIds",
+      "selectionMode: replace | additive | toggle",
+      "selectionModifierKeys",
       "nodePlacements / nodeConnections",
       "enableRangeSelection / enableNodeDragging / enableNodeResizing / enableNodeConnecting",
       "onSelectionChange / onSelectionIdsChange / onNodePlacementsChange / onNodeConnectionsChange"
@@ -67,7 +69,8 @@ export const componentDocs: ComponentDoc[] = [
     features: [
       "Renders nodes inside a CSS grid.",
       "Supports controlled and uncontrolled node placement state.",
-      "Can draw connection lines and range-selection overlays."
+      "Can draw connection lines and range-selection overlays.",
+      "Range selection can replace, add to, or toggle selected node ids."
     ],
     preview: (
       <div className="docs-canvas-preview">
@@ -163,12 +166,28 @@ export const componentDocs: ComponentDoc[] = [
     category: "Core",
     name: "GridraSnapGuide",
     summary: "Alignment guide for drag and resize interactions.",
-    options: ["orientation: vertical | horizontal", "position", "placement", "active", "visible", "HTML div attributes"],
-    features: ["Can render from pixel coordinates.", "Can render from grid placement."],
+    options: [
+      "orientation: vertical | horizontal",
+      "position",
+      "placement",
+      "active",
+      "visible",
+      "GridraSnapGuides guides[] helper",
+      "HTML div attributes"
+    ],
+    features: [
+      "Can render from pixel coordinates.",
+      "Can render from grid placement.",
+      "GridraSnapGuides renders multiple guides without changing the single-guide primitive."
+    ],
     preview: (
       <div className="docs-guide-preview">
-        <GridraSnapGuide end={72} orientation="vertical" position={48} />
-        <GridraSnapGuide end={120} orientation="horizontal" position={36} />
+        <GridraSnapGuides
+          guides={[
+            { end: 72, orientation: "vertical", position: 48 },
+            { end: 120, orientation: "horizontal", position: 36 }
+          ]}
+        />
       </div>
     )
   },
@@ -242,61 +261,92 @@ export const componentDocs: ComponentDoc[] = [
     category: "Controls",
     name: "GridraField",
     summary: "Label, control, hint, and error wrapper.",
-    options: ["label", "htmlFor", "hint", "error", "children", "HTML div attributes"],
-    features: ["Associates label with a control.", "Shows error instead of hint when both are present."],
+    options: [
+      "label",
+      "htmlFor",
+      "hint / hintId",
+      "error / errorId",
+      "required",
+      "disabled",
+      "orientation: vertical | horizontal",
+      "children",
+      "HTML div attributes"
+    ],
+    features: [
+      "Associates label with a control.",
+      "Shows error instead of hint when both are present.",
+      "Can expose hint and error ids for aria-describedby wiring.",
+      "Supports required, disabled, and horizontal layout styling."
+    ],
     preview: (
-      <GridraField hint="1 to 24" htmlFor="docs-columns" label="Columns">
-        <GridraInput id="docs-columns" defaultValue="12" />
-      </GridraField>
+      <div className="docs-form-preview">
+        <GridraField hint="1 to 24" hintId="docs-columns-hint" htmlFor="docs-columns" label="Columns" required>
+          <GridraInput id="docs-columns" defaultValue="12" size="sm" />
+        </GridraField>
+        <GridraField error="Required" errorId="docs-name-error" htmlFor="docs-name" label="Name">
+          <GridraInput id="docs-name" invalid />
+        </GridraField>
+      </div>
     )
   },
   {
     category: "Controls",
     name: "GridraInput",
     summary: "Text-like input styled with Gridra tokens.",
-    options: ["type", "aria-invalid", "value / defaultValue", "All input attributes"],
-    features: ["Defaults type to text.", "Uses invalid styling through aria-invalid."],
-    preview: <GridraInput aria-label="Name" defaultValue="Node label" />
+    options: ["type", "size: sm | md | lg", "invalid", "aria-invalid", "value / defaultValue", "All input attributes"],
+    features: ["Defaults type to text.", "Invalid prop maps to aria-invalid unless explicitly overridden."],
+    preview: (
+      <div className="docs-form-preview">
+        <GridraInput aria-label="Small name" defaultValue="Small" size="sm" />
+        <GridraInput aria-label="Invalid name" defaultValue="Invalid" invalid size="lg" />
+      </div>
+    )
   },
   {
     category: "Controls",
     name: "GridraSelect",
     summary: "Native select styled for dense panels.",
-    options: ["value / defaultValue", "children option elements", "aria-invalid", "All select attributes"],
+    options: ["value / defaultValue", "children option elements", "size: sm | md | lg", "invalid", "aria-invalid", "All select attributes"],
     features: ["Keeps native keyboard and form behavior.", "Uses Gridra input border and focus styles."],
     preview: (
-      <GridraSelect aria-label="Mode" defaultValue="select">
-        <option value="select">Select</option>
-        <option value="pan">Pan</option>
-      </GridraSelect>
+      <div className="docs-form-preview">
+        <GridraSelect aria-label="Mode" defaultValue="select" size="sm">
+          <option value="select">Select</option>
+          <option value="pan">Pan</option>
+        </GridraSelect>
+        <GridraSelect aria-label="Invalid mode" defaultValue="inspect" invalid size="lg">
+          <option value="inspect">Inspect</option>
+          <option value="pan">Pan</option>
+        </GridraSelect>
+      </div>
     )
   },
   {
     category: "Controls",
     name: "GridraTextarea",
     summary: "Multi-line text input for notes and longer properties.",
-    options: ["value / defaultValue", "aria-invalid", "All textarea attributes"],
+    options: ["value / defaultValue", "size: sm | md | lg", "invalid", "aria-invalid", "All textarea attributes"],
     features: ["Supports vertical resizing.", "Uses the same invalid styling as input and select."],
-    preview: <GridraTextarea aria-label="Notes" defaultValue="Dense controls for node editing." />
+    preview: <GridraTextarea aria-label="Notes" defaultValue="Dense controls for node editing." invalid size="lg" />
   },
   {
     category: "Controls",
     name: "GridraCheckbox",
     summary: "Checkbox with optional inline label.",
-    options: ["label", "checked / defaultChecked", "disabled", "All checkbox input attributes except type"],
-    features: ["Keeps native checkbox semantics.", "Uses a custom square mark."],
-    preview: <GridraCheckbox defaultChecked label="Snap" />
+    options: ["label", "description", "size: sm | md | lg", "invalid", "checked / defaultChecked", "disabled", "All checkbox input attributes except type"],
+    features: ["Keeps native checkbox semantics.", "Uses a custom square mark.", "Can show descriptive helper text."],
+    preview: <GridraCheckbox defaultChecked description="Aligns nodes to the grid" label="Snap" size="lg" />
   },
   {
     category: "Controls",
     name: "GridraRadio",
     summary: "Radio control with optional inline label.",
-    options: ["label", "checked / defaultChecked", "name", "value", "All radio input attributes except type"],
-    features: ["Keeps native radio grouping.", "Uses a custom circular mark."],
+    options: ["label", "description", "size: sm | md | lg", "invalid", "checked / defaultChecked", "name", "value", "All radio input attributes except type"],
+    features: ["Keeps native radio grouping.", "Uses a custom circular mark.", "Can show descriptive helper text."],
     preview: (
       <div className="docs-inline-preview">
-        <GridraRadio defaultChecked label="Compact" name="docs-density" />
-        <GridraRadio label="Comfort" name="docs-density" />
+        <GridraRadio defaultChecked description="Dense controls" label="Compact" name="docs-density" size="sm" />
+        <GridraRadio description="More breathing room" label="Comfort" name="docs-density" size="lg" />
       </div>
     )
   },
@@ -304,17 +354,17 @@ export const componentDocs: ComponentDoc[] = [
     category: "Controls",
     name: "GridraSwitch",
     summary: "Button-based switch for binary settings.",
-    options: ["checked", "label", "disabled", "All button attributes except role"],
-    features: ["Sets role switch.", "Maps checked to aria-checked."],
-    preview: <GridraSwitch checked label="Preview" />
+    options: ["checked", "label", "description", "size: sm | md | lg", "invalid", "onCheckedChange", "disabled", "All button attributes except role"],
+    features: ["Sets role switch.", "Maps checked to aria-checked.", "Reports the next checked value through onCheckedChange."],
+    preview: <GridraSwitch checked description="Shows live editor state" label="Preview" size="lg" />
   },
   {
     category: "Controls",
     name: "GridraSlider",
     summary: "Range input for numeric values.",
-    options: ["min", "max", "step", "value / defaultValue", "All range input attributes except type"],
-    features: ["Uses native range behavior.", "Theme renders a square track and thumb."],
-    preview: <GridraSlider aria-label="Opacity" defaultValue="72" max={100} min={0} />
+    options: ["min", "max", "step", "size: sm | md | lg", "showValue", "valueFormatter", "value / defaultValue", "All range input attributes except type"],
+    features: ["Uses native range behavior.", "Theme renders a square track and thumb.", "Can show a formatted current value."],
+    preview: <GridraSlider aria-label="Opacity" defaultValue="72" max={100} min={0} showValue size="lg" valueFormatter={(value) => `${value}%`} />
   },
   {
     category: "Display",

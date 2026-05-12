@@ -325,6 +325,12 @@ body {
   flex-wrap: wrap;
 }
 
+.docs-form-preview {
+  display: grid;
+  gap: var(--gridra-space-sm);
+  min-width: 0;
+}
+
 .docs-mini-shell {
   min-height: 56px;
   border: 1px solid var(--gridra-color-border);

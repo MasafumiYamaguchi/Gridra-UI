@@ -124,6 +124,142 @@ describe("GridraCanvasArea", () => {
     expect(selectedIdGroups).toEqual([["inside"]]);
   });
 
+  it("adds range-selected nodes when selectionMode is additive", () => {
+    const selectedIdGroups: string[][] = [];
+    const { container } = render(
+      <GridraCanvasArea
+        defaultSelectedIds={["outside"]}
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "inside",
+            placement: { column: 1, row: 1 }
+          },
+          {
+            id: "outside",
+            placement: { column: 4, row: 4 }
+          }
+        ]}
+        onSelectionIdsChange={(selectedIds) => selectedIdGroups.push(selectedIds)}
+        selectionMode="additive"
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    firePointerEvent(canvas, "pointerdown", {
+      button: 0,
+      clientX: 0,
+      clientY: 0,
+      pointerId: 14
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 14
+    });
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 14
+    });
+
+    expect(selectedIdGroups.at(-1)).toEqual(["outside", "inside"]);
+  });
+
+  it("toggles range-selected nodes when selectionMode is toggle", () => {
+    const selectedIdGroups: string[][] = [];
+    const { container } = render(
+      <GridraCanvasArea
+        defaultSelectedIds={["inside", "outside"]}
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "inside",
+            placement: { column: 1, row: 1 }
+          },
+          {
+            id: "outside",
+            placement: { column: 4, row: 4 }
+          }
+        ]}
+        onSelectionIdsChange={(selectedIds) => selectedIdGroups.push(selectedIds)}
+        selectionMode="toggle"
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    firePointerEvent(canvas, "pointerdown", {
+      button: 0,
+      clientX: 0,
+      clientY: 0,
+      pointerId: 15
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 15
+    });
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 15
+    });
+
+    expect(selectedIdGroups.at(-1)).toEqual(["outside"]);
+  });
+
+  it("uses selection modifier keys for range selection mode", () => {
+    const selectedIdGroups: string[][] = [];
+    const { container } = render(
+      <GridraCanvasArea
+        defaultSelectedIds={["outside"]}
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "inside",
+            placement: { column: 1, row: 1 }
+          },
+          {
+            id: "outside",
+            placement: { column: 4, row: 4 }
+          }
+        ]}
+        onSelectionIdsChange={(selectedIds) => selectedIdGroups.push(selectedIds)}
+        selectionModifierKeys={{ additive: "Shift", toggle: "Meta" }}
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    firePointerEvent(canvas, "pointerdown", {
+      button: 0,
+      clientX: 0,
+      clientY: 0,
+      pointerId: 16
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 16
+    });
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 16,
+      shiftKey: true
+    });
+
+    expect(selectedIdGroups.at(-1)).toEqual(["outside", "inside"]);
+  });
+
   it("renders the active selection box while dragging", () => {
     const { container } = render(<GridraCanvasArea />);
     const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;

@@ -36,6 +36,7 @@ import type {
   NodeDragState,
   NodeResizeState,
   NodeSnapGuide,
+  GridraSelectionMode,
 } from "./types";
 
 // ここがコンポーネントの根幹
@@ -74,6 +75,8 @@ export function GridraCanvasArea<
   onPointerUp,
   onKeyDown,
   renderNode,
+  selectionMode = "replace",
+  selectionModifierKeys,
   selectedId,
   selectedIds,
   style,
@@ -533,12 +536,21 @@ export function GridraCanvasArea<
       dragOriginRef.current,
       getCanvasPoint(event, event.currentTarget),
     );
-    const nextSelectedIds = hitTestNodes(
+    const hitSelectedIds = hitTestNodes(
       normalizedNodes,
       rect,
       event.currentTarget,
       normalizedGridColumns ?? 12,
       normalizedGridRows ?? 6,
+    );
+    const nextSelectedIds = mergeSelectedIds(
+      getSelectionMode(event, selectionMode, selectionModifierKeys),
+      currentSelectedIds.length > 0
+        ? currentSelectedIds
+        : currentSelectedId
+          ? [currentSelectedId]
+          : [],
+      hitSelectedIds,
     );
     const nextSelectedConnectionKeys = hitTestConnections(
       currentNodeConnections,
@@ -752,6 +764,54 @@ function createNodeDragSnapGuides(
       end: horizontalStart + metrics.columnStep * gridColumns,
     },
   ];
+}
+
+function getSelectionMode(
+  event: PointerEvent<HTMLDivElement>,
+  fallbackMode: GridraSelectionMode,
+  modifierKeys?: { additive?: "Shift"; toggle?: "Meta" | "Control" },
+): GridraSelectionMode {
+  if (modifierKeys?.additive === "Shift" && event.shiftKey) {
+    return "additive";
+  }
+
+  if (modifierKeys?.toggle === "Meta" && event.metaKey) {
+    return "toggle";
+  }
+
+  if (modifierKeys?.toggle === "Control" && event.ctrlKey) {
+    return "toggle";
+  }
+
+  return fallbackMode;
+}
+
+function mergeSelectedIds(
+  mode: GridraSelectionMode,
+  currentSelectedIds: GridraId[],
+  hitSelectedIds: GridraId[],
+): GridraId[] {
+  if (mode === "replace") {
+    return hitSelectedIds;
+  }
+
+  const currentSet = new Set(currentSelectedIds);
+
+  if (mode === "additive") {
+    return Array.from(new Set([...currentSelectedIds, ...hitSelectedIds]));
+  }
+
+  hitSelectedIds.forEach((id) => {
+    if (currentSet.has(id)) {
+      currentSet.delete(id);
+    } else {
+      currentSet.add(id);
+    }
+  });
+
+  return currentSelectedIds
+    .filter((id) => currentSet.has(id))
+    .concat(hitSelectedIds.filter((id) => currentSet.has(id) && !currentSelectedIds.includes(id)));
 }
 
 function createNodeResizeSnapGuides(

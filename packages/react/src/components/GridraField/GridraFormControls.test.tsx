@@ -30,6 +30,22 @@ describe("GridraInput", () => {
     expect((input as HTMLInputElement).value).toBe("4");
     expect(onChange).toHaveBeenCalledTimes(1);
   });
+
+  it("supports size and invalid while preserving explicit aria-invalid", () => {
+    render(
+      <>
+        <GridraInput aria-label="Name" invalid size="lg" />
+        <GridraInput aria-invalid="false" aria-label="Override" invalid />
+      </>
+    );
+
+    const input = screen.getByRole("textbox", { name: "Name" });
+    const override = screen.getByRole("textbox", { name: "Override" });
+
+    expect(input.className).toContain("gridra-input--lg");
+    expect(input.getAttribute("aria-invalid")).toBe("true");
+    expect(override.getAttribute("aria-invalid")).toBe("false");
+  });
 });
 
 describe("GridraSelect", () => {
@@ -48,6 +64,18 @@ describe("GridraSelect", () => {
 
     expect((select as HTMLSelectElement).value).toBe("pan");
     expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("supports size and invalid state", () => {
+    render(
+      <GridraSelect aria-label="Status" invalid size="sm">
+        <option value="ready">Ready</option>
+      </GridraSelect>
+    );
+    const select = screen.getByRole("combobox", { name: "Status" });
+
+    expect(select.className).toContain("gridra-select--sm");
+    expect(select.getAttribute("aria-invalid")).toBe("true");
   });
 });
 
@@ -72,5 +100,36 @@ describe("GridraField", () => {
 
     expect(screen.getByText("Required").className).toContain("gridra-field__error");
     expect(screen.queryByText("Optional hint")).toBeNull();
+  });
+
+  it("supports required, disabled, orientation, and hint/error ids", () => {
+    const { rerender } = render(
+      <GridraField
+        disabled
+        hint="Useful hint"
+        hintId="columns-hint"
+        htmlFor="columns"
+        label="Columns"
+        orientation="horizontal"
+        required
+      >
+        <GridraInput id="columns" />
+      </GridraField>
+    );
+    const field = screen.getByText("Columns").closest(".gridra-field");
+
+    expect(field?.className).toContain("gridra-field--horizontal");
+    expect(field?.className).toContain("gridra-field--disabled");
+    expect(field?.className).toContain("gridra-field--required");
+    expect(screen.getByText("Useful hint").getAttribute("id")).toBe("columns-hint");
+    expect(screen.getByText("*")).toBeTruthy();
+
+    rerender(
+      <GridraField error="Required" errorId="columns-error" htmlFor="columns" label="Columns">
+        <GridraInput id="columns" />
+      </GridraField>
+    );
+
+    expect(screen.getByText("Required").getAttribute("id")).toBe("columns-error");
   });
 });

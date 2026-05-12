@@ -1,6 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { GridraSnapGuide } from "./GridraSnapGuide";
+import { GridraSnapGuides } from "./GridraSnapGuides";
 
 afterEach(() => {
   cleanup();
@@ -84,5 +85,21 @@ describe("GridraSnapGuide", () => {
     expect(guide?.getAttribute("style")).toContain("left: 0px");
     expect(guide?.getAttribute("style")).toContain("top: 10px");
     expect(guide?.getAttribute("style")).toContain("height: 0px");
+  });
+
+  it("renders multiple guides through the helper component", () => {
+    const { container } = render(
+      <GridraSnapGuides
+        guides={[
+          { orientation: "vertical", position: 20 },
+          { orientation: "horizontal", position: 40 }
+        ]}
+      />
+    );
+
+    expect(container.querySelector(".gridra-snap-guides")).not.toBeNull();
+    expect(container.querySelectorAll(".gridra-snap-guide")).toHaveLength(2);
+    expect(container.querySelector(".gridra-snap-guide--vertical")).not.toBeNull();
+    expect(container.querySelector(".gridra-snap-guide--horizontal")).not.toBeNull();
   });
 });

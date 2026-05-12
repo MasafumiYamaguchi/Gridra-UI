@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import type { MouseEvent } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GridraAvatar } from "../GridraAvatar";
 import { GridraBadge } from "../GridraBadge";
@@ -36,6 +37,14 @@ describe("additional Gridra form controls", () => {
     expect(onChange).toHaveBeenCalledTimes(1);
   });
 
+  it("supports textarea size class", () => {
+    render(<GridraTextarea aria-label="Large notes" invalid size="lg" />);
+    const textarea = screen.getByRole("textbox", { name: "Large notes" });
+
+    expect(textarea.className).toContain("gridra-textarea--lg");
+    expect(textarea.getAttribute("aria-invalid")).toBe("true");
+  });
+
   it("supports checkbox and radio labels", () => {
     render(
       <>
@@ -46,6 +55,25 @@ describe("additional Gridra form controls", () => {
 
     expect((screen.getByRole("checkbox", { name: "Snap" }) as HTMLInputElement).checked).toBe(true);
     expect((screen.getByRole("radio", { name: "Grid" }) as HTMLInputElement).checked).toBe(false);
+  });
+
+  it("supports checkbox and radio description, size, and invalid state", () => {
+    render(
+      <>
+        <GridraCheckbox description="Aligns to grid" invalid label="Snap" size="lg" />
+        <GridraRadio description="Dense controls" invalid label="Compact" name="density" size="sm" />
+      </>
+    );
+    const checkbox = screen.getByRole("checkbox", { name: "Snap Aligns to grid" });
+    const radio = screen.getByRole("radio", { name: "Compact Dense controls" });
+
+    expect(checkbox.getAttribute("aria-invalid")).toBe("true");
+    expect(checkbox.closest(".gridra-checkbox")?.className).toContain("gridra-checkbox--lg");
+    expect(checkbox.closest(".gridra-checkbox")?.className).toContain("gridra-checkbox--invalid");
+    expect(radio.getAttribute("aria-invalid")).toBe("true");
+    expect(radio.closest(".gridra-radio")?.className).toContain("gridra-radio--sm");
+    expect(screen.getByText("Aligns to grid").className).toContain("gridra-checkbox__description");
+    expect(screen.getByText("Dense controls").className).toContain("gridra-radio__description");
   });
 
   it("reports switch and slider interaction", () => {
@@ -74,6 +102,57 @@ describe("additional Gridra form controls", () => {
     expect((slider as HTMLInputElement).value).toBe("75");
     expect(onSwitchClick).toHaveBeenCalledTimes(1);
     expect(onSliderChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports switch checked changes and supports invalid description", () => {
+    const onCheckedChange = vi.fn();
+    const onPreventedClick = vi.fn((event: MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+    });
+
+    render(
+      <>
+        <GridraSwitch
+          description="Shows temporary state"
+          invalid
+          label="Preview"
+          onCheckedChange={onCheckedChange}
+          size="lg"
+        />
+        <GridraSwitch checked label="Locked" onCheckedChange={onCheckedChange} onClick={onPreventedClick} />
+      </>
+    );
+
+    const preview = screen.getByRole("switch", { name: "Preview Shows temporary state" });
+    const locked = screen.getByRole("switch", { name: "Locked" });
+
+    fireEvent.click(preview);
+    fireEvent.click(locked);
+
+    expect(preview.getAttribute("aria-invalid")).toBe("true");
+    expect(preview.className).toContain("gridra-switch--lg");
+    expect(preview.className).toContain("gridra-switch--invalid");
+    expect(onCheckedChange).toHaveBeenCalledTimes(1);
+    expect(onCheckedChange).toHaveBeenCalledWith(true);
+    expect(onPreventedClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders slider value with a formatter", () => {
+    render(
+      <GridraSlider
+        aria-label="Opacity"
+        defaultValue="40"
+        showValue
+        size="lg"
+        valueFormatter={(value) => `${value}%`}
+      />
+    );
+    const slider = screen.getByRole("slider", { name: "Opacity" });
+
+    fireEvent.change(slider, { target: { value: "72" } });
+
+    expect(slider.className).toContain("gridra-slider--lg");
+    expect(screen.getByText("72%").className).toContain("gridra-slider-field__value");
   });
 });
 
