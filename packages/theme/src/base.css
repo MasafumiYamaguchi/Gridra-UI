@@ -354,8 +354,51 @@
 }
 
 .gridra-slider {
+  height: 20px;
   width: 100%;
   accent-color: var(--gridra-color-accent);
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.gridra-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  border: 1px solid var(--gridra-color-border-strong);
+  border-radius: 0;
+  background: var(--gridra-color-surface-input);
+}
+
+.gridra-slider::-webkit-slider-thumb {
+  width: 14px;
+  height: 18px;
+  margin-top: -6px;
+  appearance: none;
+  border: 1px solid var(--gridra-color-accent);
+  border-radius: 0;
+  background: var(--gridra-color-text);
+  box-shadow: var(--gridra-shadow-selected);
+}
+
+.gridra-slider::-moz-range-track {
+  height: 8px;
+  border: 1px solid var(--gridra-color-border-strong);
+  border-radius: 0;
+  background: var(--gridra-color-surface-input);
+}
+
+.gridra-slider::-moz-range-thumb {
+  width: 14px;
+  height: 18px;
+  border: 1px solid var(--gridra-color-accent);
+  border-radius: 0;
+  background: var(--gridra-color-text);
+  box-shadow: var(--gridra-shadow-selected);
+}
+
+.gridra-slider:disabled {
+  cursor: default;
+  opacity: 0.45;
 }
 
 .gridra-badge {
