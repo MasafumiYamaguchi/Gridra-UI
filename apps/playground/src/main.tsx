@@ -27,7 +27,10 @@ import {
 } from "@gridra-ui/react";
 import "@gridra-ui/theme/base.css";
 import "@gridra-ui/theme/dark.css";
+import { ComponentDocsPage } from "./componentDocs";
 import "./styles.css";
+
+const isDocsRoute = window.location.pathname === "/docs";
 
 function Playground() {
   const avatarImageUrl = "https://i.pravatar.cc/96?img=12";
@@ -154,6 +157,7 @@ function Playground() {
           { id: "drag", label: "Drag", pressed: nodeDraggingEnabled },
           { id: "resize", label: "Resize", pressed: nodeResizingEnabled },
           { id: "components", label: "Components", pressed: viewMode === "components" },
+          { id: "docs", label: "Docs" },
           { id: "pan", label: "Pan" },
           { id: "inspect", label: "Inspect" }
         ]}
@@ -175,6 +179,9 @@ function Playground() {
           }
           if (id === "components") {
             setViewMode((current) => (current === "components" ? "canvas" : "components"));
+          }
+          if (id === "docs") {
+            window.location.href = "/docs";
           }
         }}
       />
@@ -350,6 +357,6 @@ function Playground() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Playground />
+    {isDocsRoute ? <ComponentDocsPage /> : <Playground />}
   </StrictMode>
 );
