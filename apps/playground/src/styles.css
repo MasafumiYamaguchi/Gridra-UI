@@ -10,59 +10,10 @@ body {
   background: #000000;
 }
 
-.playground-panel-section {
-  display: grid;
-  gap: var(--gridra-space-sm);
-}
-
-.playground-section-heading,
-.playground-control-row,
-.playground-slider-row,
-.playground-status-row,
-.playground-icon-row {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: var(--gridra-space-sm);
-}
-
-.playground-section-heading {
-  justify-content: space-between;
-}
-
-.playground-control-row {
-  flex-wrap: wrap;
-}
-
-.playground-slider-row {
-  align-items: center;
-}
-
-.playground-slider-row .gridra-slider {
-  min-width: 0;
-  flex: 1;
-}
-
-.playground-status-row {
-  min-height: 28px;
-}
-
 .playground-component-stage {
   min-width: 0;
   min-height: 0;
   flex: 1;
-  overflow: auto;
-  border: 1px solid var(--gridra-color-border);
-  background: var(--gridra-color-background);
-  padding: var(--gridra-space-lg);
-}
-
-.playground-component-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--gridra-space-lg);
-  margin-bottom: var(--gridra-space-lg);
 }
 
 .playground-component-title {
@@ -77,19 +28,7 @@ body {
 }
 
 .playground-component-grid {
-  display: grid;
   grid-template-columns: repeat(3, minmax(220px, 1fr));
-  gap: var(--gridra-space-md);
-}
-
-.playground-component-group {
-  display: grid;
-  align-content: start;
-  gap: var(--gridra-space-md);
-  min-width: 0;
-  border: 1px solid var(--gridra-color-border);
-  background: var(--gridra-color-surface);
-  padding: var(--gridra-space-md);
 }
 
 .playground-component-group--wide {
@@ -103,10 +42,6 @@ body {
 }
 
 @media (max-width: 760px) {
-  .playground-component-header {
-    display: grid;
-  }
-
   .playground-component-grid {
     grid-template-columns: minmax(0, 1fr);
   }

@@ -3,12 +3,17 @@ import { createRoot } from "react-dom/client";
 import {
   GridraAvatar,
   GridraBadge,
+  GridraBox,
   GridraButton,
   GridraCanvasArea,
   GridraCheckbox,
+  GridraCluster,
   GridraDivider,
   GridraField,
+  GridraGridLayout,
   GridraIconButton,
+  GridraInline,
+  GridraInlineItem,
   GridraSelectableGrid,
   GridraInput,
   GridraLabel,
@@ -21,6 +26,7 @@ import {
   GridraSelect,
   GridraSlider,
   GridraSpinner,
+  GridraStack,
   GridraSwitch,
   GridraTextarea,
   GridraToolbar
@@ -96,11 +102,11 @@ function Playground() {
             </GridraButton>
           }
         >
-          <div className="playground-panel-section">
-            <div className="playground-section-heading">
+          <GridraStack gap="sm">
+            <GridraInline align="center" justify="between">
               <GridraLabel>Canvas</GridraLabel>
               <GridraBadge tone="muted">{gridColumns} x {gridRows}</GridraBadge>
-            </div>
+            </GridraInline>
             <GridraField htmlFor="playground-selected-node" label="Selected Node">
               <GridraSelect
                 id="playground-selected-node"
@@ -135,7 +141,7 @@ function Playground() {
                 value={gridRows}
               />
             </GridraField>
-          </div>
+          </GridraStack>
           <GridraDivider />
           <GridraSelectableGrid
             columns={1}
@@ -186,25 +192,39 @@ function Playground() {
         }}
       />
       {viewMode === "components" ? (
-        <section className="playground-component-stage">
-          <div className="playground-component-header">
+        <GridraBox
+          as="section"
+          border="default"
+          className="playground-component-stage"
+          fullHeight
+          padding="lg"
+          scroll="auto"
+        >
+          <GridraInline align="start" className="playground-component-header" justify="between">
             <div>
               <GridraLabel>Basic Controls</GridraLabel>
               <h1 className="playground-component-title">Component Check Surface</h1>
             </div>
-            <div className="playground-status-row">
+            <GridraInline align="center" gap="sm">
               <GridraAvatar alt="Demo avatar" fallback="UI" shape="circle" size="md" src={avatarImageUrl} />
               <GridraBadge tone="accent">{controlOpacity}%</GridraBadge>
               {controlPreviewEnabled ? <GridraSpinner label="Preview running" /> : null}
-            </div>
-          </div>
-          <div className="playground-component-grid">
-            <section className="playground-component-group">
-              <div className="playground-section-heading">
+            </GridraInline>
+          </GridraInline>
+          <GridraGridLayout className="playground-component-grid" columns="auto" gap="md" minColumnWidth={220}>
+            <GridraStack
+              as="section"
+              border="default"
+              className="playground-component-group"
+              gap="md"
+              padding="md"
+              surface="surface"
+            >
+              <GridraInline align="center" justify="between">
                 <GridraLabel>Actions</GridraLabel>
                 <GridraBadge tone="muted">Button family</GridraBadge>
-              </div>
-              <div className="playground-control-row">
+              </GridraInline>
+              <GridraCluster align="center" gap="sm">
                 <GridraButton variant="primary">Primary</GridraButton>
                 <GridraButton>Default</GridraButton>
                 <GridraButton variant="ghost">Ghost</GridraButton>
@@ -217,15 +237,22 @@ function Playground() {
                 </GridraIconButton>
                 <GridraIconButton label="Add item" variant="ghost">
                   +
-                </GridraIconButton>
-              </div>
-            </section>
-            <section className="playground-component-group">
-              <div className="playground-section-heading">
-                <GridraLabel>Boolean</GridraLabel>
-                <GridraBadge>{controlPreviewEnabled ? "active" : "idle"}</GridraBadge>
-              </div>
-              <div className="playground-control-row">
+              </GridraIconButton>
+            </GridraCluster>
+          </GridraStack>
+          <GridraStack
+            as="section"
+            border="default"
+            className="playground-component-group"
+            gap="md"
+            padding="md"
+            surface="surface"
+          >
+            <GridraInline align="center" justify="between">
+              <GridraLabel>Boolean</GridraLabel>
+              <GridraBadge>{controlPreviewEnabled ? "active" : "idle"}</GridraBadge>
+            </GridraInline>
+            <GridraCluster align="center" gap="sm">
                 <GridraCheckbox
                   checked={controlSnapEnabled}
                   label="Snap"
@@ -235,15 +262,22 @@ function Playground() {
                   checked={controlPreviewEnabled}
                   label="Preview"
                   onClick={() => setControlPreviewEnabled((current) => !current)}
-                />
-              </div>
-            </section>
-            <section className="playground-component-group">
-              <div className="playground-section-heading">
-                <GridraLabel>Choice</GridraLabel>
-                <GridraBadge>{controlDensity}</GridraBadge>
-              </div>
-              <div className="playground-control-row" role="radiogroup" aria-label="Density">
+              />
+            </GridraCluster>
+          </GridraStack>
+          <GridraStack
+            as="section"
+            border="default"
+            className="playground-component-group"
+            gap="md"
+            padding="md"
+            surface="surface"
+          >
+            <GridraInline align="center" justify="between">
+              <GridraLabel>Choice</GridraLabel>
+              <GridraBadge>{controlDensity}</GridraBadge>
+            </GridraInline>
+            <GridraCluster align="center" gap="sm" role="radiogroup" aria-label="Density">
                 <GridraRadio
                   checked={controlDensity === "compact"}
                   label="Compact"
@@ -258,46 +292,62 @@ function Playground() {
                   onChange={() => setControlDensity("comfortable")}
                   value="comfortable"
                 />
-              </div>
+              </GridraCluster>
               <GridraField htmlFor="playground-demo-select" label="Selected Node">
                 <GridraSelect id="playground-demo-select" defaultValue="input">
                   <option value="input">Input</option>
                   <option value="transform">Transform</option>
                   <option value="output">Output</option>
-                </GridraSelect>
-              </GridraField>
-            </section>
-            <section className="playground-component-group playground-component-group--wide">
-              <div className="playground-section-heading">
-                <GridraLabel>Input</GridraLabel>
-                <GridraBadge tone="accent">{controlOpacity}%</GridraBadge>
-              </div>
-              <GridraField htmlFor="playground-opacity" label="Opacity">
-                <div className="playground-slider-row">
+              </GridraSelect>
+            </GridraField>
+          </GridraStack>
+          <GridraStack
+            as="section"
+            border="default"
+            className="playground-component-group playground-component-group--wide"
+            gap="md"
+            padding="md"
+            surface="surface"
+          >
+            <GridraInline align="center" justify="between">
+              <GridraLabel>Input</GridraLabel>
+              <GridraBadge tone="accent">{controlOpacity}%</GridraBadge>
+            </GridraInline>
+            <GridraField htmlFor="playground-opacity" label="Opacity">
+              <GridraInline align="center" gap="sm" fullWidth>
+                <GridraInlineItem grow>
                   <GridraSlider
-                    id="playground-opacity"
-                    max={100}
-                    min={0}
-                    onChange={(event) => setControlOpacity(Number(event.target.value))}
-                    value={controlOpacity}
-                  />
-                  <GridraBadge tone="accent">{controlOpacity}%</GridraBadge>
-                </div>
-              </GridraField>
-              <GridraField htmlFor="playground-notes" label="Notes">
-                <GridraTextarea
-                  id="playground-notes"
-                  onChange={(event) => setControlNotes(event.target.value)}
-                  value={controlNotes}
+                  id="playground-opacity"
+                  max={100}
+                  min={0}
+                  onChange={(event) => setControlOpacity(Number(event.target.value))}
+                  value={controlOpacity}
                 />
-              </GridraField>
-            </section>
-            <section className="playground-component-group">
-              <div className="playground-section-heading">
-                <GridraLabel>Display</GridraLabel>
-                <GridraBadge tone="muted">Static</GridraBadge>
-              </div>
-              <div className="playground-control-row">
+                </GridraInlineItem>
+                <GridraBadge tone="accent">{controlOpacity}%</GridraBadge>
+              </GridraInline>
+            </GridraField>
+              <GridraField htmlFor="playground-notes" label="Notes">
+              <GridraTextarea
+                id="playground-notes"
+                onChange={(event) => setControlNotes(event.target.value)}
+                value={controlNotes}
+              />
+            </GridraField>
+          </GridraStack>
+          <GridraStack
+            as="section"
+            border="default"
+            className="playground-component-group"
+            gap="md"
+            padding="md"
+            surface="surface"
+          >
+            <GridraInline align="center" justify="between">
+              <GridraLabel>Display</GridraLabel>
+              <GridraBadge tone="muted">Static</GridraBadge>
+            </GridraInline>
+            <GridraCluster align="center" gap="sm">
                 <GridraAvatar alt="Demo avatar" fallback="UI" shape="square" size="sm" src={avatarImageUrl} />
                 <GridraAvatar alt="Demo avatar" fallback="UI" shape="rounded" size="md" src={avatarImageUrl} />
                 <GridraAvatar alt="Demo avatar" fallback="UI" monochrome shape="circle" size="lg" src={avatarImageUrl} />
@@ -305,15 +355,15 @@ function Playground() {
                 <GridraBadge>Default</GridraBadge>
                 <GridraBadge tone="accent">Accent</GridraBadge>
                 <GridraBadge tone="muted">Muted</GridraBadge>
-              </div>
+              </GridraCluster>
               <GridraDivider />
-              <div className="playground-status-row">
+              <GridraInline align="center" gap="sm">
                 <GridraSpinner label="Preview running" />
                 <GridraLabel>Preview running</GridraLabel>
-              </div>
-            </section>
-          </div>
-        </section>
+              </GridraInline>
+            </GridraStack>
+          </GridraGridLayout>
+        </GridraBox>
       ) : (
         <GridraCanvasArea
           enableNodeConnecting={nodeConnectingEnabled}
