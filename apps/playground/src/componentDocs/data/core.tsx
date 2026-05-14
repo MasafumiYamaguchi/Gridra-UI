@@ -1,14 +1,17 @@
 import {
   GridraBadge,
+  GridraCluster,
   GridraConnectionHandle,
   GridraDragHandle,
+  GridraInline,
   GridraLabel,
   GridraNode,
   GridraPanel,
   GridraResizeHandle,
   GridraSelectableGrid,
   GridraSelectionBox,
-  GridraSnapGuides
+  GridraSnapGuides,
+  GridraStack
 } from "@gridra-ui/react";
 import type { ComponentDoc } from "../types";
 export const coreDocs: ComponentDoc[] = [
@@ -118,8 +121,11 @@ export const coreDocs: ComponentDoc[] = [
     ],
     preview: (
       <div className="docs-canvas-preview">
-        <GridraNode id="docs-canvas-node" placement={{ column: 1, row: 1, columnSpan: 2, rowSpan: 1 }} selected>
-          Node
+        <GridraNode id="docs-canvas-node-a" placement={{ column: 1, row: 1, columnSpan: 2, rowSpan: 1 }} selected>
+          Node A
+        </GridraNode>
+        <GridraNode id="docs-canvas-node-b" placement={{ column: 4, row: 2, columnSpan: 2, rowSpan: 1 }}>
+          Node B
         </GridraNode>
       </div>
     )
@@ -157,14 +163,32 @@ export const coreDocs: ComponentDoc[] = [
       }
     ],
     preview: (
-      <GridraSelectableGrid
-        columns={2}
-        items={[
-          { id: "a", label: "Input" },
-          { id: "b", label: "Output" }
-        ]}
-        selectedId="a"
-      />
+      <GridraStack gap="sm">
+        <GridraSelectableGrid
+          columns={2}
+          items={[
+            { id: "a", label: "Input" },
+            { id: "b", label: "Output" }
+          ]}
+        />
+        <GridraSelectableGrid
+          columns={2}
+          items={[
+            { id: "a", label: "Input" },
+            { id: "b", label: "Output" }
+          ]}
+          selectedId="a"
+        />
+        <GridraSelectableGrid
+          columns={3}
+          items={[
+            { id: "x", label: "A" },
+            { id: "y", label: "B" },
+            { id: "z", label: "C" }
+          ]}
+          selectedId="y"
+        />
+      </GridraStack>
     )
   },
   {

@@ -154,6 +154,40 @@ body {
   min-width: 0;
 }
 
+.docs-page__mobile-controls {
+  display: none;
+}
+
+.docs-page__mobile-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gridra-space-sm);
+}
+
+.docs-page__mobile-viewing {
+  display: none;
+}
+
+.docs-page__mobile-viewing-label {
+  color: var(--gridra-color-muted-text);
+  font-size: 11px;
+}
+
+.docs-page__mobile-viewing-name {
+  color: var(--gridra-color-text);
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.docs-page__mobile-toggle {
+  display: none;
+}
+
+.docs-page__mobile-selector {
+  display: none;
+}
+
 .docs-page__nav {
   display: grid;
   align-content: start;
@@ -247,7 +281,36 @@ body {
 }
 
 .docs-detail__section--quiet {
-  opacity: 0.72;
+  opacity: 0.65;
+}
+
+.docs-detail__section--primary {
+  gap: var(--gridra-space-md);
+  padding: var(--gridra-space-sm) 0 var(--gridra-space-md);
+}
+
+.docs-detail__section--technical .docs-props-table-wrapper {
+  border: 0;
+}
+
+.docs-detail__section--examples .docs-examples {
+  gap: 0;
+}
+
+.docs-detail__section--examples .docs-example {
+  padding: var(--gridra-space-md) 0;
+  border-top: 1px solid var(--gridra-color-border);
+}
+
+.docs-detail__section--examples .docs-example:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.docs-detail__section--secondary {
+  gap: var(--gridra-space-md);
+  padding-left: var(--gridra-space-md);
+  border-left: 2px solid var(--gridra-color-border);
 }
 
 .docs-detail__notes-group {
@@ -393,7 +456,34 @@ body {
   }
 
   .docs-page__nav {
+    display: none;
+  }
+
+  .docs-page__nav.docs-page__nav--mobile-open {
+    display: grid;
     max-height: 168px;
+  }
+
+  .docs-page__mobile-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gridra-space-sm);
+  }
+
+  .docs-page__mobile-selector {
+    display: block;
+    width: 100%;
+  }
+
+  .docs-page__mobile-viewing {
+    display: flex;
+    align-items: center;
+    gap: var(--gridra-space-xs);
+  }
+
+  .docs-page__mobile-toggle {
+    display: inline-flex;
+    align-self: flex-start;
   }
 
   .docs-detail {

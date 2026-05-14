@@ -7,6 +7,7 @@ import {
   GridraInlineItem,
   GridraInput,
   GridraLabel,
+  GridraSelect,
   GridraStack
 } from "@gridra-ui/react";
 import { componentDocs } from "./data";
@@ -120,6 +121,7 @@ export function ComponentDocsPage() {
   const detailRef = useRef<HTMLElement>(null);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [activeDocName, setActiveDocName] = useState(() => {
     const hashName = window.location.hash.replace("#docs-", "");
     return componentDocs.some((doc) => doc.name === hashName)
@@ -193,39 +195,76 @@ export function ComponentDocsPage() {
         ))}
       </div>
       <div className="docs-page__layout">
-        <div className="docs-page__sidebar">
-          <GridraField className="docs-page__search" label="Search">
-            <GridraInput
-              aria-label="Search components"
-              onChange={(event) => {
-                setSearchQuery(event.target.value);
-              }}
-              placeholder="Search components..."
-              type="search"
-              value={searchQuery}
-            />
-          </GridraField>
-          <nav className="docs-page__nav" aria-label="Component documentation">
-            {visibleDocs.length === 0 ? (
-              <div className="docs-page__nav-empty">
-                <GridraBadge tone="muted">No matches</GridraBadge>
+      <div className="docs-page__sidebar">
+        <GridraField className="docs-page__search" label="Search">
+          <GridraInput
+            aria-label="Search components"
+            onChange={(event) => {
+              setSearchQuery(event.target.value);
+            }}
+            placeholder="Search components..."
+            type="search"
+            value={searchQuery}
+          />
+        </GridraField>
+        <div className="docs-page__mobile-controls">
+          {visibleDocs.length === 0 ? (
+            <div className="docs-page__mobile-empty">
+              <GridraBadge tone="muted">No matches</GridraBadge>
+            </div>
+          ) : (
+            <>
+              <GridraSelect
+                aria-label="Select component"
+                className="docs-page__mobile-selector"
+                onChange={(event) => selectDoc(event.target.value)}
+                value={activeDoc.name}
+              >
+                {visibleDocs.map((doc) => (
+                  <option key={doc.name} value={doc.name}>
+                    {doc.name}
+                  </option>
+                ))}
+              </GridraSelect>
+              <div className="docs-page__mobile-viewing">
+                <span className="docs-page__mobile-viewing-label">Currently viewing:</span>{" "}
+                <span className="docs-page__mobile-viewing-name">{activeDoc.name}</span>
               </div>
-            ) : (
-              visibleDocs.map((doc) => (
-                <button
-                  className="docs-page__nav-item"
-                  key={doc.name}
-                  onClick={() => selectDoc(doc.name)}
-                  type="button"
-                  aria-current={doc.name === activeDoc.name ? "page" : undefined}
-                >
-                  <span>{doc.name}</span>
-                  <GridraBadge tone="muted">{doc.category}</GridraBadge>
-                </button>
-              ))
-            )}
-          </nav>
+              <GridraButton
+                className="docs-page__mobile-toggle"
+                onClick={() => setMobileNavOpen((open) => !open)}
+                size="sm"
+                variant="default"
+              >
+                {mobileNavOpen ? "Hide component list" : "Show all components"}
+              </GridraButton>
+            </>
+          )}
         </div>
+        <nav
+          className={`docs-page__nav${mobileNavOpen ? " docs-page__nav--mobile-open" : ""}`}
+          aria-label="Component documentation"
+        >
+          {visibleDocs.length === 0 ? (
+            <div className="docs-page__nav-empty">
+              <GridraBadge tone="muted">No matches</GridraBadge>
+            </div>
+          ) : (
+            visibleDocs.map((doc) => (
+              <button
+                className="docs-page__nav-item"
+                key={doc.name}
+                onClick={() => selectDoc(doc.name)}
+                type="button"
+                aria-current={doc.name === activeDoc.name ? "page" : undefined}
+              >
+                <span>{doc.name}</span>
+                <GridraBadge tone="muted">{doc.category}</GridraBadge>
+              </button>
+            ))
+          )}
+        </nav>
+      </div>
         <article ref={detailRef} className="docs-detail" id={`docs-${activeDoc.name}`}>
           <header className="docs-detail__header">
             <GridraBadge tone="muted">{activeDoc.category}</GridraBadge>
@@ -234,14 +273,14 @@ export function ComponentDocsPage() {
           <p className="docs-detail__summary">{activeDoc.summary}</p>
 
           {activeDoc.description ? (
-            <section className="docs-detail__section">
+            <section className="docs-detail__section docs-detail__section--primary">
               <GridraLabel>Overview</GridraLabel>
               <p className="docs-detail__description">{activeDoc.description}</p>
             </section>
           ) : null}
 
           {activeDoc.usage ? (
-            <section className="docs-detail__section">
+            <section className="docs-detail__section docs-detail__section--primary">
               <GridraLabel>Usage</GridraLabel>
               <p className="docs-detail__description">{activeDoc.usage}</p>
             </section>
@@ -257,13 +296,13 @@ export function ComponentDocsPage() {
             </section>
           ) : null}
 
-          <section className="docs-detail__section">
+          <section className="docs-detail__section docs-detail__section--primary">
             <GridraLabel>Preview</GridraLabel>
             <div className="docs-card__preview">{activeDoc.preview}</div>
           </section>
 
           {activeDoc.states && activeDoc.states.length > 0 ? (
-            <section className="docs-detail__section">
+            <section className="docs-detail__section docs-detail__section--primary">
               <GridraLabel>States</GridraLabel>
               <div className="docs-examples">
                 {activeDoc.states.map((state, index) => (
@@ -282,14 +321,14 @@ export function ComponentDocsPage() {
           ) : null}
 
           {activeDoc.props.length > 0 ? (
-            <section className="docs-detail__section">
+            <section className="docs-detail__section docs-detail__section--technical">
               <GridraLabel>Props</GridraLabel>
               <PropsTable props={activeDoc.props} />
             </section>
           ) : null}
 
           {activeDoc.examples.length > 0 ? (
-            <section className="docs-detail__section">
+            <section className="docs-detail__section docs-detail__section--examples">
               <GridraLabel>Examples</GridraLabel>
               <div className="docs-examples">
                 {activeDoc.examples.map((example, index) => (
@@ -308,7 +347,7 @@ export function ComponentDocsPage() {
           ) : null}
 
           {(activeDoc.notes || activeDoc.avoid || activeDoc.options.length > 0 || activeDoc.features.length > 0 || activeDoc.compositions) ? (
-            <section className="docs-detail__section">
+            <section className="docs-detail__section docs-detail__section--secondary">
               <GridraLabel>Notes</GridraLabel>
               {activeDoc.avoid ? (
                 <div className="docs-detail__notes-group">
@@ -355,7 +394,7 @@ export function ComponentDocsPage() {
           ) : null}
 
           {activeDoc.accessibility ? (
-            <section className="docs-detail__section">
+            <section className="docs-detail__section docs-detail__section--primary">
               <GridraLabel>Accessibility</GridraLabel>
               <p className="docs-detail__description">{activeDoc.accessibility}</p>
             </section>

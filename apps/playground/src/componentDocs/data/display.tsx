@@ -1,4 +1,4 @@
-import { GridraAvatar, GridraBadge, GridraDivider, GridraLabel, GridraSpinner } from "@gridra-ui/react";
+import { GridraAvatar, GridraBadge, GridraCluster, GridraDivider, GridraInline, GridraLabel, GridraSpinner, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../types";
 const avatarImageUrl = "https://i.pravatar.cc/96?img=12";
 
@@ -66,14 +66,18 @@ export const displayDocs: ComponentDoc[] = [
       }
     ],
     preview: (
-      <div className="docs-inline-preview">
-        <GridraBadge>Default</GridraBadge>
-        <GridraBadge tone="accent">Accent</GridraBadge>
-        <GridraBadge tone="muted">Muted</GridraBadge>
-        <GridraBadge shape="pill" size="sm" tone="success">Success</GridraBadge>
-        <GridraBadge shape="rounded" tone="warning">Warning</GridraBadge>
-        <GridraBadge tone="danger">Danger</GridraBadge>
-      </div>
+      <GridraStack gap="sm">
+        <GridraInline align="center" gap="sm">
+          <GridraBadge tone="default">Default</GridraBadge>
+          <GridraBadge tone="accent">Accent</GridraBadge>
+          <GridraBadge tone="muted">Muted</GridraBadge>
+        </GridraInline>
+        <GridraInline align="center" gap="sm">
+          <GridraBadge size="sm">Small</GridraBadge>
+          <GridraBadge shape="pill">Pill</GridraBadge>
+          <GridraBadge shape="pill" size="sm">Pill Small</GridraBadge>
+        </GridraInline>
+      </GridraStack>
     )
   },
   {
@@ -122,12 +126,17 @@ export const displayDocs: ComponentDoc[] = [
       }
     ],
     preview: (
-      <div className="docs-inline-preview">
-        <GridraAvatar alt="Demo avatar" fallback="UI" shape="square" size="sm" src={avatarImageUrl} />
-        <GridraAvatar alt="Demo avatar" fallback="UI" shape="rounded" size="md" src={avatarImageUrl} />
-        <GridraAvatar alt="Demo avatar" fallback="UI" monochrome shape="circle" size="lg" src={avatarImageUrl} />
-        <GridraAvatar fallback="UI" shape="circle" size={34} />
-      </div>
+      <GridraStack gap="sm">
+        <GridraInline align="center" gap="sm">
+          <GridraAvatar alt="Demo" shape="square" size="sm" src={avatarImageUrl} />
+          <GridraAvatar alt="Demo" shape="rounded" size="md" src={avatarImageUrl} />
+          <GridraAvatar alt="Demo" shape="circle" size="lg" src={avatarImageUrl} />
+        </GridraInline>
+        <GridraInline align="center" gap="sm">
+          <GridraAvatar alt="Demo" monochrome shape="circle" size="md" src={avatarImageUrl} />
+          <GridraAvatar fallback="FB" shape="square" size="md" />
+        </GridraInline>
+      </GridraStack>
     )
   },
   {

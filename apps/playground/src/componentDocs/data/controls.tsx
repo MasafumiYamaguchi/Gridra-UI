@@ -1,12 +1,15 @@
 import {
   GridraButton,
   GridraCheckbox,
+  GridraCluster,
   GridraField,
   GridraIconButton,
+  GridraInline,
   GridraInput,
   GridraRadio,
   GridraSelect,
   GridraSlider,
+  GridraStack,
   GridraSwitch,
   GridraTextarea,
   GridraToolbar
@@ -89,13 +92,15 @@ export const controlsDocs: ComponentDoc[] = [
       }
     ],
     preview: (
-      <div className="docs-inline-preview">
+      <GridraCluster align="center" gap="sm" rowGap="sm">
+        <GridraButton variant="primary">Primary</GridraButton>
+        <GridraButton variant="default">Default</GridraButton>
+        <GridraButton variant="ghost">Ghost</GridraButton>
+        <GridraButton disabled>Disabled</GridraButton>
         <GridraButton size="sm">Small</GridraButton>
-        <GridraButton>Default</GridraButton>
-        <GridraButton size="lg" variant="primary">Large</GridraButton>
+        <GridraButton size="lg">Large</GridraButton>
         <GridraButton loading>Loading</GridraButton>
-        <GridraButton fullWidth variant="ghost">Full width</GridraButton>
-      </div>
+      </GridraCluster>
     )
   },
   {
@@ -200,14 +205,20 @@ export const controlsDocs: ComponentDoc[] = [
       }
     ],
     preview: (
-      <div className="docs-form-preview">
-        <GridraField hint="1 to 24" hintId="docs-columns-hint" htmlFor="docs-columns" label="Columns" required>
-          <GridraInput id="docs-columns" defaultValue="12" size="sm" />
+      <GridraStack gap="sm">
+        <GridraField hint="Normal hint text" htmlFor="docs-field-normal" label="Normal">
+          <GridraInput id="docs-field-normal" defaultValue="Value" size="sm" />
         </GridraField>
-        <GridraField error="Required" errorId="docs-name-error" htmlFor="docs-name" label="Name">
-          <GridraInput id="docs-name" invalid />
+        <GridraField error="Invalid value" htmlFor="docs-field-invalid" label="Invalid">
+          <GridraInput id="docs-field-invalid" invalid size="sm" />
         </GridraField>
-      </div>
+        <GridraField htmlFor="docs-field-disabled" label="Disabled">
+          <GridraInput id="docs-field-disabled" defaultValue="Read only" disabled size="sm" />
+        </GridraField>
+        <GridraField htmlFor="docs-field-required" label="Required" required>
+          <GridraInput id="docs-field-required" size="sm" />
+        </GridraField>
+      </GridraStack>
     )
   },
   {
@@ -495,6 +506,13 @@ export const controlsDocs: ComponentDoc[] = [
 />`
       }
     ],
-    preview: <GridraSlider aria-label="Opacity" defaultValue="72" max={100} min={0} showValue size="lg" valueFormatter={(value) => `${value}%`} />
+    preview: (
+      <GridraStack gap="sm">
+        <GridraSlider aria-label="Default" defaultValue="50" max={100} min={0} />
+        <GridraSlider aria-label="Small" defaultValue="40" max={100} min={0} size="sm" />
+        <GridraSlider aria-label="Large" defaultValue="60" max={100} min={0} size="lg" />
+        <GridraSlider aria-label="With value" defaultValue="75" max={100} min={0} showValue valueFormatter={(value) => `${value}%`} />
+      </GridraStack>
+    )
   },
 ];

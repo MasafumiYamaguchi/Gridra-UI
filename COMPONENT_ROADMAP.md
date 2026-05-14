@@ -451,25 +451,25 @@ The playground docs should become a component guide that helps users decide when
 
 ### P2: Preview Quality
 
-- [ ] Treat Preview as a comparison surface, not only a render smoke check.
-- [ ] Prioritize richer state previews for `GridraButton`, `GridraBadge`, `GridraAvatar`, `GridraField`, `GridraSlider`, `GridraSelectableGrid`, and `GridraCanvasArea`.
-- [ ] Increase preview space where needed so variant, state, and density differences are visible.
-- [ ] Keep decision-oriented Preview/States content before Props and Examples.
+- [x] Treat Preview as a comparison surface, not only a render smoke check.
+- [x] Prioritize richer state previews for `GridraButton`, `GridraBadge`, `GridraAvatar`, `GridraField`, `GridraSlider`, `GridraSelectableGrid`, and `GridraCanvasArea`.
+- [x] Increase preview space where needed so variant, state, and density differences are visible.
+- [x] Keep decision-oriented Preview/States content before Props and Examples.
 
 ### P3: Mobile Docs UX
 
-- [ ] Avoid showing the full component list before the detail content on narrow screens.
-- [ ] Group category, search, and selected component controls near the top on mobile.
-- [ ] Collapse the component list or replace it with a compact selector/listbox pattern below 760px.
-- [ ] Reduce the distance from page top to the active component detail on mobile.
+- [x] Avoid showing the full component list before the detail content on narrow screens.
+- [x] Group category, search, and selected component controls near the top on mobile.
+- [x] Collapse the component list or replace it with a compact selector/listbox pattern below 760px.
+- [x] Reduce the distance from page top to the active component detail on mobile.
 
 ### P4: Visual Hierarchy
 
 - [x] Dogfood Gridra UI components in the docs UI itself (search input, copy button, headers, example headers).
-- [ ] Differentiate section weight for Overview, Preview, Props, Examples, Accessibility, and Notes.
-- [ ] Make lower-priority technical blocks such as Import visually quieter.
-- [ ] Reduce repeated high-contrast borders where they make all sections feel equally important.
-- [ ] Make Preview, Usage, and Accessibility the strongest reading anchors.
+- [x] Differentiate section weight for Overview, Preview, Props, Examples, Accessibility, and Notes.
+- [x] Make lower-priority technical blocks such as Import visually quieter.
+- [x] Reduce repeated high-contrast borders where they make all sections feel equally important.
+- [x] Make Preview, Usage, and Accessibility the strongest reading anchors.
 
 Acceptance checks:
 
