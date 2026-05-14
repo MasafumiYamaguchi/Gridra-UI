@@ -40,6 +40,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraSwitch`
 - [x] `GridraTextarea`
 - [x] `GridraBox`
+- [x] `GridraCluster`
 - [x] `GridraInline`
 - [x] `GridraStack`
 
@@ -88,7 +89,7 @@ Layout components should support dense application surfaces rather than marketin
 - [x] Box
 - [x] Stack
 - [x] Inline
-- [ ] Cluster
+- [x] Cluster
 - [ ] Grid Layout
 - [ ] Container
 - [ ] Split Pane

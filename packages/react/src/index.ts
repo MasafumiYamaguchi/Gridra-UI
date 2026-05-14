@@ -4,6 +4,7 @@ export * from "./components/GridraBox";
 export * from "./components/GridraButton";
 export * from "./components/GridraCanvasArea";
 export * from "./components/GridraCheckbox";
+export * from "./components/GridraCluster";
 export * from "./components/GridraConnectionHandle";
 export * from "./components/GridraDragHandle";
 export * from "./components/GridraDivider";
