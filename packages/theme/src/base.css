@@ -1258,6 +1258,111 @@
   gap: var(--gridra-space-sm);
 }
 
+.gridra-grid-layout {
+  min-width: 0;
+  min-height: 0;
+}
+
+.gridra-grid-layout--columns-auto {
+  grid-template-columns: repeat(auto-fit, minmax(var(--gridra-grid-layout-min-column-width, 160px), 1fr));
+}
+
+.gridra-grid-layout--columns-fixed {
+  grid-template-columns: repeat(var(--gridra-grid-layout-columns, 1), minmax(0, 1fr));
+}
+
+.gridra-grid-layout--gap-none {
+  gap: 0;
+}
+
+.gridra-grid-layout--gap-xs {
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-grid-layout--gap-sm {
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-grid-layout--gap-md {
+  gap: var(--gridra-space-md);
+}
+
+.gridra-grid-layout--gap-lg {
+  gap: var(--gridra-space-lg);
+}
+
+.gridra-grid-layout--column-gap-none {
+  column-gap: 0;
+}
+
+.gridra-grid-layout--column-gap-xs {
+  column-gap: var(--gridra-space-xs);
+}
+
+.gridra-grid-layout--column-gap-sm {
+  column-gap: var(--gridra-space-sm);
+}
+
+.gridra-grid-layout--column-gap-md {
+  column-gap: var(--gridra-space-md);
+}
+
+.gridra-grid-layout--column-gap-lg {
+  column-gap: var(--gridra-space-lg);
+}
+
+.gridra-grid-layout--row-gap-none {
+  row-gap: 0;
+}
+
+.gridra-grid-layout--row-gap-xs {
+  row-gap: var(--gridra-space-xs);
+}
+
+.gridra-grid-layout--row-gap-sm {
+  row-gap: var(--gridra-space-sm);
+}
+
+.gridra-grid-layout--row-gap-md {
+  row-gap: var(--gridra-space-md);
+}
+
+.gridra-grid-layout--row-gap-lg {
+  row-gap: var(--gridra-space-lg);
+}
+
+.gridra-grid-layout--align-start {
+  align-items: start;
+}
+
+.gridra-grid-layout--align-center {
+  align-items: center;
+}
+
+.gridra-grid-layout--align-end {
+  align-items: end;
+}
+
+.gridra-grid-layout--align-stretch {
+  align-items: stretch;
+}
+
+.gridra-grid-layout--justify-start {
+  justify-items: start;
+}
+
+.gridra-grid-layout--justify-center {
+  justify-items: center;
+}
+
+.gridra-grid-layout--justify-end {
+  justify-items: end;
+}
+
+.gridra-grid-layout--justify-stretch {
+  justify-items: stretch;
+}
+
 .gridra-grid__item {
   min-width: 0;
   border: 1px solid var(--gridra-color-border);
