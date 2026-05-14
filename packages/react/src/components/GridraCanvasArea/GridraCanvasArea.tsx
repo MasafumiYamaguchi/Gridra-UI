@@ -8,6 +8,7 @@ import type {
 import { useMemo, useRef, useState } from "react";
 import type { GridraId, GridraPoint, GridraRect } from "@gridra-ui/core";
 import { GridraConnectionHandle } from "../GridraConnectionHandle";
+import type { GridraConnectionHandleKind } from "../GridraConnectionHandle";
 import { GridraDragHandle } from "../GridraDragHandle";
 import { GridraNode } from "../GridraNode";
 import { GridraResizeHandle } from "../GridraResizeHandle";
@@ -165,6 +166,7 @@ export function GridraCanvasArea<
   const startNodeConnection = (
     event: PointerEvent<HTMLSpanElement>,
     node: TNode,
+    originKind: GridraConnectionHandleKind,
   ) => {
     if (
       !enableNodeConnecting ||
@@ -174,6 +176,7 @@ export function GridraCanvasArea<
     }
 
     nodeConnectionStateRef.current = {
+      originKind,
       pointerId: event.pointerId,
       sourceId: node.id,
     };
@@ -201,13 +204,21 @@ export function GridraCanvasArea<
         ? event.target.closest<HTMLElement>("[data-gridra-connection-node-id]")
         : null;
     const targetId = handle?.dataset.gridraConnectionNodeId;
+    const targetKind = handle?.dataset.gridraConnectionKind as
+      | GridraConnectionHandleKind
+      | undefined;
 
-    if (targetId && targetId !== connectionState.sourceId) {
-      const nextConnection = {
-        sourceId: connectionState.sourceId,
-        targetId,
-      };
+    const nextConnection =
+      targetId && targetKind
+        ? createNodeConnection(
+            connectionState.sourceId,
+            connectionState.originKind,
+            targetId,
+            targetKind,
+          )
+        : null;
 
+    if (nextConnection) {
       if (!hasConnection(currentNodeConnections, nextConnection)) {
         setNodeConnections([...currentNodeConnections, nextConnection]);
         onNodeConnect?.(nextConnection);
@@ -647,25 +658,38 @@ export function GridraCanvasArea<
         const resizing = resizingNodeId === node.id;
         const connectionHandleProps = {
           input: {
-            "data-gridra-connection-node-id": node.id,
-          },
-          output: {
+            "data-gridra-connection-kind": "input" as const,
             "data-gridra-connection-node-id": node.id,
             onPointerDown: (event: PointerEvent<HTMLSpanElement>) =>
-              startNodeConnection(event, renderableNode),
+              startNodeConnection(event, renderableNode, "input"),
+          },
+          output: {
+            "data-gridra-connection-kind": "output" as const,
+            "data-gridra-connection-node-id": node.id,
+            onPointerDown: (event: PointerEvent<HTMLSpanElement>) =>
+              startNodeConnection(event, renderableNode, "output"),
           },
         };
         const connectionHandles = enableNodeConnecting ? (
           <>
             <GridraConnectionHandle
               {...connectionHandleProps.input}
-              active={connectingNodeId !== null && !connecting}
+              active={
+                nodeConnectionStateRef.current?.originKind === "output" &&
+                connectingNodeId !== null &&
+                !connecting
+              }
               kind="input"
               position="left"
             />
             <GridraConnectionHandle
               {...connectionHandleProps.output}
-              active={connecting}
+              active={
+                connecting ||
+                (nodeConnectionStateRef.current?.originKind === "input" &&
+                  connectingNodeId !== null &&
+                  !connecting)
+              }
               kind="output"
               position="right"
             />
@@ -764,6 +788,29 @@ function createNodeDragSnapGuides(
       end: horizontalStart + metrics.columnStep * gridColumns,
     },
   ];
+}
+
+function createNodeConnection(
+  originId: GridraId,
+  originKind: GridraConnectionHandleKind,
+  targetId: GridraId,
+  targetKind: GridraConnectionHandleKind,
+): GridraNodeConnection | null {
+  if (originId === targetId || originKind === targetKind) {
+    return null;
+  }
+
+  if (originKind === "output" && targetKind === "input") {
+    return {
+      sourceId: originId,
+      targetId,
+    };
+  }
+
+  return {
+    sourceId: targetId,
+    targetId: originId,
+  };
 }
 
 function getSelectionMode(

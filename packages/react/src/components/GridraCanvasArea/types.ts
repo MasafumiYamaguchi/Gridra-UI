@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import type { GridraId, GridraPoint } from "@gridra-ui/core";
 import type { GridraNodePlacement } from "../GridraNode";
+import type { GridraConnectionHandleKind } from "../GridraConnectionHandle";
 import type { GridraSnapGuideOrientation } from "../GridraSnapGuide";
 
 export interface GridraCanvasNode {
@@ -13,6 +14,7 @@ export type GridraNodePlacements = Record<string, GridraNodePlacement>;
 
 export interface GridraConnectionHandleAttributes
   extends HTMLAttributes<HTMLSpanElement> {
+  "data-gridra-connection-kind": GridraConnectionHandleKind;
   "data-gridra-connection-node-id": GridraId;
 }
 
@@ -118,6 +120,7 @@ export interface NodeResizeState {
 }
 
 export interface NodeConnectionState {
+  originKind: GridraConnectionHandleKind;
   pointerId: number;
   sourceId: GridraId;
 }

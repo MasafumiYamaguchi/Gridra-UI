@@ -1,5 +1,14 @@
-import { useEffect, useState } from "react";
-import { GridraBadge, GridraButton, GridraLabel } from "@gridra-ui/react";
+import { useEffect, useRef, useState } from "react";
+import {
+  GridraBadge,
+  GridraButton,
+  GridraField,
+  GridraInline,
+  GridraInlineItem,
+  GridraInput,
+  GridraLabel,
+  GridraStack
+} from "@gridra-ui/react";
 import { componentDocs } from "./data";
 import { highlightDocsCode } from "./highlight";
 import type { DocsCodeLanguage, PropDoc } from "./types";
@@ -8,19 +17,18 @@ function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
 
   return (
-    <button
-      className="docs-copy-button"
+    <GridraButton
       onClick={() => {
         navigator.clipboard.writeText(text).then(() => {
           setCopied(true);
           setTimeout(() => setCopied(false), 1500);
         });
       }}
-      type="button"
-      title="Copy to clipboard"
+      size="sm"
+      variant="ghost"
     >
       {copied ? "Copied" : "Copy"}
-    </button>
+    </GridraButton>
   );
 }
 
@@ -109,7 +117,9 @@ function PropsTable({ props }: { props: PropDoc[] }) {
 }
 
 export function ComponentDocsPage() {
+  const detailRef = useRef<HTMLElement>(null);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [activeDocName, setActiveDocName] = useState(() => {
     const hashName = window.location.hash.replace("#docs-", "");
     return componentDocs.some((doc) => doc.name === hashName)
@@ -117,37 +127,59 @@ export function ComponentDocsPage() {
       : componentDocs[0]?.name;
   });
   const categories = ["All", ...Array.from(new Set(componentDocs.map((doc) => doc.category)))];
+
+  const filteredDocs = componentDocs.filter((doc) =>
+    doc.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+  );
   const visibleDocs =
     activeCategory === "All"
-      ? componentDocs
-      : componentDocs.filter((doc) => doc.category === activeCategory);
+      ? filteredDocs
+      : filteredDocs.filter((doc) => doc.category === activeCategory);
   const activeDoc =
     visibleDocs.find((doc) => doc.name === activeDocName) ?? visibleDocs[0] ?? componentDocs[0];
+
+  function resetDetailScroll() {
+    if (detailRef.current) {
+      detailRef.current.scrollTop = 0;
+    }
+  }
 
   function selectCategory(category: string) {
     const nextDocs =
       category === "All"
-        ? componentDocs
-        : componentDocs.filter((doc) => doc.category === category);
+        ? filteredDocs
+        : filteredDocs.filter((doc) => doc.category === category);
 
     setActiveCategory(category);
     setActiveDocName(nextDocs[0]?.name);
+    resetDetailScroll();
   }
 
   function selectDoc(name: string) {
     setActiveDocName(name);
     window.history.replaceState(null, "", `#docs-${name}`);
+    resetDetailScroll();
   }
+
+  useEffect(() => {
+    resetDetailScroll();
+  }, [activeDocName]);
 
   return (
     <section className="gridra-root gridra-theme-dark docs-page">
-      <header className="docs-page__header">
+      <GridraStack
+        align="center"
+        as="header"
+        className="docs-page__header"
+        direction="horizontal"
+        justify="between"
+      >
         <div>
           <GridraLabel>Documentation</GridraLabel>
           <h1 className="docs-page__title">Gridra UI Components</h1>
         </div>
         <GridraBadge tone="accent">{componentDocs.length} components</GridraBadge>
-      </header>
+      </GridraStack>
       <div className="docs-page__filters" aria-label="Component categories">
         {categories.map((category) => (
           <GridraButton
@@ -161,38 +193,62 @@ export function ComponentDocsPage() {
         ))}
       </div>
       <div className="docs-page__layout">
-        <nav className="docs-page__nav" aria-label="Component documentation">
-          {visibleDocs.map((doc) => (
-            <button
-              className="docs-page__nav-item"
-              key={doc.name}
-              onClick={() => selectDoc(doc.name)}
-              type="button"
-              aria-current={doc.name === activeDoc.name ? "page" : undefined}
-            >
-              <span>{doc.name}</span>
-              <GridraBadge tone="muted">{doc.category}</GridraBadge>
-            </button>
-          ))}
-        </nav>
-        <article className="docs-detail" id={`docs-${activeDoc.name}`}>
+        <div className="docs-page__sidebar">
+          <GridraField className="docs-page__search" label="Search">
+            <GridraInput
+              aria-label="Search components"
+              onChange={(event) => {
+                setSearchQuery(event.target.value);
+              }}
+              placeholder="Search components..."
+              type="search"
+              value={searchQuery}
+            />
+          </GridraField>
+          <nav className="docs-page__nav" aria-label="Component documentation">
+            {visibleDocs.length === 0 ? (
+              <div className="docs-page__nav-empty">
+                <GridraBadge tone="muted">No matches</GridraBadge>
+              </div>
+            ) : (
+              visibleDocs.map((doc) => (
+                <button
+                  className="docs-page__nav-item"
+                  key={doc.name}
+                  onClick={() => selectDoc(doc.name)}
+                  type="button"
+                  aria-current={doc.name === activeDoc.name ? "page" : undefined}
+                >
+                  <span>{doc.name}</span>
+                  <GridraBadge tone="muted">{doc.category}</GridraBadge>
+                </button>
+              ))
+            )}
+          </nav>
+        </div>
+        <article ref={detailRef} className="docs-detail" id={`docs-${activeDoc.name}`}>
           <header className="docs-detail__header">
-            <div>
-              <GridraBadge tone="muted">{activeDoc.category}</GridraBadge>
-              <h2 className="docs-detail__title">{activeDoc.name}</h2>
-            </div>
+            <GridraBadge tone="muted">{activeDoc.category}</GridraBadge>
+            <h2 className="docs-detail__title">{activeDoc.name}</h2>
           </header>
           <p className="docs-detail__summary">{activeDoc.summary}</p>
 
           {activeDoc.description ? (
             <section className="docs-detail__section">
-              <GridraLabel>Description</GridraLabel>
+              <GridraLabel>Overview</GridraLabel>
               <p className="docs-detail__description">{activeDoc.description}</p>
             </section>
           ) : null}
 
-          {activeDoc.importExample ? (
+          {activeDoc.usage ? (
             <section className="docs-detail__section">
+              <GridraLabel>Usage</GridraLabel>
+              <p className="docs-detail__description">{activeDoc.usage}</p>
+            </section>
+          ) : null}
+
+          {activeDoc.importExample ? (
+            <section className="docs-detail__section docs-detail__section--quiet">
               <GridraLabel>Import</GridraLabel>
               <div className="docs-import-block">
                 <code className="docs-import-block__code">{activeDoc.importExample}</code>
@@ -205,6 +261,25 @@ export function ComponentDocsPage() {
             <GridraLabel>Preview</GridraLabel>
             <div className="docs-card__preview">{activeDoc.preview}</div>
           </section>
+
+          {activeDoc.states && activeDoc.states.length > 0 ? (
+            <section className="docs-detail__section">
+              <GridraLabel>States</GridraLabel>
+              <div className="docs-examples">
+                {activeDoc.states.map((state, index) => (
+                  <div className="docs-example" key={index}>
+                    <GridraInline align="baseline" className="docs-example__header" gap="sm">
+                      <span className="docs-example__title">{state.title}</span>
+                      {state.description ? (
+                        <span className="docs-example__description">{state.description}</span>
+                      ) : null}
+                    </GridraInline>
+                    <CodeBlock code={state.code} language={state.language} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           {activeDoc.props.length > 0 ? (
             <section className="docs-detail__section">
@@ -219,12 +294,12 @@ export function ComponentDocsPage() {
               <div className="docs-examples">
                 {activeDoc.examples.map((example, index) => (
                   <div className="docs-example" key={index}>
-                    <div className="docs-example__header">
+                    <GridraInline align="baseline" className="docs-example__header" gap="sm">
                       <span className="docs-example__title">{example.title}</span>
                       {example.description ? (
                         <span className="docs-example__description">{example.description}</span>
                       ) : null}
-                    </div>
+                    </GridraInline>
                     <CodeBlock code={example.code} language={example.language} />
                   </div>
                 ))}
@@ -232,24 +307,59 @@ export function ComponentDocsPage() {
             </section>
           ) : null}
 
-          <div className="docs-detail__meta">
+          {(activeDoc.notes || activeDoc.avoid || activeDoc.options.length > 0 || activeDoc.features.length > 0 || activeDoc.compositions) ? (
             <section className="docs-detail__section">
-              <GridraLabel>Options</GridraLabel>
-              <ul className="docs-card__list">
-                {activeDoc.options.map((option) => (
-                  <li key={option}>{option}</li>
-                ))}
-              </ul>
+              <GridraLabel>Notes</GridraLabel>
+              {activeDoc.avoid ? (
+                <div className="docs-detail__notes-group">
+                  <p className="docs-detail__notes-label">Avoid</p>
+                  <p className="docs-detail__description">{activeDoc.avoid}</p>
+                </div>
+              ) : null}
+              {activeDoc.compositions && activeDoc.compositions.length > 0 ? (
+                <div className="docs-detail__notes-group">
+                  <p className="docs-detail__notes-label">Compositions</p>
+                  <ul className="docs-card__list">
+                    {activeDoc.compositions.map((comp) => (
+                      <li key={comp}>{comp}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {activeDoc.features.length > 0 ? (
+                <div className="docs-detail__notes-group">
+                  <p className="docs-detail__notes-label">Features</p>
+                  <ul className="docs-card__list">
+                    {activeDoc.features.map((feature) => (
+                      <li key={feature}>{feature}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {activeDoc.options.length > 0 ? (
+                <div className="docs-detail__notes-group">
+                  <p className="docs-detail__notes-label">Design choices</p>
+                  <ul className="docs-card__list">
+                    {activeDoc.options.map((option) => (
+                      <li key={option}>{option}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {activeDoc.notes ? (
+                <div className="docs-detail__notes-group">
+                  <p className="docs-detail__description">{activeDoc.notes}</p>
+                </div>
+              ) : null}
             </section>
+          ) : null}
+
+          {activeDoc.accessibility ? (
             <section className="docs-detail__section">
-              <GridraLabel>Features</GridraLabel>
-              <ul className="docs-card__list">
-                {activeDoc.features.map((feature) => (
-                  <li key={feature}>{feature}</li>
-                ))}
-              </ul>
+              <GridraLabel>Accessibility</GridraLabel>
+              <p className="docs-detail__description">{activeDoc.accessibility}</p>
             </section>
-          </div>
+          ) : null}
         </article>
       </div>
     </section>

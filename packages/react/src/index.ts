@@ -12,6 +12,7 @@ export * from "./components/GridraDragHandle";
 export * from "./components/GridraDivider";
 export * from "./components/GridraField";
 export * from "./components/GridraIconButton";
+export * from "./components/GridraSelectableGrid";
 export * from "./components/GridraInline";
 export * from "./components/GridraInput";
 export * from "./components/GridraLabel";

@@ -18,14 +18,20 @@ export interface CodeExample {
 export type DocsCodeLanguage = "tsx" | "ts" | "css" | "bash";
 
 export interface ComponentDoc {
+  accessibility?: string;
+  avoid?: string;
   category: string;
+  compositions?: string[];
   description: string;
   examples: CodeExample[];
   features: string[];
   importExample: string;
   name: string;
+  notes?: string;
   options: string[];
   preview: ReactNode;
   props: PropDoc[];
+  states?: CodeExample[];
   summary: string;
+  usage?: string;
 }

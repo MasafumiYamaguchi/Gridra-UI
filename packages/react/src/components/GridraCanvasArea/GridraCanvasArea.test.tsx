@@ -613,6 +613,46 @@ describe("GridraCanvasArea", () => {
     expect(connections).toEqual([{ sourceId: "input", targetId: "output" }]);
   });
 
+  it("connects an input handle to another node output handle by normalizing direction", () => {
+    const connections: Array<{ sourceId: string; targetId: string }> = [];
+    const { container } = render(
+      <GridraCanvasArea
+        enableNodeConnecting
+        nodes={[
+          {
+            id: "input",
+            placement: { column: 1, row: 1 }
+          },
+          {
+            id: "output",
+            placement: { column: 2, row: 1 }
+          }
+        ]}
+        onNodeConnect={(connection) => connections.push(connection)}
+      />
+    );
+    const outputInputHandle = container.querySelector(
+      '[data-gridra-connection-node-id="output"].gridra-connection-handle--input'
+    ) as HTMLElement;
+    const inputOutputHandle = container.querySelector(
+      '[data-gridra-connection-node-id="input"].gridra-connection-handle--output'
+    ) as HTMLElement;
+
+    firePointerEvent(outputInputHandle, "pointerdown", {
+      button: 0,
+      clientX: 80,
+      clientY: 10,
+      pointerId: 15
+    });
+    firePointerEvent(inputOutputHandle, "pointerup", {
+      clientX: 10,
+      clientY: 10,
+      pointerId: 15
+    });
+
+    expect(connections).toEqual([{ sourceId: "input", targetId: "output" }]);
+  });
+
   it("renders configured node connections as SVG paths", () => {
     const { container } = render(
       <GridraCanvasArea
