@@ -8,8 +8,8 @@ import {
   GridraCheckbox,
   GridraDivider,
   GridraField,
-  GridraGrid,
   GridraIconButton,
+  GridraSelectableGrid,
   GridraInput,
   GridraLabel,
   GridraNode,
@@ -137,7 +137,7 @@ function Playground() {
             </GridraField>
           </div>
           <GridraDivider />
-          <GridraGrid
+          <GridraSelectableGrid
             columns={1}
             items={items}
             onSelectionChange={(nextSelectedId) => {

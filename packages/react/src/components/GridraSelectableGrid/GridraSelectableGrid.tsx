@@ -2,12 +2,11 @@ import type { ReactNode } from "react";
 import type { GridraId, GridraSelectableItem } from "@gridra-ui/core";
 import { useControllableValue } from "../../hooks/useControllableValue";
 
-export interface GridraGridItem extends GridraSelectableItem {
+export interface GridraSelectableGridItem extends GridraSelectableItem {
   label?: ReactNode;
 }
 
-// グリッドののコンポーネントに必要なプロパティを定義するインターフェース
-export interface GridraGridProps<TItem extends GridraGridItem = GridraGridItem> {
+export interface GridraSelectableGridProps<TItem extends GridraSelectableGridItem = GridraSelectableGridItem> {
   items: TItem[];
   selectedId?: GridraId | null;
   defaultSelectedId?: GridraId | null;
@@ -18,7 +17,7 @@ export interface GridraGridProps<TItem extends GridraGridItem = GridraGridItem> 
   renderItem?: (item: TItem, state: { selected: boolean }) => ReactNode;
 }
 
-export function GridraGrid<TItem extends GridraGridItem = GridraGridItem>({
+export function GridraSelectableGrid<TItem extends GridraSelectableGridItem = GridraSelectableGridItem>({
   className,
   columns = "repeat(auto-fill, minmax(160px, 1fr))",
   defaultSelectedId = null,
@@ -27,16 +26,15 @@ export function GridraGrid<TItem extends GridraGridItem = GridraGridItem>({
   onSelectionChange,
   renderItem,
   selectedId
-}: GridraGridProps<TItem>) {
+}: GridraSelectableGridProps<TItem>) {
   const [currentSelectedId, setSelectedId] = useControllableValue(
     selectedId,
     defaultSelectedId,
     onSelectionChange
   );
-  const gridTemplateColumns = typeof columns === "number" ? `repeat(${columns}, minmax(0, 1fr))` : columns;// クラス名を結合して、必要なクラスを適用する
-  const gridClassName = ["gridra-grid", className].filter(Boolean).join(" ");// gridのClssnameにくっつけて定義する
+  const gridTemplateColumns = typeof columns === "number" ? `repeat(${columns}, minmax(0, 1fr))` : columns;
+  const gridClassName = ["gridra-grid", className].filter(Boolean).join(" ");
 
-  // アイテムが空の場合は、emptyStateを表示する
   if (items.length === 0) {
     return (
       <div className={gridClassName} style={{ gridTemplateColumns }}>

@@ -15,7 +15,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 
 - [x] `GridraRoot`
 - [x] `GridraCanvasArea`
-- [x] `GridraGrid`
+- [x] `GridraSelectableGrid` (`GridraGrid` is a compatibility alias)
 - [x] `GridraPanel`
 - [x] `GridraNode`
 - [x] `GridraSelectionBox`
@@ -409,6 +409,24 @@ pointer event
   -> render handles/guides/selection
   -> emit stable callback
 ```
+
+## Grid Naming Contract
+
+To avoid confusion between the three grid-related surfaces:
+
+- `GridraGridLayout`
+  - CSS grid layout primitive
+  - Renders children in a CSS grid container
+  - No selection state, no item rendering API
+- `GridraSelectableGrid`
+  - Selectable item collection
+  - Renders `items` as buttons with `aria-selected` support
+  - Manages controlled/uncontrolled selection state
+  - `GridraGrid` is a compatibility alias for this component
+- `GridraCanvasArea`
+  - Spatial editing canvas
+  - Handles node placement, range selection, drag, resize, and connections
+  - Not a general-purpose grid layout component
 
 ## Debug And Research Keywords
 

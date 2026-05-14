@@ -2,11 +2,11 @@ import {
   GridraBadge,
   GridraConnectionHandle,
   GridraDragHandle,
-  GridraGrid,
   GridraLabel,
   GridraNode,
   GridraPanel,
   GridraResizeHandle,
+  GridraSelectableGrid,
   GridraSelectionBox,
   GridraSnapGuides
 } from "@gridra-ui/react";
@@ -126,11 +126,11 @@ export const coreDocs: ComponentDoc[] = [
   },
   {
     category: "Core",
-    name: "GridraGrid",
+    name: "GridraSelectableGrid",
     summary: "Compact selectable item grid for dense lists and panel navigation.",
     description:
-      "GridraGrid renders a dense grid of selectable items. Each item is rendered as a button with aria-selected support. It supports controlled and uncontrolled selection, custom item rendering, and an empty state.",
-    importExample: 'import { GridraGrid } from "@gridra-ui/react";',
+      "GridraSelectableGrid renders a dense grid of selectable items. Each item is rendered as a button with aria-selected support. It supports controlled and uncontrolled selection, custom item rendering, and an empty state. GridraGrid is a compatibility alias for this component.",
+    importExample: 'import { GridraSelectableGrid } from "@gridra-ui/react";',
     props: [
       { name: "items", type: "TItem[]", required: true, description: "Array of grid items with id and optional label." },
       { name: "columns", type: "number | string", default: "auto-fill", description: "Number of columns or CSS grid-template-columns value." },
@@ -142,11 +142,11 @@ export const coreDocs: ComponentDoc[] = [
       { name: "className", type: "string", description: "Additional CSS classes." }
     ],
     options: ["items", "columns", "selectedId", "onSelectionChange", "emptyLabel", "HTML div attributes"],
-    features: ["Renders items as selectable buttons.", "Marks the selected item with aria-selected."],
+    features: ["Renders items as selectable buttons.", "Marks the selected item with aria-selected.", "GridraGrid is a compatibility alias."],
     examples: [
       {
         title: "Selectable grid",
-        code: `<GridraGrid
+        code: `<GridraSelectableGrid
   columns={2}
   items={[
     { id: "a", label: "Input" },
@@ -157,7 +157,7 @@ export const coreDocs: ComponentDoc[] = [
       }
     ],
     preview: (
-      <GridraGrid
+      <GridraSelectableGrid
         columns={2}
         items={[
           { id: "a", label: "Input" },
