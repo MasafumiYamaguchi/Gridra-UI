@@ -210,8 +210,8 @@ export function GridraCanvasArea<
 
       if (!hasConnection(currentNodeConnections, nextConnection)) {
         setNodeConnections([...currentNodeConnections, nextConnection]);
+        onNodeConnect?.(nextConnection);
       }
-      onNodeConnect?.(nextConnection);
     } else {
       onNodeConnectionCancel?.(connectionState.sourceId);
     }

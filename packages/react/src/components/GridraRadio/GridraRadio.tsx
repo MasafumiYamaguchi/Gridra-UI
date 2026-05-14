@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode } from "react";
+import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 
 export type GridraRadioSize = "sm" | "md" | "lg";
 
@@ -19,6 +19,9 @@ export function GridraRadio({
   size = "md",
   ...props
 }: GridraRadioProps) {
+  const generatedId = useId();
+  const controlId = props.id ?? generatedId;
+  const descriptionId = description ? `${controlId}-description` : undefined;
   const radioClassName = [
     "gridra-radio",
     `gridra-radio--${size}`,
@@ -32,8 +35,10 @@ export function GridraRadio({
   return (
     <label className={radioClassName}>
       <input
+        aria-describedby={descriptionId}
         aria-invalid={resolvedAriaInvalid}
         className="gridra-radio__input"
+        id={controlId}
         type="radio"
         {...props}
       />
@@ -41,7 +46,11 @@ export function GridraRadio({
       {label || description ? (
         <span className="gridra-radio__content">
           {label ? <span className="gridra-radio__label">{label}</span> : null}
-          {description ? <span className="gridra-radio__description">{description}</span> : null}
+          {description ? (
+            <span id={descriptionId} className="gridra-radio__description" aria-hidden="true">
+              {description}
+            </span>
+          ) : null}
         </span>
       ) : null}
     </label>

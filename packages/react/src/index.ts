@@ -10,6 +10,7 @@ export * from "./components/GridraDivider";
 export * from "./components/GridraField";
 export * from "./components/GridraGrid";
 export * from "./components/GridraIconButton";
+export * from "./components/GridraInline";
 export * from "./components/GridraInput";
 export * from "./components/GridraLabel";
 export * from "./components/GridraNode";

@@ -38,7 +38,11 @@ export function GridraGrid<TItem extends GridraGridItem = GridraGridItem>({
 
   // アイテムが空の場合は、emptyStateを表示する
   if (items.length === 0) {
-    return <div className="gridra-grid__empty">{emptyState}</div>;
+    return (
+      <div className={gridClassName} style={{ gridTemplateColumns }}>
+        <div className="gridra-grid__empty">{emptyState}</div>
+      </div>
+    );
   }
 
   return (

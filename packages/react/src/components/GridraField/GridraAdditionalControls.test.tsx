@@ -64,16 +64,20 @@ describe("additional Gridra form controls", () => {
         <GridraRadio description="Dense controls" invalid label="Compact" name="density" size="sm" />
       </>
     );
-    const checkbox = screen.getByRole("checkbox", { name: "Snap Aligns to grid" });
-    const radio = screen.getByRole("radio", { name: "Compact Dense controls" });
+    const checkbox = screen.getByRole("checkbox", { name: "Snap" });
+    const radio = screen.getByRole("radio", { name: "Compact" });
+    const checkboxDescription = screen.getByText("Aligns to grid");
+    const radioDescription = screen.getByText("Dense controls");
 
     expect(checkbox.getAttribute("aria-invalid")).toBe("true");
+    expect(checkbox.getAttribute("aria-describedby")).toBe(checkboxDescription.id);
     expect(checkbox.closest(".gridra-checkbox")?.className).toContain("gridra-checkbox--lg");
     expect(checkbox.closest(".gridra-checkbox")?.className).toContain("gridra-checkbox--invalid");
     expect(radio.getAttribute("aria-invalid")).toBe("true");
+    expect(radio.getAttribute("aria-describedby")).toBe(radioDescription.id);
     expect(radio.closest(".gridra-radio")?.className).toContain("gridra-radio--sm");
-    expect(screen.getByText("Aligns to grid").className).toContain("gridra-checkbox__description");
-    expect(screen.getByText("Dense controls").className).toContain("gridra-radio__description");
+    expect(checkboxDescription.className).toContain("gridra-checkbox__description");
+    expect(radioDescription.className).toContain("gridra-radio__description");
   });
 
   it("reports switch and slider interaction", () => {

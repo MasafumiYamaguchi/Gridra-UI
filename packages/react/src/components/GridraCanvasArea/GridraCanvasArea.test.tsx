@@ -996,6 +996,47 @@ describe("GridraCanvasArea", () => {
     expect(connections).toEqual([]);
     expect(canceledIds).toEqual(["input"]);
   });
+
+  it("does not fire onNodeConnect for an already-existing connection", () => {
+    const connections: Array<{ sourceId: string; targetId: string }> = [];
+    const { container } = render(
+      <GridraCanvasArea
+        defaultNodeConnections={[{ sourceId: "input", targetId: "output" }]}
+        enableNodeConnecting
+        nodes={[
+          {
+            id: "input",
+            placement: { column: 1, row: 1 }
+          },
+          {
+            id: "output",
+            placement: { column: 2, row: 1 }
+          }
+        ]}
+        onNodeConnect={(connection) => connections.push(connection)}
+      />
+    );
+    const inputOutputHandle = container.querySelector(
+      '[data-gridra-connection-node-id="input"].gridra-connection-handle--output'
+    ) as HTMLElement;
+    const outputInputHandle = container.querySelector(
+      '[data-gridra-connection-node-id="output"].gridra-connection-handle--input'
+    ) as HTMLElement;
+
+    firePointerEvent(inputOutputHandle, "pointerdown", {
+      button: 0,
+      clientX: 10,
+      clientY: 10,
+      pointerId: 17
+    });
+    firePointerEvent(outputInputHandle, "pointerup", {
+      clientX: 80,
+      clientY: 10,
+      pointerId: 17
+    });
+
+    expect(connections).toEqual([]);
+  });
 });
 
 function setCanvasGeometry(

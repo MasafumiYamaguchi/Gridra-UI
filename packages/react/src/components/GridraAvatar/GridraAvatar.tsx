@@ -36,13 +36,20 @@ export function GridraAvatar({
     ...style,
     ...getCustomSizeStyle(size)
   } as CSSProperties;
+  const fallbackAccessibleName = !src ? (alt || fallback || undefined) : undefined;
 
   return (
-    <span className={avatarClassName} style={avatarStyle} {...props}>
+    <span
+      className={avatarClassName}
+      style={avatarStyle}
+      role={fallbackAccessibleName ? "img" : undefined}
+      aria-label={fallbackAccessibleName}
+      {...props}
+    >
       {src ? (
         <img alt={alt} className="gridra-avatar__image" src={src} />
       ) : (
-        <span className="gridra-avatar__fallback" aria-hidden={alt ? undefined : true}>
+        <span className="gridra-avatar__fallback" aria-hidden="true">
           {fallback ?? alt.slice(0, 2)}
         </span>
       )}

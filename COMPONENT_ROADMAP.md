@@ -40,6 +40,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraSwitch`
 - [x] `GridraTextarea`
 - [x] `GridraBox`
+- [x] `GridraInline`
 - [x] `GridraStack`
 
 ## Priority 1: Gridra Core
@@ -86,7 +87,7 @@ Layout components should support dense application surfaces rather than marketin
 
 - [x] Box
 - [x] Stack
-- [ ] Inline
+- [x] Inline
 - [ ] Cluster
 - [ ] Grid Layout
 - [ ] Container
@@ -348,6 +349,47 @@ snap candidate from interaction logic
   -> GridraSnapGuide
   -> visual alignment line
 ```
+
+### GridraInline
+
+Current status: implemented and reviewed. No blocking defect identified in the current exported surface.
+
+Implemented:
+
+- Horizontal-only inline layout primitive built on `GridraBox` with `inline-flex`.
+- Supports `gap`, `align`, and `justify` modifiers aligned with the existing layout vocabulary.
+- Supports `separator` rendering between direct, valid children only.
+- Exports `GridraInlineItem` with `grow` for filling available horizontal space.
+- Playground docs cover basic rows, separators, and trailing-action layouts.
+
+Review notes:
+
+- `justify="between"` only becomes visually meaningful when `GridraInline` has available width, such as `fullWidth` or a constrained parent layout.
+- `GridraInlineItem grow` follows the same rule: it can only push later content when the inline row has horizontal space to distribute.
+- `GridraInline` is not the wrapping primitive. Multi-line loose grouping should remain a `Cluster` concern.
+- `separator` is a direct-child visual aid. It does not split inside fragments or provide semantic grouping on its own.
+
+Potential follow-ups:
+
+- Keep the docs explicit that spacing distribution examples assume `fullWidth` or equivalent parent width.
+- Re-check `GridraInline` versus `Cluster` responsibilities when the wrapping layout primitive is designed.
+- Add separator semantics and accessibility guidance if separators are promoted beyond purely decorative usage.
+
+## Hardening Backlog From Component Review
+
+### High Priority
+
+- [x] `GridraCanvasArea`: duplicate node connections are not inserted twice, but `onNodeConnect` still fires for an already-existing edge. ~~Treat the callback contract as "new connection accepted" or rename/document it explicitly before connection validation expands.~~ Fixed: `onNodeConnect` now only fires when the connection is actually new.
+- [x] `GridraAvatar`: image mode keeps `alt`, but fallback mode renders text inside a plain `span`. ~~Preserve an equivalent accessible name for fallback avatars so image and fallback states expose the same identity.~~ Fixed: fallback mode now exposes `role="img"` and `aria-label` derived from `alt` or `fallback`, matching the accessible surface of image mode.
+
+### Medium Priority
+
+- [x] `GridraGrid`: the empty state drops the normal `gridra-grid` root/className contract and returns only `gridra-grid__empty`. ~~Keep the outer component contract stable so layout selectors and sizing do not change when items become empty.~~ Fixed: empty state now preserves the `gridra-grid` wrapper with `gridra-grid__empty` nested inside.
+- [x] `GridraToolbar`: `renderAction` returns list items without a component-owned key boundary, making React key warnings easy for consumers to trigger. ~~Decide whether the toolbar should wrap custom actions or document a stricter render contract.~~ Fixed: each rendered action is now wrapped in a `Fragment` keyed by `action.id`, and `renderAction` receives a `context: { key: string }` so consumers can assign keys explicitly if they return arrays.
+
+### Follow-up Review
+
+- [x] `GridraCheckbox` / `GridraRadio`: `description` is rendered inside the label content, so it behaves closer to accessible-name text than `aria-describedby` help text. ~~Revisit this when form accessibility semantics are hardened.~~ Fixed: `description` now receives a unique `id`, the control uses `aria-describedby` to reference it, and the description text is hidden from the accessible name via `aria-hidden="true"` so it is announced as supplementary help text rather than part of the label.
 
 ## Design Notes To Keep In Mind
 

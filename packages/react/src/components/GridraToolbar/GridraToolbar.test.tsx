@@ -27,4 +27,23 @@ describe("GridraToolbar", () => {
     expect(select.getAttribute("aria-pressed")).toBe("true");
     expect(actions).toEqual(["pan"]);
   });
+
+  it("passes key context to renderAction and avoids key warnings", () => {
+    const contexts: Array<{ key: string }> = [];
+
+    render(
+      <GridraToolbar
+        actions={[
+          { id: "select", label: "Select" },
+          { id: "pan", label: "Pan" }
+        ]}
+        renderAction={(action, context) => {
+          contexts.push(context);
+          return <button type="button">{action.label}</button>;
+        }}
+      />
+    );
+
+    expect(contexts).toEqual([{ key: "select" }, { key: "pan" }]);
+  });
 });

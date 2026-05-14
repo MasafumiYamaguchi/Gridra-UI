@@ -31,4 +31,14 @@ describe("GridraGrid", () => {
 
     expect(changes).toEqual(["a"]);
   });
+
+  it("keeps gridra-grid root class in empty state", () => {
+    const { container } = render(<GridraGrid items={[]} />);
+    const grid = container.querySelector(".gridra-grid");
+    const empty = container.querySelector(".gridra-grid__empty");
+
+    expect(grid).not.toBeNull();
+    expect(empty).not.toBeNull();
+    expect(empty?.parentElement?.classList.contains("gridra-grid")).toBe(true);
+  });
 });

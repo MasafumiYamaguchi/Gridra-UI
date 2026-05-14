@@ -1591,3 +1591,79 @@
 .gridra-stack--wrap {
   flex-wrap: wrap;
 }
+
+.gridra-inline {
+  min-width: 0;
+  min-height: 0;
+}
+
+.gridra-inline--gap-none {
+  gap: 0;
+}
+
+.gridra-inline--gap-xs {
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-inline--gap-sm {
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-inline--gap-md {
+  gap: var(--gridra-space-md);
+}
+
+.gridra-inline--gap-lg {
+  gap: var(--gridra-space-lg);
+}
+
+.gridra-inline--align-start {
+  align-items: flex-start;
+}
+
+.gridra-inline--align-center {
+  align-items: center;
+}
+
+.gridra-inline--align-end {
+  align-items: flex-end;
+}
+
+.gridra-inline--align-stretch {
+  align-items: stretch;
+}
+
+.gridra-inline--align-baseline {
+  align-items: baseline;
+}
+
+.gridra-inline--justify-start {
+  justify-content: flex-start;
+}
+
+.gridra-inline--justify-center {
+  justify-content: center;
+}
+
+.gridra-inline--justify-end {
+  justify-content: flex-end;
+}
+
+.gridra-inline--justify-between {
+  justify-content: space-between;
+}
+
+.gridra-inline__separator {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+.gridra-inline-item {
+  display: inline-block;
+}
+
+.gridra-inline-item--grow {
+  flex: 1 1 auto;
+  min-width: 0;
+}

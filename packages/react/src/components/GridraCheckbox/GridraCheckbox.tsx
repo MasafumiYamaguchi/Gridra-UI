@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode } from "react";
+import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 
 export type GridraCheckboxSize = "sm" | "md" | "lg";
 
@@ -19,6 +19,9 @@ export function GridraCheckbox({
   size = "md",
   ...props
 }: GridraCheckboxProps) {
+  const generatedId = useId();
+  const controlId = props.id ?? generatedId;
+  const descriptionId = description ? `${controlId}-description` : undefined;
   const checkboxClassName = [
     "gridra-checkbox",
     `gridra-checkbox--${size}`,
@@ -32,8 +35,10 @@ export function GridraCheckbox({
   return (
     <label className={checkboxClassName}>
       <input
+        aria-describedby={descriptionId}
         aria-invalid={resolvedAriaInvalid}
         className="gridra-checkbox__input"
+        id={controlId}
         type="checkbox"
         {...props}
       />
@@ -41,7 +46,11 @@ export function GridraCheckbox({
       {label || description ? (
         <span className="gridra-checkbox__content">
           {label ? <span className="gridra-checkbox__label">{label}</span> : null}
-          {description ? <span className="gridra-checkbox__description">{description}</span> : null}
+          {description ? (
+            <span id={descriptionId} className="gridra-checkbox__description" aria-hidden="true">
+              {description}
+            </span>
+          ) : null}
         </span>
       ) : null}
     </label>

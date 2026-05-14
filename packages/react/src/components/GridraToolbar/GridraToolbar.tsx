@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import { Fragment, type HTMLAttributes, type ReactNode } from "react";
 import { GridraButton, type GridraButtonProps } from "../GridraButton";
 
 export interface GridraToolbarAction {
@@ -11,7 +11,7 @@ export interface GridraToolbarAction {
 export interface GridraToolbarProps extends HTMLAttributes<HTMLDivElement> {
   actions?: GridraToolbarAction[];
   onAction?: (id: string) => void;
-  renderAction?: (action: GridraToolbarAction) => ReactNode;
+  renderAction?: (action: GridraToolbarAction, context: { key: string }) => ReactNode;
 }
 
 export function GridraToolbar({
@@ -26,20 +26,21 @@ export function GridraToolbar({
 
   return (
     <div className={toolbarClassName} role="toolbar" {...props}>
-      {actions.map((action) =>
-        renderAction ? (
-          renderAction(action)
-        ) : (
-          <GridraToolbarButton
-            key={action.id}
-            aria-pressed={action.pressed}
-            disabled={action.disabled}
-            onClick={() => onAction?.(action.id)}
-          >
-            {action.label}
-          </GridraToolbarButton>
-        )
-      )}
+      {actions.map((action) => (
+        <Fragment key={action.id}>
+          {renderAction ? (
+            renderAction(action, { key: action.id })
+          ) : (
+            <GridraToolbarButton
+              aria-pressed={action.pressed}
+              disabled={action.disabled}
+              onClick={() => onAction?.(action.id)}
+            >
+              {action.label}
+            </GridraToolbarButton>
+          )}
+        </Fragment>
+      ))}
       {children}
     </div>
   );
