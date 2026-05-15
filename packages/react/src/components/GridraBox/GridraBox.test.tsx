@@ -122,4 +122,16 @@ describe("GridraBox", () => {
     expect(box.className).toContain("gridra-box--min-width-zero");
     expect(box.className).toContain("gridra-box--min-height-zero");
   });
+
+  it("supports width-constrained layout via style props", () => {
+    render(
+      <GridraBox style={{ marginInline: "auto", maxWidth: 720 }}>
+        Constrained
+      </GridraBox>
+    );
+    const box = screen.getByText("Constrained") as HTMLElement;
+
+    expect(box.style.marginInline).toBe("auto");
+    expect(box.style.maxWidth).toBe("720px");
+  });
 });

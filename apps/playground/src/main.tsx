@@ -8,7 +8,6 @@ import {
   GridraCanvasArea,
   GridraCheckbox,
   GridraCluster,
-  GridraContainer,
   GridraDivider,
   GridraField,
   GridraGridLayout,
@@ -554,18 +553,28 @@ function Playground() {
             surface="surface"
           >
             <GridraInline align="center" justify="between">
-              <GridraLabel>Container</GridraLabel>
-              <GridraBadge tone="muted">width constraint</GridraBadge>
+              <GridraLabel>Constrained Box</GridraLabel>
+              <GridraBadge tone="muted">maxWidth + marginInline</GridraBadge>
             </GridraInline>
             <GridraBox border="default" padding="sm" surface="raised">
-              <GridraContainer border="default" padding="sm" size="sm" surface="input">
+              <GridraBox
+                border="default"
+                padding="sm"
+                style={{ marginInline: "auto", maxWidth: 480 }}
+                surface="input"
+              >
                 <GridraBadge size="sm">size=sm center</GridraBadge>
-              </GridraContainer>
+              </GridraBox>
             </GridraBox>
             <GridraBox border="default" padding="sm" surface="raised">
-              <GridraContainer align="end" border="default" maxWidth={220} padding="sm" surface="input">
+              <GridraBox
+                border="default"
+                padding="sm"
+                style={{ marginInline: "auto 0", maxWidth: 220 }}
+                surface="input"
+              >
                 <GridraBadge size="sm" tone="accent">align=end + maxWidth</GridraBadge>
-              </GridraContainer>
+              </GridraBox>
             </GridraBox>
           </GridraStack>
           <GridraStack
