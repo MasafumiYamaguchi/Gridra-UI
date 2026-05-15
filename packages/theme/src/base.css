@@ -2037,6 +2037,26 @@
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-surface);
+  scrollbar-width: thin;
+}
+
+.gridra-sidebar__content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gridra-sidebar__content::-webkit-scrollbar-track {
+  background: var(--gridra-color-surface);
+}
+
+.gridra-sidebar__content::-webkit-scrollbar-thumb {
+  border: 2px solid var(--gridra-color-surface);
+  background: var(--gridra-color-border-strong);
+}
+
+.gridra-sidebar__content::-webkit-scrollbar-thumb:hover {
+  background: var(--gridra-color-accent);
 }
 
 .gridra-sidebar__toggle {

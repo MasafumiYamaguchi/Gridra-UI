@@ -24,7 +24,6 @@ import {
   type GridraNodePropertiesSchema,
   type GridraNodePropertiesValue,
   type GridraNodePlacements,
-  GridraPanel,
   GridraPropertiesPanel,
   GridraRadio,
   GridraRoot,
@@ -183,137 +182,141 @@ function Playground() {
   return (
     <GridraRoot
       className={theme}
+      style={{ "--gridra-panel-width": "auto" } as React.CSSProperties}
       panel={
-        <GridraPanel
-          heading="GRIDRA"
-          header={
-            <GridraButton
-              onClick={() =>
-                setTheme((current) =>
-                  current === "gridra-theme-dark" ? "gridra-theme-light" : "gridra-theme-dark"
-                )
-              }
-              variant="ghost"
-            >
-              Theme
-            </GridraButton>
-          }
-        >
-          <GridraStack gap="sm">
-            <GridraInline align="center" justify="between">
-              <GridraLabel>Canvas</GridraLabel>
-              <GridraBadge tone="muted">{gridColumns} x {gridRows}</GridraBadge>
-            </GridraInline>
-            <GridraField htmlFor="playground-selected-node" label="Selected Node">
-              <GridraSelect
-                id="playground-selected-node"
-                onChange={(event) => {
-                  setSelectedId(event.target.value);
-                  setSelectedIds([event.target.value]);
+        <GridraSidebar defaultOpen side="left" toggleSize={28}>
+          <GridraBox fullHeight minHeightZero minWidthZero padding="md">
+            <GridraStack gap="sm">
+              <GridraInline align="center" justify="between">
+                <h2 className="gridra-panel__title">GRIDRA</h2>
+                <GridraButton
+                  onClick={() =>
+                    setTheme((current) =>
+                      current === "gridra-theme-dark" ? "gridra-theme-light" : "gridra-theme-dark"
+                    )
+                  }
+                  variant="ghost"
+                >
+                  Theme
+                </GridraButton>
+              </GridraInline>
+              <GridraStack gap="sm">
+                <GridraInline align="center" justify="between">
+                  <GridraLabel>Canvas</GridraLabel>
+                  <GridraBadge tone="muted">{gridColumns} x {gridRows}</GridraBadge>
+                </GridraInline>
+                <GridraField htmlFor="playground-selected-node" label="Selected Node">
+                  <GridraSelect
+                    id="playground-selected-node"
+                    onChange={(event) => {
+                      setSelectedId(event.target.value);
+                      setSelectedIds([event.target.value]);
+                    }}
+                    value={selectedId ?? ""}
+                  >
+                    {nodes.map((node) => (
+                      <option key={node.id} value={node.id}>
+                        {node.label}
+                      </option>
+                    ))}
+                  </GridraSelect>
+                </GridraField>
+                <GridraField htmlFor="playground-grid-columns" label="Columns">
+                  <GridraInput
+                    id="playground-grid-columns"
+                    min={1}
+                    onChange={(event) => setGridColumns(Number(event.target.value))}
+                    type="number"
+                    value={gridColumns}
+                  />
+                </GridraField>
+                <GridraField htmlFor="playground-grid-rows" label="Rows">
+                  <GridraInput
+                    id="playground-grid-rows"
+                    min={1}
+                    onChange={(event) => setGridRows(Number(event.target.value))}
+                    type="number"
+                    value={gridRows}
+                  />
+                </GridraField>
+                <GridraField label="Minimap">
+                  <GridraMinimap
+                    gridColumns={gridColumns}
+                    gridRows={gridRows}
+                    nodes={nodes}
+                    selectedIds={selectedIds}
+                    viewport={{
+                      x: 0,
+                      y: 0,
+                      width: Math.max(1, Math.floor(gridColumns * 0.6)),
+                      height: Math.max(1, Math.floor(gridRows * 0.6))
+                    }}
+                  />
+                </GridraField>
+              </GridraStack>
+              <GridraDivider />
+              <GridraSelectableGrid
+                columns={1}
+                items={items}
+                onSelectionChange={(nextSelectedId) => {
+                  setSelectedId(nextSelectedId);
+                  setSelectedIds(nextSelectedId ? [nextSelectedId] : []);
                 }}
-                value={selectedId ?? ""}
-              >
-                {nodes.map((node) => (
-                  <option key={node.id} value={node.id}>
-                    {node.label}
-                  </option>
-                ))}
-              </GridraSelect>
-            </GridraField>
-            <GridraField htmlFor="playground-grid-columns" label="Columns">
-              <GridraInput
-                id="playground-grid-columns"
-                min={1}
-                onChange={(event) => setGridColumns(Number(event.target.value))}
-                type="number"
-                value={gridColumns}
+                selectedId={selectedId}
               />
-            </GridraField>
-            <GridraField htmlFor="playground-grid-rows" label="Rows">
-              <GridraInput
-                id="playground-grid-rows"
-                min={1}
-                onChange={(event) => setGridRows(Number(event.target.value))}
-                type="number"
-                value={gridRows}
-              />
-            </GridraField>
-            <GridraField label="Minimap">
-              <GridraMinimap
-                gridColumns={gridColumns}
-                gridRows={gridRows}
-                nodes={nodes}
-                selectedIds={selectedIds}
-                viewport={{
-                  x: 0,
-                  y: 0,
-                  width: Math.max(1, Math.floor(gridColumns * 0.6)),
-                  height: Math.max(1, Math.floor(gridRows * 0.6))
+              <GridraDivider />
+              <GridraInspectorPanel
+                onChange={(patch) => {
+                  if (!selectedId) {
+                    return;
+                  }
+                  const nextLabel = patch.label;
+                  if (typeof nextLabel === "string") {
+                    setNodeLabels((current) => ({ ...current, [selectedId]: nextLabel }));
+                  }
+                  if (patch.placement) {
+                    const currentPlacement =
+                      nodePlacements[selectedId] ??
+                      baseNodes.find((node) => node.id === selectedId)?.placement;
+                    if (!currentPlacement) {
+                      return;
+                    }
+                    const nextPlacement = clampPlacement({
+                      column: patch.placement.x ?? currentPlacement.column,
+                      row: patch.placement.y ?? currentPlacement.row,
+                      columnSpan: patch.placement.w ?? currentPlacement.columnSpan ?? 1,
+                      rowSpan: patch.placement.h ?? currentPlacement.rowSpan ?? 1
+                    });
+                    setNodePlacements((current) => ({ ...current, [selectedId]: nextPlacement }));
+                  }
                 }}
+                selectedNode={selectedNode}
               />
-            </GridraField>
-          </GridraStack>
-          <GridraDivider />
-          <GridraSelectableGrid
-            columns={1}
-            items={items}
-            onSelectionChange={(nextSelectedId) => {
-              setSelectedId(nextSelectedId);
-              setSelectedIds(nextSelectedId ? [nextSelectedId] : []);
-            }}
-            selectedId={selectedId}
-          />
-          <GridraDivider />
-          <GridraInspectorPanel
-            onChange={(patch) => {
-              if (!selectedId) {
-                return;
-              }
-              const nextLabel = patch.label;
-              if (typeof nextLabel === "string") {
-                setNodeLabels((current) => ({ ...current, [selectedId]: nextLabel }));
-              }
-              if (patch.placement) {
-                const currentPlacement =
-                  nodePlacements[selectedId] ??
-                  baseNodes.find((node) => node.id === selectedId)?.placement;
-                if (!currentPlacement) {
-                  return;
-                }
-                const nextPlacement = clampPlacement({
-                  column: patch.placement.x ?? currentPlacement.column,
-                  row: patch.placement.y ?? currentPlacement.row,
-                  columnSpan: patch.placement.w ?? currentPlacement.columnSpan ?? 1,
-                  rowSpan: patch.placement.h ?? currentPlacement.rowSpan ?? 1
-                });
-                setNodePlacements((current) => ({ ...current, [selectedId]: nextPlacement }));
-              }
-            }}
-            selectedNode={selectedNode}
-          />
-          <GridraDivider />
-          <GridraPropertiesPanel
-            onChange={(patch) => {
-              if (!selectedId) {
-                return;
-              }
-              const sanitizedPatch = Object.fromEntries(
-                Object.entries(patch).filter((entry) => entry[1] !== undefined)
-              ) as GridraNodePropertiesValue;
-              setNodePropertiesById((current) => ({
-                ...current,
-                [selectedId]: {
-                  ...(current[selectedId] ?? {}),
-                  ...sanitizedPatch
-                }
-              }));
-            }}
-            schema={propertiesSchema}
-            selectedNodeId={selectedId}
-            selectedNodeType={selectedNodeType}
-            value={selectedId ? nodePropertiesById[selectedId] : undefined}
-          />
-        </GridraPanel>
+              <GridraDivider />
+              <GridraPropertiesPanel
+                onChange={(patch) => {
+                  if (!selectedId) {
+                    return;
+                  }
+                  const sanitizedPatch = Object.fromEntries(
+                    Object.entries(patch).filter((entry) => entry[1] !== undefined)
+                  ) as GridraNodePropertiesValue;
+                  setNodePropertiesById((current) => ({
+                    ...current,
+                    [selectedId]: {
+                      ...(current[selectedId] ?? {}),
+                      ...sanitizedPatch
+                    }
+                  }));
+                }}
+                schema={propertiesSchema}
+                selectedNodeId={selectedId}
+                selectedNodeType={selectedNodeType}
+                value={selectedId ? nodePropertiesById[selectedId] : undefined}
+              />
+            </GridraStack>
+          </GridraBox>
+        </GridraSidebar>
       }
     >
       <GridraToolbar
