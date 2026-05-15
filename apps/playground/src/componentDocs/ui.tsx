@@ -8,6 +8,7 @@ import {
   GridraInput,
   GridraLabel,
   GridraSelect,
+  GridraSidebar,
   GridraStack
 } from "@gridra-ui/react";
 import { componentDocs } from "./data";
@@ -195,76 +196,84 @@ export function ComponentDocsPage() {
         ))}
       </div>
       <div className="docs-page__layout">
-      <div className="docs-page__sidebar">
-        <GridraField className="docs-page__search" label="Search">
-          <GridraInput
-            aria-label="Search components"
-            onChange={(event) => {
-              setSearchQuery(event.target.value);
-            }}
-            placeholder="Search components..."
-            type="search"
-            value={searchQuery}
-          />
-        </GridraField>
-        <div className="docs-page__mobile-controls">
-          {visibleDocs.length === 0 ? (
-            <div className="docs-page__mobile-empty">
-              <GridraBadge tone="muted">No matches</GridraBadge>
-            </div>
-          ) : (
-            <>
-              <GridraSelect
-                aria-label="Select component"
-                className="docs-page__mobile-selector"
-                onChange={(event) => selectDoc(event.target.value)}
-                value={activeDoc.name}
-              >
-                {visibleDocs.map((doc) => (
-                  <option key={doc.name} value={doc.name}>
-                    {doc.name}
-                  </option>
-                ))}
-              </GridraSelect>
-              <div className="docs-page__mobile-viewing">
-                <span className="docs-page__mobile-viewing-label">Currently viewing:</span>{" "}
-                <span className="docs-page__mobile-viewing-name">{activeDoc.name}</span>
-              </div>
-              <GridraButton
-                className="docs-page__mobile-toggle"
-                onClick={() => setMobileNavOpen((open) => !open)}
-                size="sm"
-                variant="default"
-              >
-                {mobileNavOpen ? "Hide component list" : "Show all components"}
-              </GridraButton>
-            </>
-          )}
-        </div>
-        <nav
-          className={`docs-page__nav${mobileNavOpen ? " docs-page__nav--mobile-open" : ""}`}
-          aria-label="Component documentation"
+        <GridraSidebar
+          className="docs-page__sidebar"
+          collapsedWidth={0}
+          defaultOpen
+          toggleSize={32}
+          width={260}
         >
-          {visibleDocs.length === 0 ? (
-            <div className="docs-page__nav-empty">
-              <GridraBadge tone="muted">No matches</GridraBadge>
+          <div className="docs-page__sidebar-inner">
+            <GridraField className="docs-page__search" label="Search">
+              <GridraInput
+                aria-label="Search components"
+                onChange={(event) => {
+                  setSearchQuery(event.target.value);
+                }}
+                placeholder="Search components..."
+                type="search"
+                value={searchQuery}
+              />
+            </GridraField>
+            <div className="docs-page__mobile-controls">
+              {visibleDocs.length === 0 ? (
+                <div className="docs-page__mobile-empty">
+                  <GridraBadge tone="muted">No matches</GridraBadge>
+                </div>
+              ) : (
+                <>
+                  <GridraSelect
+                    aria-label="Select component"
+                    className="docs-page__mobile-selector"
+                    onChange={(event) => selectDoc(event.target.value)}
+                    value={activeDoc.name}
+                  >
+                    {visibleDocs.map((doc) => (
+                      <option key={doc.name} value={doc.name}>
+                        {doc.name}
+                      </option>
+                    ))}
+                  </GridraSelect>
+                  <div className="docs-page__mobile-viewing">
+                    <span className="docs-page__mobile-viewing-label">Currently viewing:</span>{" "}
+                    <span className="docs-page__mobile-viewing-name">{activeDoc.name}</span>
+                  </div>
+                  <GridraButton
+                    className="docs-page__mobile-toggle"
+                    onClick={() => setMobileNavOpen((open) => !open)}
+                    size="sm"
+                    variant="default"
+                  >
+                    {mobileNavOpen ? "Hide component list" : "Show all components"}
+                  </GridraButton>
+                </>
+              )}
             </div>
-          ) : (
-            visibleDocs.map((doc) => (
-              <button
-                className="docs-page__nav-item"
-                key={doc.name}
-                onClick={() => selectDoc(doc.name)}
-                type="button"
-                aria-current={doc.name === activeDoc.name ? "page" : undefined}
-              >
-                <span>{doc.name}</span>
-                <GridraBadge tone="muted">{doc.category}</GridraBadge>
-              </button>
-            ))
-          )}
-        </nav>
-      </div>
+            <nav
+              className={`docs-page__nav${mobileNavOpen ? " docs-page__nav--mobile-open" : ""}`}
+              aria-label="Component documentation"
+            >
+              {visibleDocs.length === 0 ? (
+                <div className="docs-page__nav-empty">
+                  <GridraBadge tone="muted">No matches</GridraBadge>
+                </div>
+              ) : (
+                visibleDocs.map((doc) => (
+                  <button
+                    className="docs-page__nav-item"
+                    key={doc.name}
+                    onClick={() => selectDoc(doc.name)}
+                    type="button"
+                    aria-current={doc.name === activeDoc.name ? "page" : undefined}
+                  >
+                    <span>{doc.name}</span>
+                    <GridraBadge tone="muted">{doc.category}</GridraBadge>
+                  </button>
+                ))
+              )}
+            </nav>
+          </div>
+        </GridraSidebar>
         <article ref={detailRef} className="docs-detail" id={`docs-${activeDoc.name}`}>
           <header className="docs-detail__header">
             <GridraBadge tone="muted">{activeDoc.category}</GridraBadge>

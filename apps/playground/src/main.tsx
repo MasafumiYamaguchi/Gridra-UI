@@ -30,6 +30,7 @@ import {
   GridraRoot,
   GridraSelect,
   GridraSlider,
+  GridraSidebar,
   GridraSplitPane,
   GridraSpinner,
   GridraStack,
@@ -105,6 +106,9 @@ function Playground() {
   const [controlOpacity, setControlOpacity] = useState(72);
   const [splitPaneOrientation, setSplitPaneOrientation] = useState<"horizontal" | "vertical">("horizontal");
   const [splitPaneSizes, setSplitPaneSizes] = useState([30, 40, 30]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarSide, setSidebarSide] = useState<"left" | "right">("left");
+  const [sidebarResizable, setSidebarResizable] = useState(true);
   const [controlPreviewEnabled, setControlPreviewEnabled] = useState(true);
   const [controlSnapEnabled, setControlSnapEnabled] = useState(true);
   const [iconPreviewPressed, setIconPreviewPressed] = useState(false);
@@ -542,6 +546,92 @@ function Playground() {
                   <GridraBadge tone="muted">tertiary</GridraBadge>
                 </GridraBox>
               </GridraSplitPane>
+            </GridraBox>
+          </GridraStack>
+          <GridraStack
+            as="section"
+            border="default"
+            className="playground-component-group playground-component-group--wide"
+            gap="md"
+            padding="md"
+            surface="surface"
+          >
+            <GridraInline align="center" justify="between">
+              <GridraLabel>Sidebar</GridraLabel>
+              <GridraBadge tone="muted">{sidebarOpen ? "open" : "closed"}</GridraBadge>
+            </GridraInline>
+            <GridraCluster align="center" gap="sm">
+              <GridraButton onClick={() => setSidebarOpen((current) => !current)} size="sm">
+                Toggle
+              </GridraButton>
+              <GridraButton
+                onClick={() => setSidebarSide("left")}
+                pressed={sidebarSide === "left"}
+                size="sm"
+              >
+                Left
+              </GridraButton>
+              <GridraButton
+                onClick={() => setSidebarSide("right")}
+                pressed={sidebarSide === "right"}
+                size="sm"
+              >
+                Right
+              </GridraButton>
+              <GridraCheckbox
+                checked={sidebarResizable}
+                label="Resizable"
+                onChange={(event) => setSidebarResizable(event.target.checked)}
+              />
+            </GridraCluster>
+            <GridraBox border="default" style={{ height: 180 }} surface="raised">
+              <GridraInline fullWidth style={{ height: "100%" }}>
+                {sidebarSide === "left" ? (
+                  <>
+                    <GridraSidebar
+                      collapsedWidth={0}
+                      maxWidth={340}
+                      minWidth={180}
+                      onOpenChange={(nextOpen) => setSidebarOpen(nextOpen)}
+                      open={sidebarOpen}
+                      resizable={sidebarResizable}
+                      side={sidebarSide}
+                      width={260}
+                    >
+                      <GridraBox fullHeight padding="sm" surface="input">
+                        <GridraLabel>Navigation</GridraLabel>
+                        <GridraBadge size="sm">left shell</GridraBadge>
+                      </GridraBox>
+                    </GridraSidebar>
+                    <GridraBox fullWidth padding="sm" surface="input">
+                      <GridraLabel>Main Area</GridraLabel>
+                      <GridraBadge tone="muted">content</GridraBadge>
+                    </GridraBox>
+                  </>
+                ) : (
+                  <>
+                    <GridraBox fullWidth padding="sm" surface="input">
+                      <GridraLabel>Main Area</GridraLabel>
+                      <GridraBadge tone="muted">content</GridraBadge>
+                    </GridraBox>
+                    <GridraSidebar
+                      collapsedWidth={0}
+                      maxWidth={340}
+                      minWidth={180}
+                      onOpenChange={(nextOpen) => setSidebarOpen(nextOpen)}
+                      open={sidebarOpen}
+                      resizable={sidebarResizable}
+                      side={sidebarSide}
+                      width={260}
+                    >
+                      <GridraBox fullHeight padding="sm" surface="input">
+                        <GridraLabel>Inspector</GridraLabel>
+                        <GridraBadge size="sm">right shell</GridraBadge>
+                      </GridraBox>
+                    </GridraSidebar>
+                  </>
+                )}
+              </GridraInline>
             </GridraBox>
           </GridraStack>
           <GridraStack

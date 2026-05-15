@@ -36,6 +36,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraRadio`
 - [x] `GridraSelect`
 - [x] `GridraSlider`
+- [x] `GridraSidebar`
 - [x] `GridraSpinner`
 - [x] `GridraSwitch`
 - [x] `GridraTextarea`
@@ -95,7 +96,7 @@ Layout components should support dense application surfaces rather than marketin
 - [x] Container (Integrated into `GridraBox`)
 - [x] Split Pane
 - [x] Resizable Panel Group (Integrated into `GridraSplitPane` three-pane mode)
-- [ ] Sidebar
+- [x] Sidebar
 - [ ] Header
 - [ ] Footer
 
@@ -448,6 +449,38 @@ pointer drag or keyboard input on separator
   -> update internal state (or controlled value via onSizeChange)
   -> CSS variable --gridra-split-pane-size updates
   -> pane layout reflows
+```
+
+### GridraSidebar
+
+Current status: implemented.
+
+Implemented:
+
+- App-shell sidebar component exported from `@gridra-ui/react`.
+- Supports `left`/`right` side placement.
+- Supports controlled/uncontrolled open state (`open` / `defaultOpen` / `onOpenChange`).
+- Supports `width` and `collapsedWidth` based open/closed sizing.
+- Optional `resizable` mode with `minWidth` / `maxWidth` constraints.
+- Resizable separator supports pointer drag and keyboard control (`ArrowLeft/ArrowRight`, `Home`, `End`).
+- Root exposes open state through `aria-expanded`.
+- Playground includes a live sidebar demo (side toggle, open toggle, resizable toggle).
+
+Not implemented yet:
+
+- Overlay drawer behavior, backdrop, and focus trap.
+- Breakpoint-aware mode switching (desktop sidebar vs mobile drawer).
+- Built-in persistence for width/open state.
+
+Current data flow:
+
+```text
+open/defaultOpen and width props
+  -> resolve active sidebar width (open or collapsed)
+  -> optional separator drag/keyboard updates width in resizable mode
+  -> optional open state toggles
+  -> CSS variable --gridra-sidebar-width updates
+  -> shell layout reflows
 ```
 
 ### GridraMinimap

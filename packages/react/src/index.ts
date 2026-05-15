@@ -27,6 +27,7 @@ export * from "./components/GridraRoot";
 export * from "./components/GridraSelect";
 export * from "./components/GridraSelectionBox";
 export * from "./components/GridraSlider";
+export * from "./components/GridraSidebar";
 export * from "./components/GridraSplitPane";
 export * from "./components/GridraSnapGuide";
 export * from "./components/GridraSpinner";

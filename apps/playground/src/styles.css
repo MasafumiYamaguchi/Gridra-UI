@@ -137,17 +137,25 @@ body {
 
 .docs-page__layout {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   gap: var(--gridra-space-md);
   min-height: 0;
 }
 
 .docs-page__sidebar {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.docs-page__sidebar-inner {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: var(--gridra-space-sm);
   min-width: 0;
   min-height: 0;
+  height: 100%;
+  padding: var(--gridra-space-sm);
 }
 
 .docs-page__search {
@@ -421,6 +429,10 @@ body {
   }
 
   .docs-page__sidebar {
+    width: 100%;
+  }
+
+  .docs-page__sidebar-inner {
     grid-template-rows: auto auto;
   }
 
