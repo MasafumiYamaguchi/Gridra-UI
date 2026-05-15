@@ -106,7 +106,7 @@ Layout components should support dense application surfaces rather than marketin
 These need careful keyboard, focus, and layering behavior before they are considered stable.
 
 - [x] Tooltip
-- [ ] Popover
+- [x] Popover
 - [ ] Dialog / Modal
 - [ ] Drawer
 - [ ] Dropdown Menu
@@ -513,7 +513,44 @@ anchor hover/focus
   -> open state update (internal or controlled callback)
   -> measure anchor + tooltip rect
   -> compute placement and optional opposite-side flip
-  -> render tooltip with fixed coordinates
+   -> render tooltip with fixed coordinates
+```
+
+### GridraPopover
+
+Current status: implemented.
+
+Implemented:
+
+- Click-triggered non-modal overlay component exported from `@gridra-ui/react`.
+- Supports `top` / `right` / `bottom` / `left` placement.
+- Supports controlled/uncontrolled open state (`open` / `defaultOpen` / `onOpenChange`).
+- Opens on trigger click, closes on Escape key or outside pointerdown (both configurable).
+- Supports `size` tokens (`sm` / `md` / `lg`) and `maxWidth` override (`number | string`).
+- Applies viewport collision handling by flipping to the opposite side.
+- Wires `aria-expanded` and `aria-controls` on the trigger.
+- Composes with existing trigger `onClick` and `ref` without breaking them.
+
+Not implemented yet:
+
+- Portal rendering.
+- Focus trap and automatic focus management.
+- Arrow rendering.
+- Start/end aligned placements.
+- Modal/backdrop behavior.
+- Nested popover coordination.
+- Arrow-key item navigation (out of scope for this component).
+
+Current data flow:
+
+```text
+trigger click
+  -> open state update (internal or controlled callback)
+  -> measure anchor + popover rect
+  -> compute placement and optional opposite-side flip
+  -> render popover with fixed coordinates
+  -> outside pointerdown / Escape key
+  -> close
 ```
 
 ### GridraMinimap

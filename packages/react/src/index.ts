@@ -35,4 +35,5 @@ export * from "./components/GridraStack";
 export * from "./components/GridraSwitch";
 export * from "./components/GridraTextarea";
 export * from "./components/GridraToolbar";
+export * from "./components/GridraPopover";
 export * from "./components/GridraTooltip";
