@@ -36,6 +36,7 @@ import {
   GridraStack,
   GridraSwitch,
   GridraTextarea,
+  GridraTooltip,
   GridraToolbar
 } from "@gridra-ui/react";
 import "@gridra-ui/theme/base.css";
@@ -423,6 +424,33 @@ function Playground() {
                   label="Preview"
                   onClick={() => setControlPreviewEnabled((current) => !current)}
               />
+            </GridraCluster>
+          </GridraStack>
+          <GridraStack
+            as="section"
+            border="default"
+            className="playground-component-group"
+            gap="md"
+            padding="md"
+            surface="surface"
+          >
+            <GridraInline align="center" justify="between">
+              <GridraLabel>Tooltip</GridraLabel>
+              <GridraBadge tone="muted">top/right/bottom/left</GridraBadge>
+            </GridraInline>
+            <GridraCluster align="center" gap="sm">
+              <GridraTooltip content="Top hint" placement="top">
+                <GridraButton size="sm">Top</GridraButton>
+              </GridraTooltip>
+              <GridraTooltip content="Right hint with max width override for numeric sizing." maxWidth={220} placement="right" size="lg">
+                <GridraButton size="sm">Right</GridraButton>
+              </GridraTooltip>
+              <GridraTooltip content="Bottom hint" placement="bottom">
+                <GridraButton size="sm">Bottom</GridraButton>
+              </GridraTooltip>
+              <GridraTooltip content="Left hint" placement="left" size="sm">
+                <GridraButton size="sm">Left</GridraButton>
+              </GridraTooltip>
             </GridraCluster>
           </GridraStack>
           <GridraStack

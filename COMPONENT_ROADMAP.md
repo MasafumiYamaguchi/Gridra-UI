@@ -24,6 +24,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraConnectionHandle`
 - [x] `GridraSnapGuide`
 - [x] `GridraToolbar`
+- [x] `GridraTooltip`
 - [x] `GridraAvatar`
 - [x] `GridraBadge`
 - [x] `GridraButton`
@@ -97,14 +98,14 @@ Layout components should support dense application surfaces rather than marketin
 - [x] Split Pane
 - [x] Resizable Panel Group (Integrated into `GridraSplitPane` three-pane mode)
 - [x] Sidebar
-- [ ] Header
-- [ ] Footer
+- [x] Header (Out of scope as library component; compose with `GridraBox` / `GridraInline` / `GridraStack`)
+- [x] Footer (Out of scope as library component; compose with `GridraBox` / `GridraInline` / `GridraStack`)
 
 ## Priority 4: Overlays And Interaction
 
 These need careful keyboard, focus, and layering behavior before they are considered stable.
 
-- [ ] Tooltip
+- [x] Tooltip
 - [ ] Popover
 - [ ] Dialog / Modal
 - [ ] Drawer
@@ -481,6 +482,38 @@ open/defaultOpen and width props
   -> optional open state toggles
   -> CSS variable --gridra-sidebar-width updates
   -> shell layout reflows
+```
+
+### GridraTooltip
+
+Current status: implemented.
+
+Implemented:
+
+- Lightweight tooltip component exported from `@gridra-ui/react`.
+- Supports `top` / `right` / `bottom` / `left` placement.
+- Supports controlled/uncontrolled open state (`open` / `defaultOpen` / `onOpenChange`).
+- Opens by `hover` and `focus`, closes on `mouseleave` and `blur`.
+- Supports configurable `showDelay`.
+- Supports `size` tokens (`sm` / `md` / `lg`) and `maxWidth` override (`number | string`).
+- Applies simple viewport collision handling by flipping to the opposite side.
+
+Not implemented yet:
+
+- Start/end aligned placements.
+- Arrow rendering.
+- Advanced collision strategy beyond opposite-side flip.
+- Interactive tooltip content.
+
+Current data flow:
+
+```text
+anchor hover/focus
+  -> optional showDelay timer
+  -> open state update (internal or controlled callback)
+  -> measure anchor + tooltip rect
+  -> compute placement and optional opposite-side flip
+  -> render tooltip with fixed coordinates
 ```
 
 ### GridraMinimap

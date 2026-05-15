@@ -2147,6 +2147,35 @@
   box-shadow: var(--gridra-shadow-selected);
 }
 
+.gridra-tooltip {
+  position: fixed;
+  z-index: 10;
+  max-width: var(--gridra-tooltip-max-width, 240px);
+  border: 1px solid var(--gridra-color-border-strong);
+  background: var(--gridra-color-surface-raised);
+  color: var(--gridra-color-text);
+  box-shadow: var(--gridra-shadow-selected);
+  pointer-events: none;
+}
+
+.gridra-tooltip--sm {
+  padding: 4px 6px;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.gridra-tooltip--md {
+  padding: 6px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-tooltip--lg {
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .gridra-minimap {
   width: 100%;
   min-width: 0;
