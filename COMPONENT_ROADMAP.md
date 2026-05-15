@@ -61,7 +61,7 @@ These components define the library's identity as a dense, panel-based spatial U
 - [x] Snap Guide
 - [ ] Minimap
 - [x] Inspector Panel
-- [~] Properties Panel
+- [x] Properties Panel
 
 ## Priority 2: Basic Controls
 
@@ -93,7 +93,7 @@ Layout components should support dense application surfaces rather than marketin
 - [x] Cluster
 - [x] Grid Layout
 - [ ] Container
-- [ ] Split Pane
+- [x] Split Pane
 - [ ] Resizable Panel Group
 - [ ] Sidebar
 - [ ] Header
@@ -381,6 +381,70 @@ canvas selection change
   -> onChange emits patch
   -> parent normalizes and updates node label/placement state
   -> GridraCanvasArea re-renders updated node
+```
+
+### GridraPropertiesPanel
+
+Current status: implemented.
+
+Implemented:
+
+- Controlled properties panel component exported from `@gridra-ui/react`.
+- Schema-driven rendering by node type with field kinds: `text`, `number`, `select`, and `toggle`.
+- Emits partial updates through `onChange` so parent state owns normalization and persistence.
+- Shows a built-in empty state when selection, schema, or value is missing.
+- Playground side panel integrates `GridraPropertiesPanel` below `GridraInspectorPanel`.
+- Playground keeps per-node property state and switches field sets by selected node type.
+- Canvas node labels reflect key property values so edits are visible in the main surface.
+
+Not implemented yet:
+
+- Multi-node property editing.
+- Cross-field validation rules and dependent-field behavior.
+- Node-type-specific custom editors beyond the base schema field kinds.
+
+Current data flow:
+
+```text
+canvas selection change
+  -> parent resolves selected node id and type
+  -> GridraPropertiesPanel receives selectedNodeId, selectedNodeType, schema, and value
+  -> user edits a property field
+  -> onChange emits partial property patch
+  -> parent merges patch into nodePropertiesById[selectedNodeId]
+  -> GridraCanvasArea re-renders node with updated visible property detail
+```
+
+### GridraSplitPane
+
+Current status: implemented.
+
+Implemented:
+
+- Two-pane split layout component exported from `@gridra-ui/react`.
+- Supports `horizontal` and `vertical` orientations.
+- Supports controlled and uncontrolled pane size using percent (`size` / `defaultSize`).
+- Supports `minSize` and `maxSize` constraints in percent.
+- Resizes via pointer drag using pointer capture to continue tracking outside the handle bounds.
+- Exposes keyboard resizing on separator (`Arrow` keys, `Home`, `End`).
+- Playground includes an orientation toggle and live size readout demo.
+
+Not implemented yet:
+
+- Collapsible panes.
+- Pixel-based sizing.
+- Built-in persistence.
+- Nested split-pane orchestration helpers.
+
+Current data flow:
+
+```text
+pointer drag or keyboard input on separator
+  -> derive next percent size
+  -> clamp with min/max and 0-100 bounds
+  -> update internal state (or controlled value via onSizeChange)
+  -> CSS variable --gridra-split-pane-size updates
+  -> pane layout reflows
 ```
 
 ### GridraInline

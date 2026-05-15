@@ -20,12 +20,16 @@ import {
   GridraLabel,
   GridraNode,
   type GridraNodeConnection,
+  type GridraNodePropertiesSchema,
+  type GridraNodePropertiesValue,
   type GridraNodePlacements,
   GridraPanel,
+  GridraPropertiesPanel,
   GridraRadio,
   GridraRoot,
   GridraSelect,
   GridraSlider,
+  GridraSplitPane,
   GridraSpinner,
   GridraStack,
   GridraSwitch,
@@ -39,19 +43,47 @@ import "./styles.css";
 
 const isDocsRoute = window.location.pathname === "/docs";
 
+type PlaygroundNodeType = "input" | "transform" | "output";
+
+const propertiesSchema: GridraNodePropertiesSchema = {
+  input: [
+    { id: "sourceName", label: "Source Name", kind: "text" },
+    { id: "enabled", label: "Enabled", kind: "toggle" }
+  ],
+  transform: [
+    {
+      id: "mode",
+      label: "Mode",
+      kind: "select",
+      options: [
+        { value: "merge", label: "Merge" },
+        { value: "replace", label: "Replace" }
+      ]
+    },
+    { id: "intensity", label: "Intensity", kind: "number", min: 0, max: 100, step: 1 }
+  ],
+  output: [
+    { id: "targetName", label: "Target Name", kind: "text" },
+    { id: "compress", label: "Compress", kind: "toggle" }
+  ]
+};
+
 const baseNodes = [
   {
     id: "node-input",
+    type: "input" as PlaygroundNodeType,
     label: "Input",
     placement: { column: 2, row: 2, columnSpan: 4, rowSpan: 2 }
   },
   {
     id: "node-transform",
+    type: "transform" as PlaygroundNodeType,
     label: "Transform",
     placement: { column: 8, row: 5, columnSpan: 5, rowSpan: 2 }
   },
   {
     id: "node-output",
+    type: "output" as PlaygroundNodeType,
     label: "Output",
     placement: { column: 8, row: 1, columnSpan: 4, rowSpan: 2 }
   }
@@ -70,6 +102,8 @@ function Playground() {
   const [controlDensity, setControlDensity] = useState<"compact" | "comfortable">("compact");
   const [controlNotes, setControlNotes] = useState("Dense controls for node editing.");
   const [controlOpacity, setControlOpacity] = useState(72);
+  const [splitPaneOrientation, setSplitPaneOrientation] = useState<"horizontal" | "vertical">("horizontal");
+  const [splitPaneSize, setSplitPaneSize] = useState(56);
   const [controlPreviewEnabled, setControlPreviewEnabled] = useState(true);
   const [controlSnapEnabled, setControlSnapEnabled] = useState(true);
   const [iconPreviewPressed, setIconPreviewPressed] = useState(false);
@@ -81,6 +115,11 @@ function Playground() {
   const [nodeLabels, setNodeLabels] = useState<Record<string, string>>(() =>
     Object.fromEntries(baseNodes.map((node) => [node.id, node.label]))
   );
+  const [nodePropertiesById, setNodePropertiesById] = useState<Record<string, GridraNodePropertiesValue>>({
+    "node-input": { sourceName: "Source A", enabled: true },
+    "node-transform": { mode: "merge", intensity: 50 },
+    "node-output": { targetName: "Target A", compress: false }
+  });
   const [gridColumns, setGridColumns] = useState(12);
   const [gridRows, setGridRows] = useState(6);
   const nodes = useMemo(
@@ -111,6 +150,12 @@ function Playground() {
         h: node.placement.rowSpan ?? 1
       }
     };
+  }, [nodes, selectedId]);
+  const selectedNodeType = useMemo(() => {
+    if (!selectedId) {
+      return null;
+    }
+    return nodes.find((candidate) => candidate.id === selectedId)?.type ?? null;
   }, [nodes, selectedId]);
 
   const clampPlacement = (nextPlacement: {
@@ -225,6 +270,28 @@ function Playground() {
               }
             }}
             selectedNode={selectedNode}
+          />
+          <GridraDivider />
+          <GridraPropertiesPanel
+            onChange={(patch) => {
+              if (!selectedId) {
+                return;
+              }
+              const sanitizedPatch = Object.fromEntries(
+                Object.entries(patch).filter((entry) => entry[1] !== undefined)
+              ) as GridraNodePropertiesValue;
+              setNodePropertiesById((current) => ({
+                ...current,
+                [selectedId]: {
+                  ...(current[selectedId] ?? {}),
+                  ...sanitizedPatch
+                }
+              }));
+            }}
+            schema={propertiesSchema}
+            selectedNodeId={selectedId}
+            selectedNodeType={selectedNodeType}
+            value={selectedId ? nodePropertiesById[selectedId] : undefined}
           />
         </GridraPanel>
       }
@@ -412,6 +479,53 @@ function Playground() {
           <GridraStack
             as="section"
             border="default"
+            className="playground-component-group playground-component-group--wide"
+            gap="md"
+            padding="md"
+            surface="surface"
+          >
+            <GridraInline align="center" justify="between">
+              <GridraLabel>Split Pane</GridraLabel>
+              <GridraBadge tone="accent">{Math.round(splitPaneSize)}%</GridraBadge>
+            </GridraInline>
+            <GridraCluster align="center" gap="sm">
+              <GridraButton
+                onClick={() => setSplitPaneOrientation("horizontal")}
+                pressed={splitPaneOrientation === "horizontal"}
+                size="sm"
+              >
+                Horizontal
+              </GridraButton>
+              <GridraButton
+                onClick={() => setSplitPaneOrientation("vertical")}
+                pressed={splitPaneOrientation === "vertical"}
+                size="sm"
+              >
+                Vertical
+              </GridraButton>
+            </GridraCluster>
+            <GridraBox border="default" style={{ height: 180 }} surface="raised">
+              <GridraSplitPane
+                maxSize={85}
+                minSize={15}
+                onSizeChange={setSplitPaneSize}
+                orientation={splitPaneOrientation}
+                size={splitPaneSize}
+              >
+                <GridraBox padding="sm" surface="input">
+                  <GridraLabel>Pane A</GridraLabel>
+                  <GridraBadge tone="muted">primary</GridraBadge>
+                </GridraBox>
+                <GridraBox padding="sm" surface="input">
+                  <GridraLabel>Pane B</GridraLabel>
+                  <GridraBadge tone="muted">secondary</GridraBadge>
+                </GridraBox>
+              </GridraSplitPane>
+            </GridraBox>
+          </GridraStack>
+          <GridraStack
+            as="section"
+            border="default"
             className="playground-component-group"
             gap="md"
             padding="md"
@@ -457,6 +571,15 @@ function Playground() {
             setSelectedId(nextSelectedIds[0] ?? null);
           }}
           renderNode={(node, state) => (
+            (() => {
+              const nodeProps = nodePropertiesById[node.id];
+              const detail =
+                node.type === "transform"
+                  ? String(nodeProps?.mode ?? "")
+                  : node.type === "input"
+                    ? String(nodeProps?.sourceName ?? "")
+                    : String(nodeProps?.targetName ?? "");
+              return (
             <GridraNode
               connectionHandles={state.connectionHandles}
               dragHandle={state.selected ? state.dragHandle : undefined}
@@ -470,8 +593,10 @@ function Playground() {
               resizeHandle={state.selected ? state.resizeHandle : undefined}
               selected={state.selected}
             >
-              {node.label ?? node.id}
+              {detail ? `${node.label ?? node.id} · ${detail}` : node.label ?? node.id}
             </GridraNode>
+              );
+            })()
           )}
           selectedId={selectedId}
           selectedIds={selectedIds}

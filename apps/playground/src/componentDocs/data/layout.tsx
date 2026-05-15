@@ -1,4 +1,4 @@
-import { GridraBadge, GridraBox, GridraCluster, GridraGridLayout, GridraInline, GridraInlineItem, GridraStack } from "@gridra-ui/react";
+import { GridraBadge, GridraBox, GridraCluster, GridraGridLayout, GridraInline, GridraInlineItem, GridraSplitPane, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../types";
 export const layoutDocs: ComponentDoc[] = [
   {
@@ -314,6 +314,63 @@ export const layoutDocs: ComponentDoc[] = [
           <GridraBadge size="sm">One</GridraBadge>
           <GridraBadge size="sm">Two</GridraBadge>
         </GridraCluster>
+      </div>
+    )
+  },
+  {
+    category: "Layout",
+    name: "GridraSplitPane",
+    summary: "Two-pane layout primitive with draggable separator and controlled/uncontrolled sizing.",
+    description:
+      "GridraSplitPane provides a 2-pane split layout with a draggable separator. It supports horizontal and vertical orientation, controlled or uncontrolled size, and percent-based min/max constraints. Use it for editor shells, inspector splits, and resizable work areas.",
+    importExample: 'import { GridraSplitPane } from "@gridra-ui/react";',
+    props: [
+      { name: "orientation", type: "\"horizontal\" | \"vertical\"", default: "\"horizontal\"", description: "Split direction." },
+      { name: "size", type: "number", description: "Controlled primary pane size in percent (0-100)." },
+      { name: "defaultSize", type: "number", default: "50", description: "Uncontrolled initial primary pane size in percent." },
+      { name: "minSize", type: "number", default: "10", description: "Minimum primary pane size in percent." },
+      { name: "maxSize", type: "number", default: "90", description: "Maximum primary pane size in percent." },
+      { name: "onSizeChange", type: "(next, previous) => void", description: "Called when pane size changes." },
+      { name: "children", type: "ReactNode", description: "Exactly two panes (primary, secondary)." }
+    ],
+    options: [
+      "orientation: horizontal | vertical",
+      "size / defaultSize",
+      "minSize / maxSize",
+      "onSizeChange",
+      "HTML div attributes"
+    ],
+    features: [
+      "Draggable separator with pointer capture.",
+      "Keyboard resize support on separator (Arrow/Home/End).",
+      "Controlled and uncontrolled sizing with percent constraints."
+    ],
+    examples: [
+      {
+        title: "Horizontal split",
+        code: `<GridraSplitPane defaultSize={60} minSize={20} maxSize={80}>
+  <GridraBox padding="sm" surface="input">Pane A</GridraBox>
+  <GridraBox padding="sm" surface="input">Pane B</GridraBox>
+</GridraSplitPane>`
+      },
+      {
+        title: "Vertical controlled split",
+        code: `<GridraSplitPane orientation="vertical" size={size} onSizeChange={setSize}>
+  <GridraBox padding="sm" surface="input">Top</GridraBox>
+  <GridraBox padding="sm" surface="input">Bottom</GridraBox>
+</GridraSplitPane>`
+      }
+    ],
+    preview: (
+      <div className="docs-inline-preview" style={{ height: 170 }}>
+        <GridraSplitPane defaultSize={58} minSize={20} maxSize={80}>
+          <GridraBox padding="sm" surface="input">
+            <GridraBadge size="sm">Pane A</GridraBadge>
+          </GridraBox>
+          <GridraBox padding="sm" surface="input">
+            <GridraBadge size="sm" tone="accent">Pane B</GridraBadge>
+          </GridraBox>
+        </GridraSplitPane>
       </div>
     )
   },
