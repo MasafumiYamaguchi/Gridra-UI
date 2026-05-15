@@ -38,11 +38,35 @@ describe("additional Gridra form controls", () => {
   });
 
   it("supports textarea size class", () => {
-    render(<GridraTextarea aria-label="Large notes" invalid size="lg" />);
+    render(
+      <GridraTextarea
+        aria-describedby="notes-hint"
+        aria-label="Large notes"
+        className="custom-textarea"
+        disabled
+        invalid
+        name="notes"
+        placeholder="Notes"
+        required
+        size="lg"
+      />
+    );
     const textarea = screen.getByRole("textbox", { name: "Large notes" });
 
     expect(textarea.className).toContain("gridra-textarea--lg");
+    expect(textarea.className).toContain("custom-textarea");
     expect(textarea.getAttribute("aria-invalid")).toBe("true");
+    expect(textarea.getAttribute("aria-describedby")).toBe("notes-hint");
+    expect(textarea.getAttribute("name")).toBe("notes");
+    expect(textarea.getAttribute("placeholder")).toBe("Notes");
+    expect((textarea as HTMLTextAreaElement).disabled).toBe(true);
+    expect((textarea as HTMLTextAreaElement).required).toBe(true);
+  });
+
+  it("omits textarea aria-invalid when invalid is false", () => {
+    render(<GridraTextarea aria-label="Notes" invalid={false} />);
+
+    expect(screen.getByRole("textbox", { name: "Notes" }).hasAttribute("aria-invalid")).toBe(false);
   });
 
   it("supports checkbox and radio labels", () => {
@@ -60,8 +84,24 @@ describe("additional Gridra form controls", () => {
   it("supports checkbox and radio description, size, and invalid state", () => {
     render(
       <>
-        <GridraCheckbox description="Aligns to grid" invalid label="Snap" size="lg" />
-        <GridraRadio description="Dense controls" invalid label="Compact" name="density" size="sm" />
+        <GridraCheckbox
+          description="Aligns to grid"
+          id="snap"
+          invalid
+          label="Snap"
+          name="snap"
+          size="lg"
+          value="enabled"
+        />
+        <GridraRadio
+          description="Dense controls"
+          id="compact"
+          invalid
+          label="Compact"
+          name="density"
+          size="sm"
+          value="compact"
+        />
       </>
     );
     const checkbox = screen.getByRole("checkbox", { name: "Snap" });
@@ -70,14 +110,60 @@ describe("additional Gridra form controls", () => {
     const radioDescription = screen.getByText("Dense controls");
 
     expect(checkbox.getAttribute("aria-invalid")).toBe("true");
-    expect(checkbox.getAttribute("aria-describedby")).toBe(checkboxDescription.id);
+    expect(checkbox.getAttribute("aria-describedby")).toBe("snap-description");
+    expect(checkboxDescription.id).toBe("snap-description");
+    expect(checkboxDescription.getAttribute("aria-hidden")).toBe("true");
+    expect(checkbox.getAttribute("name")).toBe("snap");
+    expect(checkbox.getAttribute("value")).toBe("enabled");
     expect(checkbox.closest(".gridra-checkbox")?.className).toContain("gridra-checkbox--lg");
     expect(checkbox.closest(".gridra-checkbox")?.className).toContain("gridra-checkbox--invalid");
     expect(radio.getAttribute("aria-invalid")).toBe("true");
-    expect(radio.getAttribute("aria-describedby")).toBe(radioDescription.id);
+    expect(radio.getAttribute("aria-describedby")).toBe("compact-description");
+    expect(radioDescription.id).toBe("compact-description");
+    expect(radioDescription.getAttribute("aria-hidden")).toBe("true");
+    expect(radio.getAttribute("value")).toBe("compact");
     expect(radio.closest(".gridra-radio")?.className).toContain("gridra-radio--sm");
     expect(checkboxDescription.className).toContain("gridra-checkbox__description");
     expect(radioDescription.className).toContain("gridra-radio__description");
+  });
+
+  it("supports accessible names without visible labels and native checked contracts", () => {
+    const onCheckboxChange = vi.fn();
+    const onRadioChange = vi.fn();
+
+    render(
+      <>
+        <GridraCheckbox aria-label="Snap" checked disabled onChange={onCheckboxChange} />
+        <GridraRadio aria-label="Grid" name="mode" onChange={onRadioChange} value="grid" />
+      </>
+    );
+    const checkbox = screen.getByRole("checkbox", { name: "Snap" }) as HTMLInputElement;
+    const radio = screen.getByRole("radio", { name: "Grid" }) as HTMLInputElement;
+
+    fireEvent.click(radio);
+
+    expect(checkbox.checked).toBe(true);
+    expect(checkbox.disabled).toBe(true);
+    expect(radio.checked).toBe(true);
+    expect(onCheckboxChange).not.toHaveBeenCalled();
+    expect(onRadioChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("lets native radio groups enforce exclusive selection", () => {
+    render(
+      <>
+        <GridraRadio label="Select" name="tool" value="select" />
+        <GridraRadio label="Pan" name="tool" value="pan" />
+      </>
+    );
+    const select = screen.getByRole("radio", { name: "Select" }) as HTMLInputElement;
+    const pan = screen.getByRole("radio", { name: "Pan" }) as HTMLInputElement;
+
+    fireEvent.click(select);
+    fireEvent.click(pan);
+
+    expect(select.checked).toBe(false);
+    expect(pan.checked).toBe(true);
   });
 
   it("reports switch and slider interaction", () => {
@@ -106,6 +192,30 @@ describe("additional Gridra form controls", () => {
     expect((slider as HTMLInputElement).value).toBe("75");
     expect(onSwitchClick).toHaveBeenCalledTimes(1);
     expect(onSliderChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("syncs switch checked state, type, disabled behavior, and checked-change payloads", () => {
+    const onCheckedChange = vi.fn();
+
+    const { rerender } = render(
+      <GridraSwitch checked={false} label="Preview" onCheckedChange={onCheckedChange} type="submit" />
+    );
+    const preview = screen.getByRole("switch", { name: "Preview" }) as HTMLButtonElement;
+
+    fireEvent.click(preview);
+
+    expect(preview.type).toBe("submit");
+    expect(preview.getAttribute("aria-checked")).toBe("false");
+    expect(preview.className).not.toContain("gridra-switch--checked");
+    expect(onCheckedChange).toHaveBeenCalledWith(true);
+
+    rerender(<GridraSwitch checked disabled label="Preview" onCheckedChange={onCheckedChange} />);
+
+    fireEvent.click(screen.getByRole("switch", { name: "Preview" }));
+    expect(screen.getByRole("switch", { name: "Preview" }).getAttribute("aria-checked")).toBe("true");
+    expect(screen.getByRole("switch", { name: "Preview" }).className).toContain("gridra-switch--checked");
+    expect((screen.getByRole("switch", { name: "Preview" }) as HTMLButtonElement).type).toBe("button");
+    expect(onCheckedChange).toHaveBeenCalledTimes(1);
   });
 
   it("reports switch checked changes and supports invalid description", () => {
@@ -157,6 +267,59 @@ describe("additional Gridra form controls", () => {
 
     expect(slider.className).toContain("gridra-slider--lg");
     expect(screen.getByText("72%").className).toContain("gridra-slider-field__value");
+  });
+
+  it("derives slider display from min, controlled value, and native props", () => {
+    const formatter = vi.fn((value: number) => `${value}px`);
+    const { rerender } = render(
+      <GridraSlider
+        aria-label="Width"
+        disabled
+        max={200}
+        min={10}
+        name="width"
+        showValue
+        step={5}
+        value={25}
+        valueFormatter={formatter}
+      />
+    );
+    const slider = screen.getByRole("slider", { name: "Width" }) as HTMLInputElement;
+
+    expect(screen.getByText("25px")).toBeTruthy();
+    expect(formatter).toHaveBeenLastCalledWith(25);
+    expect(slider.disabled).toBe(true);
+    expect(slider.max).toBe("200");
+    expect(slider.min).toBe("10");
+    expect(slider.name).toBe("width");
+    expect(slider.step).toBe("5");
+
+    rerender(
+      <GridraSlider
+        aria-label="Width"
+        min={10}
+        showValue
+        value={40}
+        valueFormatter={formatter}
+      />
+    );
+
+    expect(screen.getByText("40px")).toBeTruthy();
+    expect(formatter).toHaveBeenLastCalledWith(40);
+  });
+
+  it("uses min or zero as the initial slider display value and skips wrapper when hidden", () => {
+    const { unmount } = render(<GridraSlider aria-label="Columns" min={2} showValue />);
+
+    expect(screen.getByText("2")).toBeTruthy();
+
+    unmount();
+    render(<GridraSlider aria-label="Columns" showValue />);
+    expect(screen.getByText("0")).toBeTruthy();
+
+    cleanup();
+    render(<GridraSlider aria-label="Columns" />);
+    expect(document.querySelector(".gridra-slider-field")).toBeNull();
   });
 });
 

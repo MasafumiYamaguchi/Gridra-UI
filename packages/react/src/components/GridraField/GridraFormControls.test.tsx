@@ -34,7 +34,17 @@ describe("GridraInput", () => {
   it("supports size and invalid while preserving explicit aria-invalid", () => {
     render(
       <>
-        <GridraInput aria-label="Name" invalid size="lg" />
+        <GridraInput
+          aria-describedby="name-hint"
+          aria-label="Name"
+          className="custom-input"
+          disabled
+          invalid
+          name="name"
+          placeholder="Full name"
+          required
+          size="lg"
+        />
         <GridraInput aria-invalid="false" aria-label="Override" invalid />
       </>
     );
@@ -43,8 +53,20 @@ describe("GridraInput", () => {
     const override = screen.getByRole("textbox", { name: "Override" });
 
     expect(input.className).toContain("gridra-input--lg");
+    expect(input.className).toContain("custom-input");
     expect(input.getAttribute("aria-invalid")).toBe("true");
+    expect(input.getAttribute("aria-describedby")).toBe("name-hint");
+    expect(input.getAttribute("name")).toBe("name");
+    expect(input.getAttribute("placeholder")).toBe("Full name");
+    expect((input as HTMLInputElement).disabled).toBe(true);
+    expect((input as HTMLInputElement).required).toBe(true);
     expect(override.getAttribute("aria-invalid")).toBe("false");
+  });
+
+  it("omits aria-invalid when invalid is false", () => {
+    render(<GridraInput aria-label="Name" invalid={false} />);
+
+    expect(screen.getByRole("textbox", { name: "Name" }).hasAttribute("aria-invalid")).toBe(false);
   });
 });
 
@@ -68,14 +90,42 @@ describe("GridraSelect", () => {
 
   it("supports size and invalid state", () => {
     render(
-      <GridraSelect aria-label="Status" invalid size="sm">
+      <GridraSelect aria-label="Status" className="custom-select" disabled invalid name="status" required size="sm">
         <option value="ready">Ready</option>
       </GridraSelect>
     );
     const select = screen.getByRole("combobox", { name: "Status" });
 
     expect(select.className).toContain("gridra-select--sm");
+    expect(select.className).toContain("custom-select");
     expect(select.getAttribute("aria-invalid")).toBe("true");
+    expect(select.getAttribute("name")).toBe("status");
+    expect((select as HTMLSelectElement).disabled).toBe(true);
+    expect((select as HTMLSelectElement).required).toBe(true);
+  });
+
+  it("supports controlled value and multiple selection contracts", () => {
+    const { rerender } = render(
+      <GridraSelect aria-label="Modes" multiple onChange={() => {}} value={["pan"]}>
+        <option value="select">Select</option>
+        <option value="pan">Pan</option>
+        <option value="draw">Draw</option>
+      </GridraSelect>
+    );
+    const select = screen.getByRole("listbox", { name: "Modes" }) as HTMLSelectElement;
+
+    expect(select.multiple).toBe(true);
+    expect(Array.from(select.selectedOptions).map((option) => option.value)).toEqual(["pan"]);
+
+    rerender(
+      <GridraSelect aria-label="Modes" multiple onChange={() => {}} value={["select", "draw"]}>
+        <option value="select">Select</option>
+        <option value="pan">Pan</option>
+        <option value="draw">Draw</option>
+      </GridraSelect>
+    );
+
+    expect(Array.from(select.selectedOptions).map((option) => option.value)).toEqual(["select", "draw"]);
   });
 });
 
@@ -131,5 +181,38 @@ describe("GridraField", () => {
     );
 
     expect(screen.getByText("Required").getAttribute("id")).toBe("columns-error");
+  });
+
+  it("forwards root attributes and marks invalid fields by error state", () => {
+    render(
+      <GridraField
+        className="custom-field"
+        data-testid="field"
+        error="Broken"
+        htmlFor="name"
+        label={<span>Name</span>}
+        role="group"
+      >
+        <GridraInput id="name" />
+      </GridraField>
+    );
+    const field = screen.getByTestId("field");
+
+    expect(field.getAttribute("role")).toBe("group");
+    expect(field.className).toContain("gridra-field--invalid");
+    expect(field.className).toContain("custom-field");
+    expect(screen.getByLabelText("Name")).toBeTruthy();
+  });
+
+  it("does not automatically wire hint ids or disabled state into child controls", () => {
+    render(
+      <GridraField disabled hint="Useful hint" hintId="name-hint" htmlFor="name" label="Name">
+        <GridraInput id="name" />
+      </GridraField>
+    );
+    const input = screen.getByLabelText("Name");
+
+    expect(input.hasAttribute("aria-describedby")).toBe(false);
+    expect((input as HTMLInputElement).disabled).toBe(false);
   });
 });
