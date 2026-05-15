@@ -60,8 +60,8 @@ These components define the library's identity as a dense, panel-based spatial U
 - [x] Connection Handle
 - [x] Snap Guide
 - [ ] Minimap
-- [ ] Inspector Panel
-- [ ] Properties Panel
+- [x] Inspector Panel
+- [~] Properties Panel
 
 ## Priority 2: Basic Controls
 
@@ -350,6 +350,37 @@ snap candidate from interaction logic
   -> orientation plus pixel position or grid placement
   -> GridraSnapGuide
   -> visual alignment line
+```
+
+### GridraInspectorPanel
+
+Current status: implemented.
+
+Implemented:
+
+- Controlled inspector panel component exported from `@gridra-ui/react`.
+- Supports selected-node editing for `label` and placement (`x`, `y`, `w`, `h`) in v1.
+- Shows a built-in empty state when no node is selected.
+- Emits partial updates through `onChange` so parent state owns normalization and persistence.
+- Supports optional `onCommit` callback from Enter key in the label field.
+- The playground integrates the inspector in the side panel and syncs edits with canvas state.
+
+Not implemented yet:
+
+- Multi-node editing.
+- Node-type-specific properties (belongs to `Properties Panel`).
+- Connection editing from inspector.
+
+Current data flow:
+
+```text
+canvas selection change
+  -> parent resolves selected node
+  -> GridraInspectorPanel receives selectedNode
+  -> user edits fields
+  -> onChange emits patch
+  -> parent normalizes and updates node label/placement state
+  -> GridraCanvasArea re-renders updated node
 ```
 
 ### GridraInline

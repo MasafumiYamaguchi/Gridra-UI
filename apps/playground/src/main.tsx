@@ -16,6 +16,7 @@ import {
   GridraInlineItem,
   GridraSelectableGrid,
   GridraInput,
+  GridraInspectorPanel,
   GridraLabel,
   GridraNode,
   type GridraNodeConnection,
@@ -38,6 +39,24 @@ import "./styles.css";
 
 const isDocsRoute = window.location.pathname === "/docs";
 
+const baseNodes = [
+  {
+    id: "node-input",
+    label: "Input",
+    placement: { column: 2, row: 2, columnSpan: 4, rowSpan: 2 }
+  },
+  {
+    id: "node-transform",
+    label: "Transform",
+    placement: { column: 8, row: 5, columnSpan: 5, rowSpan: 2 }
+  },
+  {
+    id: "node-output",
+    label: "Output",
+    placement: { column: 8, row: 1, columnSpan: 4, rowSpan: 2 }
+  }
+] as const;
+
 function Playground() {
   const avatarImageUrl = "https://i.pravatar.cc/96?img=12";
   const [theme, setTheme] = useState<"gridra-theme-light" | "gridra-theme-dark">("gridra-theme-dark");
@@ -59,29 +78,56 @@ function Playground() {
     { sourceId: "node-transform", targetId: "node-output" }
   ]);
   const [nodePlacements, setNodePlacements] = useState<GridraNodePlacements>({});
+  const [nodeLabels, setNodeLabels] = useState<Record<string, string>>(() =>
+    Object.fromEntries(baseNodes.map((node) => [node.id, node.label]))
+  );
   const [gridColumns, setGridColumns] = useState(12);
   const [gridRows, setGridRows] = useState(6);
   const nodes = useMemo(
-    () => [
-      {
-        id: "node-input",
-        label: "Input",
-        placement: { column: 2, row: 2, columnSpan: 4, rowSpan: 2 }
-      },
-      {
-        id: "node-transform",
-        label: "Transform",
-        placement: { column: 8, row: 5, columnSpan: 5, rowSpan: 2 }
-      },
-      {
-        id: "node-output",
-        label: "Output",
-        placement: { column: 8, row: 1, columnSpan: 4, rowSpan: 2 }
-      }
-    ],
-    []
+    () =>
+      baseNodes.map((node) => ({
+        ...node,
+        label: nodeLabels[node.id] ?? node.label,
+        placement: nodePlacements[node.id] ?? node.placement
+      })),
+    [nodeLabels, nodePlacements]
   );
   const items = nodes.map((node) => ({ id: node.id, label: node.label }));
+  const selectedNode = useMemo(() => {
+    if (!selectedId) {
+      return null;
+    }
+    const node = nodes.find((candidate) => candidate.id === selectedId);
+    if (!node) {
+      return null;
+    }
+    return {
+      id: node.id,
+      label: node.label,
+      placement: {
+        x: node.placement.column,
+        y: node.placement.row,
+        w: node.placement.columnSpan ?? 1,
+        h: node.placement.rowSpan ?? 1
+      }
+    };
+  }, [nodes, selectedId]);
+
+  const clampPlacement = (nextPlacement: {
+    column: number;
+    row: number;
+    columnSpan: number;
+    rowSpan: number;
+  }) => {
+    const clampedColumnSpan = Math.min(Math.max(1, nextPlacement.columnSpan), gridColumns);
+    const clampedRowSpan = Math.min(Math.max(1, nextPlacement.rowSpan), gridRows);
+    return {
+      column: Math.min(Math.max(1, nextPlacement.column), gridColumns - clampedColumnSpan + 1),
+      row: Math.min(Math.max(1, nextPlacement.row), gridRows - clampedRowSpan + 1),
+      columnSpan: clampedColumnSpan,
+      rowSpan: clampedRowSpan
+    };
+  };
 
   return (
     <GridraRoot
@@ -151,6 +197,34 @@ function Playground() {
               setSelectedIds(nextSelectedId ? [nextSelectedId] : []);
             }}
             selectedId={selectedId}
+          />
+          <GridraDivider />
+          <GridraInspectorPanel
+            onChange={(patch) => {
+              if (!selectedId) {
+                return;
+              }
+              const nextLabel = patch.label;
+              if (typeof nextLabel === "string") {
+                setNodeLabels((current) => ({ ...current, [selectedId]: nextLabel }));
+              }
+              if (patch.placement) {
+                const currentPlacement =
+                  nodePlacements[selectedId] ??
+                  baseNodes.find((node) => node.id === selectedId)?.placement;
+                if (!currentPlacement) {
+                  return;
+                }
+                const nextPlacement = clampPlacement({
+                  column: patch.placement.x ?? currentPlacement.column,
+                  row: patch.placement.y ?? currentPlacement.row,
+                  columnSpan: patch.placement.w ?? currentPlacement.columnSpan ?? 1,
+                  rowSpan: patch.placement.h ?? currentPlacement.rowSpan ?? 1
+                });
+                setNodePlacements((current) => ({ ...current, [selectedId]: nextPlacement }));
+              }
+            }}
+            selectedNode={selectedNode}
           />
         </GridraPanel>
       }
