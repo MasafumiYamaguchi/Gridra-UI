@@ -1,4 +1,4 @@
-import { GridraBadge, GridraBox, GridraCluster, GridraGridLayout, GridraInline, GridraInlineItem, GridraSplitPane, GridraStack } from "@gridra-ui/react";
+import { GridraBadge, GridraBox, GridraCluster, GridraContainer, GridraGridLayout, GridraInline, GridraInlineItem, GridraSplitPane, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../types";
 export const layoutDocs: ComponentDoc[] = [
   {
@@ -46,6 +46,14 @@ export const layoutDocs: ComponentDoc[] = [
       "Maps layout props to CSS modifier classes.",
       "Supports surface, border, radius, and scroll tokens from the theme."
     ],
+    usage:
+      "Use GridraBox for generic structure and visual primitives (padding, surface, border, scroll, display). Choose GridraContainer when your main goal is consistent content width and horizontal alignment.",
+    avoid:
+      "Avoid using GridraBox alone as a team-wide width standard. Repeating one-off max-width and margin rules can drift across screens.",
+    compositions: [
+      "GridraContainer + GridraBox: apply width constraint first, then local surface/padding structure.",
+      "GridraBox + GridraStack/Inline/GridLayout: use Box as a low-level wrapper around layout primitives."
+    ],
     examples: [
       {
         title: "Basic padded surface",
@@ -75,6 +83,71 @@ export const layoutDocs: ComponentDoc[] = [
         <GridraBox display="flex" gap="sm" padding="sm" surface="input">
           <GridraBadge size="sm">A</GridraBadge>
           <GridraBadge size="sm">B</GridraBadge>
+        </GridraBox>
+      </div>
+    )
+  },
+  {
+    category: "Layout",
+    name: "GridraContainer",
+    summary: "Width-constrained layout primitive with token-based max-width and horizontal alignment.",
+    description:
+      "GridraContainer is a width-constrained wrapper built on GridraBox. It provides max-width tokens and horizontal alignment so content stays readable in dense interfaces. Use maxWidth when token presets are not enough.",
+    importExample: 'import { GridraContainer } from "@gridra-ui/react";',
+    props: [
+      { name: "size", type: "\"sm\" | \"md\" | \"lg\" | \"xl\" | \"full\"", default: "\"lg\"", description: "Width token for max-width." },
+      { name: "maxWidth", type: "number | string", description: "Optional max-width override. Numbers are px." },
+      { name: "align", type: "\"start\" | \"center\" | \"end\"", default: "\"center\"", description: "Horizontal alignment inside the parent." },
+      { name: "padding", type: "\"none\" | \"xs\" | \"sm\" | \"md\" | \"lg\"", description: "Inherited from GridraBox." },
+      { name: "surface", type: "\"none\" | \"surface\" | \"raised\" | \"input\" | \"selected\"", description: "Inherited from GridraBox." },
+      { name: "border", type: "\"none\" | \"default\" | \"strong\"", description: "Inherited from GridraBox." },
+      { name: "fullWidth", type: "boolean", default: "false", description: "Inherited from GridraBox." }
+    ],
+    options: [
+      "size: sm | md | lg | xl | full",
+      "maxWidth: number | string",
+      "align: start | center | end",
+      "padding / paddingX / paddingY / surface / border / radius / scroll",
+      "HTML element attributes"
+    ],
+    features: [
+      "Token-based max-width control.",
+      "Optional maxWidth override.",
+      "Start/center/end alignment without manual margins."
+    ],
+    usage:
+      "Use GridraContainer when you need a canonical readable content width. Prefer it over ad-hoc max-width CSS when the intent is layout consistency across pages and panels.",
+    avoid:
+      "Avoid using GridraContainer as a general replacement for GridraBox. It is for width constraint and alignment, not for all structural layout concerns.",
+    compositions: [
+      "GridraContainer + GridraStack: common content column with stable width.",
+      "GridraContainer + GridraGridLayout: constrained responsive card/forms area."
+    ],
+    examples: [
+      {
+        title: "Centered container",
+        code: `<GridraContainer size="md" border="default" padding="sm">
+  <GridraBadge>Centered content</GridraBadge>
+</GridraContainer>`
+      },
+      {
+        title: "End-aligned custom width",
+        code: `<GridraContainer align="end" maxWidth={640} surface="input" padding="sm">
+  <GridraBadge>Custom width</GridraBadge>
+</GridraContainer>`
+      }
+    ],
+    preview: (
+      <div className="docs-inline-preview">
+        <GridraBox border="default" padding="sm">
+          <GridraContainer border="default" padding="sm" size="sm" surface="raised">
+            <GridraBadge size="sm">SM centered</GridraBadge>
+          </GridraContainer>
+        </GridraBox>
+        <GridraBox border="default" padding="sm">
+          <GridraContainer align="end" border="default" maxWidth={220} padding="sm" surface="input">
+            <GridraBadge size="sm" tone="accent">End aligned</GridraBadge>
+          </GridraContainer>
         </GridraBox>
       </div>
     )

@@ -59,7 +59,7 @@ These components define the library's identity as a dense, panel-based spatial U
 - [x] Resize Handle
 - [x] Connection Handle
 - [x] Snap Guide
-- [ ] Minimap
+- [x] Minimap
 - [x] Inspector Panel
 - [x] Properties Panel
 
@@ -92,7 +92,7 @@ Layout components should support dense application surfaces rather than marketin
 - [x] Inline
 - [x] Cluster
 - [x] Grid Layout
-- [ ] Container
+- [x] Container
 - [x] Split Pane
 - [ ] Resizable Panel Group
 - [ ] Sidebar
@@ -445,6 +445,62 @@ pointer drag or keyboard input on separator
   -> update internal state (or controlled value via onSizeChange)
   -> CSS variable --gridra-split-pane-size updates
   -> pane layout reflows
+```
+
+### GridraMinimap
+
+Current status: implemented.
+
+Implemented:
+
+- Visual minimap component exported from `@gridra-ui/react`.
+- Renders normalized node rectangles from grid placement data.
+- Highlights selected nodes via `selectedIds`.
+- Supports optional viewport rectangle overlay.
+- Uses grid-based background lines derived from `gridColumns` and `gridRows`.
+- Playground side panel includes a minimap preview tied to current canvas nodes.
+
+Not implemented yet:
+
+- Interactive pan/zoom control from minimap.
+- Connection line preview in minimap.
+- Bidirectional viewport sync with canvas scroll/zoom.
+
+Current data flow:
+
+```text
+nodes + grid dimensions + selection ids
+  -> normalize placement to percent coordinates
+  -> render minimap node rectangles
+  -> optional viewport rect overlay
+```
+
+### GridraContainer
+
+Current status: implemented.
+
+Implemented:
+
+- Width-constrained layout component exported from `@gridra-ui/react`.
+- Built on `GridraBox` so existing box-style props remain available.
+- Supports size tokens: `sm`, `md`, `lg`, `xl`, `full`.
+- Supports `maxWidth` override using number (px) or CSS length string.
+- Supports horizontal alignment: `start`, `center`, `end`.
+- Playground includes container width/alignment demos in the component check surface.
+
+Not implemented yet:
+
+- Breakpoint-object API for responsive width maps.
+- Container-query driven behavior.
+- Layout orchestration beyond width constraint and alignment.
+
+Current data flow:
+
+```text
+size token and optional maxWidth override
+  -> resolve --gridra-container-max-width
+  -> apply alignment modifier
+  -> GridraBox renders constrained-width wrapper
 ```
 
 ### GridraInline

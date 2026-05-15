@@ -8,6 +8,7 @@ import {
   GridraCanvasArea,
   GridraCheckbox,
   GridraCluster,
+  GridraContainer,
   GridraDivider,
   GridraField,
   GridraGridLayout,
@@ -18,6 +19,7 @@ import {
   GridraInput,
   GridraInspectorPanel,
   GridraLabel,
+  GridraMinimap,
   GridraNode,
   type GridraNodeConnection,
   type GridraNodePropertiesSchema,
@@ -230,6 +232,20 @@ function Playground() {
                 onChange={(event) => setGridRows(Number(event.target.value))}
                 type="number"
                 value={gridRows}
+              />
+            </GridraField>
+            <GridraField label="Minimap">
+              <GridraMinimap
+                gridColumns={gridColumns}
+                gridRows={gridRows}
+                nodes={nodes}
+                selectedIds={selectedIds}
+                viewport={{
+                  x: 0,
+                  y: 0,
+                  width: Math.max(1, Math.floor(gridColumns * 0.6)),
+                  height: Math.max(1, Math.floor(gridRows * 0.6))
+                }}
               />
             </GridraField>
           </GridraStack>
@@ -521,6 +537,29 @@ function Playground() {
                   <GridraBadge tone="muted">secondary</GridraBadge>
                 </GridraBox>
               </GridraSplitPane>
+            </GridraBox>
+          </GridraStack>
+          <GridraStack
+            as="section"
+            border="default"
+            className="playground-component-group playground-component-group--wide"
+            gap="md"
+            padding="md"
+            surface="surface"
+          >
+            <GridraInline align="center" justify="between">
+              <GridraLabel>Container</GridraLabel>
+              <GridraBadge tone="muted">width constraint</GridraBadge>
+            </GridraInline>
+            <GridraBox border="default" padding="sm" surface="raised">
+              <GridraContainer border="default" padding="sm" size="sm" surface="input">
+                <GridraBadge size="sm">size=sm center</GridraBadge>
+              </GridraContainer>
+            </GridraBox>
+            <GridraBox border="default" padding="sm" surface="raised">
+              <GridraContainer align="end" border="default" maxWidth={220} padding="sm" surface="input">
+                <GridraBadge size="sm" tone="accent">align=end + maxWidth</GridraBadge>
+              </GridraContainer>
             </GridraBox>
           </GridraStack>
           <GridraStack
