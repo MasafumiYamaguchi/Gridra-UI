@@ -94,7 +94,7 @@ Layout components should support dense application surfaces rather than marketin
 - [x] Grid Layout
 - [x] Container
 - [x] Split Pane
-- [ ] Resizable Panel Group
+- [x] Resizable Panel Group (Integrated into `GridraSplitPane` three-pane mode)
 - [ ] Sidebar
 - [ ] Header
 - [ ] Footer
@@ -422,8 +422,10 @@ Current status: implemented.
 Implemented:
 
 - Two-pane split layout component exported from `@gridra-ui/react`.
+- Three-pane layout mode integrated from the Resizable Panel Group requirement.
 - Supports `horizontal` and `vertical` orientations.
 - Supports controlled and uncontrolled pane size using percent (`size` / `defaultSize`).
+- Supports controlled and uncontrolled three-pane sizes (`sizes` / `defaultSizes`).
 - Supports `minSize` and `maxSize` constraints in percent.
 - Resizes via pointer drag using pointer capture to continue tracking outside the handle bounds.
 - Exposes keyboard resizing on separator (`Arrow` keys, `Home`, `End`).
@@ -435,6 +437,7 @@ Not implemented yet:
 - Pixel-based sizing.
 - Built-in persistence.
 - Nested split-pane orchestration helpers.
+- Four-or-more-pane orchestration as first-class API.
 
 Current data flow:
 

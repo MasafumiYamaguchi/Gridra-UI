@@ -1881,6 +1881,25 @@
     minmax(0, calc(100% - var(--gridra-split-pane-size)));
 }
 
+.gridra-split-pane--horizontal.gridra-split-pane--three {
+  grid-template-columns:
+    minmax(0, var(--gridra-split-pane-size-a))
+    var(--gridra-split-pane-handle-size)
+    minmax(0, var(--gridra-split-pane-size-b))
+    var(--gridra-split-pane-handle-size)
+    minmax(0, var(--gridra-split-pane-size-c));
+}
+
+.gridra-split-pane--vertical.gridra-split-pane--three {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows:
+    minmax(0, var(--gridra-split-pane-size-a))
+    var(--gridra-split-pane-handle-size)
+    minmax(0, var(--gridra-split-pane-size-b))
+    var(--gridra-split-pane-handle-size)
+    minmax(0, var(--gridra-split-pane-size-c));
+}
+
 .gridra-split-pane__pane {
   min-width: 0;
   min-height: 0;
@@ -1900,6 +1919,16 @@
 .gridra-split-pane--vertical .gridra-split-pane__pane--secondary {
   grid-column: 1;
   grid-row: 3;
+}
+
+.gridra-split-pane__pane--tertiary {
+  grid-column: 5;
+  grid-row: 1;
+}
+
+.gridra-split-pane--vertical .gridra-split-pane__pane--tertiary {
+  grid-column: 1;
+  grid-row: 5;
 }
 
 .gridra-split-pane__separator {
@@ -1962,6 +1991,10 @@
   grid-row: 1;
 }
 
+.gridra-split-pane--horizontal .gridra-split-pane__separator--2 {
+  grid-column: 4;
+}
+
 .gridra-split-pane--horizontal .gridra-split-pane__separator::before {
   width: 1px;
   height: 100%;
@@ -1971,6 +2004,10 @@
   grid-column: 1;
   grid-row: 2;
   cursor: row-resize;
+}
+
+.gridra-split-pane--vertical .gridra-split-pane__separator--2 {
+  grid-row: 4;
 }
 
 .gridra-split-pane--vertical .gridra-split-pane__separator::before {

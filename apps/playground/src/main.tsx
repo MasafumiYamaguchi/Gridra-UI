@@ -105,7 +105,7 @@ function Playground() {
   const [controlNotes, setControlNotes] = useState("Dense controls for node editing.");
   const [controlOpacity, setControlOpacity] = useState(72);
   const [splitPaneOrientation, setSplitPaneOrientation] = useState<"horizontal" | "vertical">("horizontal");
-  const [splitPaneSize, setSplitPaneSize] = useState(56);
+  const [splitPaneSizes, setSplitPaneSizes] = useState([30, 40, 30]);
   const [controlPreviewEnabled, setControlPreviewEnabled] = useState(true);
   const [controlSnapEnabled, setControlSnapEnabled] = useState(true);
   const [iconPreviewPressed, setIconPreviewPressed] = useState(false);
@@ -502,7 +502,9 @@ function Playground() {
           >
             <GridraInline align="center" justify="between">
               <GridraLabel>Split Pane</GridraLabel>
-              <GridraBadge tone="accent">{Math.round(splitPaneSize)}%</GridraBadge>
+              <GridraBadge tone="accent">
+                {splitPaneSizes.map((value) => Math.round(value)).join(" / ")}%
+              </GridraBadge>
             </GridraInline>
             <GridraCluster align="center" gap="sm">
               <GridraButton
@@ -524,9 +526,9 @@ function Playground() {
               <GridraSplitPane
                 maxSize={85}
                 minSize={15}
-                onSizeChange={setSplitPaneSize}
+                onSizesChange={setSplitPaneSizes}
                 orientation={splitPaneOrientation}
-                size={splitPaneSize}
+                sizes={splitPaneSizes}
               >
                 <GridraBox padding="sm" surface="input">
                   <GridraLabel>Pane A</GridraLabel>
@@ -535,6 +537,10 @@ function Playground() {
                 <GridraBox padding="sm" surface="input">
                   <GridraLabel>Pane B</GridraLabel>
                   <GridraBadge tone="muted">secondary</GridraBadge>
+                </GridraBox>
+                <GridraBox padding="sm" surface="input">
+                  <GridraLabel>Pane C</GridraLabel>
+                  <GridraBadge tone="muted">tertiary</GridraBadge>
                 </GridraBox>
               </GridraSplitPane>
             </GridraBox>

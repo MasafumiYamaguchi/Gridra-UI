@@ -115,4 +115,73 @@ describe("GridraSplitPane", () => {
     expect(split.getAttribute("style")).toContain("--gridra-split-pane-size: 90%");
     expect(handleSizeChange).toHaveBeenCalled();
   });
+
+  it("renders three panes with two separators", () => {
+    render(
+      <GridraSplitPane defaultSizes={[20, 50, 30]}>
+        <div>A</div>
+        <div>B</div>
+        <div>C</div>
+      </GridraSplitPane>,
+    );
+
+    const split = screen.getByText("A").closest(".gridra-split-pane") as HTMLDivElement;
+    expect(split.className).toContain("gridra-split-pane--three");
+    expect(screen.getAllByRole("separator")).toHaveLength(2);
+    const style = split.getAttribute("style") ?? "";
+    expect(style).toContain("--gridra-split-pane-size-a: 20%");
+    expect(style).toContain("--gridra-split-pane-size-b: 50%");
+    expect(style).toContain("--gridra-split-pane-size-c: 30%");
+  });
+
+  it("applies controlled sizes in three-pane mode", () => {
+    render(
+      <GridraSplitPane sizes={[25, 35, 40]}>
+        <div>A</div>
+        <div>B</div>
+        <div>C</div>
+      </GridraSplitPane>,
+    );
+    const split = screen.getByText("A").closest(".gridra-split-pane") as HTMLDivElement;
+    const style = split.getAttribute("style") ?? "";
+    expect(style).toContain("--gridra-split-pane-size-a: 25%");
+    expect(style).toContain("--gridra-split-pane-size-b: 35%");
+    expect(style).toContain("--gridra-split-pane-size-c: 40%");
+  });
+
+  it("updates adjacent panes through first separator drag in three-pane mode", () => {
+    const handleSizesChange = vi.fn();
+    render(
+      <GridraSplitPane defaultSizes={[30, 40, 30]} onSizesChange={handleSizesChange}>
+        <div>A</div>
+        <div>B</div>
+        <div>C</div>
+      </GridraSplitPane>,
+    );
+
+    const split = screen.getByText("A").closest(".gridra-split-pane") as HTMLDivElement;
+    const firstSeparator = screen.getAllByRole("separator")[0] as HTMLDivElement;
+    Object.defineProperty(split, "getBoundingClientRect", {
+      value: () => ({
+        x: 0,
+        y: 0,
+        left: 0,
+        top: 0,
+        width: 200,
+        height: 100,
+        right: 200,
+        bottom: 100,
+        toJSON: () => ({}),
+      }),
+    });
+
+    fireEvent.mouseDown(firstSeparator, { clientX: 80 });
+    fireEvent.mouseMove(firstSeparator, { clientX: 100 });
+
+    expect(handleSizesChange).toHaveBeenCalled();
+    const style = split.getAttribute("style") ?? "";
+    expect(style).toContain("--gridra-split-pane-size-a: 50%");
+    expect(style).toContain("--gridra-split-pane-size-b: 20%");
+    expect(style).toContain("--gridra-split-pane-size-c: 30%");
+  });
 });
