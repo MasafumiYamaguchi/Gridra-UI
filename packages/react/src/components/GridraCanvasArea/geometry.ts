@@ -26,6 +26,25 @@ export function normalizeGridPlacement(
   };
 }
 
+export function normalizeGridPlacementForDrag(
+  placement: GridraNodePlacement,
+  maxColumns?: number,
+  maxRows?: number,
+): GridraNodePlacement {
+  const columnSpan = normalizeGridSpan(placement.columnSpan, maxColumns);
+  const rowSpan = normalizeGridSpan(placement.rowSpan, maxRows);
+
+  const maxColumn = maxColumns === undefined ? Infinity : Math.max(1, maxColumns - columnSpan + 1);
+  const maxRow = maxRows === undefined ? Infinity : Math.max(1, maxRows - rowSpan + 1);
+
+  return {
+    column: Math.min(normalizeGridLine(placement.column, maxColumns), maxColumn),
+    row: Math.min(normalizeGridLine(placement.row, maxRows), maxRow),
+    columnSpan,
+    rowSpan,
+  };
+}
+
 export function normalizeGridLine(value: number, max?: number): number {
   if (!Number.isFinite(value)) {
     return 1;
@@ -82,6 +101,14 @@ export function getConnectionPath(
 ): string {
   const sourcePoint = getConnectionPoint(source, "output", gridColumns, gridRows);
   const targetPoint = getConnectionPoint(target, "input", gridColumns, gridRows);
+  return getPreviewConnectionPath(sourcePoint, targetPoint, gridColumns);
+}
+
+export function getPreviewConnectionPath(
+  sourcePoint: GridraPoint,
+  targetPoint: GridraPoint,
+  gridColumns: number,
+): string {
   const controlDistance = Math.max(0.5, Math.abs(targetPoint.x - sourcePoint.x) * 0.5);
   const sourceControlX = Math.min(gridColumns, sourcePoint.x + controlDistance);
   const targetControlX = Math.max(0, targetPoint.x - controlDistance);
@@ -192,6 +219,20 @@ export function getGridMetrics(
     paddingTop,
     rowGap,
     rowStep: Math.max(1, cellHeight + rowGap),
+  };
+}
+
+export function getGridPoint(
+  point: GridraPoint,
+  canvas: HTMLDivElement,
+  gridColumns: number,
+  gridRows: number,
+): GridraPoint {
+  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
+
+  return {
+    x: (point.x - metrics.paddingLeft) / metrics.columnStep,
+    y: (point.y - metrics.paddingTop) / metrics.rowStep,
   };
 }
 

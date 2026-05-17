@@ -123,6 +123,7 @@ export interface NodeConnectionState {
   originKind: GridraConnectionHandleKind;
   pointerId: number;
   sourceId: GridraId;
+  currentPoint: GridraPoint;
 }
 
 export interface NodeSnapGuide {

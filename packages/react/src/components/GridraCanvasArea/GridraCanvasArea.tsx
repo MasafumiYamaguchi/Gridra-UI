@@ -22,9 +22,11 @@ import {
   formatCssLength,
   getCanvasPoint,
   getGridMetrics,
+  getGridPoint,
   getNodeRect,
   normalizeGridCount,
   normalizeGridPlacement,
+  normalizeGridPlacementForDrag,
   normalizeGridSpan,
   placementsEqual,
 } from "./geometry";
@@ -117,6 +119,14 @@ export function GridraCanvasArea<
   const [resizingNodeId, setResizingNodeId] = useState<GridraId | null>(null);
   const [snapGuides, setSnapGuides] = useState<NodeSnapGuide[]>([]);
   const [selectedConnectionKeys, setSelectedConnectionKeys] = useState<string[]>([]);
+  const [connectionPreview, setConnectionPreview] = useState<
+    | {
+        sourceId: GridraId;
+        originKind: GridraConnectionHandleKind;
+        currentGridPoint: GridraPoint;
+      }
+    | null
+  >(null);
   const normalizedGridColumns =
     gridColumns === undefined ? undefined : normalizeGridCount(gridColumns);
   const normalizedGridRows =
@@ -175,15 +185,37 @@ export function GridraCanvasArea<
       return;
     }
 
+    const canvas = event.currentTarget.closest(".gridra-canvas-area");
+
+    if (!(canvas instanceof HTMLDivElement)) {
+      return;
+    }
+
+    const currentPoint = getCanvasPoint(event, canvas);
+    const gridColumnsForConnection = normalizedGridColumns ?? 12;
+    const gridRowsForConnection = normalizedGridRows ?? 6;
+    const currentGridPoint = getGridPoint(
+      currentPoint,
+      canvas,
+      gridColumnsForConnection,
+      gridRowsForConnection,
+    );
+
     nodeConnectionStateRef.current = {
       originKind,
       pointerId: event.pointerId,
       sourceId: node.id,
+      currentPoint,
     };
     setSelectedConnectionKeys([]);
     setConnectingNodeId(node.id);
     setSelectedId(node.id);
     setSelectedIds([node.id]);
+    setConnectionPreview({
+      sourceId: node.id,
+      originKind,
+      currentGridPoint,
+    });
     onNodeConnectionStart?.(node.id);
     event.preventDefault();
     event.stopPropagation();
@@ -229,6 +261,7 @@ export function GridraCanvasArea<
 
     nodeConnectionStateRef.current = null;
     setConnectingNodeId(null);
+    setConnectionPreview(null);
     event.preventDefault();
 
     return true;
@@ -289,6 +322,38 @@ export function GridraCanvasArea<
     onNodeConnectionCancel?.(connectionState.sourceId);
     nodeConnectionStateRef.current = null;
     setConnectingNodeId(null);
+    setConnectionPreview(null);
+
+    return true;
+  };
+
+  const updateNodeConnection = (event: PointerEvent<HTMLDivElement>): boolean => {
+    const connectionState = nodeConnectionStateRef.current;
+
+    if (
+      connectionState === null ||
+      connectionState.pointerId !== event.pointerId
+    ) {
+      return false;
+    }
+
+    const currentPoint = getCanvasPoint(event, event.currentTarget);
+    const gridColumnsForConnection = normalizedGridColumns ?? 12;
+    const gridRowsForConnection = normalizedGridRows ?? 6;
+    const currentGridPoint = getGridPoint(
+      currentPoint,
+      event.currentTarget,
+      gridColumnsForConnection,
+      gridRowsForConnection,
+    );
+
+    nodeConnectionStateRef.current = { ...connectionState, currentPoint };
+    setConnectionPreview((prev) =>
+      prev
+        ? { ...prev, currentGridPoint }
+        : null,
+    );
+    event.preventDefault();
 
     return true;
   };
@@ -339,7 +404,7 @@ export function GridraCanvasArea<
     const gridRowsForDrag = normalizedGridRows ?? 6;
     const metrics = getGridMetrics(event.currentTarget, gridColumnsForDrag, gridRowsForDrag);
     const currentPoint = getCanvasPoint(event, event.currentTarget);
-    const nextPlacement = normalizeGridPlacement(
+    const nextPlacement = normalizeGridPlacementForDrag(
       {
         ...dragState.startPlacement,
         column:
@@ -619,6 +684,7 @@ export function GridraCanvasArea<
         onPointerMove?.(event);
         if (
           !event.defaultPrevented &&
+          !updateNodeConnection(event) &&
           !updateNodeResize(event) &&
           !updateNodeDrag(event)
         ) {
@@ -647,6 +713,7 @@ export function GridraCanvasArea<
         gridRows={normalizedGridRows ?? 6}
         nodes={normalizedNodes}
         onConnectionSelect={selectNodeConnection}
+        previewConnection={connectionPreview ?? undefined}
         selectedConnectionKeys={selectedConnectionKeys}
       />
       {normalizedNodes.map((node) => {

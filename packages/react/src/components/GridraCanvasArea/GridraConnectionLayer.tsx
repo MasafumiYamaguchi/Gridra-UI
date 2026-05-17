@@ -1,5 +1,6 @@
+import type { GridraId, GridraPoint } from "@gridra-ui/core";
 import { getConnectionKey } from "./connectionUtils";
-import { getConnectionPath } from "./geometry";
+import { getConnectionPath, getConnectionPoint, getPreviewConnectionPath } from "./geometry";
 import type {
   GridraCanvasNode,
   GridraConnectionSegment,
@@ -12,6 +13,7 @@ export function GridraConnectionLayer<TNode extends GridraCanvasNode>({
   gridRows,
   nodes,
   onConnectionSelect,
+  previewConnection,
   selectedConnectionKeys,
 }: {
   connections: GridraNodeConnection[];
@@ -19,12 +21,38 @@ export function GridraConnectionLayer<TNode extends GridraCanvasNode>({
   gridRows: number;
   nodes: TNode[];
   onConnectionSelect: (connection: GridraNodeConnection) => void;
+  previewConnection?: {
+    sourceId: GridraId;
+    originKind: "input" | "output";
+    currentGridPoint: GridraPoint;
+  };
   selectedConnectionKeys: string[];
 }) {
   const segments = getConnectionSegments(connections, nodes, gridColumns, gridRows);
   const selectedKeySet = new Set(selectedConnectionKeys);
+  let previewPath: string | null = null;
 
-  if (segments.length === 0) {
+  if (previewConnection) {
+    const sourceNode = nodes.find((n) => n.id === previewConnection.sourceId);
+
+    if (sourceNode) {
+      const sourcePoint = getConnectionPoint(
+        sourceNode.placement,
+        previewConnection.originKind === "output" ? "output" : "input",
+        gridColumns,
+        gridRows,
+      );
+      const targetPoint = previewConnection.currentGridPoint;
+
+      if (previewConnection.originKind === "output") {
+        previewPath = getPreviewConnectionPath(sourcePoint, targetPoint, gridColumns);
+      } else {
+        previewPath = getPreviewConnectionPath(targetPoint, sourcePoint, gridColumns);
+      }
+    }
+  }
+
+  if (segments.length === 0 && previewPath === null) {
     return null;
   }
 
@@ -55,6 +83,12 @@ export function GridraConnectionLayer<TNode extends GridraCanvasNode>({
           }}
         />
       ))}
+      {previewPath && (
+        <path
+          className="gridra-connection-line gridra-connection-line--preview"
+          d={previewPath}
+        />
+      )}
     </svg>
   );
 }

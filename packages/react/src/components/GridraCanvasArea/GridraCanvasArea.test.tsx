@@ -397,6 +397,98 @@ describe("GridraCanvasArea", () => {
     expect(canvas.classList.contains("gridra-canvas-area--snap-guides-visible")).toBe(false);
   });
 
+  it("keeps node spans unchanged when dragging past the right edge", () => {
+    const movedPlacements: Array<{ column: number; columnSpan?: number }> = [];
+    const { container } = render(
+      <GridraCanvasArea
+        enableNodeDragging
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "wide",
+            placement: { column: 2, row: 1, columnSpan: 2, rowSpan: 1 }
+          }
+        ]}
+        onNodeMove={(_, placement) => movedPlacements.push(placement)}
+        selectedId="wide"
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    const handle = container.querySelector(".gridra-drag-handle") as HTMLElement;
+
+    firePointerEvent(handle, "pointerdown", {
+      button: 0,
+      clientX: 20,
+      clientY: 20,
+      pointerId: 22
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 400,
+      clientY: 20,
+      pointerId: 22
+    });
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 400,
+      clientY: 20,
+      pointerId: 22
+    });
+
+    const node = container.querySelector(".gridra-node");
+
+    expect(node?.getAttribute("style")).toContain("grid-column: 3 / span 2");
+    expect(movedPlacements.at(-1)).toMatchObject({ column: 3, columnSpan: 2 });
+  });
+
+  it("keeps node spans unchanged when dragging past the bottom edge", () => {
+    const movedPlacements: Array<{ row: number; rowSpan?: number }> = [];
+    const { container } = render(
+      <GridraCanvasArea
+        enableNodeDragging
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "tall",
+            placement: { column: 1, row: 2, columnSpan: 1, rowSpan: 2 }
+          }
+        ]}
+        onNodeMove={(_, placement) => movedPlacements.push(placement)}
+        selectedId="tall"
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    const handle = container.querySelector(".gridra-drag-handle") as HTMLElement;
+
+    firePointerEvent(handle, "pointerdown", {
+      button: 0,
+      clientX: 20,
+      clientY: 20,
+      pointerId: 23
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 20,
+      clientY: 400,
+      pointerId: 23
+    });
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 20,
+      clientY: 400,
+      pointerId: 23
+    });
+
+    const node = container.querySelector(".gridra-node");
+
+    expect(node?.getAttribute("style")).toContain("grid-row: 3 / span 2");
+    expect(movedPlacements.at(-1)).toMatchObject({ row: 3, rowSpan: 2 });
+  });
+
   it("does not render node resize handles until resizing is enabled", () => {
     const { container } = render(
       <GridraCanvasArea
@@ -996,6 +1088,110 @@ describe("GridraCanvasArea", () => {
     );
 
     expect(container.querySelector(".gridra-connection-line")).toBeNull();
+  });
+
+  it("renders a preview connection line while dragging from an output handle", () => {
+    const { container } = render(
+      <GridraCanvasArea
+        enableNodeConnecting
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "input",
+            placement: { column: 1, row: 1 }
+          },
+          {
+            id: "output",
+            placement: { column: 2, row: 1 }
+          }
+        ]}
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    const outputHandle = container.querySelector(
+      '[data-gridra-connection-node-id="input"].gridra-connection-handle--output'
+    ) as HTMLElement;
+
+    firePointerEvent(outputHandle, "pointerdown", {
+      button: 0,
+      clientX: 10,
+      clientY: 10,
+      pointerId: 20
+    });
+
+    expect(container.querySelector(".gridra-connection-line--preview")).not.toBeNull();
+
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 200,
+      clientY: 200,
+      pointerId: 20
+    });
+
+    const previewLine = container.querySelector(".gridra-connection-line--preview");
+    expect(previewLine).not.toBeNull();
+    expect(previewLine?.getAttribute("d")).toContain("M 1 0.5");
+
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 200,
+      clientY: 200,
+      pointerId: 20
+    });
+
+    expect(container.querySelector(".gridra-connection-line--preview")).toBeNull();
+  });
+
+  it("renders a preview connection line while dragging from an input handle", () => {
+    const { container } = render(
+      <GridraCanvasArea
+        enableNodeConnecting
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "input",
+            placement: { column: 1, row: 1 }
+          },
+          {
+            id: "output",
+            placement: { column: 2, row: 1 }
+          }
+        ]}
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    const inputHandle = container.querySelector(
+      '[data-gridra-connection-node-id="output"].gridra-connection-handle--input'
+    ) as HTMLElement;
+
+    firePointerEvent(inputHandle, "pointerdown", {
+      button: 0,
+      clientX: 200,
+      clientY: 10,
+      pointerId: 21
+    });
+
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 50,
+      clientY: 50,
+      pointerId: 21
+    });
+
+    const previewLine = container.querySelector(".gridra-connection-line--preview");
+    expect(previewLine).not.toBeNull();
+    expect(previewLine?.getAttribute("d")).toContain("M 0.5 0.5");
+
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 50,
+      clientY: 50,
+      pointerId: 21
+    });
+
+    expect(container.querySelector(".gridra-connection-line--preview")).toBeNull();
   });
 
   it("cancels a connection when it ends on the source node", () => {
