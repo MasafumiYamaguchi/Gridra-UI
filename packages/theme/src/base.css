@@ -2327,6 +2327,91 @@
   background: var(--gridra-color-accent);
 }
 
+.gridra-dropdown-menu {
+  position: fixed;
+  z-index: 50;
+  min-width: var(--gridra-dropdown-menu-min-width, 140px);
+  max-width: var(--gridra-dropdown-menu-max-width, 320px);
+  border: 1px solid var(--gridra-color-border-strong);
+  background: var(--gridra-color-surface-raised);
+  color: var(--gridra-color-text);
+  box-shadow: var(--gridra-shadow-selected);
+  padding: 2px;
+  overflow: hidden;
+}
+
+.gridra-dropdown-menu--sm .gridra-dropdown-menu__item {
+  padding: 4px 8px;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.gridra-dropdown-menu--md .gridra-dropdown-menu__item {
+  padding: 6px 10px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-dropdown-menu--lg .gridra-dropdown-menu__item {
+  padding: 8px 12px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gridra-dropdown-menu__item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--gridra-space-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--gridra-color-text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  outline: none;
+}
+
+.gridra-dropdown-menu__item:hover,
+.gridra-dropdown-menu__item--active {
+  border-color: var(--gridra-color-border-strong);
+  background: var(--gridra-color-selected);
+}
+
+.gridra-dropdown-menu__item:focus-visible {
+  outline: 2px solid var(--gridra-color-accent);
+  outline-offset: -2px;
+}
+
+.gridra-dropdown-menu__item--disabled {
+  color: var(--gridra-color-muted-text);
+  cursor: default;
+  opacity: 0.48;
+}
+
+.gridra-dropdown-menu__item--disabled:hover,
+.gridra-dropdown-menu__item--disabled.gridra-dropdown-menu__item--active {
+  border-color: transparent;
+  background: transparent;
+}
+
+.gridra-dropdown-menu__item--destructive {
+  color: var(--gridra-color-accent);
+}
+
+.gridra-dropdown-menu__item-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gridra-dropdown-menu__separator {
+  height: 1px;
+  margin: 2px 6px;
+  background: var(--gridra-color-border);
+}
+
 .gridra-tooltip {
   position: fixed;
   z-index: 10;

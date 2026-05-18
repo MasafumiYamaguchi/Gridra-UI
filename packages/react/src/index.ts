@@ -11,6 +11,7 @@ export * from "./components/GridraGridLayout";
 export * from "./components/GridraDragHandle";
 export * from "./components/GridraDialog";
 export * from "./components/GridraDivider";
+export * from "./components/GridraDropdownMenu";
 export * from "./components/GridraField";
 export * from "./components/GridraIconButton";
 export * from "./components/GridraInspectorPanel";

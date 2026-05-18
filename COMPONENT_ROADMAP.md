@@ -108,8 +108,8 @@ These need careful keyboard, focus, and layering behavior before they are consid
 - [x] Tooltip
 - [x] Popover
 - [x] Dialog / Modal
-- [ ] Drawer
-- [ ] Dropdown Menu
+- [ ] Drawer (Deferred until a concrete overlay/mobile use case appears)
+- [x] Dropdown Menu
 - [ ] Context Menu
 - [ ] Command Palette
 - [ ] Hover Card
@@ -473,6 +473,14 @@ Not implemented yet:
 - Breakpoint-aware mode switching (desktop sidebar vs mobile drawer).
 - Built-in persistence for width/open state.
 
+Decision note:
+
+- Do not add `GridraDrawer` as a near-term component just because `GridraSidebar` exists.
+- `GridraSidebar` remains the app-shell layout primitive: persistent side regions, layout reflow, optional resize.
+- A future `GridraDrawer` should only be added when there is a concrete temporary overlay or mobile use case.
+- If added, `GridraDrawer` should follow `GridraDialog` overlay responsibilities: portal, backdrop, Escape dismissal, focus trap, and focus restore.
+- Drawer resizing should stay out of scope; persistent/resizable side panels remain `GridraSidebar` responsibility.
+
 Current data flow:
 
 ```text
@@ -589,7 +597,46 @@ trigger click / open prop
   -> Tab focus trap active
   -> Escape / backdrop click / close button
   -> close
-  -> focus restored to trigger
+   -> focus restored to trigger
+```
+
+### GridraDropdownMenu
+
+Current status: implemented.
+
+Implemented:
+
+- Command dropdown menu component exported from `@gridra-ui/react`.
+- Items-based API with command items (`id`, `label`, `disabled?`, `destructive?`) and separator items (`{ type: "separator" }`).
+- Trigger receives `aria-haspopup="menu"`, `aria-expanded`, and `aria-controls`.
+- Menu root uses `role="menu"`; items use `role="menuitem"`; separators use `role="separator"`.
+- Supports controlled/uncontrolled open state (`open` / `defaultOpen` / `onOpenChange`).
+- Fixed positioning engine shared with `GridraPopover` with viewport collision flip.
+- Full keyboard navigation: `ArrowDown`/`ArrowUp` cycle enabled items, `Home`/`End` jump to first/last, `Enter`/`Space` activate, `Escape` closes, `Tab` closes.
+- Trigger keyboard: `ArrowDown`/`Enter`/`Space` open menu, `ArrowUp` opens and focuses last item.
+- Disabled items are rendered, skipped by keyboard, and never invoke `onAction`.
+- Destructive items receive visual accent treatment.
+- Supports `size` tokens (`sm`/`md`/`lg`) and `minWidth`/`maxWidth` overrides.
+- Outside pointer-down and Escape close (configurable). `closeOnAction` controls auto-close on activation.
+
+Not implemented yet:
+
+- Checkbox, radio, submenu, or typeahead items.
+- Portal rendering (stays inline fixed-positioned like Popover).
+- Nested menu coordination.
+- Context menu trigger mode.
+
+Current data flow:
+
+```text
+trigger click / ArrowDown
+  -> open menu
+  -> compute fixed position near trigger
+  -> focus first enabled menuitem
+  -> arrow keys move active item
+  -> Enter/Space/click selects item
+  -> onAction(id)
+  -> close (or stay open if closeOnAction=false)
 ```
 
 ### GridraMinimap
