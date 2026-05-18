@@ -2197,6 +2197,136 @@
   line-height: 1.45;
 }
 
+.gridra-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: var(--gridra-space-md);
+}
+
+.gridra-dialog {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  max-height: calc(100vh - var(--gridra-space-md) * 2);
+  min-width: 0;
+  border: 1px solid var(--gridra-color-border-strong);
+  background: var(--gridra-color-surface);
+  color: var(--gridra-color-text);
+  box-shadow: var(--gridra-shadow-selected);
+  overflow: hidden;
+}
+
+.gridra-dialog:focus {
+  outline: 2px solid var(--gridra-color-accent);
+  outline-offset: -2px;
+}
+
+.gridra-dialog--sm {
+  width: 360px;
+  max-width: 100%;
+}
+
+.gridra-dialog--md {
+  width: 480px;
+  max-width: 100%;
+}
+
+.gridra-dialog--lg {
+  width: 640px;
+  max-width: 100%;
+}
+
+.gridra-dialog--fullscreen {
+  width: 100%;
+  max-height: none;
+  height: calc(100vh - var(--gridra-space-md) * 2);
+}
+
+.gridra-dialog__header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: var(--gridra-space-sm);
+  padding: var(--gridra-space-md);
+  border-bottom: 1px solid var(--gridra-color-border);
+}
+
+.gridra-dialog__title {
+  margin: 0;
+  color: var(--gridra-color-text);
+  font-family: var(--gridra-font-brand);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.gridra-dialog__description {
+  margin: 0;
+  grid-column: 1 / -1;
+  color: var(--gridra-color-muted-text);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-dialog__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--gridra-color-border);
+  background: var(--gridra-color-surface-input);
+  color: var(--gridra-color-muted-text);
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.gridra-dialog__close:hover {
+  border-color: var(--gridra-color-accent);
+  color: var(--gridra-color-text);
+}
+
+.gridra-dialog__close:focus-visible {
+  outline: 2px solid var(--gridra-color-accent);
+  outline-offset: 1px;
+}
+
+.gridra-dialog__body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--gridra-space-md);
+  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-surface);
+  scrollbar-width: thin;
+}
+
+.gridra-dialog__body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gridra-dialog__body::-webkit-scrollbar-track {
+  background: var(--gridra-color-surface);
+}
+
+.gridra-dialog__body::-webkit-scrollbar-thumb {
+  border: 2px solid var(--gridra-color-surface);
+  background: var(--gridra-color-border-strong);
+}
+
+.gridra-dialog__body::-webkit-scrollbar-thumb:hover {
+  background: var(--gridra-color-accent);
+}
+
 .gridra-tooltip {
   position: fixed;
   z-index: 10;

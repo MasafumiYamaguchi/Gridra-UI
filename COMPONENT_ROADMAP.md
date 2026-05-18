@@ -107,7 +107,7 @@ These need careful keyboard, focus, and layering behavior before they are consid
 
 - [x] Tooltip
 - [x] Popover
-- [ ] Dialog / Modal
+- [x] Dialog / Modal
 - [ ] Drawer
 - [ ] Dropdown Menu
 - [ ] Context Menu
@@ -551,6 +551,45 @@ trigger click
   -> render popover with fixed coordinates
   -> outside pointerdown / Escape key
   -> close
+```
+
+### GridraDialog
+
+Current status: implemented.
+
+Implemented:
+
+- Modal dialog component exported from `@gridra-ui/react`.
+- Renders into `document.body` via `createPortal` — first portal-based component.
+- Optional trigger element with `aria-haspopup="dialog"` and `aria-expanded`.
+- `role="dialog"`, `aria-modal="true"`, `aria-labelledby` to title, `aria-describedby` to optional description.
+- Supports controlled/uncontrolled open state (`open` / `defaultOpen` / `onOpenChange`).
+- Backdrop with optional pointer-down dismissal (`closeOnBackdropPointerDown`).
+- Escape key dismissal (`closeOnEscape`).
+- Close button with configurable accessible label (`showCloseButton`, `closeLabel`).
+- Focus trap: `Tab` and `Shift+Tab` cycle through focusable elements inside the dialog.
+- Focus restore: returns focus to the previously focused element or trigger on close.
+- Supports `initialFocusRef` for custom initial focus target.
+- Size variants: `sm` (360px), `md` (480px), `lg` (640px), `fullscreen`.
+
+Not implemented yet:
+
+- Body scroll locking.
+- Nested dialog orchestration.
+- Compound component parts (header, body, footer slots).
+- Animated open/close transitions.
+
+Current data flow:
+
+```text
+trigger click / open prop
+  -> document.body portal render
+  -> backdrop + dialog surface visible
+  -> initial focus moved into dialog
+  -> Tab focus trap active
+  -> Escape / backdrop click / close button
+  -> close
+  -> focus restored to trigger
 ```
 
 ### GridraMinimap
