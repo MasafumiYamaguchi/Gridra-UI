@@ -2412,6 +2412,10 @@
   background: var(--gridra-color-border);
 }
 
+.gridra-context-menu {
+  z-index: 100;
+}
+
 .gridra-tooltip {
   position: fixed;
   z-index: 10;

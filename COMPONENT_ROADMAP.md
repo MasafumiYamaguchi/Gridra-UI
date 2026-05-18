@@ -110,7 +110,7 @@ These need careful keyboard, focus, and layering behavior before they are consid
 - [x] Dialog / Modal
 - [ ] Drawer (Deferred until a concrete overlay/mobile use case appears)
 - [x] Dropdown Menu
-- [ ] Context Menu
+- [x] Context Menu
 - [ ] Command Palette
 - [ ] Hover Card
 
@@ -635,6 +635,44 @@ trigger click / ArrowDown
   -> focus first enabled menuitem
   -> arrow keys move active item
   -> Enter/Space/click selects item
+  -> onAction(id)
+  -> close (or stay open if closeOnAction=false)
+```
+
+### GridraContextMenu
+
+Current status: implemented.
+
+Implemented:
+
+- Right-click / keyboard context menu component exported from `@gridra-ui/react`.
+- Wraps a target element and composes with existing `onContextMenu`, `onKeyDown`, and `ref`.
+- Reuses `GridraDropdownMenuItem` type — same command/separator item model.
+- Opens on native `contextmenu` event with `preventDefault()` to suppress browser menu.
+- Opens on `ContextMenu` key or `Shift+F10` keyboard triggers.
+- Fixed positioning at pointer coordinates for mouse, near target bottom-left for keyboard.
+- Viewport clamping keeps the menu fully inside the screen.
+- Reuses `GridraDropdownMenu` CSS classes for visual consistency.
+- Full keyboard navigation: `ArrowDown`/`ArrowUp`, `Home`/`End`, `Enter`/`Space`, `Escape`, `Tab`.
+- WAI-ARIA: `role="menu"`, `role="menuitem"`, `role="separator"`, `aria-haspopup="menu"`, `aria-expanded`.
+- Supports controlled/uncontrolled open state, `disabled`, `closeOnAction`, `closeOnEscape`, `closeOnOutsidePointerDown`.
+- Size tokens (`sm`/`md`/`lg`) and `minWidth`/`maxWidth` overrides.
+
+Not implemented yet:
+
+- Coordinate-controlled API (no `position` prop).
+- Arbitrary context payload (v1 returns only action `id`).
+- Checkbox, radio, or submenu items.
+
+Current data flow:
+
+```text
+pointer contextmenu / ContextMenu key / Shift+F10
+  -> prevent native menu
+  -> capture pointer coordinate or target position
+  -> open menu with viewport-clamped fixed position
+  -> focus first enabled menuitem
+  -> keyboard/click activates command
   -> onAction(id)
   -> close (or stay open if closeOnAction=false)
 ```
