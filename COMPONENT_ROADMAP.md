@@ -111,7 +111,7 @@ These need careful keyboard, focus, and layering behavior before they are consid
 - [ ] Drawer (Deferred until a concrete overlay/mobile use case appears)
 - [x] Dropdown Menu
 - [x] Context Menu
-- [ ] Command Palette
+- [x] Command Palette
 - [ ] Hover Card
 
 ## Priority 5: Navigation
@@ -675,6 +675,47 @@ pointer contextmenu / ContextMenu key / Shift+F10
   -> keyboard/click activates command
   -> onAction(id)
   -> close (or stay open if closeOnAction=false)
+```
+
+### GridraCommandPalette
+
+Current status: implemented.
+
+Implemented:
+
+- Modal command palette component exported from `@gridra-ui/react`.
+- Portal-based rendering with backdrop — same overlay strategy as `GridraDialog`.
+- Search input focused on open; filters commands by case-insensitive substring across plain string/number `label` and `description` values, plus `group` and `keywords`.
+- Group rendering: items with `group` are shown under compact group labels (no caller pre-sort required).
+- Item type extends DropdownMenu's command model with `description?`, `group?`, and `keywords?`.
+- Supports controlled/uncontrolled `open` and `query` state (`open`/`defaultOpen`/`onOpenChange`, `query`/`defaultQuery`/`onQueryChange`).
+- Full keyboard navigation: `ArrowDown`/`ArrowUp`, `Home`/`End`, `Enter` to activate, `Escape` to close, and modal `Tab` focus trapping.
+- Disabled commands are rendered, skipped by keyboard, and never invoke `onAction`.
+- `closeOnAction` (default true), `closeOnEscape`, backdrop-pointer-down close, close button.
+- Size variants: `sm` (400px), `md` (560px), `lg` (720px).
+- Configurable `title`, `placeholder`, `emptyLabel`.
+- Focus restores to the previously focused element on close.
+- Query resets on close in uncontrolled mode.
+- JSX labels/descriptions should provide searchable terms through `keywords`.
+
+Not implemented yet:
+
+- Global hotkey registration (apps control `open` externally).
+- Fuzzy ranking or weighted search.
+- Nested pages, async loading, recent commands, checkbox/radio commands, or custom item rendering.
+- Separator items rendered in the filtered list (accepted in items but not separately rendered in v1).
+
+Current data flow:
+
+```text
+open
+  -> portal modal surface with backdrop
+  -> focus search input
+  -> query filters commands (plain label/desc text, group, keywords)
+  -> arrow keys move active result through enabled matches
+  -> Enter/click activates command
+  -> onAction(id)
+  -> close by default
 ```
 
 ### GridraMinimap
