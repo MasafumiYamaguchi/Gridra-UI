@@ -13,4 +13,14 @@ describe("GridraGrid (compatibility alias)", () => {
 
     expect(grid).not.toBeNull();
   });
+
+  it("preserves selectable grid behavior through the alias", () => {
+    const { container } = render(
+      <GridraGrid defaultSelectedId="a" items={[{ id: "a", label: "Alpha" }]} />,
+    );
+
+    const item = container.querySelector(".gridra-grid__item");
+
+    expect(item?.getAttribute("aria-selected")).toBe("true");
+  });
 });

@@ -42,4 +42,12 @@ describe("GridraSpinner", () => {
       "--gridra-spinner-size: 2rem"
     );
   });
+
+  it("does not add a custom size variable for preset sizes", () => {
+    render(<GridraSpinner label="Loading" size="sm" />);
+    const spinner = screen.getByRole("status", { name: "Loading" });
+
+    expect(spinner.className).toContain("gridra-spinner--sm");
+    expect(spinner.getAttribute("style") ?? "").not.toContain("--gridra-spinner-size");
+  });
 });

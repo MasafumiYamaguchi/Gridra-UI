@@ -31,4 +31,16 @@ describe("GridraLabel", () => {
     expect(label.className).toContain("custom-label");
     expect(screen.getByText("Density")).toBeTruthy();
   });
+
+  it("does not associate with a control when htmlFor is omitted", () => {
+    render(
+      <>
+        <GridraLabel>Name</GridraLabel>
+        <GridraInput id="name" />
+      </>
+    );
+
+    expect(screen.getByText("Name").getAttribute("for")).toBeNull();
+    expect(screen.queryByLabelText("Name")).toBeNull();
+  });
 });

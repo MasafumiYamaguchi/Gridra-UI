@@ -53,4 +53,14 @@ describe("GridraButton", () => {
     expect(button.className).toContain("gridra-button--loading");
     expect(onClick).not.toHaveBeenCalled();
   });
+
+  it("defaults to type button and preserves explicit type", () => {
+    const { rerender } = render(<GridraButton>Run</GridraButton>);
+
+    expect((screen.getByRole("button", { name: "Run" }) as HTMLButtonElement).type).toBe("button");
+
+    rerender(<GridraButton type="submit">Run</GridraButton>);
+
+    expect((screen.getByRole("button", { name: "Run" }) as HTMLButtonElement).type).toBe("submit");
+  });
 });

@@ -40,4 +40,13 @@ describe("GridraDivider", () => {
     expect(divider.className).toContain("gridra-divider--inset");
     expect(divider.className).toContain("custom-divider");
   });
+
+  it("supports zero spacing without adding inset styling", () => {
+    render(<GridraDivider spacing="none" tone="muted" />);
+    const divider = screen.getByRole("separator");
+
+    expect(divider.className).toContain("gridra-divider--none");
+    expect(divider.className).toContain("gridra-divider--muted");
+    expect(divider.className).not.toContain("gridra-divider--inset");
+  });
 });

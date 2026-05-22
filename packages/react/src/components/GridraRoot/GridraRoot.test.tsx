@@ -48,4 +48,16 @@ describe("GridraRoot", () => {
     expect(shell?.children[0]).toBe(screen.getByRole("main"));
     expect(shell?.children[1]).toBe(screen.getByTestId("panel"));
   });
+
+  it("ignores panel position styling when the panel is null", () => {
+    render(
+      <GridraRoot panel={null} panelPosition="right">
+        Canvas
+      </GridraRoot>,
+    );
+    const shell = screen.getByRole("main").parentElement;
+
+    expect(shell?.className).toBe("gridra-root__shell");
+    expect(shell?.children).toHaveLength(1);
+  });
 });

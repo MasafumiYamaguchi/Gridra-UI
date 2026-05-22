@@ -25,6 +25,13 @@ describe("canvas hit testing helpers", () => {
     expect(hitTestNodes(nodes, { x: 195, y: 95, width: 30, height: 30 }, canvas, 4, 2)).toEqual(["b"]);
   });
 
+  it("returns no hits when the selection rectangle misses all items", () => {
+    const canvas = createCanvas();
+
+    expect(hitTestNodes(nodes, { x: 360, y: 170, width: 20, height: 20 }, canvas, 4, 2)).toEqual([]);
+    expect(hitTestConnections(connections, nodes, { x: 360, y: 170, width: 20, height: 20 }, canvas, 4, 2)).toEqual([]);
+  });
+
   it("finds intersecting connections and skips missing endpoints", () => {
     const canvas = createCanvas();
 

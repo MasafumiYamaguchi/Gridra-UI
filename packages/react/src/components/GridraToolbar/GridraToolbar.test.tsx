@@ -46,4 +46,21 @@ describe("GridraToolbar", () => {
 
     expect(contexts).toEqual([{ key: "select" }, { key: "pan" }]);
   });
+
+  it("does not route disabled default actions", () => {
+    const actions: string[] = [];
+
+    render(
+      <GridraToolbar
+        actions={[{ disabled: true, id: "delete", label: "Delete" }]}
+        onAction={(id) => actions.push(id)}
+      />
+    );
+
+    const button = screen.getByRole("button", { name: "Delete" }) as HTMLButtonElement;
+    fireEvent.click(button);
+
+    expect(button.disabled).toBe(true);
+    expect(actions).toEqual([]);
+  });
 });

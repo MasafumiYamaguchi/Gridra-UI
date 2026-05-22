@@ -46,4 +46,15 @@ describe("GridraPanel", () => {
     expect(panel.querySelector(".gridra-panel__header")).toBeNull();
     expect(screen.getByText("Plain body").className).toContain("gridra-panel__body");
   });
+
+  it("renders custom header content without forcing a heading", () => {
+    render(
+      <GridraPanel header={<button type="button">Close</button>}>
+        Body
+      </GridraPanel>,
+    );
+
+    expect(screen.getByRole("button", { name: "Close" })).toBeTruthy();
+    expect(screen.queryByRole("heading")).toBeNull();
+  });
 });

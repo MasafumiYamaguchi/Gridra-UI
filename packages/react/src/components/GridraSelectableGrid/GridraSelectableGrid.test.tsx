@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { GridraSelectableGrid } from "./GridraSelectableGrid";
 
 afterEach(() => {
@@ -44,6 +44,42 @@ describe("GridraSelectableGrid", () => {
     fireEvent.click(screen.getByRole("button", { name: "Alpha" }));
 
     expect(changes).toEqual(["a"]);
+  });
+
+  it("does not mutate controlled selection until selectedId changes", () => {
+    const handleSelectionChange = vi.fn();
+
+    render(
+      <GridraSelectableGrid
+        items={[{ id: "a", label: "Alpha" }]}
+        onSelectionChange={handleSelectionChange}
+        selectedId={null}
+      />
+    );
+
+    const item = screen.getByRole("button", { name: "Alpha" });
+    fireEvent.click(item);
+
+    expect(handleSelectionChange).toHaveBeenCalledWith("a", null);
+    expect(item.getAttribute("aria-selected")).toBe("false");
+  });
+
+  it("reports null when clicking the selected item again", () => {
+    const handleSelectionChange = vi.fn();
+
+    render(
+      <GridraSelectableGrid
+        defaultSelectedId="a"
+        items={[{ id: "a", label: "Alpha" }]}
+        onSelectionChange={handleSelectionChange}
+      />
+    );
+
+    const item = screen.getByRole("button", { name: "Alpha" });
+    fireEvent.click(item);
+
+    expect(handleSelectionChange).toHaveBeenCalledWith(null, "a");
+    expect(item.getAttribute("aria-selected")).toBe("false");
   });
 
   it("keeps gridra-grid root class in empty state", () => {

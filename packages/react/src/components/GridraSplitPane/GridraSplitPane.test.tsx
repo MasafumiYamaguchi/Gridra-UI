@@ -93,6 +93,71 @@ describe("GridraSplitPane", () => {
     expect(style).toContain("--gridra-split-pane-size: 70%");
   });
 
+  it("ignores pointer movement before dragging starts", () => {
+    const handleSizeChange = vi.fn();
+    render(
+      <GridraSplitPane defaultSize={50} onSizeChange={handleSizeChange}>
+        <div>A</div>
+        <div>B</div>
+      </GridraSplitPane>,
+    );
+
+    const split = screen.getByText("A").closest(".gridra-split-pane") as HTMLDivElement;
+    const separator = screen.getByRole("separator") as HTMLDivElement;
+
+    Object.defineProperty(split, "getBoundingClientRect", {
+      value: () => ({
+        x: 0,
+        y: 0,
+        left: 0,
+        top: 0,
+        width: 200,
+        height: 100,
+        right: 200,
+        bottom: 100,
+        toJSON: () => ({}),
+      }),
+    });
+
+    fireEvent.mouseMove(separator, { clientX: 160 });
+
+    expect(handleSizeChange).not.toHaveBeenCalled();
+    expect(split.getAttribute("style")).toContain("--gridra-split-pane-size: 50%");
+  });
+
+  it("ignores drag math when the container has no measurable size", () => {
+    const handleSizeChange = vi.fn();
+    render(
+      <GridraSplitPane defaultSize={50} onSizeChange={handleSizeChange}>
+        <div>A</div>
+        <div>B</div>
+      </GridraSplitPane>,
+    );
+
+    const split = screen.getByText("A").closest(".gridra-split-pane") as HTMLDivElement;
+    const separator = screen.getByRole("separator") as HTMLDivElement;
+
+    Object.defineProperty(split, "getBoundingClientRect", {
+      value: () => ({
+        x: 0,
+        y: 0,
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 100,
+        right: 0,
+        bottom: 100,
+        toJSON: () => ({}),
+      }),
+    });
+
+    fireEvent.mouseDown(separator, { clientX: 10 });
+    fireEvent.mouseMove(separator, { clientX: 20 });
+
+    expect(handleSizeChange).not.toHaveBeenCalled();
+    expect(split.getAttribute("style")).toContain("--gridra-split-pane-size: 50%");
+  });
+
   it("updates size with keyboard arrows and Home/End", () => {
     const handleSizeChange = vi.fn();
     render(

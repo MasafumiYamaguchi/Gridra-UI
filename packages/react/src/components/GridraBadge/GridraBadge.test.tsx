@@ -32,4 +32,14 @@ describe("GridraBadge", () => {
     expect(badge.className).toContain("gridra-badge--pill");
     expect(badge.className).toContain("custom-badge");
   });
+
+  it("does not add button or status semantics by default", () => {
+    render(<GridraBadge>Passive</GridraBadge>);
+    const badge = screen.getByText("Passive");
+
+    expect(badge.tagName).toBe("SPAN");
+    expect(badge.getAttribute("role")).toBeNull();
+    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.queryByRole("status")).toBeNull();
+  });
 });

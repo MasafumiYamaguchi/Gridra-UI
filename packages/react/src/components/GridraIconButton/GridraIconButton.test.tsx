@@ -41,4 +41,12 @@ describe("GridraIconButton", () => {
     expect(button.className).toContain("gridra-icon-button--loading");
     expect(onClick).not.toHaveBeenCalled();
   });
+
+  it("uses a label initial when no icon children are provided", () => {
+    render(<GridraIconButton label="Zoom" />);
+    const button = screen.getByRole("button", { name: "Zoom" });
+
+    expect(button.textContent).toBe("Z");
+    expect((button as HTMLButtonElement).type).toBe("button");
+  });
 });

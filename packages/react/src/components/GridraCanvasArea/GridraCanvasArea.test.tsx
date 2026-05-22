@@ -124,6 +124,46 @@ describe("GridraCanvasArea", () => {
     expect(selectedIdGroups).toEqual([["inside"]]);
   });
 
+  it("ignores non-primary pointer buttons for range selection", () => {
+    const selectedIdGroups: string[][] = [];
+    const { container } = render(
+      <GridraCanvasArea
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "inside",
+            placement: { column: 1, row: 1 }
+          }
+        ]}
+        onSelectionIdsChange={(selectedIds) => selectedIdGroups.push(selectedIds)}
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    firePointerEvent(canvas, "pointerdown", {
+      button: 2,
+      clientX: 0,
+      clientY: 0,
+      pointerId: 24
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 24
+    });
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 120,
+      clientY: 120,
+      pointerId: 24
+    });
+
+    expect(selectedIdGroups).toEqual([]);
+    expect(container.querySelector(".gridra-selection-box")).toBeNull();
+  });
+
   it("adds range-selected nodes when selectionMode is additive", () => {
     const selectedIdGroups: string[][] = [];
     const { container } = render(
