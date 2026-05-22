@@ -118,7 +118,7 @@ These need careful keyboard, focus, and layering behavior before they are consid
 
 Useful once the playground and documentation need more structure.
 
-- [ ] Tabs
+- [x] Tabs
 - [ ] Breadcrumb
 - [ ] Accordion
 - [ ] Tree View
@@ -771,7 +771,43 @@ trigger mouseenter/focus
   -> card mouseenter cancels hide
   -> trigger/card mouseleave
   -> hideDelay timer
-  -> close
+   -> close
+```
+
+### GridraTabs
+
+Current status: implemented.
+
+Implemented:
+
+- Tabbed content switching component exported from `@gridra-ui/react`.
+- Items-based API: `{ id, label, content, disabled? }`.
+- Controlled/uncontrolled selection via `selectedId` / `defaultSelectedId` / `onSelectionChange`.
+- Default selection falls back to the first enabled item.
+- Disabled tabs are non-interactive (`disabled`, `aria-disabled="true"`), skipped by keyboard and click.
+- ARIA tab pattern: `role="tablist"` with `aria-orientation`, `role="tab"` with `aria-controls`/`aria-selected`, `role="tabpanel"` with `aria-labelledby`.
+- Roving tabindex keyboard navigation: `ArrowLeft`/`ArrowRight` (horizontal), `ArrowUp`/`ArrowDown` (vertical), `Home`/`End`.
+- Two activation modes: `automatic` (focus selects), `manual` (`Enter`/`Space` selects).
+- Two visual variants: `line` (accent underline) and `boxed` (bordered box).
+- Three sizes: `sm`, `md`, `lg`.
+- Only the active panel is rendered.
+
+Not implemented yet:
+
+- Compound (children-as-tabs) API.
+- Lazy loading or caching of panel content.
+- Closable tabs, reorderable tabs, nested tabs.
+- Responsive overflow menu for the tab list.
+
+Current data flow:
+
+```text
+click / keyboard arrow / Home / End
+  -> roving tabindex moves focus within enabled tabs
+  -> automatic mode: selection updates on focus move
+  -> manual mode: Enter/Space triggers selection
+  -> onSelectionChange(nextId, previousId)
+  -> panel content swaps to selected tab
 ```
 
 ### GridraMinimap

@@ -3,6 +3,7 @@ import { controlsDocs } from "./controls";
 import { coreDocs } from "./core";
 import { displayDocs } from "./display";
 import { layoutDocs } from "./layout";
+import { navigationDocs } from "./navigation";
 import { overlaysDocs } from "./overlays";
 
 export const componentDocs: ComponentDoc[] = [
@@ -10,5 +11,6 @@ export const componentDocs: ComponentDoc[] = [
   ...coreDocs,
   ...controlsDocs,
   ...displayDocs,
-  ...overlaysDocs
+  ...overlaysDocs,
+  ...navigationDocs,
 ];

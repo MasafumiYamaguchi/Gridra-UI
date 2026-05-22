@@ -2646,6 +2646,107 @@
   line-height: 1.5;
 }
 
+.gridra-tabs {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+}
+
+.gridra-tabs--horizontal {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.gridra-tabs__list {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.gridra-tabs__list::-webkit-scrollbar {
+  display: none;
+}
+
+.gridra-tabs--horizontal .gridra-tabs__list {
+  flex-direction: row;
+  border-bottom: 1px solid var(--gridra-color-border);
+}
+
+.gridra-tabs--vertical .gridra-tabs__list {
+  flex-direction: column;
+  border-right: 1px solid var(--gridra-color-border);
+}
+
+.gridra-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gridra-space-xs);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--gridra-color-muted-text);
+  cursor: pointer;
+  font: inherit;
+  white-space: nowrap;
+  outline: none;
+  transition: color 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.gridra-tabs__tab:hover {
+  color: var(--gridra-color-text);
+}
+
+.gridra-tabs__tab:focus-visible {
+  outline: 2px solid var(--gridra-color-accent);
+  outline-offset: -2px;
+}
+
+.gridra-tabs__tab--selected {
+  color: var(--gridra-color-text);
+}
+
+.gridra-tabs__tab--disabled {
+  color: var(--gridra-color-muted-text);
+  opacity: 0.4;
+  cursor: default;
+}
+
+.gridra-tabs--sm .gridra-tabs__tab {
+  padding: 4px 8px;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.gridra-tabs--md .gridra-tabs__tab {
+  padding: 5px 10px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-tabs--lg .gridra-tabs__tab {
+  padding: 7px 12px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gridra-tabs--line .gridra-tabs__tab--selected {
+  border-bottom-color: var(--gridra-color-accent);
+}
+
+.gridra-tabs--vertical.gridra-tabs--line .gridra-tabs__tab--selected {
+  border-bottom-color: transparent;
+  border-right-color: var(--gridra-color-accent);
+}
+
+.gridra-tabs--boxed .gridra-tabs__tab--selected {
+  border-color: var(--gridra-color-border-strong);
+  background: var(--gridra-color-surface);
+}
+
+.gridra-tabs__panel {
+  min-height: 0;
+  padding: var(--gridra-space-md) 0;
+}
+
 .gridra-tooltip {
   position: fixed;
   z-index: 10;

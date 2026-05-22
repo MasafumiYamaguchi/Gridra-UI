@@ -38,6 +38,7 @@ export * from "./components/GridraSnapGuide";
 export * from "./components/GridraSpinner";
 export * from "./components/GridraStack";
 export * from "./components/GridraSwitch";
+export * from "./components/GridraTabs";
 export * from "./components/GridraTextarea";
 export * from "./components/GridraToolbar";
 export * from "./components/GridraPopover";
