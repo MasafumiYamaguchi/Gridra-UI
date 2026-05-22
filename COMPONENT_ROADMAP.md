@@ -175,6 +175,15 @@ These should keep animation libraries optional. Gridra UI should expose stable D
 - [ ] GSAP integration
 - [ ] Framer Motion integration
 
+## Priority 10: Theme And Color System
+
+Theme work should make colors easier to author, swap, and document without forcing consumers to edit component CSS.
+
+- [ ] Dedicated color token files
+- [ ] Named color theme exports
+- [ ] Runtime theme selection API/pattern
+- [ ] Playground theme selector
+
 ## Suggested Implementation Order
 
 1. Harden the current exported components and ensure their APIs feel consistent.
@@ -183,6 +192,7 @@ These should keep animation libraries optional. Gridra UI should expose stable D
 4. Add overlays only after focus management and portal strategy are decided.
 5. Add data display and advanced controls after concrete product examples exist in the playground.
 6. Add animation integrations after component DOM contracts, refs, and open/close state APIs are stable.
+7. Split and document theme color tokens before adding many additional visual variants.
 
 ## Component Notes
 
@@ -892,6 +902,49 @@ Design constraints:
 - Framer Motion must remain optional and should not be imported by `@gridra-ui/react`.
 - Wrappers must preserve refs and ARIA attributes from the underlying Gridra component.
 - Exit animations must not break focus restore, Escape handling, or outside-click behavior for overlays.
+
+## Theme And Color System Notes
+
+Current status: partially implemented.
+
+Existing state:
+
+- `@gridra-ui/theme` exports `base.css`, `dark.css`, and `light.css`.
+- Core component CSS consumes `--gridra-color-*` custom properties.
+- The playground already imports `base.css` plus theme CSS and toggles `gridra-theme-dark` / `gridra-theme-light`.
+
+Goal:
+
+- Move color values into dedicated color theme files so palettes can be authored and reviewed independently from component layout CSS.
+- Support multiple named color themes that consumers can select by importing a CSS file and applying a theme class.
+- Keep `base.css` responsible for component structure, spacing, typography, and default token fallbacks rather than owning every color value.
+
+Candidate file structure:
+
+- `packages/theme/src/colors/dark.css`
+- `packages/theme/src/colors/light.css`
+- `packages/theme/src/colors/<theme-name>.css`
+- Keep compatibility exports for `@gridra-ui/theme/dark.css` and `@gridra-ui/theme/light.css`.
+
+Candidate theme selection patterns:
+
+- CSS class selection: apply `gridra-theme-dark`, `gridra-theme-light`, or another named theme class to `GridraRoot`.
+- App-level state selection in playground docs with a theme selector control.
+- Optional future helper docs for persisting the selected theme in local storage.
+
+Not implemented yet:
+
+- Dedicated `colors/` files separate from current `dark.css` and `light.css`.
+- A documented list of required color tokens for third-party themes.
+- Additional built-in palettes beyond light and dark.
+- A public React theme provider; current preferred path remains CSS custom properties plus classes.
+
+Design constraints:
+
+- Color theme files must define the same required `--gridra-color-*` and shadow tokens.
+- New color themes should not change component sizing, spacing, typography, or interaction behavior.
+- Theme switching must not require remounting components.
+- Avoid hard-coded component colors in `base.css`; promote repeated literals into tokens over time.
 
 ## Hardening Backlog From Component Review
 
