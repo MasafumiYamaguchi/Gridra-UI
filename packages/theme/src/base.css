@@ -2611,6 +2611,41 @@
   max-width: 40%;
 }
 
+.gridra-hover-card {
+  position: fixed;
+  z-index: 20;
+  width: var(--gridra-hover-card-width, auto);
+  min-width: var(--gridra-hover-card-min-width, 0);
+  max-width: var(--gridra-hover-card-max-width, 320px);
+  height: var(--gridra-hover-card-height, auto);
+  min-height: var(--gridra-hover-card-min-height, 0);
+  max-height: var(--gridra-hover-card-max-height, none);
+  border: 1px solid var(--gridra-color-border-strong);
+  background: var(--gridra-color-surface-raised);
+  color: var(--gridra-color-text);
+  box-shadow: var(--gridra-shadow-selected);
+  overflow: auto;
+  overflow-wrap: break-word;
+}
+
+.gridra-hover-card--sm {
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-hover-card--md {
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gridra-hover-card--lg {
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .gridra-tooltip {
   position: fixed;
   z-index: 10;

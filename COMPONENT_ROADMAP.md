@@ -112,7 +112,7 @@ These need careful keyboard, focus, and layering behavior before they are consid
 - [x] Dropdown Menu
 - [x] Context Menu
 - [x] Command Palette
-- [ ] Hover Card
+- [x] Hover Card
 
 ## Priority 5: Navigation
 
@@ -168,6 +168,13 @@ These are useful but should wait until the lower-level primitives are stable.
 - [ ] Code Editor
 - [ ] Calendar
 
+## Priority 9: Animation Integrations
+
+These should keep animation libraries optional. Gridra UI should expose stable DOM, refs, and state hooks first, then provide thin integration examples or adapters where they reduce boilerplate.
+
+- [ ] GSAP integration
+- [ ] Framer Motion integration
+
 ## Suggested Implementation Order
 
 1. Harden the current exported components and ensure their APIs feel consistent.
@@ -175,6 +182,7 @@ These are useful but should wait until the lower-level primitives are stable.
 3. Add spatial editing components such as selection, handles, resize, snap, and inspector panels.
 4. Add overlays only after focus management and portal strategy are decided.
 5. Add data display and advanced controls after concrete product examples exist in the playground.
+6. Add animation integrations after component DOM contracts, refs, and open/close state APIs are stable.
 
 ## Component Notes
 
@@ -715,7 +723,45 @@ open
   -> arrow keys move active result through enabled matches
   -> Enter/click activates command
   -> onAction(id)
-  -> close by default
+   -> close by default
+```
+
+### GridraHoverCard
+
+Current status: implemented.
+
+Implemented:
+
+- Interactive hover card component exported from `@gridra-ui/react`.
+- Opens on `mouseenter` and `focus` after configurable `showDelay`.
+- Closes after `hideDelay` on `mouseleave` / `blur` from both trigger and card.
+- Interactive: pointer move from trigger to card cancels the hide timer.
+- Escape key closes immediately.
+- Fixed positioning with viewport collision flip — same engine as `GridraTooltip` and `GridraPopover`.
+- Supports controlled/uncontrolled open state, `disabled`, `placement`, and `size` tokens (`sm`/`md`/`lg`).
+- Supports string-only CSS length sizing: `width`, `minWidth`, `maxWidth`, `height`, `minHeight`, and `maxHeight`.
+- Sizing values are passed as CSS strings such as `"320px"`, `"32vw"`, `"50%"`, `"40vh"`, or `"calc(100vh - 48px)"`; numeric px shorthand is intentionally not supported.
+- ARIA: trigger has `aria-expanded` and `aria-controls` while open.
+- Composes with existing trigger `onMouseEnter`, `onMouseLeave`, `onFocus`, `onBlur`, and `ref`.
+
+Not implemented yet:
+
+- Portal rendering (inline fixed-positioned like Popover).
+- Arrow rendering.
+- Start/end aligned placements.
+- Touch device-specific behavior.
+
+Current data flow:
+
+```text
+trigger mouseenter/focus
+  -> showDelay timer
+  -> open
+  -> fixed-position card near trigger
+  -> card mouseenter cancels hide
+  -> trigger/card mouseleave
+  -> hideDelay timer
+  -> close
 ```
 
 ### GridraMinimap
@@ -788,6 +834,64 @@ Potential follow-ups:
 - Keep the docs explicit that spacing distribution examples assume `fullWidth` or equivalent parent width.
 - Re-check `GridraInline` versus `Cluster` responsibilities when the wrapping layout primitive is designed.
 - Add separator semantics and accessibility guidance if separators are promoted beyond purely decorative usage.
+
+## Animation Integration Notes
+
+### GSAP Integration
+
+Current status: not started.
+
+Goal:
+
+- Let consumers animate Gridra surfaces with GSAP without making GSAP a required runtime dependency.
+- Prioritize examples and small helper patterns before adding a public adapter package.
+- Keep imperative animation ownership outside core components; components should expose stable refs, class names, data attributes, and state callbacks.
+
+Candidate integration surfaces:
+
+- Overlay enter/exit transitions for `GridraPopover`, `GridraHoverCard`, `GridraTooltip`, `GridraDialog`, and menu surfaces.
+- Canvas editing feedback such as node move/resize emphasis, connection line draw-in, and snap guide pulse.
+- Playground demos that show `gsap.context()` cleanup with component refs.
+
+Not implemented yet:
+
+- A dedicated `@gridra-ui/gsap` package.
+- Built-in timeline props on core components.
+- Animation lifecycle callbacks beyond existing open/close and interaction callbacks.
+
+Design constraints:
+
+- GSAP must remain an optional peer/example dependency, not a dependency of `@gridra-ui/react`.
+- Integration examples must include cleanup to avoid leaked tweens/timelines.
+- Animation should respect disabled/reduced-motion decisions made by the host app.
+
+### Framer Motion Integration
+
+Current status: not started.
+
+Goal:
+
+- Make Gridra components easy to wrap with Framer Motion while preserving accessibility and controlled state contracts.
+- Prefer composition through `motion(...)`, `as`/wrapper patterns, and stable class names over adding motion-specific props to every component.
+- Document recommended variants for overlays, panels, nodes, and command surfaces.
+
+Candidate integration surfaces:
+
+- Presence-based overlay transitions with `AnimatePresence` for hover cards, popovers, dialogs, and command palette.
+- Motion-enhanced nodes and panels for layout transitions in canvas/workspace UIs.
+- Playground examples that show controlled `open` state paired with `AnimatePresence`.
+
+Not implemented yet:
+
+- A dedicated `@gridra-ui/framer-motion` package.
+- Motion component exports such as `MotionGridraBox`.
+- Built-in `initial` / `animate` / `exit` props on Gridra components.
+
+Design constraints:
+
+- Framer Motion must remain optional and should not be imported by `@gridra-ui/react`.
+- Wrappers must preserve refs and ARIA attributes from the underlying Gridra component.
+- Exit animations must not break focus restore, Escape handling, or outside-click behavior for overlays.
 
 ## Hardening Backlog From Component Review
 
