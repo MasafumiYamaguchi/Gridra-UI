@@ -35,6 +35,7 @@ import { clusterDoc } from "./components/gridra-cluster";
 import { sidebarDoc } from "./components/gridra-sidebar";
 import { splitPaneDoc } from "./components/gridra-split-pane";
 import { gridLayoutDoc } from "./components/gridra-grid-layout";
+import { menuDoc } from "./components/gridra-menu";
 import { accordionDoc } from "./components/gridra-accordion";
 import { breadcrumbDoc } from "./components/gridra-breadcrumb";
 import { treeViewDoc } from "./components/gridra-tree-view";
@@ -84,6 +85,7 @@ export const componentDocs: ComponentDoc[] = [
   sidebarDoc,
   splitPaneDoc,
   gridLayoutDoc,
+  menuDoc,
   accordionDoc,
   breadcrumbDoc,
   treeViewDoc,

@@ -24,6 +24,7 @@ export * from "./components/GridraSelectableGrid";
 export * from "./components/GridraInline";
 export * from "./components/GridraInput";
 export * from "./components/GridraLabel";
+export * from "./components/GridraMenu";
 export * from "./components/GridraMinimap";
 export * from "./components/GridraNode";
 export * from "./components/GridraPanel";

@@ -2412,6 +2412,121 @@
   background: var(--gridra-color-border);
 }
 
+.gridra-menu {
+  min-width: 0;
+}
+
+.gridra-menu__list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gridra-menu--vertical .gridra-menu__list {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gridra-menu--horizontal .gridra-menu__list {
+  flex-direction: row;
+  gap: 2px;
+}
+
+.gridra-menu__list-item {
+  min-width: 0;
+}
+
+.gridra-menu__item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--gridra-space-xs);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--gridra-color-muted-text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  outline: none;
+}
+
+.gridra-menu__item:hover {
+  border-color: var(--gridra-color-border);
+  color: var(--gridra-color-text);
+}
+
+.gridra-menu__item:focus-visible {
+  outline: 2px solid var(--gridra-color-accent);
+  outline-offset: -2px;
+}
+
+.gridra-menu__item--active {
+  border-color: var(--gridra-color-accent);
+  background: var(--gridra-color-selected);
+  color: var(--gridra-color-text);
+  box-shadow: var(--gridra-shadow-selected);
+}
+
+.gridra-menu__item--active:hover {
+  border-color: var(--gridra-color-accent);
+  color: var(--gridra-color-text);
+}
+
+.gridra-menu__item--disabled {
+  color: var(--gridra-color-muted-text);
+  cursor: default;
+  opacity: 0.48;
+}
+
+.gridra-menu__item--disabled:hover {
+  border-color: transparent;
+  background: transparent;
+  color: var(--gridra-color-muted-text);
+}
+
+.gridra-menu__item--destructive {
+  color: var(--gridra-color-accent);
+}
+
+.gridra-menu__item-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gridra-menu__separator {
+  height: 1px;
+  margin: 2px 4px;
+  background: var(--gridra-color-border);
+}
+
+.gridra-menu--horizontal .gridra-menu__separator {
+  width: 1px;
+  height: auto;
+  margin: 4px 2px;
+}
+
+.gridra-menu--sm .gridra-menu__item {
+  padding: 3px 8px;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.gridra-menu--md .gridra-menu__item {
+  padding: 5px 10px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-menu--lg .gridra-menu__item {
+  padding: 7px 12px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .gridra-context-menu {
   z-index: 100;
 }

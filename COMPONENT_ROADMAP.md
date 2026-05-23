@@ -43,6 +43,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraIconButton`
 - [x] `GridraInput`
 - [x] `GridraLabel`
+- [x] `GridraMenu`
 - [x] `GridraRadio`
 - [x] `GridraSelect`
 - [x] `GridraSlider`
@@ -136,7 +137,7 @@ Useful once the playground and documentation need more structure.
 - [x] Breadcrumb
 - [x] Accordion
 - [x] Tree View
-- [ ] Menu
+- [x] GridraMenu
 - [ ] Pagination
 - [ ] Stepper
 
