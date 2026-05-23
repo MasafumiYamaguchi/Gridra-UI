@@ -63,7 +63,8 @@ body {
   background: var(--gridra-color-background);
   padding: var(--gridra-space-lg);
   scroll-behavior: smooth;
-  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-background);
+  scrollbar-color: var(--gridra-color-border-strong)
+    var(--gridra-color-background);
   scrollbar-width: thin;
 }
 
@@ -150,6 +151,14 @@ body {
   scrollbar-width: thin;
 }
 
+.docs-page__sidebar .gridra-sidebar__toggle {
+  right: 0;
+}
+
+.docs-page__sidebar.gridra-sidebar--closed .gridra-sidebar__toggle {
+  right: calc(var(--gridra-sidebar-toggle-size) * -1);
+}
+
 .docs-page__sidebar-inner {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
@@ -161,7 +170,16 @@ body {
 }
 
 .docs-page__search {
+  position: relative;
   min-width: 0;
+  padding-top: 40px;
+}
+
+.docs-page__search .gridra-field__label {
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  font-size: 12px;
 }
 
 .docs-page__mobile-controls {
@@ -205,7 +223,8 @@ body {
   min-width: 0;
   min-height: 0;
   overflow: auto;
-  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-background);
+  scrollbar-color: var(--gridra-color-border-strong)
+    var(--gridra-color-background);
   scrollbar-width: thin;
 }
 
@@ -269,7 +288,8 @@ body {
   border: 1px solid var(--gridra-color-border);
   background: var(--gridra-color-surface);
   padding: var(--gridra-space-lg);
-  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-background);
+  scrollbar-color: var(--gridra-color-border-strong)
+    var(--gridra-color-background);
   scrollbar-width: thin;
 }
 
@@ -404,8 +424,13 @@ body {
   display: grid;
   min-height: 80px;
   border: 1px solid var(--gridra-color-border);
-  background-image: radial-gradient(circle, var(--gridra-color-node-pattern) 1px, transparent 1px);
-  background-size: var(--gridra-node-pattern-size) var(--gridra-node-pattern-size);
+  background-image: radial-gradient(
+    circle,
+    var(--gridra-color-node-pattern) 1px,
+    transparent 1px
+  );
+  background-size: var(--gridra-node-pattern-size)
+    var(--gridra-node-pattern-size);
 }
 
 .docs-canvas-preview {
@@ -558,7 +583,9 @@ body {
   line-height: 1;
   padding: 5px 8px;
   text-transform: uppercase;
-  transition: color 120ms ease, border-color 120ms ease;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease;
 }
 
 .docs-copy-button:hover {
@@ -603,7 +630,8 @@ body {
   font-size: 13px;
   line-height: 1.55;
   white-space: pre;
-  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-surface-raised);
+  scrollbar-color: var(--gridra-color-border-strong)
+    var(--gridra-color-surface-raised);
   scrollbar-width: thin;
 }
 
@@ -631,7 +659,8 @@ body {
 .docs-props-table-wrapper {
   overflow: auto;
   border: 1px solid var(--gridra-color-border);
-  scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-surface-raised);
+  scrollbar-color: var(--gridra-color-border-strong)
+    var(--gridra-color-surface-raised);
   scrollbar-width: thin;
 }
 
@@ -709,8 +738,6 @@ body {
   display: grid;
   gap: var(--gridra-space-sm);
 }
-
-
 
 .docs-example__title {
   color: var(--gridra-color-text);
