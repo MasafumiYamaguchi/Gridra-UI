@@ -4,7 +4,6 @@ import {
   GridraButton,
   GridraField,
   GridraInline,
-  GridraInlineItem,
   GridraInput,
   GridraLabel,
   GridraSelect,
@@ -13,112 +12,10 @@ import {
   GridraTreeView,
 } from "@gridra-ui/react";
 import type { GridraTreeItem } from "@gridra-ui/react";
+import { CodeBlock } from "./code-block";
+import { CopyButton } from "./copy-button";
 import { componentDocs } from "./data";
-import { highlightDocsCode } from "./highlight";
-import type { DocsCodeLanguage, PropDoc } from "./types";
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-
-  return (
-    <GridraButton
-      onClick={() => {
-        navigator.clipboard.writeText(text).then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1500);
-        });
-      }}
-      size="sm"
-      variant="ghost"
-    >
-      {copied ? "Copied" : "Copy"}
-    </GridraButton>
-  );
-}
-
-function CodeBlock({
-  code,
-  language = "tsx"
-}: {
-  code: string;
-  language?: DocsCodeLanguage;
-}) {
-  const [highlightedCode, setHighlightedCode] = useState<string>();
-
-  useEffect(() => {
-    let active = true;
-
-    setHighlightedCode(undefined);
-    highlightDocsCode(code, language)
-      .then((html) => {
-        if (active) {
-          setHighlightedCode(html);
-        }
-      })
-      .catch(() => {
-        if (active) {
-          setHighlightedCode(undefined);
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [code, language]);
-
-  return (
-    <div className="docs-code-block">
-      <div className="docs-code-block__header">
-        <span className="docs-code-block__lang">{language}</span>
-        <CopyButton text={code} />
-      </div>
-      {highlightedCode ? (
-        <div
-          className="docs-code-block__highlight"
-          dangerouslySetInnerHTML={{ __html: highlightedCode }}
-        />
-      ) : (
-        <pre className="docs-code-block__pre">
-          <code>{code}</code>
-        </pre>
-      )}
-    </div>
-  );
-}
-
-function PropsTable({ props }: { props: PropDoc[] }) {
-  return (
-    <div className="docs-props-table-wrapper">
-      <table className="docs-props-table">
-        <thead>
-          <tr>
-            <th>Prop</th>
-            <th>Type</th>
-            <th>Default</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.map((prop) => (
-            <tr key={prop.name}>
-              <td>
-                <code className="docs-prop-name">
-                  {prop.name}
-                  {prop.required && <span className="docs-prop-required">*</span>}
-                </code>
-              </td>
-              <td>
-                <code className="docs-prop-type">{prop.type}</code>
-              </td>
-              <td>{prop.default ?? "—"}</td>
-              <td>{prop.description}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+import { PropsTable } from "./props-table";
 
 export function ComponentDocsPage() {
   const detailRef = useRef<HTMLElement>(null);
