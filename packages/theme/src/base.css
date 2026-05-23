@@ -2646,6 +2646,135 @@
   line-height: 1.5;
 }
 
+.gridra-accordion {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--gridra-color-border);
+}
+
+.gridra-accordion--divided .gridra-accordion__item {
+  border-top: 1px solid var(--gridra-color-border);
+}
+
+.gridra-accordion--divided .gridra-accordion__item:first-child {
+  border-top: 0;
+}
+
+.gridra-accordion__item {
+  min-width: 0;
+}
+
+.gridra-accordion__item--disabled .gridra-accordion__title {
+  opacity: 0.45;
+}
+
+.gridra-accordion__header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gridra-space-sm);
+  border: 0;
+  background: var(--gridra-color-surface);
+  color: var(--gridra-color-text);
+  cursor: pointer;
+  font: inherit;
+  outline: none;
+  padding: 0;
+  text-align: left;
+}
+
+.gridra-accordion__header:hover {
+  background: var(--gridra-color-surface-raised);
+}
+
+.gridra-accordion__item--disabled .gridra-accordion__header {
+  cursor: default;
+}
+
+.gridra-accordion__title {
+  min-width: 0;
+  flex: 1;
+  font-family: var(--gridra-font-brand);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gridra-accordion__icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease;
+}
+
+.gridra-accordion__icon::after {
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid var(--gridra-color-muted-text);
+  border-bottom: 1px solid var(--gridra-color-muted-text);
+  content: "";
+  transform: rotate(45deg);
+}
+
+.gridra-accordion__item--expanded .gridra-accordion__icon {
+  transform: rotate(180deg);
+}
+
+.gridra-accordion__panel {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.gridra-accordion__panel-content {
+  color: var(--gridra-color-muted-text);
+}
+
+.gridra-accordion__header:focus-visible {
+  outline: 2px solid var(--gridra-color-accent);
+  outline-offset: -2px;
+}
+
+.gridra-accordion--sm .gridra-accordion__header {
+  padding: var(--gridra-space-xs) var(--gridra-space-sm);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.gridra-accordion--sm .gridra-accordion__panel-content {
+  padding: var(--gridra-space-xs) var(--gridra-space-sm);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.gridra-accordion--md .gridra-accordion__header {
+  padding: var(--gridra-space-sm) var(--gridra-space-md);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-accordion--md .gridra-accordion__panel-content {
+  padding: var(--gridra-space-sm) var(--gridra-space-md);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-accordion--lg .gridra-accordion__header {
+  padding: var(--gridra-space-md) var(--gridra-space-lg);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gridra-accordion--lg .gridra-accordion__panel-content {
+  padding: var(--gridra-space-md) var(--gridra-space-lg);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .gridra-breadcrumb {
   min-width: 0;
 }

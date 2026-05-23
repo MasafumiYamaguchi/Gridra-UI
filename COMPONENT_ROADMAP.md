@@ -120,7 +120,7 @@ Useful once the playground and documentation need more structure.
 
 - [x] Tabs
 - [x] Breadcrumb
-- [ ] Accordion
+- [x] Accordion
 - [ ] Tree View
 - [ ] Menu
 - [ ] Pagination
