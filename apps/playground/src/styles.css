@@ -128,7 +128,7 @@ body {
 
 .docs-page__title {
   margin-top: 4px;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .docs-page__filters {
@@ -181,13 +181,13 @@ body {
 
 .docs-page__mobile-viewing-label {
   color: var(--gridra-color-muted-text);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .docs-page__mobile-viewing-name {
   color: var(--gridra-color-text);
   font-weight: 500;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .docs-page__mobile-toggle {
@@ -209,6 +209,17 @@ body {
   scrollbar-width: thin;
 }
 
+.docs-page__nav .gridra-tree-view__row {
+  padding: 5px 8px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.docs-tree-leaf-marker {
+  color: var(--gridra-color-muted-text);
+  flex: 0 0 auto;
+}
+
 .docs-page__nav-empty {
   display: flex;
   min-height: 0;
@@ -228,7 +239,7 @@ body {
   color: var(--gridra-color-muted-text);
   cursor: pointer;
   font: inherit;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.04em;
   padding: 7px 8px;
   text-align: left;
@@ -280,8 +291,8 @@ body {
 .docs-detail__summary {
   margin: 0;
   color: var(--gridra-color-muted-text);
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
 }
 
 .docs-detail__preview,
@@ -331,7 +342,7 @@ body {
 .docs-detail__notes-label {
   margin: 0;
   color: var(--gridra-color-muted-text);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -359,8 +370,8 @@ body {
   margin: 6px 0 0;
   padding: 0;
   color: var(--gridra-color-muted-text);
-  font-size: 11px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.45;
   list-style: none;
 }
 
@@ -512,7 +523,7 @@ body {
 .docs-detail__description {
   margin: 0;
   color: var(--gridra-color-muted-text);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.6;
 }
 
@@ -530,7 +541,7 @@ body {
 .docs-import-block__code {
   color: var(--gridra-color-text);
   font-family: var(--gridra-font-mono);
-  font-size: 11px;
+  font-size: 13px;
   white-space: pre-wrap;
   word-break: break-all;
 }
@@ -577,7 +588,7 @@ body {
 .docs-code-block__lang {
   color: var(--gridra-color-muted-text);
   font-family: var(--gridra-font-mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -589,7 +600,7 @@ body {
   padding: var(--gridra-space-md);
   color: var(--gridra-color-text);
   font-family: var(--gridra-font-mono);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.55;
   white-space: pre;
   scrollbar-color: var(--gridra-color-border-strong) var(--gridra-color-surface-raised);
@@ -642,8 +653,8 @@ body {
   width: 100%;
   border-collapse: collapse;
   color: var(--gridra-color-text);
-  font-size: 11px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.5;
   text-align: left;
 }
 
@@ -656,7 +667,7 @@ body {
   border-bottom: 1px solid var(--gridra-color-border);
   color: var(--gridra-color-muted-text);
   font-weight: 500;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -675,7 +686,7 @@ body {
 .docs-prop-name {
   color: var(--gridra-color-text);
   font-family: var(--gridra-font-mono);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .docs-prop-required {
@@ -686,7 +697,7 @@ body {
 .docs-prop-type {
   color: var(--gridra-color-muted-text);
   font-family: var(--gridra-font-mono);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .docs-examples {
@@ -703,12 +714,12 @@ body {
 
 .docs-example__title {
   color: var(--gridra-color-text);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.04em;
 }
 
 .docs-example__description {
   color: var(--gridra-color-muted-text);
-  font-size: 11px;
+  font-size: 13px;
 }

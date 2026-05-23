@@ -76,6 +76,19 @@ export const treeViewDoc: ComponentDoc = {
   )}
 />`,
       },
+      {
+        title: "Leaf marker prefix",
+        description: "Use renderItem to prefix leaf nodes with a marker, keeping branch labels unadorned.",
+        code: `<GridraTreeView
+  items={items}
+  renderItem={(item, state) => (
+    <GridraInline align="center" gap="xs">
+      {!state.hasChildren ? <span>-</span> : null}
+      <span>{item.label}</span>
+    </GridraInline>
+  )}
+/>`,
+      },
     ],
     preview: (
       <GridraBox padding="md" style={{ width: 300 }}>

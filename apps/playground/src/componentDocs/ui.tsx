@@ -185,6 +185,14 @@ export function ComponentDocsPage() {
                   defaultExpandedIds={treeDefaultExpanded}
                   items={treeItems}
                   onItemClick={(id) => selectDoc(id)}
+                  renderItem={(item, state) => (
+                    <GridraInline align="center" gap="xs">
+                      {!state.hasChildren ? (
+                        <span className="docs-tree-leaf-marker">-</span>
+                      ) : null}
+                      <span>{item.label}</span>
+                    </GridraInline>
+                  )}
                   size="md"
                 />
               )}
