@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   GridraBadge,
   GridraButton,
@@ -9,8 +9,10 @@ import {
   GridraLabel,
   GridraSelect,
   GridraSidebar,
-  GridraStack
+  GridraStack,
+  GridraTreeView,
 } from "@gridra-ui/react";
+import type { GridraTreeItem } from "@gridra-ui/react";
 import { componentDocs } from "./data";
 import { highlightDocsCode } from "./highlight";
 import type { DocsCodeLanguage, PropDoc } from "./types";
@@ -138,6 +140,30 @@ export function ComponentDocsPage() {
     activeCategory === "All"
       ? filteredDocs
       : filteredDocs.filter((doc) => doc.category === activeCategory);
+
+  const treeItems = useMemo<GridraTreeItem[]>(() => {
+    const catOrder = categories.filter((c) => c !== "All");
+
+    const cats = activeCategory === "All" ? catOrder : [activeCategory];
+
+    return cats
+      .filter((cat) => filteredDocs.some((d) => d.category === cat))
+      .map((cat) => ({
+        id: cat,
+        label: cat,
+        children: filteredDocs
+          .filter((d) => d.category === cat)
+          .map((doc) => ({
+            id: doc.name,
+            label: doc.name,
+          })),
+      }));
+  }, [activeCategory, filteredDocs, categories]);
+
+  const treeDefaultExpanded = useMemo(
+    () => (activeCategory !== "All" || searchQuery.trim() ? treeItems.map((i) => i.id) : []),
+    [activeCategory, searchQuery, treeItems],
+  );
   const activeDoc =
     visibleDocs.find((doc) => doc.name === activeDocName) ?? visibleDocs[0] ?? componentDocs[0];
 
@@ -258,18 +284,12 @@ export function ComponentDocsPage() {
                   <GridraBadge tone="muted">No matches</GridraBadge>
                 </div>
               ) : (
-                visibleDocs.map((doc) => (
-                  <button
-                    className="docs-page__nav-item"
-                    key={doc.name}
-                    onClick={() => selectDoc(doc.name)}
-                    type="button"
-                    aria-current={doc.name === activeDoc.name ? "page" : undefined}
-                  >
-                    <span>{doc.name}</span>
-                    <GridraBadge tone="muted">{doc.category}</GridraBadge>
-                  </button>
-                ))
+                <GridraTreeView
+                  defaultExpandedIds={treeDefaultExpanded}
+                  items={treeItems}
+                  onItemClick={(id) => selectDoc(id)}
+                  size="md"
+                />
               )}
             </nav>
           </div>

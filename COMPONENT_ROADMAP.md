@@ -121,7 +121,7 @@ Useful once the playground and documentation need more structure.
 - [x] Tabs
 - [x] Breadcrumb
 - [x] Accordion
-- [ ] Tree View
+- [x] Tree View
 - [ ] Menu
 - [ ] Pagination
 - [ ] Stepper

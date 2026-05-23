@@ -2646,6 +2646,128 @@
   line-height: 1.5;
 }
 
+.gridra-tree-view {
+  min-width: 0;
+  overflow: auto;
+}
+
+.gridra-tree-view__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gridra-tree-view__group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gridra-tree-view__item {
+  min-width: 0;
+}
+
+.gridra-tree-view__row {
+  display: flex;
+  align-items: center;
+  gap: var(--gridra-space-xs);
+  color: var(--gridra-color-text);
+  cursor: pointer;
+  outline: none;
+  min-width: 0;
+}
+
+.gridra-tree-view__row:hover {
+  background: var(--gridra-color-selected);
+}
+
+.gridra-tree-view__row--focused {
+  border: 1px solid var(--gridra-color-accent);
+  background: var(--gridra-color-selected);
+}
+
+.gridra-tree-view__item--disabled .gridra-tree-view__row {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.gridra-tree-view__item--disabled .gridra-tree-view__row:hover {
+  background: transparent;
+}
+
+.gridra-tree-view__indent {
+  flex: 0 0 auto;
+}
+
+.gridra-tree-view__chevron {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease;
+  color: var(--gridra-color-muted-text);
+}
+
+.gridra-tree-view__chevron::after {
+  width: 5px;
+  height: 5px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  content: "";
+  transform: rotate(-45deg);
+}
+
+.gridra-tree-view__chevron--expanded::after {
+  transform: rotate(45deg);
+}
+
+.gridra-tree-view__chevron-spacer {
+  width: 16px;
+  flex: 0 0 auto;
+}
+
+.gridra-tree-view__label {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.gridra-tree-view__label-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gridra-tree-view__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gridra-space-md);
+  color: var(--gridra-color-muted-text);
+}
+
+.gridra-tree-view--sm .gridra-tree-view__row {
+  padding: 3px 6px;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.gridra-tree-view--md .gridra-tree-view__row {
+  padding: 4px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-tree-view--lg .gridra-tree-view__row {
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .gridra-accordion {
   display: flex;
   flex-direction: column;
