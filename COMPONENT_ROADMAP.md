@@ -119,7 +119,7 @@ These need careful keyboard, focus, and layering behavior before they are consid
 Useful once the playground and documentation need more structure.
 
 - [x] Tabs
-- [ ] Breadcrumb
+- [x] Breadcrumb
 - [ ] Accordion
 - [ ] Tree View
 - [ ] Menu

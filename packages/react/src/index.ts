@@ -1,6 +1,7 @@
 export * from "./components/GridraAvatar";
 export * from "./components/GridraBadge";
 export * from "./components/GridraBox";
+export * from "./components/GridraBreadcrumb";
 export * from "./components/GridraButton";
 export * from "./components/GridraCanvasArea";
 export * from "./components/GridraCheckbox";
