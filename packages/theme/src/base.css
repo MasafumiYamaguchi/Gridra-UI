@@ -3012,6 +3012,120 @@
   line-height: 1.45;
 }
 
+.gridra-pagination {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-pagination__controls {
+  display: inline-flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-pagination__button {
+  display: inline-flex;
+  min-width: 28px;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gridra-color-border);
+  border-radius: var(--gridra-radius-sm);
+  background: var(--gridra-color-surface-input);
+  color: var(--gridra-color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0 8px;
+}
+
+.gridra-pagination__button:hover:not(:disabled) {
+  border-color: var(--gridra-color-border-strong);
+  background: var(--gridra-color-surface-raised);
+}
+
+.gridra-pagination__button:focus-visible {
+  outline: 2px solid var(--gridra-color-accent);
+  outline-offset: 1px;
+}
+
+.gridra-pagination__button--active,
+.gridra-pagination__button[aria-current="page"] {
+  border-color: var(--gridra-color-accent);
+  background: var(--gridra-color-selected);
+  box-shadow: var(--gridra-shadow-selected);
+}
+
+.gridra-pagination__button--disabled,
+.gridra-pagination__button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.gridra-pagination__ellipsis {
+  display: inline-flex;
+  min-width: 18px;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  color: var(--gridra-color-muted-text);
+  user-select: none;
+}
+
+.gridra-pagination__info {
+  display: inline-flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-pagination__page-size {
+  min-width: 104px;
+}
+
+.gridra-pagination__select {
+  width: auto;
+  min-width: 104px;
+}
+
+.gridra-pagination__summary {
+  color: var(--gridra-color-muted-text);
+  font-size: 10px;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.gridra-pagination--sm .gridra-pagination__button {
+  min-width: 24px;
+  min-height: 24px;
+  font-size: 10px;
+  padding: 0 6px;
+}
+
+.gridra-pagination--sm .gridra-pagination__ellipsis {
+  min-height: 24px;
+}
+
+.gridra-pagination--lg .gridra-pagination__button {
+  min-width: 34px;
+  min-height: 34px;
+  font-size: 12px;
+  padding: 0 10px;
+}
+
+.gridra-pagination--lg .gridra-pagination__ellipsis {
+  min-height: 34px;
+}
+
 .gridra-breadcrumb {
   min-width: 0;
 }

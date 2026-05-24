@@ -39,6 +39,7 @@ import { menuDoc } from "./components/gridra-menu";
 import { accordionDoc } from "./components/gridra-accordion";
 import { breadcrumbDoc } from "./components/gridra-breadcrumb";
 import { treeViewDoc } from "./components/gridra-tree-view";
+import { paginationDoc } from "./components/gridra-pagination";
 import { tabsDoc } from "./components/gridra-tabs";
 import { tooltipDoc } from "./components/gridra-tooltip";
 import { popoverDoc } from "./components/gridra-popover";
@@ -90,6 +91,7 @@ export const componentDocs: ComponentDoc[] = [
   breadcrumbDoc,
   treeViewDoc,
   tabsDoc,
+  paginationDoc,
   tooltipDoc,
   popoverDoc,
   dialogDoc,

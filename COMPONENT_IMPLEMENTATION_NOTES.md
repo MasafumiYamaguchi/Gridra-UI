@@ -618,6 +618,51 @@ click / keyboard arrow / Home / End
   -> panel content swaps to selected tab
 ```
 
+### GridraPagination
+
+Current status: implemented.
+
+Implemented:
+
+- Button-based pagination component exported from `@gridra-ui/react`.
+- Controlled/uncontrolled behavior for both `page` and `pageSize`.
+- Props: `page`, `defaultPage`, `onPageChange`, `pageSize`, `defaultPageSize`, `onPageSizeChange`, `totalItems`, `pageSizeOptions`, `siblingCount`, `boundaryCount`, `size`, `showFirstLast`, `showPageSize`, `showSummary`, `disabled`.
+- Pure utility functions in `paginationUtils.ts`: `normalizeTotalItems`, `normalizePageSize`, `normalizePage`, `normalizePageSizeOptions`, `normalizeSiblingOrBoundaryCount`, `generatePages`.
+- Numeric input is normalized before rendering: pages clamp to the valid range, invalid totals become 0, invalid page sizes fall back to 25, and decimals are floored.
+- Page range generation with siblingCount/boundaryCount-aware ellipsis.
+- `pageSize` change automatically resets `page` to 1.
+- Rendered as `nav` with `aria-label="Pagination"`, page buttons use `aria-current="page"`.
+- First/Previous/Next/Last buttons disable at boundaries.
+- `disabled` prop disables all buttons and the page size select.
+- `totalItems=0` renders gracefully with page 1, disabled boundaries, and "No items" summary.
+- Page size selector includes current value even if outside `pageSizeOptions`.
+
+Not implemented yet:
+
+- Link-based pagination (for SEO/URL-driven navigation).
+- Compact variant without page numbers.
+- Infinite scroll or load-more pattern integration.
+
+Current data flow:
+
+```text
+totalItems + pageSize
+  -> pageCount = Math.max(1, ceil(totalItems / pageSize))
+  -> currentPage clamped to [1, pageCount]
+  -> generatePages(currentPage, pageCount, siblingCount, boundaryCount)
+  -> buttons + ellipsis rendered
+
+user click page button
+  -> goToPage(nextPage)
+  -> setPage(clamped)
+  -> onPageChange(clamped, previousPage)
+
+user change pageSize select
+  -> setPageSize(nextSize)
+  -> onPageSizeChange(nextSize, previousSize)
+  -> setPage(1) (page resets to first)
+```
+
 ### GridraMinimap
 
 Current status: implemented.

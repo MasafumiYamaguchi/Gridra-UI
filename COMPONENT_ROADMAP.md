@@ -138,7 +138,7 @@ Useful once the playground and documentation need more structure.
 - [x] Accordion
 - [x] Tree View
 - [x] GridraMenu
-- [ ] Pagination
+- [x] Pagination
 - [ ] Stepper
 
 ## Priority 6: Feedback
