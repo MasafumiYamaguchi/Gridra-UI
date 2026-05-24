@@ -663,6 +663,50 @@ user change pageSize select
   -> setPage(1) (page resets to first)
 ```
 
+### GridraStepper
+
+Current status: implemented.
+
+Implemented:
+
+- Linear step indicator component exported from `@gridra-ui/react`.
+- Items-based API: `{ id, label, description?, disabled? }`.
+- Controlled/uncontrolled currentId via `currentId` / `defaultCurrentId` / `onStepChange`.
+- Step states: completed (before current), current, pending (after current), disabled (explicit or global).
+- Completed steps are clickable buttons for backtracking; current step is a button with `aria-current="step"`; pending steps are disabled.
+- Per-step `disabled` and global `disabled` prop.
+- Rendered as `nav` with `aria-label="Progress"` and `ol > li` structure.
+- Each step has a numbered marker, label, optional description, and a connector between steps.
+- Connectors reflect state visually (completed/current/pending/disabled classes).
+- Horizontal and vertical orientations, three sizes (sm/md/lg).
+- Unknown, empty, or disabled currentId falls back to the first enabled step.
+- If no enabled step exists, no step receives `aria-current` and all step buttons are disabled.
+
+Not implemented yet:
+
+- Step content panel switching (managed by parent in v1).
+- Branching, non-linear, or skipped step states.
+- Error state or custom icon rendering.
+- Step completion animation.
+
+Current data flow:
+
+```text
+items + currentId
+  -> currentId falls back to the first enabled step
+  -> currentIndex = findIndex(items, currentId), or -1 when no enabled step exists
+  -> for each item at index i:
+       i < currentIndex  -> completed (clickable, fires onStepChange)
+       i == currentIndex -> current (aria-current="step", no callback)
+       i > currentIndex  -> pending (disabled, no callback)
+       no current         -> disabled, no callback
+
+user click completed step
+  -> handleStepClick(id)
+  -> if controlled: onStepChange(id, currentId)
+  -> if uncontrolled: setInternalCurrentId(id) + onStepChange(id, currentId)
+```
+
 ### GridraMinimap
 
 Current status: implemented.

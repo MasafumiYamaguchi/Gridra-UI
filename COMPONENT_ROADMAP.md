@@ -139,7 +139,7 @@ Useful once the playground and documentation need more structure.
 - [x] Tree View
 - [x] GridraMenu
 - [x] Pagination
-- [ ] Stepper
+- [x] Stepper
 
 ## Priority 6: Feedback
 

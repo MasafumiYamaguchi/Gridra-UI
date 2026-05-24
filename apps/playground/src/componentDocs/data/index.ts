@@ -34,6 +34,7 @@ import { inlineDoc } from "./components/gridra-inline";
 import { clusterDoc } from "./components/gridra-cluster";
 import { sidebarDoc } from "./components/gridra-sidebar";
 import { splitPaneDoc } from "./components/gridra-split-pane";
+import { stepperDoc } from "./components/gridra-stepper";
 import { gridLayoutDoc } from "./components/gridra-grid-layout";
 import { menuDoc } from "./components/gridra-menu";
 import { accordionDoc } from "./components/gridra-accordion";
@@ -92,6 +93,7 @@ export const componentDocs: ComponentDoc[] = [
   treeViewDoc,
   tabsDoc,
   paginationDoc,
+  stepperDoc,
   tooltipDoc,
   popoverDoc,
   dialogDoc,
