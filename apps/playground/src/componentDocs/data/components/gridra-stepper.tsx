@@ -1,4 +1,4 @@
-import { GridraBox, GridraStepper } from "@gridra-ui/react";
+import { GridraBox, GridraStack, GridraStepper } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const stepperDoc: ComponentDoc = {
@@ -88,15 +88,28 @@ export const stepperDoc: ComponentDoc = {
     ],
     preview: (
       <GridraBox padding="md">
-        <GridraStepper
-          items={[
-            { id: "cart", label: "Cart", description: "2 items" },
-            { id: "shipping", label: "Shipping", description: "Tokyo, Japan" },
-            { id: "payment", label: "Payment" },
-            { id: "confirm", label: "Confirm" },
-          ]}
-          defaultCurrentId="payment"
-        />
+        <GridraStack gap="lg">
+          <GridraStepper
+            items={[
+              { id: "cart", label: "Cart", description: "2 items" },
+              { id: "shipping", label: "Shipping", description: "Tokyo, Japan" },
+              { id: "payment", label: "Payment" },
+              { id: "confirm", label: "Confirm" },
+            ]}
+            defaultCurrentId="payment"
+          />
+          <GridraStepper
+            items={[
+              { id: "account", label: "Account", description: "Create workspace" },
+              { id: "profile", label: "Profile", description: "Team details" },
+              { id: "preferences", label: "Preferences", description: "Optional" },
+              { id: "review", label: "Review" },
+            ]}
+            defaultCurrentId="profile"
+            orientation="vertical"
+            size="sm"
+          />
+        </GridraStack>
       </GridraBox>
     ),
     accessibility:
