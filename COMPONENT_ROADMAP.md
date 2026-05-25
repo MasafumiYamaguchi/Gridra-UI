@@ -145,7 +145,7 @@ Useful once the playground and documentation need more structure.
 
 These communicate async state, validation, and empty/error states.
 
-- [ ] Alert
+- [x] Alert
 - [ ] Toast
 - [ ] Progress
 - [ ] Skeleton

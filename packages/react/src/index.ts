@@ -1,4 +1,5 @@
 export * from "./components/GridraAccordion";
+export * from "./components/GridraAlert";
 export * from "./components/GridraAvatar";
 export * from "./components/GridraBadge";
 export * from "./components/GridraBox";
