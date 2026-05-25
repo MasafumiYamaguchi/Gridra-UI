@@ -49,4 +49,5 @@ export * from "./components/GridraTextarea";
 export * from "./components/GridraToolbar";
 export * from "./components/GridraTreeView";
 export * from "./components/GridraPopover";
+export * from "./components/GridraToast";
 export * from "./components/GridraTooltip";
