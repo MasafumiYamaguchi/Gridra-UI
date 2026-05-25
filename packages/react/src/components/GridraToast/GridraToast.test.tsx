@@ -134,6 +134,42 @@ describe("GridraToast", () => {
     vi.useRealTimers();
   });
 
+  it("plays the exit animation before showing the next queued toast", () => {
+    vi.useFakeTimers();
+
+    render(
+      <GridraToastProvider>
+        <ToastTrigger message="First" options={{ duration: 1000 }} />
+        <ToastTrigger message="Second" options={{ duration: 1000 }} />
+      </GridraToastProvider>,
+    );
+
+    const [btn1, btn2] = screen.getAllByRole("button", { name: "Show toast" });
+
+    click(btn1);
+    click(btn2);
+
+    const firstToast = screen.getByRole("status");
+    expect(firstToast.textContent).toContain("First");
+    expect(firstToast.className).not.toContain("gridra-toast--exiting");
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(screen.getByRole("status").textContent).toContain("First");
+    expect(screen.getByRole("status").className).toContain("gridra-toast--exiting");
+
+    act(() => {
+      vi.advanceTimersByTime(150);
+    });
+
+    expect(screen.getByRole("status").textContent).toContain("Second");
+    expect(screen.getByRole("status").className).not.toContain("gridra-toast--exiting");
+
+    vi.useRealTimers();
+  });
+
   it("applies explicit role override", () => {
     render(
       <GridraToastProvider>

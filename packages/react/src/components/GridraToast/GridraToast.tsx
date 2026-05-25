@@ -27,6 +27,7 @@ interface QueuedToast {
 
 const DEFAULT_DURATION = 3000;
 const DEFAULT_ROLE = "status";
+const EXIT_ANIMATION_DURATION = 150;
 
 let nextId = 0;
 
@@ -59,6 +60,7 @@ export function GridraToastProvider({ children }: { children: ReactNode }) {
   const [exiting, setExiting] = useState(false);
   const queueRef = useRef<QueuedToast[]>([]);
   const timerRef = useRef<number | null>(null);
+  const exitTimerRef = useRef<number | null>(null);
   const currentRef = useRef<QueuedToast | null>(null);
 
   const [portalThemeClassName, setPortalThemeClassName] = useState<
@@ -72,22 +74,31 @@ export function GridraToastProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const processQueue = useCallback(() => {
-    clearTimer();
-    if (queueRef.current.length === 0) {
-      setExiting(true);
-      window.setTimeout(() => {
-        setExiting(false);
-        setCurrentToast(null);
-        currentRef.current = null;
-      }, 150);
-      return;
+  const clearExitTimer = useCallback(() => {
+    if (exitTimerRef.current !== null) {
+      clearTimeout(exitTimerRef.current);
+      exitTimerRef.current = null;
     }
+  }, []);
+
+  const showNextToast = useCallback(() => {
     const [next, ...rest] = queueRef.current;
     queueRef.current = rest;
-    currentRef.current = next;
-    setCurrentToast(next);
-  }, [clearTimer]);
+
+    setExiting(false);
+    currentRef.current = next ?? null;
+    setCurrentToast(next ?? null);
+  }, []);
+
+  const beginExit = useCallback(() => {
+    clearTimer();
+    clearExitTimer();
+    setExiting(true);
+    exitTimerRef.current = window.setTimeout(() => {
+      exitTimerRef.current = null;
+      showNextToast();
+    }, EXIT_ANIMATION_DURATION);
+  }, [clearExitTimer, clearTimer, showNextToast]);
 
   useEffect(() => {
     currentRef.current = currentToast;
@@ -96,14 +107,17 @@ export function GridraToastProvider({ children }: { children: ReactNode }) {
     }
     setPortalThemeClassName(getGridraThemeClassName());
     timerRef.current = window.setTimeout(() => {
-      processQueue();
+      beginExit();
     }, currentToast.options.duration);
     return clearTimer;
-  }, [currentToast, processQueue, clearTimer]);
+  }, [currentToast, beginExit, clearTimer]);
 
   useEffect(() => {
-    return () => clearTimer();
-  }, [clearTimer]);
+    return () => {
+      clearTimer();
+      clearExitTimer();
+    };
+  }, [clearExitTimer, clearTimer]);
 
   const show = useCallback(
     (message: ReactNode, options?: GridraToastOptions) => {
