@@ -20,9 +20,9 @@ export const toastDoc: ComponentDoc = {
   category: "Feedback",
   name: "GridraToast",
   summary:
-    "Provider-based transient notification system that displays short messages at the bottom of the viewport with automatic dismissal.",
+    "Provider-based transient notification system that displays short messages at the top or bottom of the viewport with automatic dismissal.",
   description:
-    "GridraToast provides a lightweight notification system inspired by Android Toast. Messages appear at the bottom center of the viewport and auto-dismiss after a configurable duration. Multiple calls are queued and shown one at a time in FIFO order. Toasts do not capture focus and are intended for non-blocking transient feedback.",
+    "GridraToast provides a lightweight notification system inspired by Android Toast. Messages appear at the bottom or top center of the viewport and auto-dismiss after a configurable duration. Multiple calls are queued and shown one at a time in FIFO order. Toasts do not capture focus and are intended for non-blocking transient feedback.",
   importExample:
     'import { GridraToastProvider, useToast } from "@gridra-ui/react";',
   props: [
@@ -30,6 +30,12 @@ export const toastDoc: ComponentDoc = {
       name: "GridraToastProvider > children",
       type: "ReactNode",
       description: "The subtree that has access to useToast().",
+    },
+    {
+      name: "GridraToastProvider > position",
+      type: '"top" | "bottom"',
+      default: '"bottom"',
+      description: "Controls where toasts appear on the screen.",
     },
     {
       name: "show(message, options?)",
@@ -69,6 +75,7 @@ export const toastDoc: ComponentDoc = {
     "id: optional custom identifier",
     "role: ARIA role override (default status)",
     "className: additional styling class",
+    "position: top or bottom placement (default bottom)",
     "FIFO queue: one toast visible at a time",
     "Exit animation on dismissal",
     "prefers-reduced-motion support",
@@ -111,6 +118,12 @@ show("This stays longer", { duration: 5000 });`,
 show("First");
 show("Second");
 show("Third");`,
+    },
+    {
+      title: "Position at top",
+      code: `<GridraToastProvider position="top">
+  <App />
+</GridraToastProvider>`,
     },
   ],
   preview: (

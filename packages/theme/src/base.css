@@ -3770,6 +3770,11 @@
   pointer-events: none;
 }
 
+.gridra-toast__viewport--top {
+  bottom: auto;
+  top: var(--gridra-space-lg);
+}
+
 .gridra-toast {
   display: inline-flex;
   align-items: center;
@@ -3811,6 +3816,36 @@
   to {
     opacity: 0;
     transform: translateY(-4px);
+  }
+}
+
+.gridra-toast__viewport--top .gridra-toast {
+  animation: gridra-toast-in-top 200ms ease;
+}
+
+.gridra-toast__viewport--top .gridra-toast--exiting {
+  animation: gridra-toast-out-top 150ms ease forwards;
+}
+
+@keyframes gridra-toast-in-top {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gridra-toast-out-top {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
   }
 }
 

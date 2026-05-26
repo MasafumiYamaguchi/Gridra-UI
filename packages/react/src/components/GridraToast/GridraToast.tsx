@@ -9,6 +9,8 @@ import {
 import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 
+export type GridraToastPosition = "top" | "bottom";
+
 export interface GridraToastOptions {
   duration?: number;
   id?: string;
@@ -55,7 +57,13 @@ function getGridraThemeClassName(): string | undefined {
   );
 }
 
-export function GridraToastProvider({ children }: { children: ReactNode }) {
+export function GridraToastProvider({
+  children,
+  position = "bottom",
+}: {
+  children: ReactNode;
+  position?: GridraToastPosition;
+}) {
   const [currentToast, setCurrentToast] = useState<QueuedToast | null>(null);
   const [exiting, setExiting] = useState(false);
   const queueRef = useRef<QueuedToast[]>([]);
@@ -146,6 +154,7 @@ export function GridraToastProvider({ children }: { children: ReactNode }) {
     "gridra-toast__portal",
     portalThemeClassName,
     "gridra-toast__viewport",
+    position === "top" && "gridra-toast__viewport--top",
   ]
     .filter(Boolean)
     .join(" ");
