@@ -30,6 +30,7 @@ export * from "./components/GridraMinimap";
 export * from "./components/GridraNode";
 export * from "./components/GridraPagination";
 export * from "./components/GridraPanel";
+export * from "./components/GridraProgress";
 export * from "./components/GridraPropertiesPanel";
 export * from "./components/GridraRadio";
 export * from "./components/GridraResizeHandle";

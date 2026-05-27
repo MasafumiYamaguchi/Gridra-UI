@@ -3858,3 +3858,90 @@
     animation: none;
   }
 }
+
+/* --------------------------------
+ * Progress
+ * -------------------------------- */
+.gridra-progress {
+  --gridra-progress-track: color-mix(in srgb, var(--gridra-color-muted-text) 20%, transparent);
+  --gridra-progress-fill: var(--gridra-color-accent);
+
+  display: block;
+  width: 100%;
+  background: var(--gridra-progress-track);
+  overflow: hidden;
+  position: relative;
+}
+
+.gridra-progress--sm {
+  height: 2px;
+}
+
+.gridra-progress--md {
+  height: 4px;
+}
+
+.gridra-progress--lg {
+  height: 6px;
+}
+
+/* Tone fill overrides */
+.gridra-progress--default {
+  --gridra-progress-fill: var(--gridra-color-accent);
+}
+
+.gridra-progress--muted {
+  --gridra-progress-fill: var(--gridra-color-muted-text);
+}
+
+.gridra-progress--accent {
+  --gridra-progress-fill: var(--gridra-color-accent);
+}
+
+.gridra-progress--success {
+  --gridra-progress-fill: #1f854c;
+}
+
+.gridra-progress--warning {
+  --gridra-progress-fill: #d9a020;
+}
+
+.gridra-progress--danger {
+  --gridra-progress-fill: #d93426;
+}
+
+.gridra-progress__fill {
+  height: 100%;
+  background: var(--gridra-progress-fill);
+  transition: width 200ms ease;
+}
+
+/* Indeterminate */
+.gridra-progress--indeterminate .gridra-progress__fill {
+  width: 40%;
+  animation: gridra-progress-indeterminate 1.5s ease-in-out infinite;
+}
+
+@keyframes gridra-progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(150%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridra-progress__fill {
+    transition: none;
+  }
+
+  .gridra-progress--indeterminate .gridra-progress__fill {
+    animation: none;
+    width: 100%;
+    opacity: 0.4;
+  }
+}
