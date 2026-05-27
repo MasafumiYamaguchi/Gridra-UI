@@ -3945,3 +3945,171 @@
     opacity: 0.4;
   }
 }
+
+/* --------------------------------
+ * Skeleton
+ * -------------------------------- */
+.gridra-skeleton {
+  --gridra-skeleton-color: color-mix(in srgb, var(--gridra-color-muted-text) 25%, transparent);
+  --gridra-skeleton-width: 100%;
+  --gridra-skeleton-height: var(--gridra-space-md);
+
+  display: block;
+  width: var(--gridra-skeleton-width);
+  height: var(--gridra-skeleton-height);
+  background: var(--gridra-skeleton-color);
+}
+
+.gridra-skeleton--block {
+  height: var(--gridra-skeleton-height);
+}
+
+.gridra-skeleton--text {
+  height: auto;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-skeleton--text .gridra-skeleton__row {
+  height: var(--gridra-skeleton-height);
+  background: var(--gridra-skeleton-color);
+  width: 100%;
+}
+
+.gridra-skeleton--text .gridra-skeleton__row:last-child {
+  width: 70%;
+}
+
+.gridra-skeleton--circle {
+  border-radius: 50%;
+  width: var(--gridra-skeleton-width);
+  height: var(--gridra-skeleton-height);
+}
+
+/* Sizes */
+.gridra-skeleton--sm {
+  --gridra-skeleton-height: var(--gridra-space-sm);
+}
+
+.gridra-skeleton--md {
+  --gridra-skeleton-height: var(--gridra-space-md);
+}
+
+.gridra-skeleton--lg {
+  --gridra-skeleton-height: var(--gridra-space-lg);
+}
+
+/* Shimmer animation */
+.gridra-skeleton--animated {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--gridra-color-muted-text) 12%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: gridra-skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+.gridra-skeleton--animated.gridra-skeleton--text {
+  background-image: none;
+}
+
+.gridra-skeleton--animated .gridra-skeleton__row {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--gridra-color-muted-text) 12%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: gridra-skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes gridra-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridra-skeleton--animated {
+    animation: none;
+    background-image: none;
+  }
+
+  .gridra-skeleton--animated .gridra-skeleton__row {
+    animation: none;
+    background-image: none;
+  }
+}
+
+/* --------------------------------
+ * Empty State
+ * -------------------------------- */
+.gridra-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--gridra-space-sm);
+  color: var(--gridra-color-text);
+}
+
+.gridra-empty-state--sm {
+  gap: var(--gridra-space-xs);
+  padding: var(--gridra-space-sm);
+}
+
+.gridra-empty-state--md {
+  gap: var(--gridra-space-sm);
+  padding: var(--gridra-space-md);
+}
+
+.gridra-empty-state--lg {
+  gap: var(--gridra-space-md);
+  padding: var(--gridra-space-lg);
+}
+
+.gridra-empty-state__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gridra-color-muted-text);
+}
+
+.gridra-empty-state__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gridra-space-xs);
+  max-width: 360px;
+}
+
+.gridra-empty-state__heading {
+  font-weight: 500;
+  color: var(--gridra-color-text);
+}
+
+.gridra-empty-state__description {
+  color: var(--gridra-color-muted-text);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.gridra-empty-state__body {
+  color: var(--gridra-color-muted-text);
+}
+
+.gridra-empty-state__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gridra-space-xs);
+}
