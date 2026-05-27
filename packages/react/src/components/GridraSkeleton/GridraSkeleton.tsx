@@ -50,8 +50,8 @@ export function GridraSkeleton({
     style,
   };
 
-  if (variant === "text" && rows !== undefined) {
-    const count = Math.max(1, rows);
+  if (variant === "text") {
+    const count = Math.max(1, rows ?? 1);
     const lines = Array.from({ length: count }, (_, i) => (
       <div key={i} className="gridra-skeleton__row" />
     ));
