@@ -22,6 +22,14 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
+function normalizeMax(max: number): number {
+  return Number.isFinite(max) && max > 0 ? max : 100;
+}
+
+function normalizeValue(value: number): number {
+  return Number.isFinite(value) ? value : 0;
+}
+
 export function GridraProgress({
   className,
   label,
@@ -32,8 +40,12 @@ export function GridraProgress({
   ...props
 }: GridraProgressProps) {
   const isIndeterminate = value === undefined;
-  const clampedValue = isIndeterminate ? 0 : clamp(value, 0, max);
-  const fraction = isIndeterminate ? 0 : clampedValue / max;
+  const normalizedMax = normalizeMax(max);
+  const normalizedValue = isIndeterminate ? 0 : normalizeValue(value);
+  const clampedValue = isIndeterminate
+    ? 0
+    : clamp(normalizedValue, 0, normalizedMax);
+  const fraction = isIndeterminate ? 0 : clampedValue / normalizedMax;
   const percent = fraction * 100;
 
   const rootClassName = [
@@ -51,7 +63,7 @@ export function GridraProgress({
       className={rootClassName}
       role="progressbar"
       aria-label={label || undefined}
-      aria-valuemax={isIndeterminate ? undefined : max}
+      aria-valuemax={isIndeterminate ? undefined : normalizedMax}
       aria-valuemin={isIndeterminate ? undefined : 0}
       aria-valuenow={isIndeterminate ? undefined : clampedValue}
       {...props}
