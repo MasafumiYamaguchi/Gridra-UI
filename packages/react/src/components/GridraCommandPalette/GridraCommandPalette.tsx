@@ -14,6 +14,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 
 export type GridraCommandPaletteSize = "sm" | "md" | "lg";
 
@@ -534,17 +535,3 @@ export function GridraCommandPalette({
     : null;
 }
 
-function getPortalTarget(): HTMLElement | null {
-  return typeof document === "undefined" ? null : document.body;
-}
-
-function getGridraThemeClassName() {
-  if (typeof document === "undefined") {
-    return undefined;
-  }
-
-  const themeHost = document.querySelector(".gridra-theme-dark, .gridra-theme-light");
-  return Array.from(themeHost?.classList ?? []).find(
-    (className) => className === "gridra-theme-dark" || className === "gridra-theme-light",
-  );
-}

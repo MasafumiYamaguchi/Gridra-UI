@@ -8,6 +8,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
+import { getGridraThemeClassName } from "../../internal/theme";
 
 export type GridraToastPosition = "top" | "bottom";
 
@@ -41,20 +42,6 @@ export function useToast(): GridraToastContextValue {
     throw new Error("useToast must be used within a <GridraToastProvider>");
   }
   return context;
-}
-
-function getGridraThemeClassName(): string | undefined {
-  if (typeof document === "undefined") {
-    return undefined;
-  }
-
-  const themeHost = document.querySelector(
-    ".gridra-theme-dark, .gridra-theme-light",
-  );
-  return Array.from(themeHost?.classList ?? []).find(
-    (className) =>
-      className === "gridra-theme-dark" || className === "gridra-theme-light",
-  );
 }
 
 export function GridraToastProvider({

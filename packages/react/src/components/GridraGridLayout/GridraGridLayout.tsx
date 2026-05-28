@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { formatCssLength } from "../../internal/numeric";
 import { GridraBox, type GridraBoxProps } from "../GridraBox";
 
 export type GridraGridLayoutGap = "none" | "xs" | "sm" | "md" | "lg";
@@ -53,13 +54,6 @@ export function GridraGridLayout({
       {children as ReactNode}
     </GridraBox>
   );
-}
-
-function formatCssLength(value: number | string): string {
-  if (typeof value === "number") {
-    return `${Number.isFinite(value) ? Math.max(0, value) : 0}px`;
-  }
-  return value;
 }
 
 function safeRepeatCount(value: number): number {

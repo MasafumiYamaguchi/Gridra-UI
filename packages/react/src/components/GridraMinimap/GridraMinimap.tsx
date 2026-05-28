@@ -1,6 +1,7 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 import type { GridraId } from "@gridra-ui/core";
 import type { GridraNodePlacement } from "../GridraNode";
+import { clampInt, clampNumber } from "../../internal/numeric";
 
 export interface GridraMinimapNode {
   id: GridraId;
@@ -98,17 +99,3 @@ function normalizePlacement(
   return { column, row, columnSpan, rowSpan };
 }
 
-function clampInt(value: number, min: number, max: number): number {
-  if (!Number.isFinite(value)) {
-    return min;
-  }
-  const intValue = Math.floor(value);
-  return Math.min(max, Math.max(min, intValue));
-}
-
-function clampNumber(value: number, min: number, max: number): number {
-  if (!Number.isFinite(value)) {
-    return min;
-  }
-  return Math.min(max, Math.max(min, value));
-}

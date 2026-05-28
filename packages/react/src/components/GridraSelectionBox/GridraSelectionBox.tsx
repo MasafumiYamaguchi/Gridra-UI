@@ -1,5 +1,6 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 import type { GridraRect } from "@gridra-ui/core";
+import { normalizeGridLine, normalizeGridSpan } from "../../internal/numeric";
 
 export interface GridraSelectionBoxPlacement {
   column: number;
@@ -63,22 +64,6 @@ export function GridraSelectionBox({
       {...props}
     />
   );
-}
-
-function normalizeGridLine(value: number): number {
-  if (!Number.isFinite(value)) {
-    return 1;
-  }
-
-  return Math.max(1, Math.floor(value));
-}
-
-function normalizeGridSpan(value = 1): number {
-  if (!Number.isFinite(value)) {
-    return 1;
-  }
-
-  return Math.max(1, Math.floor(value));
 }
 
 function normalizeCoordinate(value: number): number {

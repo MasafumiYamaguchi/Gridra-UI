@@ -14,6 +14,9 @@ import {
   useState,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { composeHandlers } from "../../internal/composeHandlers";
+import { mergeRefs } from "../../internal/mergeRefs";
+import { computeFloatingPosition, isOutOfViewport, oppositePlacement } from "../../internal/floating";
 
 export type GridraHoverCardPlacement = "top" | "right" | "bottom" | "left";
 export type GridraHoverCardSize = "sm" | "md" | "lg";
@@ -108,13 +111,13 @@ export function GridraHoverCard({
 
       const anchorRect = anchor.getBoundingClientRect();
       const cardRect = card.getBoundingClientRect();
-      const initial = computePosition(anchorRect, cardRect, placement);
+      const initial = computeFloatingPosition(anchorRect, cardRect, placement, HOVER_CARD_OFFSET);
       let nextPlacement = placement;
       let nextCoords = initial;
 
       if (isOutOfViewport(initial, cardRect)) {
         nextPlacement = oppositePlacement(placement);
-        nextCoords = computePosition(anchorRect, cardRect, nextPlacement);
+        nextCoords = computeFloatingPosition(anchorRect, cardRect, nextPlacement, HOVER_CARD_OFFSET);
       }
 
       setResolvedPlacement(nextPlacement);
@@ -279,84 +282,3 @@ export function GridraHoverCard({
   );
 }
 
-function composeHandlers<TEvent>(
-  existing: ((event: TEvent) => void) | undefined,
-  next: (event: TEvent) => void,
-) {
-  return (event: TEvent) => {
-    existing?.(event);
-    if (!(event as unknown as { defaultPrevented: boolean }).defaultPrevented) {
-      next(event);
-    }
-  };
-}
-
-function mergeRefs<TValue>(
-  originalRef: unknown,
-  nextRef: (value: TValue | null) => void,
-) {
-  return (value: TValue | null) => {
-    if (typeof originalRef === "function") {
-      originalRef(value);
-    } else if (originalRef && typeof originalRef === "object" && "current" in (originalRef as object)) {
-      (originalRef as { current: TValue | null }).current = value;
-    }
-    nextRef(value);
-  };
-}
-
-function computePosition(
-  anchorRect: DOMRect,
-  cardRect: DOMRect,
-  cardPlacement: GridraHoverCardPlacement,
-) {
-  if (cardPlacement === "top") {
-    return {
-      top: anchorRect.top - cardRect.height - HOVER_CARD_OFFSET,
-      left: anchorRect.left + (anchorRect.width - cardRect.width) / 2,
-    };
-  }
-  if (cardPlacement === "right") {
-    return {
-      top: anchorRect.top + (anchorRect.height - cardRect.height) / 2,
-      left: anchorRect.right + HOVER_CARD_OFFSET,
-    };
-  }
-  if (cardPlacement === "bottom") {
-    return {
-      top: anchorRect.bottom + HOVER_CARD_OFFSET,
-      left: anchorRect.left + (anchorRect.width - cardRect.width) / 2,
-    };
-  }
-  return {
-    top: anchorRect.top + (anchorRect.height - cardRect.height) / 2,
-    left: anchorRect.left - cardRect.width - HOVER_CARD_OFFSET,
-  };
-}
-
-function isOutOfViewport(
-  candidateCoords: { top: number; left: number },
-  cardRect: DOMRect,
-) {
-  return (
-    candidateCoords.top < 0 ||
-    candidateCoords.left < 0 ||
-    candidateCoords.top + cardRect.height > window.innerHeight ||
-    candidateCoords.left + cardRect.width > window.innerWidth
-  );
-}
-
-function oppositePlacement(
-  cardPlacement: GridraHoverCardPlacement,
-): GridraHoverCardPlacement {
-  if (cardPlacement === "top") {
-    return "bottom";
-  }
-  if (cardPlacement === "bottom") {
-    return "top";
-  }
-  if (cardPlacement === "left") {
-    return "right";
-  }
-  return "left";
-}

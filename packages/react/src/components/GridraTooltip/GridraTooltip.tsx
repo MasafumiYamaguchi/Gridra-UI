@@ -13,6 +13,9 @@ import {
   useState,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { composeHandlers } from "../../internal/composeHandlers";
+import { mergeRefs } from "../../internal/mergeRefs";
+import { computeFloatingPosition, isOutOfViewport, oppositePlacement } from "../../internal/floating";
 
 export type GridraTooltipPlacement = "top" | "right" | "bottom" | "left";
 export type GridraTooltipSize = "sm" | "md" | "lg";
@@ -84,13 +87,13 @@ export function GridraTooltip({
 
       const anchorRect = anchor.getBoundingClientRect();
       const tooltipRect = tooltip.getBoundingClientRect();
-      const initial = computePosition(anchorRect, tooltipRect, placement);
+      const initial = computeFloatingPosition(anchorRect, tooltipRect, placement, TOOLTIP_OFFSET);
       let nextPlacement = placement;
       let nextCoords = initial;
 
       if (isOutOfViewport(initial, tooltipRect)) {
         nextPlacement = oppositePlacement(placement);
-        nextCoords = computePosition(anchorRect, tooltipRect, nextPlacement);
+        nextCoords = computeFloatingPosition(anchorRect, tooltipRect, nextPlacement, TOOLTIP_OFFSET);
       }
 
       setResolvedPlacement(nextPlacement);
@@ -186,82 +189,3 @@ export function GridraTooltip({
   );
 }
 
-function composeHandlers<TEvent>(
-  existing: ((event: TEvent) => void) | undefined,
-  next: (event: TEvent) => void,
-) {
-  return (event: TEvent) => {
-    existing?.(event);
-    if (!(event as unknown as { defaultPrevented: boolean }).defaultPrevented) {
-      next(event);
-    }
-  };
-}
-
-function mergeRefs<TValue>(
-  originalRef: unknown,
-  nextRef: (value: TValue | null) => void,
-) {
-  return (value: TValue | null) => {
-    if (typeof originalRef === "function") {
-      originalRef(value);
-    } else if (originalRef && typeof originalRef === "object" && "current" in (originalRef as object)) {
-      (originalRef as { current: TValue | null }).current = value;
-    }
-    nextRef(value);
-  };
-}
-
-function computePosition(
-  anchorRect: DOMRect,
-  tooltipRect: DOMRect,
-  placement: GridraTooltipPlacement,
-) {
-  if (placement === "top") {
-    return {
-      top: anchorRect.top - tooltipRect.height - TOOLTIP_OFFSET,
-      left: anchorRect.left + (anchorRect.width - tooltipRect.width) / 2,
-    };
-  }
-  if (placement === "right") {
-    return {
-      top: anchorRect.top + (anchorRect.height - tooltipRect.height) / 2,
-      left: anchorRect.right + TOOLTIP_OFFSET,
-    };
-  }
-  if (placement === "bottom") {
-    return {
-      top: anchorRect.bottom + TOOLTIP_OFFSET,
-      left: anchorRect.left + (anchorRect.width - tooltipRect.width) / 2,
-    };
-  }
-  return {
-    top: anchorRect.top + (anchorRect.height - tooltipRect.height) / 2,
-    left: anchorRect.left - tooltipRect.width - TOOLTIP_OFFSET,
-  };
-}
-
-function isOutOfViewport(
-  coords: { top: number; left: number },
-  tooltipRect: DOMRect,
-) {
-  return (
-    coords.top < 0 ||
-    coords.left < 0 ||
-    coords.top + tooltipRect.height > window.innerHeight ||
-    coords.left + tooltipRect.width > window.innerWidth
-  );
-}
-
-function oppositePlacement(placement: GridraTooltipPlacement): GridraTooltipPlacement {
-  if (placement === "top") {
-    return "bottom";
-  }
-  if (placement === "bottom") {
-    return "top";
-  }
-  if (placement === "left") {
-    return "right";
-  }
-  return "left";
-}

@@ -14,6 +14,9 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { composeHandlers } from "../../internal/composeHandlers";
+import { mergeRefs } from "../../internal/mergeRefs";
+import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 
 export type GridraDialogSize = "sm" | "md" | "lg" | "fullscreen";
 
@@ -268,45 +271,3 @@ export function GridraDialog({
   );
 }
 
-function getPortalTarget(): HTMLElement | null {
-  return typeof document === "undefined" ? null : document.body;
-}
-
-function getGridraThemeClassName(anchor: HTMLElement | null) {
-  if (typeof document === "undefined") {
-    return undefined;
-  }
-
-  const themeHost =
-    anchor?.closest(".gridra-theme-dark, .gridra-theme-light") ??
-    document.querySelector(".gridra-theme-dark, .gridra-theme-light");
-  return Array.from(themeHost?.classList ?? []).find(
-    (className) => className === "gridra-theme-dark" || className === "gridra-theme-light",
-  );
-}
-
-function composeHandlers<TEvent>(
-  existing: ((event: TEvent) => void) | undefined,
-  next: (event: TEvent) => void,
-) {
-  return (event: TEvent) => {
-    existing?.(event);
-    if (!(event as unknown as { defaultPrevented: boolean }).defaultPrevented) {
-      next(event);
-    }
-  };
-}
-
-function mergeRefs<TValue>(
-  originalRef: unknown,
-  nextRef: (value: TValue | null) => void,
-) {
-  return (value: TValue | null) => {
-    if (typeof originalRef === "function") {
-      originalRef(value);
-    } else if (originalRef && typeof originalRef === "object" && "current" in (originalRef as object)) {
-      (originalRef as { current: TValue | null }).current = value;
-    }
-    nextRef(value);
-  };
-}

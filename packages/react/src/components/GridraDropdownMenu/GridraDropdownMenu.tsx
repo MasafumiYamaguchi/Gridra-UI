@@ -15,6 +15,9 @@ import {
   type ReactNode,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { composeHandlers } from "../../internal/composeHandlers";
+import { mergeRefs } from "../../internal/mergeRefs";
+import { computeFloatingPosition, isOutOfViewport, oppositePlacement } from "../../internal/floating";
 
 export type GridraDropdownMenuPlacement = "top" | "right" | "bottom" | "left";
 export type GridraDropdownMenuSize = "sm" | "md" | "lg";
@@ -173,13 +176,13 @@ export function GridraDropdownMenu({
 
       const anchorRect = anchor.getBoundingClientRect();
       const menuRect = menu.getBoundingClientRect();
-      const initial = computePosition(anchorRect, menuRect, placement);
+      const initial = computeFloatingPosition(anchorRect, menuRect, placement, MENU_OFFSET, "start");
       let nextPlacement = placement;
       let nextCoords = initial;
 
       if (isOutOfViewport(initial, menuRect)) {
         nextPlacement = oppositePlacement(placement);
-        nextCoords = computePosition(anchorRect, menuRect, nextPlacement);
+        nextCoords = computeFloatingPosition(anchorRect, menuRect, nextPlacement, MENU_OFFSET, "start");
       }
 
       setResolvedPlacement(nextPlacement);
@@ -486,88 +489,3 @@ export function GridraDropdownMenu({
   );
 }
 
-function composeHandlers<TEvent>(
-  existing: ((event: TEvent) => void) | undefined,
-  next: (event: TEvent) => void,
-) {
-  return (event: TEvent) => {
-    existing?.(event);
-    if (!(event as unknown as { defaultPrevented: boolean }).defaultPrevented) {
-      next(event);
-    }
-  };
-}
-
-function mergeRefs<TValue>(
-  originalRef: unknown,
-  nextRef: (value: TValue | null) => void,
-) {
-  return (value: TValue | null) => {
-    if (typeof originalRef === "function") {
-      originalRef(value);
-    } else if (
-      originalRef &&
-      typeof originalRef === "object" &&
-      "current" in (originalRef as object)
-    ) {
-      (originalRef as { current: TValue | null }).current = value;
-    }
-    nextRef(value);
-  };
-}
-
-function computePosition(
-  anchorRect: DOMRect,
-  menuRect: DOMRect,
-  menuPlacement: GridraDropdownMenuPlacement,
-) {
-  if (menuPlacement === "bottom") {
-    return {
-      top: anchorRect.bottom + MENU_OFFSET,
-      left: anchorRect.left,
-    };
-  }
-  if (menuPlacement === "top") {
-    return {
-      top: anchorRect.top - menuRect.height - MENU_OFFSET,
-      left: anchorRect.left,
-    };
-  }
-  if (menuPlacement === "left") {
-    return {
-      top: anchorRect.top,
-      left: anchorRect.left - menuRect.width - MENU_OFFSET,
-    };
-  }
-  return {
-    top: anchorRect.top,
-    left: anchorRect.right + MENU_OFFSET,
-  };
-}
-
-function isOutOfViewport(
-  candidateCoords: { top: number; left: number },
-  menuRect: DOMRect,
-) {
-  return (
-    candidateCoords.top < 0 ||
-    candidateCoords.left < 0 ||
-    candidateCoords.top + menuRect.height > window.innerHeight ||
-    candidateCoords.left + menuRect.width > window.innerWidth
-  );
-}
-
-function oppositePlacement(
-  menuPlacement: GridraDropdownMenuPlacement,
-): GridraDropdownMenuPlacement {
-  if (menuPlacement === "top") {
-    return "bottom";
-  }
-  if (menuPlacement === "bottom") {
-    return "top";
-  }
-  if (menuPlacement === "left") {
-    return "right";
-  }
-  return "left";
-}

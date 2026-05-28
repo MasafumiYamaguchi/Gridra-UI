@@ -14,6 +14,9 @@ import {
   useState,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { composeHandlers } from "../../internal/composeHandlers";
+import { mergeRefs } from "../../internal/mergeRefs";
+import { computeFloatingPosition, isOutOfViewport, oppositePlacement } from "../../internal/floating";
 
 export type GridraPopoverPlacement = "top" | "right" | "bottom" | "left";
 export type GridraPopoverSize = "sm" | "md" | "lg";
@@ -77,13 +80,13 @@ export function GridraPopover({
 
       const anchorRect = anchor.getBoundingClientRect();
       const popoverRect = popover.getBoundingClientRect();
-      const initial = computePosition(anchorRect, popoverRect, placement);
+      const initial = computeFloatingPosition(anchorRect, popoverRect, placement, POPOVER_OFFSET);
       let nextPlacement = placement;
       let nextCoords = initial;
 
       if (isOutOfViewport(initial, popoverRect)) {
         nextPlacement = oppositePlacement(placement);
-        nextCoords = computePosition(anchorRect, popoverRect, nextPlacement);
+        nextCoords = computeFloatingPosition(anchorRect, popoverRect, nextPlacement, POPOVER_OFFSET);
       }
 
       setResolvedPlacement(nextPlacement);
@@ -215,84 +218,3 @@ export function GridraPopover({
   );
 }
 
-function composeHandlers<TEvent>(
-  existing: ((event: TEvent) => void) | undefined,
-  next: (event: TEvent) => void,
-) {
-  return (event: TEvent) => {
-    existing?.(event);
-    if (!(event as unknown as { defaultPrevented: boolean }).defaultPrevented) {
-      next(event);
-    }
-  };
-}
-
-function mergeRefs<TValue>(
-  originalRef: unknown,
-  nextRef: (value: TValue | null) => void,
-) {
-  return (value: TValue | null) => {
-    if (typeof originalRef === "function") {
-      originalRef(value);
-    } else if (originalRef && typeof originalRef === "object" && "current" in (originalRef as object)) {
-      (originalRef as { current: TValue | null }).current = value;
-    }
-    nextRef(value);
-  };
-}
-
-function computePosition(
-  anchorRect: DOMRect,
-  popoverRect: DOMRect,
-  popoverPlacement: GridraPopoverPlacement,
-) {
-  if (popoverPlacement === "top") {
-    return {
-      top: anchorRect.top - popoverRect.height - POPOVER_OFFSET,
-      left: anchorRect.left + (anchorRect.width - popoverRect.width) / 2,
-    };
-  }
-  if (popoverPlacement === "right") {
-    return {
-      top: anchorRect.top + (anchorRect.height - popoverRect.height) / 2,
-      left: anchorRect.right + POPOVER_OFFSET,
-    };
-  }
-  if (popoverPlacement === "bottom") {
-    return {
-      top: anchorRect.bottom + POPOVER_OFFSET,
-      left: anchorRect.left + (anchorRect.width - popoverRect.width) / 2,
-    };
-  }
-  return {
-    top: anchorRect.top + (anchorRect.height - popoverRect.height) / 2,
-    left: anchorRect.left - popoverRect.width - POPOVER_OFFSET,
-  };
-}
-
-function isOutOfViewport(
-  candidateCoords: { top: number; left: number },
-  popoverRect: DOMRect,
-) {
-  return (
-    candidateCoords.top < 0 ||
-    candidateCoords.left < 0 ||
-    candidateCoords.top + popoverRect.height > window.innerHeight ||
-    candidateCoords.left + popoverRect.width > window.innerWidth
-  );
-}
-
-function oppositePlacement(
-  popoverPlacement: GridraPopoverPlacement,
-): GridraPopoverPlacement {
-  if (popoverPlacement === "top") {
-    return "bottom";
-  }
-  if (popoverPlacement === "bottom") {
-    return "top";
-  }
-  if (popoverPlacement === "left") {
-    return "right";
-  }
-  return "left";
-}

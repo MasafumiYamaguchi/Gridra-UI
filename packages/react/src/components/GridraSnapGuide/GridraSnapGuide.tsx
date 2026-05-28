@@ -1,4 +1,5 @@
 import type { CSSProperties, HTMLAttributes } from "react";
+import { clampNumber, normalizeGridLine, normalizeGridSpan } from "../../internal/numeric";
 
 export type GridraSnapGuideOrientation = "vertical" | "horizontal";
 
@@ -71,14 +72,14 @@ function getPlacementStyle(
 ): CSSProperties {
   if (orientation === "vertical") {
     return {
-      gridColumn: `${normalizeGridLine(placement.column)} / span 1`,
-      gridRow: `${normalizeGridLine(placement.row)} / span ${normalizeGridSpan(placement.rowSpan)}`,
+      gridColumn: `${normalizeGridLine(placement.column ?? 1)} / span 1`,
+      gridRow: `${normalizeGridLine(placement.row ?? 1)} / span ${normalizeGridSpan(placement.rowSpan)}`,
     };
   }
 
   return {
-    gridColumn: `${normalizeGridLine(placement.column)} / span ${normalizeGridSpan(placement.columnSpan)}`,
-    gridRow: `${normalizeGridLine(placement.row)} / span 1`,
+    gridColumn: `${normalizeGridLine(placement.column ?? 1)} / span ${normalizeGridSpan(placement.columnSpan)}`,
+    gridRow: `${normalizeGridLine(placement.row ?? 1)} / span 1`,
   };
 }
 
@@ -106,22 +107,6 @@ function getPositionStyle(
     left: normalizedStart,
     width: normalizedLength,
   };
-}
-
-function normalizeGridLine(value = 1): number {
-  if (!Number.isFinite(value)) {
-    return 1;
-  }
-
-  return Math.max(1, Math.floor(value));
-}
-
-function normalizeGridSpan(value = 1): number {
-  if (!Number.isFinite(value)) {
-    return 1;
-  }
-
-  return Math.max(1, Math.floor(value));
 }
 
 function normalizeCoordinate(value: number): number {

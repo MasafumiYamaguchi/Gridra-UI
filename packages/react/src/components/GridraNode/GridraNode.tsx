@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
 import type { GridraId } from "@gridra-ui/core";
+import { normalizeGridLine, normalizeGridSpan } from "../../internal/numeric";
 
 // グリッド内のノードの配置を表すコンポーネントに必要なプロパティを定義するインターフェース
 export interface GridraNodePlacement {
@@ -65,20 +66,3 @@ export function GridraNode({
   );
 }
 
-// グリッドの行と列の位置とスパンを正規化する関数。値が有限でない場合や1未満の場合は1にする
-function normalizeGridLine(value: number): number {
-  if (!Number.isFinite(value)) {
-    return 1;
-  }
-
-  return Math.max(1, Math.floor(value));
-}
-
-// グリッドの行と列の位置とスパンを正規化する関数。値が有限でない場合や1未満の場合は1にする
-function normalizeGridSpan(value = 1): number {
-  if (!Number.isFinite(value)) {
-    return 1;
-  }
-
-  return Math.max(1, Math.floor(value));
-}
