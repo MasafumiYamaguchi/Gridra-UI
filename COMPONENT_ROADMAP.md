@@ -150,8 +150,8 @@ These communicate async state, validation, and empty/error states.
 - [x] Progress
 - [x] Skeleton
 - [x] Empty State
-- [ ] Error Message
-- [ ] Status Indicator
+- [x] Error Message
+- [x] Status Indicator
 
 ## Priority 7: Data Display
 

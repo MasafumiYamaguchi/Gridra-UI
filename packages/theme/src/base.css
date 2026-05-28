@@ -4113,3 +4113,152 @@
   justify-content: center;
   gap: var(--gridra-space-xs);
 }
+
+/* --------------------------------
+ * Error Message
+ * -------------------------------- */
+.gridra-error-message,
+.gridra-field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gridra-space-xs);
+  font-size: 11px;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+}
+
+.gridra-error-message__icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.gridra-error-message__text {
+  display: block;
+}
+
+/* Tones */
+.gridra-error-message--danger,
+.gridra-field__error {
+  color: #d93426;
+}
+
+.gridra-error-message--danger .gridra-error-message__icon {
+  color: #d93426;
+}
+
+.gridra-error-message--warning {
+  color: #d9a020;
+}
+
+.gridra-error-message--warning .gridra-error-message__icon {
+  color: #d9a020;
+}
+
+.gridra-error-message--muted {
+  color: var(--gridra-color-muted-text);
+}
+
+.gridra-error-message--muted .gridra-error-message__icon {
+  color: var(--gridra-color-muted-text);
+}
+
+/* --------------------------------
+ * Status Indicator
+ * -------------------------------- */
+.gridra-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-status-indicator__dot {
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--gridra-status-indicator-color, var(--gridra-color-muted-text));
+}
+
+.gridra-status-indicator__dot::after {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--gridra-status-indicator-color, var(--gridra-color-muted-text));
+  border-radius: inherit;
+  content: "";
+  opacity: 0;
+  transform: scale(1);
+}
+
+/* Sizes */
+.gridra-status-indicator--sm .gridra-status-indicator__dot {
+  width: 6px;
+  height: 6px;
+}
+
+.gridra-status-indicator--sm {
+  font-size: 10px;
+}
+
+.gridra-status-indicator--md .gridra-status-indicator__dot {
+  width: 8px;
+  height: 8px;
+}
+
+.gridra-status-indicator--md {
+  font-size: 11px;
+}
+
+.gridra-status-indicator__label {
+  white-space: nowrap;
+  color: var(--gridra-color-text);
+}
+
+/* Tones */
+.gridra-status-indicator--neutral .gridra-status-indicator__dot {
+  --gridra-status-indicator-color: var(--gridra-color-muted-text);
+}
+
+.gridra-status-indicator--success .gridra-status-indicator__dot {
+  --gridra-status-indicator-color: #1f854c;
+}
+
+.gridra-status-indicator--warning .gridra-status-indicator__dot {
+  --gridra-status-indicator-color: #d9a020;
+}
+
+.gridra-status-indicator--danger .gridra-status-indicator__dot {
+  --gridra-status-indicator-color: #d93426;
+}
+
+.gridra-status-indicator--info .gridra-status-indicator__dot {
+  --gridra-status-indicator-color: #2070c8;
+}
+
+.gridra-status-indicator--accent .gridra-status-indicator__dot {
+  --gridra-status-indicator-color: var(--gridra-color-accent);
+}
+
+/* Pulse */
+.gridra-status-indicator--pulse .gridra-status-indicator__dot::after {
+  animation: gridra-status-indicator-ring 1.8s ease-out infinite;
+}
+
+@keyframes gridra-status-indicator-ring {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  70%, 100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridra-status-indicator--pulse .gridra-status-indicator__dot::after {
+    animation: none;
+  }
+}
