@@ -16,21 +16,20 @@ import { GridraSelectionBox } from "../GridraSelectionBox";
 import { GridraSnapGuide } from "../GridraSnapGuide";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import { GridraConnectionLayer } from "./GridraConnectionLayer";
-import { getConnectionKey, hasConnection } from "./connectionUtils";
+import { getConnectionKey, hasConnection, createNodeConnection } from "./connectionUtils";
 import {
   createRect,
   formatCssLength,
   getCanvasPoint,
-  getGridMetrics,
   getGridPoint,
-  getNodeRect,
   normalizeGridCount,
   normalizeGridPlacement,
-  normalizeGridPlacementForDrag,
-  normalizeGridSpan,
   placementsEqual,
 } from "./geometry";
 import { hitTestConnections, hitTestNodes } from "./hitTesting";
+import { computeDragPlacement, computeResizePlacement } from "./interactionUtils";
+import { getSelectionMode, mergeSelectedIds } from "./selectionUtils";
+import { createNodeDragSnapGuides, createNodeResizeSnapGuides } from "./snapGuideUtils";
 import type {
   GridraCanvasAreaProps,
   GridraCanvasNode,
@@ -402,21 +401,14 @@ export function GridraCanvasArea<
 
     const gridColumnsForDrag = normalizedGridColumns ?? 12;
     const gridRowsForDrag = normalizedGridRows ?? 6;
-    const metrics = getGridMetrics(event.currentTarget, gridColumnsForDrag, gridRowsForDrag);
-    const currentPoint = getCanvasPoint(event, event.currentTarget);
-    const nextPlacement = normalizeGridPlacementForDrag(
-      {
-        ...dragState.startPlacement,
-        column:
-          dragState.startPlacement.column +
-          Math.round((currentPoint.x - dragState.origin.x) / metrics.columnStep),
-        row:
-          dragState.startPlacement.row +
-          Math.round((currentPoint.y - dragState.origin.y) / metrics.rowStep),
-      },
-      gridColumnsForDrag,
-      gridRowsForDrag,
-    );
+    const nextPlacement = computeDragPlacement({
+      canvas: event.currentTarget,
+      event,
+      gridColumns: gridColumnsForDrag,
+      gridRows: gridRowsForDrag,
+      origin: dragState.origin,
+      startPlacement: dragState.startPlacement,
+    });
     const previousPlacement =
       currentNodePlacements[dragState.id] ?? dragState.startPlacement;
 
@@ -507,21 +499,14 @@ export function GridraCanvasArea<
 
     const gridColumnsForResize = normalizedGridColumns ?? 12;
     const gridRowsForResize = normalizedGridRows ?? 6;
-    const metrics = getGridMetrics(event.currentTarget, gridColumnsForResize, gridRowsForResize);
-    const currentPoint = getCanvasPoint(event, event.currentTarget);
-    const nextPlacement = normalizeGridPlacement(
-      {
-        ...resizeState.startPlacement,
-        columnSpan:
-          normalizeGridSpan(resizeState.startPlacement.columnSpan) +
-          Math.round((currentPoint.x - resizeState.origin.x) / metrics.columnStep),
-        rowSpan:
-          normalizeGridSpan(resizeState.startPlacement.rowSpan) +
-          Math.round((currentPoint.y - resizeState.origin.y) / metrics.rowStep),
-      },
-      gridColumnsForResize,
-      gridRowsForResize,
-    );
+    const nextPlacement = computeResizePlacement({
+      canvas: event.currentTarget,
+      event,
+      gridColumns: gridColumnsForResize,
+      gridRows: gridRowsForResize,
+      origin: resizeState.origin,
+      startPlacement: resizeState.startPlacement,
+    });
     const previousPlacement =
       currentNodePlacements[resizeState.id] ?? resizeState.startPlacement;
 
@@ -828,129 +813,4 @@ export function GridraCanvasArea<
       {children}
     </div>
   );
-}
-
-function createNodeDragSnapGuides(
-  placement: GridraCanvasNode["placement"],
-  canvas: HTMLDivElement,
-  gridColumns: number,
-  gridRows: number,
-): NodeSnapGuide[] {
-  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
-  const rect = getNodeRect(placement, canvas, gridColumns, gridRows);
-  const verticalStart = metrics.paddingTop;
-  const horizontalStart = metrics.paddingLeft;
-
-  return [
-    {
-      orientation: "vertical",
-      position: rect.x,
-      start: verticalStart,
-      end: verticalStart + metrics.rowStep * gridRows,
-    },
-    {
-      orientation: "horizontal",
-      position: rect.y,
-      start: horizontalStart,
-      end: horizontalStart + metrics.columnStep * gridColumns,
-    },
-  ];
-}
-
-function createNodeConnection(
-  originId: GridraId,
-  originKind: GridraConnectionHandleKind,
-  targetId: GridraId,
-  targetKind: GridraConnectionHandleKind,
-): GridraNodeConnection | null {
-  if (originId === targetId || originKind === targetKind) {
-    return null;
-  }
-
-  if (originKind === "output" && targetKind === "input") {
-    return {
-      sourceId: originId,
-      targetId,
-    };
-  }
-
-  return {
-    sourceId: targetId,
-    targetId: originId,
-  };
-}
-
-function getSelectionMode(
-  event: PointerEvent<HTMLDivElement>,
-  fallbackMode: GridraSelectionMode,
-  modifierKeys?: { additive?: "Shift"; toggle?: "Meta" | "Control" },
-): GridraSelectionMode {
-  if (modifierKeys?.additive === "Shift" && event.shiftKey) {
-    return "additive";
-  }
-
-  if (modifierKeys?.toggle === "Meta" && event.metaKey) {
-    return "toggle";
-  }
-
-  if (modifierKeys?.toggle === "Control" && event.ctrlKey) {
-    return "toggle";
-  }
-
-  return fallbackMode;
-}
-
-function mergeSelectedIds(
-  mode: GridraSelectionMode,
-  currentSelectedIds: GridraId[],
-  hitSelectedIds: GridraId[],
-): GridraId[] {
-  if (mode === "replace") {
-    return hitSelectedIds;
-  }
-
-  const currentSet = new Set(currentSelectedIds);
-
-  if (mode === "additive") {
-    return Array.from(new Set([...currentSelectedIds, ...hitSelectedIds]));
-  }
-
-  hitSelectedIds.forEach((id) => {
-    if (currentSet.has(id)) {
-      currentSet.delete(id);
-    } else {
-      currentSet.add(id);
-    }
-  });
-
-  return currentSelectedIds
-    .filter((id) => currentSet.has(id))
-    .concat(hitSelectedIds.filter((id) => currentSet.has(id) && !currentSelectedIds.includes(id)));
-}
-
-function createNodeResizeSnapGuides(
-  placement: GridraCanvasNode["placement"],
-  canvas: HTMLDivElement,
-  gridColumns: number,
-  gridRows: number,
-): NodeSnapGuide[] {
-  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
-  const rect = getNodeRect(placement, canvas, gridColumns, gridRows);
-  const verticalStart = metrics.paddingTop;
-  const horizontalStart = metrics.paddingLeft;
-
-  return [
-    {
-      orientation: "vertical",
-      position: rect.x + rect.width,
-      start: verticalStart,
-      end: verticalStart + metrics.rowStep * gridRows,
-    },
-    {
-      orientation: "horizontal",
-      position: rect.y + rect.height,
-      start: horizontalStart,
-      end: horizontalStart + metrics.columnStep * gridColumns,
-    },
-  ];
 }
