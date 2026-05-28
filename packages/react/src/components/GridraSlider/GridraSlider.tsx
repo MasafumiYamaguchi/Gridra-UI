@@ -62,8 +62,10 @@ export function GridraSlider({
 
 function getDisplayValue(value: string | number | readonly string[]): number {
   if (Array.isArray(value)) {
-    return Number(value[0] ?? 0);
+    const n = Number(value[0] ?? 0);
+    return Number.isFinite(n) ? n : 0;
   }
 
-  return Number(value);
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
 }

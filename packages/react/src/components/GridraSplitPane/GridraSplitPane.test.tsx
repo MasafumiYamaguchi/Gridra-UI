@@ -249,4 +249,26 @@ describe("GridraSplitPane", () => {
     expect(style).toContain("--gridra-split-pane-size-b: 20%");
     expect(style).toContain("--gridra-split-pane-size-c: 30%");
   });
+
+  it("sanitizes NaN minSize and maxSize to safe defaults", () => {
+    const { container } = render(
+      <GridraSplitPane minSize={NaN} maxSize={NaN} defaultSize={NaN}>
+        <div>A</div>
+        <div>B</div>
+      </GridraSplitPane>
+    );
+    const style = (container.firstElementChild as HTMLElement).style;
+    expect(style.getPropertyValue("--gridra-split-pane-size")).not.toBe("NaN%");
+  });
+
+  it("sanitizes Infinity minSize and defaultSize", () => {
+    const { container } = render(
+      <GridraSplitPane minSize={Infinity} defaultSize={Infinity}>
+        <div>A</div>
+        <div>B</div>
+      </GridraSplitPane>
+    );
+    const style = (container.firstElementChild as HTMLElement).style;
+    expect(style.getPropertyValue("--gridra-split-pane-size")).not.toBe("Infinity%");
+  });
 });

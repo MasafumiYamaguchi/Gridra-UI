@@ -34,8 +34,8 @@ export function GridraMinimap({
   viewport,
   ...props
 }: GridraMinimapProps) {
-  const safeColumns = Math.max(1, Math.floor(gridColumns));
-  const safeRows = Math.max(1, Math.floor(gridRows));
+  const safeColumns = Number.isFinite(gridColumns) ? Math.max(1, Math.floor(gridColumns)) : 12;
+  const safeRows = Number.isFinite(gridRows) ? Math.max(1, Math.floor(gridRows)) : 6;
   const selectedSet = new Set(selectedIds);
 
   return (

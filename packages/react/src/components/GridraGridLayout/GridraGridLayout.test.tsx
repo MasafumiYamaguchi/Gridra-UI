@@ -113,4 +113,28 @@ describe("GridraGridLayout", () => {
     expect(layout.getAttribute("aria-label")).toBe("grid");
     expect((layout as HTMLElement).style.color).toBe("blue");
   });
+
+  it("sanitizes NaN columns to safe fallback", () => {
+    const { container } = render(
+      <GridraGridLayout columns={NaN}>A</GridraGridLayout>
+    );
+    const style = (container.firstElementChild as HTMLElement).style;
+    expect(style.getPropertyValue("--gridra-grid-layout-columns")).not.toBe("NaN");
+  });
+
+  it("sanitizes negative columns to 1", () => {
+    const { container } = render(
+      <GridraGridLayout columns={-5}>A</GridraGridLayout>
+    );
+    const style = (container.firstElementChild as HTMLElement).style;
+    expect(style.getPropertyValue("--gridra-grid-layout-columns")).toBe("1");
+  });
+
+  it("sanitizes NaN minColumnWidth to 0px", () => {
+    const { container } = render(
+      <GridraGridLayout columns="auto" minColumnWidth={NaN}>A</GridraGridLayout>
+    );
+    const style = (container.firstElementChild as HTMLElement).style;
+    expect(style.getPropertyValue("--gridra-grid-layout-min-column-width")).toBe("0px");
+  });
 });

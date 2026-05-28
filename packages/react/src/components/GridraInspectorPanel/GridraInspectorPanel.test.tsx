@@ -155,6 +155,19 @@ describe("GridraInspectorPanel", () => {
     expect(handleChange).not.toHaveBeenCalled();
   });
 
+  it("does not emit onChange for Infinity placement value", () => {
+    const handleChange = vi.fn();
+    render(
+      <GridraInspectorPanel selectedNode={baseNode} onChange={handleChange} />,
+    );
+
+    fireEvent.change(screen.getByTestId("inspector-x"), {
+      target: { value: "Infinity" },
+    });
+
+    expect(handleChange).not.toHaveBeenCalled();
+  });
+
   it("calls onCommit when Enter is pressed in label input", () => {
     const handleCommit = vi.fn();
     render(

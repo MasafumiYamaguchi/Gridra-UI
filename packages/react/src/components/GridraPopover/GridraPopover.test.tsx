@@ -275,4 +275,21 @@ describe("GridraPopover", () => {
     expect(popover.className).toContain("gridra-popover--lg");
     expect(popover.style.getPropertyValue("--gridra-popover-max-width")).toBe("400px");
   });
+
+  it("respects preventDefault on trigger onClick", () => {
+    render(
+      <GridraPopover content="Blocked content">
+        <button
+          onClick={(e) => e.preventDefault()}
+          type="button"
+        >
+          Trigger
+        </button>
+      </GridraPopover>
+    );
+
+    const trigger = screen.getByRole("button", { name: "Trigger" }) as HTMLElement;
+    fireEvent.click(trigger);
+    expect(screen.queryByText("Blocked content")).toBeNull();
+  });
 });

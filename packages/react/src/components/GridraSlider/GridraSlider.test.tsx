@@ -57,4 +57,9 @@ describe("GridraSlider", () => {
 
     expect(screen.getByText("90%")).toBeTruthy();
   });
+
+  it("sanitizes NaN defaultValue to 0 in display", () => {
+    render(<GridraSlider showValue defaultValue="NaN" />);
+    expect(screen.getByText("0")).toBeTruthy();
+  });
 });

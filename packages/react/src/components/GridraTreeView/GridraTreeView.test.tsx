@@ -287,4 +287,13 @@ describe("GridraTreeView", () => {
     fireEvent.click(screen.getByText("Item A").closest(".gridra-tree-view__row")!);
     expect(onClick).toHaveBeenCalledWith("a");
   });
+
+  it("does not call onItemClick for disabled item", () => {
+    const items = makeItems();
+    items[0].disabled = true;
+    const onClick = vi.fn();
+    render(<GridraTreeView items={items} onItemClick={onClick} />);
+    fireEvent.click(screen.getByText("Item A").closest(".gridra-tree-view__row")!);
+    expect(onClick).not.toHaveBeenCalled();
+  });
 });

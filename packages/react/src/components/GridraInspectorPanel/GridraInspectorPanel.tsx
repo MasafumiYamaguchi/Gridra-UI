@@ -30,7 +30,8 @@ export interface GridraInspectorPanelProps
 }
 
 function isValidNumber(value: string): boolean {
-  return value.trim() !== "" && !Number.isNaN(Number(value));
+  const n = Number(value);
+  return value.trim() !== "" && !Number.isNaN(n) && Number.isFinite(n);
 }
 
 export function GridraInspectorPanel({

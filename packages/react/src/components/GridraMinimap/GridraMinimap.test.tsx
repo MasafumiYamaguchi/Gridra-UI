@@ -49,4 +49,21 @@ describe("GridraMinimap", () => {
     );
     expect(container.querySelector(".gridra-minimap__viewport")).toBeNull();
   });
+
+  it("sanitizes NaN gridColumns and gridRows to safe defaults", () => {
+    const { container } = render(
+      <GridraMinimap gridColumns={NaN} gridRows={NaN} />
+    );
+    const style = (container.firstElementChild as HTMLElement).style;
+    expect(style.getPropertyValue("--gridra-minimap-columns")).not.toBe("NaN");
+    expect(style.getPropertyValue("--gridra-minimap-rows")).not.toBe("NaN");
+  });
+
+  it("sanitizes Infinity gridColumns and gridRows to safe defaults", () => {
+    const { container } = render(
+      <GridraMinimap gridColumns={Infinity} gridRows={Infinity} />
+    );
+    const style = (container.firstElementChild as HTMLElement).style;
+    expect(style.getPropertyValue("--gridra-minimap-columns")).not.toBe("Infinity");
+  });
 });

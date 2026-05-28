@@ -462,7 +462,9 @@ function composeHandlers<TEvent>(
 ) {
   return (event: TEvent) => {
     existing?.(event);
-    next(event);
+    if (!(event as unknown as { defaultPrevented: boolean }).defaultPrevented) {
+      next(event);
+    }
   };
 }
 

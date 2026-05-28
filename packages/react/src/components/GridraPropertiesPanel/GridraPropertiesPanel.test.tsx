@@ -179,6 +179,23 @@ describe("GridraPropertiesPanel", () => {
     expect(handleChange).not.toHaveBeenCalled();
   });
 
+  it("does not emit onChange for Infinity number value", () => {
+    const handleChange = vi.fn();
+    render(
+      <GridraPropertiesPanel
+        schema={sampleSchema}
+        selectedNodeId="node-1"
+        selectedNodeType="transform"
+        value={sampleValue}
+        onChange={handleChange}
+      />,
+    );
+    fireEvent.change(screen.getByTestId("property-intensity"), {
+      target: { value: "Infinity" },
+    });
+    expect(handleChange).not.toHaveBeenCalled();
+  });
+
   it("emits onChange when select field changes", () => {
     const handleChange = vi.fn();
     render(

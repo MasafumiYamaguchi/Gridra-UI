@@ -44,7 +44,7 @@ export function GridraGridLayout({
   const layoutStyle: CSSProperties = {
     ...style,
     ...(typeof columns === "number"
-      ? { "--gridra-grid-layout-columns": columns.toString() }
+      ? { "--gridra-grid-layout-columns": safeRepeatCount(columns).toString() }
       : { "--gridra-grid-layout-min-column-width": formatCssLength(minColumnWidth) })
   } as CSSProperties;
 
@@ -57,7 +57,12 @@ export function GridraGridLayout({
 
 function formatCssLength(value: number | string): string {
   if (typeof value === "number") {
-    return `${value}px`;
+    return `${Number.isFinite(value) ? Math.max(0, value) : 0}px`;
   }
   return value;
+}
+
+function safeRepeatCount(value: number): number {
+  if (!Number.isFinite(value) || value <= 0) return 1;
+  return Math.floor(value);
 }

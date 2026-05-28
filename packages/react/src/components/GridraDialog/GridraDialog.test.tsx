@@ -198,4 +198,20 @@ describe("GridraDialog", () => {
     expect(screen.getByRole("dialog")).toBeDefined();
     expect(screen.getByText("No Trigger Dialog")).toBeDefined();
   });
+
+  it("respects preventDefault on trigger onClick", () => {
+    render(
+      <GridraDialog content="Body" title="Blocked">
+        <button
+          onClick={(e) => e.preventDefault()}
+          type="button"
+        >
+          Open
+        </button>
+      </GridraDialog>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Open" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
 });

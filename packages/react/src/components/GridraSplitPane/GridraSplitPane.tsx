@@ -279,12 +279,13 @@ export function GridraSplitPane({
 }
 
 function clampSize(value: number, minSize: number, maxSize: number): number {
-  const min = Math.max(0, minSize);
-  const max = Math.min(100, maxSize);
+  const min = Number.isFinite(minSize) ? Math.max(0, minSize) : 0;
+  const max = Number.isFinite(maxSize) ? Math.min(100, maxSize) : 100;
   if (min > max) {
     return min;
   }
-  return Math.min(max, Math.max(min, value));
+  const safeValue = Number.isFinite(value) ? value : min;
+  return Math.min(max, Math.max(min, safeValue));
 }
 
 function sumBeforeIndex(values: number[], indexExclusive: number): number {

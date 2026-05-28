@@ -100,14 +100,14 @@ export function GridraPropertiesPanel({
                     min={field.min}
                     onChange={(event) => {
                       const raw = event.target.value;
-                      if (raw.trim() === "" || Number.isNaN(Number(raw))) {
+                      if (raw.trim() === "" || Number.isNaN(Number(raw)) || !Number.isFinite(Number(raw))) {
                         return;
                       }
                       handleChange(field.id, Number(raw));
                     }}
                     step={field.step}
                     type="number"
-                    value={typeof fieldValue === "number" ? fieldValue : ""}
+                    value={formatNumberValue(fieldValue)}
                   />
                 </GridraField>
               );
@@ -162,4 +162,9 @@ export function GridraPropertiesPanel({
       )}
     </GridraPanel>
   );
+}
+
+function formatNumberValue(value: unknown): string | number {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "";
+  return value;
 }

@@ -276,7 +276,9 @@ export function GridraTreeView({
                 }}
                 tabIndex={isFocused ? 0 : -1}
                 onClick={() => {
-                  onItemClick?.(item.id);
+                  if (!isDisabled) {
+                    onItemClick?.(item.id);
+                  }
                   if (!isDisabled && hasChildren) toggleExpand(item.id);
                 }}
                 onKeyDown={(e) => {
