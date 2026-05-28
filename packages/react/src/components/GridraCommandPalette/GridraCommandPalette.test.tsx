@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GridraCommandPalette } from "./GridraCommandPalette";
 
@@ -27,6 +28,12 @@ describe("GridraCommandPalette", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeDefined();
     expect(dialog.getAttribute("aria-modal")).toBe("true");
+  });
+
+  it("does not crash during server render when controlled open", () => {
+    expect(() =>
+      renderToString(<GridraCommandPalette items={basicItems} open />),
+    ).not.toThrow();
   });
 
   it("carries Gridra root and theme classes into the portal backdrop", () => {

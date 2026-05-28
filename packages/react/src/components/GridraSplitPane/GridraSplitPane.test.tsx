@@ -271,4 +271,23 @@ describe("GridraSplitPane", () => {
     const style = (container.firstElementChild as HTMLElement).style;
     expect(style.getPropertyValue("--gridra-split-pane-size")).not.toBe("Infinity%");
   });
+
+  it("keeps keyboard resizing finite when constraints are invalid", () => {
+    const handleSizeChange = vi.fn();
+    render(
+      <GridraSplitPane minSize={Infinity} maxSize={NaN} defaultSize={50} onSizeChange={handleSizeChange}>
+        <div>A</div>
+        <div>B</div>
+      </GridraSplitPane>,
+    );
+
+    const separator = screen.getByRole("separator") as HTMLDivElement;
+    fireEvent.keyDown(separator, { key: "Home" });
+    fireEvent.keyDown(separator, { key: "End" });
+    fireEvent.keyDown(separator, { key: "ArrowRight" });
+
+    for (const [next] of handleSizeChange.mock.calls) {
+      expect(Number.isFinite(next)).toBe(true);
+    }
+  });
 });

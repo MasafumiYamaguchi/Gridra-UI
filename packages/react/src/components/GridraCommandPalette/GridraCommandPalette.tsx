@@ -114,11 +114,16 @@ export function GridraCommandPalette({
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [portalMounted, setPortalMounted] = useState(false);
   const [portalThemeClassName, setPortalThemeClassName] = useState<string | undefined>(() =>
     getGridraThemeClassName(),
   );
   const titleId = useId();
   const inputId = useId();
+
+  useEffect(() => {
+    setPortalMounted(true);
+  }, []);
 
   const commandItems = useMemo(() => items.filter(isCommand), [items]);
 
@@ -350,6 +355,7 @@ export function GridraCommandPalette({
   ]
     .filter(Boolean)
     .join(" ");
+  const portalTarget = getPortalTarget();
 
   const groups = useMemo(() => {
     const map = new Map<string, GridraCommandPaletteCommandItem[]>();
@@ -364,7 +370,7 @@ export function GridraCommandPalette({
 
   const hasGrouping = groups.some(([key]) => key !== "");
 
-  return currentOpen
+  return currentOpen && portalMounted && portalTarget
     ? createPortal(
         <div
           className={backdropClassName}
@@ -523,9 +529,13 @@ export function GridraCommandPalette({
             </div>
           </div>
         </div>,
-        document.body,
+        portalTarget,
       )
     : null;
+}
+
+function getPortalTarget(): HTMLElement | null {
+  return typeof document === "undefined" ? null : document.body;
 }
 
 function getGridraThemeClassName() {

@@ -279,13 +279,21 @@ export function GridraSplitPane({
 }
 
 function clampSize(value: number, minSize: number, maxSize: number): number {
-  const min = Number.isFinite(minSize) ? Math.max(0, minSize) : 0;
-  const max = Number.isFinite(maxSize) ? Math.min(100, maxSize) : 100;
-  if (min > max) {
-    return min;
-  }
+  const { min, max } = normalizeSizeConstraints(minSize, maxSize);
   const safeValue = Number.isFinite(value) ? value : min;
   return Math.min(max, Math.max(min, safeValue));
+}
+
+function normalizeSizeConstraints(
+  minSize: number,
+  maxSize: number,
+): { min: number; max: number } {
+  const rawMin = Number.isFinite(minSize) ? Math.max(0, Math.min(100, minSize)) : 0;
+  const rawMax = Number.isFinite(maxSize) ? Math.max(0, Math.min(100, maxSize)) : 100;
+
+  return rawMin <= rawMax
+    ? { min: rawMin, max: rawMax }
+    : { min: rawMax, max: rawMin };
 }
 
 function sumBeforeIndex(values: number[], indexExclusive: number): number {
@@ -319,9 +327,15 @@ function clampSizeInPair(
   minSize: number,
   maxSize: number,
 ): number {
-  const minBound = Math.max(minSize, pairTotal - maxSize);
-  const maxBound = Math.min(maxSize, pairTotal - minSize);
-  return Math.min(maxBound, Math.max(minBound, value));
+  const { min, max } = normalizeSizeConstraints(minSize, maxSize);
+  const total = Number.isFinite(pairTotal) && pairTotal > 0 ? pairTotal : 100;
+  const minBound = Math.max(min, total - max);
+  const maxBound = Math.min(max, total - min);
+  const lower = Math.min(minBound, maxBound);
+  const upper = Math.max(minBound, maxBound);
+  const safeValue = Number.isFinite(value) ? value : lower;
+
+  return Math.min(upper, Math.max(lower, safeValue));
 }
 
 function applyAdjacentResize(

@@ -5,6 +5,7 @@ import {
   useEffect,
   useId,
   useRef,
+  useState,
   type CSSProperties,
   type HTMLAttributes,
   type ReactElement,
@@ -59,8 +60,13 @@ export function GridraDialog({
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
+  const [portalMounted, setPortalMounted] = useState(false);
   const titleId = useId();
   const descriptionId = useId();
+
+  useEffect(() => {
+    setPortalMounted(true);
+  }, []);
 
   const close = useCallback(() => {
     setCurrentOpen(false);
@@ -209,13 +215,14 @@ export function GridraDialog({
   ]
     .filter(Boolean)
     .join(" ");
+  const portalTarget = getPortalTarget();
 
   return (
     <>
       {triggerElement && isValidElement(triggerElement)
         ? cloneElement(triggerElement, triggerProps)
         : null}
-      {currentOpen
+      {currentOpen && portalMounted && portalTarget
         ? createPortal(
             <div
               className={backdropClassName}
@@ -254,11 +261,15 @@ export function GridraDialog({
                 <div className="gridra-dialog__body">{content}</div>
               </div>
             </div>,
-            document.body,
+            portalTarget,
           )
         : null}
     </>
   );
+}
+
+function getPortalTarget(): HTMLElement | null {
+  return typeof document === "undefined" ? null : document.body;
 }
 
 function getGridraThemeClassName(anchor: HTMLElement | null) {

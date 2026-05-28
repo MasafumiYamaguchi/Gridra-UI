@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GridraDialog } from "./GridraDialog";
 
@@ -213,5 +214,13 @@ describe("GridraDialog", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Open" }));
     expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("does not crash during server render when controlled open", () => {
+    expect(() =>
+      renderToString(
+        <GridraDialog content="Body" open title="Server Dialog" />,
+      ),
+    ).not.toThrow();
   });
 });
