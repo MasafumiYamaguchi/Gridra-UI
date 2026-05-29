@@ -724,6 +724,351 @@
   color: #fee2e2;
 }
 
+.gridra-card {
+  display: grid;
+  min-width: 0;
+  gap: var(--gridra-space-md);
+  border: 1px solid var(--gridra-color-border);
+  color: var(--gridra-color-text);
+}
+
+.gridra-card--surface {
+  background: var(--gridra-color-surface);
+}
+
+.gridra-card--raised {
+  background: var(--gridra-color-surface-raised);
+}
+
+.gridra-card--input {
+  background: var(--gridra-color-surface-input);
+}
+
+.gridra-card--padding-sm {
+  padding: var(--gridra-space-sm);
+}
+
+.gridra-card--padding-md {
+  padding: var(--gridra-space-md);
+}
+
+.gridra-card--padding-lg {
+  padding: var(--gridra-space-lg);
+}
+
+.gridra-card--with-media {
+  overflow: hidden;
+}
+
+.gridra-card__media {
+  min-width: 0;
+  margin: calc(var(--gridra-space-md) * -1);
+  margin-bottom: 0;
+}
+
+.gridra-card--padding-sm .gridra-card__media {
+  margin: calc(var(--gridra-space-sm) * -1);
+  margin-bottom: 0;
+}
+
+.gridra-card--padding-lg .gridra-card__media {
+  margin: calc(var(--gridra-space-lg) * -1);
+  margin-bottom: 0;
+}
+
+.gridra-card__media > img,
+.gridra-card__media > video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gridra-card__header,
+.gridra-card__footer {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-card__heading-group,
+.gridra-card__body {
+  display: grid;
+  min-width: 0;
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-card__heading {
+  color: var(--gridra-color-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.gridra-card__description,
+.gridra-card__footer {
+  color: var(--gridra-color-muted-text);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.gridra-card__actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-card__body {
+  color: var(--gridra-color-text);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gridra-list {
+  display: grid;
+  min-width: 0;
+  margin: 0;
+  color: var(--gridra-color-text);
+}
+
+.gridra-list--marker-none {
+  padding-left: 0;
+  list-style: none;
+}
+
+.gridra-list--marker-default {
+  padding-left: 18px;
+}
+
+.gridra-list--compact {
+  gap: 0;
+}
+
+.gridra-list--normal {
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-list--relaxed {
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-list--sm {
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.gridra-list--md {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gridra-list--lg {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gridra-list__item,
+.gridra-list > li {
+  min-width: 0;
+}
+
+.gridra-list--dividers {
+  gap: 0;
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+.gridra-list--dividers > .gridra-list__item,
+.gridra-list--dividers > li {
+  border-bottom: 1px solid var(--gridra-color-border);
+  padding: var(--gridra-space-sm) 0;
+}
+
+.gridra-list--dividers > .gridra-list__item:last-child,
+.gridra-list--dividers > li:last-child {
+  border-bottom: 0;
+}
+
+.gridra-description-list {
+  display: grid;
+  min-width: 0;
+  margin: 0;
+  color: var(--gridra-color-text);
+}
+
+.gridra-description-list--normal {
+  gap: var(--gridra-space-sm);
+}
+
+.gridra-description-list--compact {
+  gap: var(--gridra-space-xs);
+}
+
+.gridra-description-list__item {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(88px, 0.42fr) minmax(0, 1fr);
+  gap: var(--gridra-space-md);
+}
+
+.gridra-description-list__term {
+  min-width: 0;
+  color: var(--gridra-color-muted-text);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.gridra-description-list__description {
+  min-width: 0;
+  margin: 0;
+  color: var(--gridra-color-text);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.gridra-stat {
+  display: grid;
+  min-width: 0;
+  gap: var(--gridra-space-xs);
+  color: var(--gridra-color-text);
+}
+
+.gridra-stat--align-start {
+  justify-items: start;
+  text-align: left;
+}
+
+.gridra-stat--align-center {
+  justify-items: center;
+  text-align: center;
+}
+
+.gridra-stat--align-end {
+  justify-items: end;
+  text-align: right;
+}
+
+.gridra-stat__label {
+  color: var(--gridra-color-muted-text);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.gridra-stat__value {
+  color: var(--gridra-stat-value-color, var(--gridra-color-text));
+  font-family: var(--gridra-font-brand);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.gridra-stat__description {
+  color: var(--gridra-color-muted-text);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.gridra-stat--sm .gridra-stat__value {
+  font-size: 18px;
+}
+
+.gridra-stat--md .gridra-stat__value {
+  font-size: 24px;
+}
+
+.gridra-stat--lg .gridra-stat__value {
+  font-size: 32px;
+}
+
+.gridra-stat--accent {
+  --gridra-stat-value-color: var(--gridra-color-accent);
+}
+
+.gridra-stat--muted {
+  --gridra-stat-value-color: var(--gridra-color-muted-text);
+}
+
+.gridra-tag {
+  display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
+  align-items: center;
+  border: 1px solid var(--gridra-tag-border, var(--gridra-color-border));
+  background: var(--gridra-tag-background, transparent);
+  color: var(--gridra-tag-color, var(--gridra-color-text));
+  line-height: 1;
+}
+
+.gridra-tag--sm {
+  min-height: 18px;
+  font-size: 10px;
+  padding: 0 6px;
+}
+
+.gridra-tag--md {
+  min-height: 22px;
+  font-size: 11px;
+  padding: 0 8px;
+}
+
+.gridra-tag--accent {
+  --gridra-tag-border: var(--gridra-color-accent);
+  --gridra-tag-background: var(--gridra-color-selected);
+}
+
+.gridra-tag--muted {
+  --gridra-tag-color: var(--gridra-color-muted-text);
+}
+
+.gridra-tag--success {
+  --gridra-tag-border: #34d399;
+  --gridra-tag-color: #d1fae5;
+}
+
+.gridra-tag--warning {
+  --gridra-tag-border: #fbbf24;
+  --gridra-tag-color: #fef3c7;
+}
+
+.gridra-tag--danger {
+  --gridra-tag-border: #f87171;
+  --gridra-tag-color: #fee2e2;
+}
+
+.gridra-kbd {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gridra-color-border-strong);
+  background: var(--gridra-color-surface-input);
+  color: var(--gridra-color-text);
+  font-family: var(--gridra-font-mono);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.gridra-kbd--sm {
+  min-height: 18px;
+  min-width: 18px;
+  font-size: 10px;
+  padding: 0 5px;
+}
+
+.gridra-kbd--md {
+  min-height: 22px;
+  min-width: 22px;
+  font-size: 11px;
+  padding: 0 6px;
+}
+
 .gridra-alert {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

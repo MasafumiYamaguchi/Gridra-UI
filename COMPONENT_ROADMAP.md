@@ -157,15 +157,15 @@ These communicate async state, validation, and empty/error states.
 
 Keep these display-first at the beginning. Add stateful variants only when a real use case appears.
 
-- [ ] Card
-- [ ] List
+- [x] Card
+- [x] List
 - [ ] Table
 - [ ] Data Table
-- [ ] Description List
-- [ ] Stat
-- [ ] Tag
+- [x] Description List
+- [x] Stat
+- [x] Tag
 - [ ] Code Block
-- [ ] Kbd
+- [x] Kbd
 - [ ] Timeline
 
 ## Priority 8: Advanced Controls
