@@ -156,6 +156,7 @@ These communicate async state, validation, and empty/error states.
 ## Priority 7: Data Display
 
 Keep these display-first at the beginning. Add stateful variants only when a real use case appears.
+Remaining unchecked items are deferred for now while Priority 8 and Priority 9 settle animation and theme foundations first.
 
 - [x] Card
 - [x] List
@@ -168,9 +169,25 @@ Keep these display-first at the beginning. Add stateful variants only when a rea
 - [x] Kbd
 - [ ] Timeline
 
-## Priority 8: Advanced Controls
+## Priority 8: Animation Integrations
 
-These are useful but should wait until the lower-level primitives are stable.
+These should keep animation libraries optional. Gridra UI should expose stable DOM, refs, and state hooks first, then provide thin integration examples or adapters where they reduce boilerplate.
+
+- [ ] GSAP integration
+- [ ] Framer Motion integration
+
+## Priority 9: Theme And Color System
+
+Theme work should make colors easier to author, swap, and document without forcing consumers to edit component CSS.
+
+- [ ] Dedicated color token files
+- [ ] Named color theme exports
+- [ ] Runtime theme selection API/pattern
+- [ ] Playground theme selector
+
+## Priority 10: Advanced Controls
+
+These are useful but should wait until the lower-level primitives, animation boundaries, and theme/color system are stable.
 
 - [ ] Combobox
 - [ ] Autocomplete
@@ -182,22 +199,6 @@ These are useful but should wait until the lower-level primitives are stable.
 - [ ] Rich Text Editor
 - [ ] Code Editor
 - [ ] Calendar
-
-## Priority 9: Animation Integrations
-
-These should keep animation libraries optional. Gridra UI should expose stable DOM, refs, and state hooks first, then provide thin integration examples or adapters where they reduce boilerplate.
-
-- [ ] GSAP integration
-- [ ] Framer Motion integration
-
-## Priority 10: Theme And Color System
-
-Theme work should make colors easier to author, swap, and document without forcing consumers to edit component CSS.
-
-- [ ] Dedicated color token files
-- [ ] Named color theme exports
-- [ ] Runtime theme selection API/pattern
-- [ ] Playground theme selector
 
 ## Refactor Pass Before Priority 7
 
@@ -227,9 +228,10 @@ Track option complexity as a design risk before adding more option-heavy compone
 2. Add missing basic controls that the Gridra-specific components will need internally.
 3. Add spatial editing components such as selection, handles, resize, snap, and inspector panels.
 4. Add overlays only after focus management and portal strategy are decided.
-5. Add data display and advanced controls after concrete product examples exist in the playground.
+5. Add data display once concrete product examples exist in the playground.
 6. Add animation integrations after component DOM contracts, refs, and open/close state APIs are stable.
 7. Split and document theme color tokens before adding many additional visual variants.
+8. Add advanced controls after lower-level primitives, animation guidance, and theme/color decisions are stable.
 
 ## Related Documents
 
