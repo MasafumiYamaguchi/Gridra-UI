@@ -18,6 +18,8 @@ describe("GridraSplitPane", () => {
     const split = screen.getByText("Left").closest(".gridra-split-pane") as HTMLDivElement;
     expect(split.className).toContain("gridra-split-pane--horizontal");
     expect(split.getAttribute("style")).toContain("--gridra-split-pane-size: 50%");
+    expect(split.getAttribute("style")).toContain("--gridra-split-pane-size-fr: 50fr");
+    expect(split.getAttribute("style")).toContain("--gridra-split-pane-rest-fr: 50fr");
     expect(screen.getByRole("separator")).toBeTruthy();
   });
 
@@ -197,6 +199,9 @@ describe("GridraSplitPane", () => {
     expect(style).toContain("--gridra-split-pane-size-a: 20%");
     expect(style).toContain("--gridra-split-pane-size-b: 50%");
     expect(style).toContain("--gridra-split-pane-size-c: 30%");
+    expect(style).toContain("--gridra-split-pane-size-a-fr: 20fr");
+    expect(style).toContain("--gridra-split-pane-size-b-fr: 50fr");
+    expect(style).toContain("--gridra-split-pane-size-c-fr: 30fr");
   });
 
   it("applies controlled sizes in three-pane mode", () => {

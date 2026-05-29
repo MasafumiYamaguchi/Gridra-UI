@@ -71,17 +71,26 @@ export function GridraSplitPane({
   );
 
   const paneStyle = useMemo(
-    () => ({
-      ...style,
-      "--gridra-split-pane-size": `${clampSize(currentSize, minSize, maxSize)}%`,
-      ...(isThreePane
-        ? {
-            "--gridra-split-pane-size-a": `${currentSizes[0]}%`,
-            "--gridra-split-pane-size-b": `${currentSizes[1]}%`,
-            "--gridra-split-pane-size-c": `${currentSizes[2]}%`,
-          }
-        : null),
-    }) as CSSProperties,
+    () => {
+      const clampedSize = clampSize(currentSize, minSize, maxSize);
+
+      return {
+        ...style,
+        "--gridra-split-pane-size": `${clampedSize}%`,
+        "--gridra-split-pane-size-fr": `${clampedSize}fr`,
+        "--gridra-split-pane-rest-fr": `${100 - clampedSize}fr`,
+        ...(isThreePane
+          ? {
+              "--gridra-split-pane-size-a": `${currentSizes[0]}%`,
+              "--gridra-split-pane-size-b": `${currentSizes[1]}%`,
+              "--gridra-split-pane-size-c": `${currentSizes[2]}%`,
+              "--gridra-split-pane-size-a-fr": `${currentSizes[0]}fr`,
+              "--gridra-split-pane-size-b-fr": `${currentSizes[1]}fr`,
+              "--gridra-split-pane-size-c-fr": `${currentSizes[2]}fr`,
+            }
+          : null),
+      } as CSSProperties;
+    },
     [currentSize, currentSizes, isThreePane, maxSize, minSize, style],
   );
 
