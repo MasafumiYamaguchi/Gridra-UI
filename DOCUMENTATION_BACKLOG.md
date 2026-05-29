@@ -23,6 +23,32 @@ The playground docs should become a component guide that helps users decide when
 - [x] Move `features` and `options` into Notes section grouped by label.
 - [ ] Migrate individual component docs to use new guide fields over time.
 
+Migration order for guide fields:
+
+1. Feedback components
+   - `GridraAlert`, `GridraToast`, `GridraProgress`, `GridraSkeleton`, `GridraEmptyState`, `GridraErrorMessage`, `GridraStatusIndicator`.
+   - Prioritize `usage`, `avoid`, and `accessibility` because these components communicate async, validation, and status semantics.
+2. Overlay and interaction components
+   - `GridraTooltip`, `GridraPopover`, `GridraDialog`, `GridraDropdownMenu`, `GridraContextMenu`, `GridraCommandPalette`, `GridraHoverCard`.
+   - Prioritize `avoid`, `compositions`, and keyboard/focus `accessibility` notes.
+3. Navigation components
+   - `GridraTabs`, `GridraBreadcrumb`, `GridraAccordion`, `GridraTreeView`, `GridraMenu`, `GridraPagination`, `GridraStepper`.
+   - Prioritize controlled/uncontrolled `usage` and keyboard `states`.
+4. Core and spatial components
+   - `GridraCanvasArea`, `GridraSelectableGrid`, `GridraNode`, handles, panels, minimap, and inspector/property surfaces.
+   - Prioritize `compositions`, spatial interaction `states`, and callback contract notes.
+5. Basic controls and layout primitives
+   - Move remaining guidance out of generic `features` / `options` when it helps readers choose between similar primitives.
+
+Per-component migration checklist:
+
+- Keep `description` short and overview-oriented.
+- Move decision guidance into `usage` and `avoid`.
+- Move pairing guidance into `compositions`.
+- Move ARIA, keyboard, focus, disabled, live-region, and semantic notes into `accessibility`.
+- Add `states` only when visual or behavioral states help users compare variants before reading props.
+- Leave low-level implementation cautions in `notes`.
+
 ### P2: Preview Quality
 
 - [x] Treat Preview as a comparison surface, not only a render smoke check.

@@ -7,15 +7,14 @@ import {
   type ReactNode,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
-  useState,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
-import { computeFloatingPosition, isOutOfViewport, oppositePlacement } from "../../internal/floating";
+import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraTooltipPlacement = "top" | "right" | "bottom" | "left";
 export type GridraTooltipSize = "sm" | "md" | "lg";
@@ -57,8 +56,6 @@ export function GridraTooltip({
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const openTimerRef = useRef<number | null>(null);
   const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
-  const [resolvedPlacement, setResolvedPlacement] = useState<GridraTooltipPlacement>(placement);
-  const [coords, setCoords] = useState({ top: -9999, left: -9999 });
   const tooltipId = useId();
 
   useEffect(() => {
@@ -69,45 +66,15 @@ export function GridraTooltip({
     };
   }, []);
 
-  useEffect(() => {
-    setResolvedPlacement(placement);
-  }, [placement]);
-
-  useLayoutEffect(() => {
-    if (!currentOpen || disabled) {
-      return;
-    }
-
-    const updatePosition = () => {
-      const anchor = anchorRef.current;
-      const tooltip = tooltipRef.current;
-      if (!anchor || !tooltip) {
-        return;
-      }
-
-      const anchorRect = anchor.getBoundingClientRect();
-      const tooltipRect = tooltip.getBoundingClientRect();
-      const initial = computeFloatingPosition(anchorRect, tooltipRect, placement, TOOLTIP_OFFSET);
-      let nextPlacement = placement;
-      let nextCoords = initial;
-
-      if (isOutOfViewport(initial, tooltipRect)) {
-        nextPlacement = oppositePlacement(placement);
-        nextCoords = computeFloatingPosition(anchorRect, tooltipRect, nextPlacement, TOOLTIP_OFFSET);
-      }
-
-      setResolvedPlacement(nextPlacement);
-      setCoords(nextCoords);
-    };
-
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [currentOpen, disabled, placement, content, size, maxWidth]);
+  const { coords, resolvedPlacement } = useFloatingPosition({
+    anchorRef,
+    disabled,
+    floatingRef: tooltipRef,
+    offset: TOOLTIP_OFFSET,
+    open: currentOpen,
+    placement,
+    updateDeps: [content, size, maxWidth],
+  });
 
   const openWithDelay = () => {
     if (disabled) {
@@ -141,14 +108,12 @@ export function GridraTooltip({
     }),
   };
 
-  const tooltipClassName = [
+  const tooltipClassName = cx(
     "gridra-tooltip",
     `gridra-tooltip--${resolvedPlacement}`,
     `gridra-tooltip--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   const tooltipStyle = useMemo(
     () =>

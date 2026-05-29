@@ -199,6 +199,17 @@ Theme work should make colors easier to author, swap, and document without forci
 - [ ] Runtime theme selection API/pattern
 - [ ] Playground theme selector
 
+## Refactor Pass Before Priority 7
+
+These tasks should reduce repeated implementation patterns before the component surface grows into data display and advanced controls.
+
+1. [x] Overlay shared behavior: inventory repeated overlay behavior and extract the smallest useful shared pieces now: floating position and document event subscription. Leave portal theme inheritance and menu focus extraction for a later pass when another overlay needs them.
+2. [x] Class name composition: add a small internal helper and migrate repeated conditional class joins where it lowers noise.
+3. [x] Controlled state contracts: review value/defaultValue/onChange behavior and align controllable components around a documented pattern.
+4. [x] CanvasArea boundaries: separate the next refactor candidates for pointer normalization, selection, node drag/resize, connection handling, and visual derivation.
+5. [x] Test checklist: define the common behavior checks expected for new components and meaningful refactors.
+6. [x] Docs data migration: plan the remaining migration to usage, avoid, compositions, accessibility, notes, and states fields.
+
 ## Suggested Implementation Order
 
 1. Harden the current exported components and ensure their APIs feel consistent.

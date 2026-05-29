@@ -6,17 +6,16 @@ import {
   type ReactElement,
   type ReactNode,
   useCallback,
-  useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
-  useState,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
-import { computeFloatingPosition, isOutOfViewport, oppositePlacement } from "../../internal/floating";
+import { useDocumentEvent } from "../../internal/useDocumentEvent";
+import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraPopoverPlacement = "top" | "right" | "bottom" | "left";
 export type GridraPopoverSize = "sm" | "md" | "lg";
@@ -58,49 +57,16 @@ export function GridraPopover({
   const anchorRef = useRef<HTMLElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
-  const [resolvedPlacement, setResolvedPlacement] = useState<GridraPopoverPlacement>(placement);
-  const [coords, setCoords] = useState({ top: -9999, left: -9999 });
   const popoverId = useId();
-
-  useEffect(() => {
-    setResolvedPlacement(placement);
-  }, [placement]);
-
-  useLayoutEffect(() => {
-    if (!currentOpen || disabled) {
-      return;
-    }
-
-    const updatePosition = () => {
-      const anchor = anchorRef.current;
-      const popover = popoverRef.current;
-      if (!anchor || !popover) {
-        return;
-      }
-
-      const anchorRect = anchor.getBoundingClientRect();
-      const popoverRect = popover.getBoundingClientRect();
-      const initial = computeFloatingPosition(anchorRect, popoverRect, placement, POPOVER_OFFSET);
-      let nextPlacement = placement;
-      let nextCoords = initial;
-
-      if (isOutOfViewport(initial, popoverRect)) {
-        nextPlacement = oppositePlacement(placement);
-        nextCoords = computeFloatingPosition(anchorRect, popoverRect, nextPlacement, POPOVER_OFFSET);
-      }
-
-      setResolvedPlacement(nextPlacement);
-      setCoords(nextCoords);
-    };
-
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [currentOpen, disabled, placement, content, size, maxWidth]);
+  const { coords, resolvedPlacement } = useFloatingPosition({
+    anchorRef,
+    disabled,
+    floatingRef: popoverRef,
+    offset: POPOVER_OFFSET,
+    open: currentOpen,
+    placement,
+    updateDeps: [content, size, maxWidth],
+  });
 
   const handleEscape = useCallback(
     (event: KeyboardEvent) => {
@@ -112,15 +78,7 @@ export function GridraPopover({
     [closeOnEscape, currentOpen, setCurrentOpen],
   );
 
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [currentOpen, handleEscape]);
+  useDocumentEvent("keydown", handleEscape, currentOpen);
 
   const handleOutsidePointerDown = useCallback(
     (event: PointerEvent) => {
@@ -139,15 +97,7 @@ export function GridraPopover({
     [closeOnOutsidePointerDown, currentOpen, setCurrentOpen],
   );
 
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-    document.addEventListener("pointerdown", handleOutsidePointerDown, true);
-    return () => {
-      document.removeEventListener("pointerdown", handleOutsidePointerDown, true);
-    };
-  }, [currentOpen, handleOutsidePointerDown]);
+  useDocumentEvent("pointerdown", handleOutsidePointerDown, currentOpen, true);
 
   const toggleOpen = () => {
     if (disabled) {
@@ -171,14 +121,12 @@ export function GridraPopover({
     ),
   };
 
-  const popoverClassName = [
+  const popoverClassName = cx(
     "gridra-popover",
     `gridra-popover--${resolvedPlacement}`,
     `gridra-popover--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   const popoverStyle = useMemo(
     () =>

@@ -8,15 +8,15 @@ import {
   useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
-  useState,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
-import { computeFloatingPosition, isOutOfViewport, oppositePlacement } from "../../internal/floating";
+import { useDocumentEvent } from "../../internal/useDocumentEvent";
+import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraHoverCardPlacement = "top" | "right" | "bottom" | "left";
 export type GridraHoverCardSize = "sm" | "md" | "lg";
@@ -74,8 +74,6 @@ export function GridraHoverCard({
   const showTimerRef = useRef<number | null>(null);
   const hideTimerRef = useRef<number | null>(null);
   const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
-  const [resolvedPlacement, setResolvedPlacement] = useState<GridraHoverCardPlacement>(placement);
-  const [coords, setCoords] = useState({ top: -9999, left: -9999 });
   const cardId = useId();
 
   const clearTimers = useCallback(() => {
@@ -93,57 +91,15 @@ export function GridraHoverCard({
     return clearTimers;
   }, [clearTimers]);
 
-  useEffect(() => {
-    setResolvedPlacement(placement);
-  }, [placement]);
-
-  useLayoutEffect(() => {
-    if (!currentOpen || disabled) {
-      return;
-    }
-
-    const updatePosition = () => {
-      const anchor = anchorRef.current;
-      const card = cardRef.current;
-      if (!anchor || !card) {
-        return;
-      }
-
-      const anchorRect = anchor.getBoundingClientRect();
-      const cardRect = card.getBoundingClientRect();
-      const initial = computeFloatingPosition(anchorRect, cardRect, placement, HOVER_CARD_OFFSET);
-      let nextPlacement = placement;
-      let nextCoords = initial;
-
-      if (isOutOfViewport(initial, cardRect)) {
-        nextPlacement = oppositePlacement(placement);
-        nextCoords = computeFloatingPosition(anchorRect, cardRect, nextPlacement, HOVER_CARD_OFFSET);
-      }
-
-      setResolvedPlacement(nextPlacement);
-      setCoords(nextCoords);
-    };
-
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [
-    currentOpen,
+  const { coords, resolvedPlacement } = useFloatingPosition({
+    anchorRef,
     disabled,
+    floatingRef: cardRef,
+    offset: HOVER_CARD_OFFSET,
+    open: currentOpen,
     placement,
-    content,
-    size,
-    width,
-    minWidth,
-    maxWidth,
-    height,
-    minHeight,
-    maxHeight,
-  ]);
+    updateDeps: [content, size, width, minWidth, maxWidth, height, minHeight, maxHeight],
+  });
 
   const startShow = useCallback(() => {
     if (disabled) {
@@ -186,15 +142,7 @@ export function GridraHoverCard({
     [closeOnEscape, currentOpen, closeImmediately],
   );
 
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [currentOpen, handleEscape]);
+  useDocumentEvent("keydown", handleEscape, currentOpen);
 
   const anchorProps = {
     "aria-controls": !disabled && currentOpen ? cardId : undefined,
@@ -223,14 +171,12 @@ export function GridraHoverCard({
     ),
   };
 
-  const cardClassName = [
+  const cardClassName = cx(
     "gridra-hover-card",
     `gridra-hover-card--${resolvedPlacement}`,
     `gridra-hover-card--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   const cardStyle = useMemo(
     () =>

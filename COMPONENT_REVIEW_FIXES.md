@@ -35,6 +35,38 @@ pointer event
   -> emit stable callback
 ```
 
+## GridraCanvasArea Refactor Boundaries
+
+`GridraCanvasArea` already has separate utility modules for geometry, hit testing, interaction, selection, snapping, and connections. The next refactor should avoid moving math for its own sake and instead isolate interaction state transitions that currently live inside the component.
+
+Recommended extraction order:
+
+1. Pointer normalization
+   - Convert pointer coordinates into canvas/grid coordinates.
+   - Keep DOM reads near the component boundary.
+   - Return plain data that can be tested without React.
+2. Range selection interaction
+   - Own selection start, update, cancel, and commit transitions.
+   - Keep modifier-key selection policy explicit.
+3. Node drag interaction
+   - Own drag start, movement, snap-guide derivation, and commit.
+   - Emit previous and next placements through the existing callback contract.
+4. Node resize interaction
+   - Mirror the drag structure, but keep resize constraints and placement normalization separate.
+5. Connection interaction
+   - Own connection start, preview update, duplicate rejection, cancel, commit, and delete.
+   - Preserve the current rule that `onNodeConnect` fires only for newly accepted connections.
+6. Render-state derivation
+   - Derive selected, dragging, resizing, connecting, and handle props from stable inputs.
+   - Keep `renderNode` as a public rendering extension point, not an interaction owner.
+
+Refactor acceptance checks:
+
+- Existing public props and callbacks stay source compatible.
+- Pointer capture behavior remains covered by component-level tests.
+- Extracted functions receive and return plain data where possible.
+- Selection, drag, resize, and connection regression tests remain focused on externally visible behavior.
+
 ## Grid Naming Contract
 
 To avoid confusion between the three grid-related surfaces:

@@ -4,7 +4,6 @@ import {
   useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -15,9 +14,11 @@ import {
   type ReactNode,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
-import { computeFloatingPosition, isOutOfViewport, oppositePlacement } from "../../internal/floating";
+import { useDocumentEvent } from "../../internal/useDocumentEvent";
+import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraDropdownMenuPlacement = "top" | "right" | "bottom" | "left";
 export type GridraDropdownMenuSize = "sm" | "md" | "lg";
@@ -88,8 +89,6 @@ export function GridraDropdownMenu({
   const menuRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
   const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
-  const [resolvedPlacement, setResolvedPlacement] = useState<GridraDropdownMenuPlacement>(placement);
-  const [coords, setCoords] = useState({ top: -9999, left: -9999 });
   const [activeIndex, setActiveIndex] = useState(0);
   const menuId = useId();
 
@@ -158,45 +157,16 @@ export function GridraDropdownMenu({
     [disabled, commandItems, onAction, closeOnAction, close],
   );
 
-  useEffect(() => {
-    setResolvedPlacement(placement);
-  }, [placement]);
-
-  useLayoutEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-
-    const updatePosition = () => {
-      const anchor = triggerRef.current;
-      const menu = menuRef.current;
-      if (!anchor || !menu) {
-        return;
-      }
-
-      const anchorRect = anchor.getBoundingClientRect();
-      const menuRect = menu.getBoundingClientRect();
-      const initial = computeFloatingPosition(anchorRect, menuRect, placement, MENU_OFFSET, "start");
-      let nextPlacement = placement;
-      let nextCoords = initial;
-
-      if (isOutOfViewport(initial, menuRect)) {
-        nextPlacement = oppositePlacement(placement);
-        nextCoords = computeFloatingPosition(anchorRect, menuRect, nextPlacement, MENU_OFFSET, "start");
-      }
-
-      setResolvedPlacement(nextPlacement);
-      setCoords(nextCoords);
-    };
-
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [currentOpen, placement, items, size, minWidth, maxWidth]);
+  const { coords, resolvedPlacement } = useFloatingPosition({
+    alignment: "start",
+    anchorRef: triggerRef,
+    disabled,
+    floatingRef: menuRef,
+    offset: MENU_OFFSET,
+    open: currentOpen,
+    placement,
+    updateDeps: [items, size, minWidth, maxWidth],
+  });
 
   useEffect(() => {
     if (!currentOpen) {
@@ -258,17 +228,8 @@ export function GridraDropdownMenu({
     [closeOnOutsidePointerDown, currentOpen, close],
   );
 
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-    document.addEventListener("keydown", handleEscape);
-    document.addEventListener("pointerdown", handleOutsidePointerDown, true);
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.removeEventListener("pointerdown", handleOutsidePointerDown, true);
-    };
-  }, [currentOpen, handleEscape, handleOutsidePointerDown]);
+  useDocumentEvent("keydown", handleEscape, currentOpen);
+  useDocumentEvent("pointerdown", handleOutsidePointerDown, currentOpen, true);
 
   const handleMenuKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -379,14 +340,12 @@ export function GridraDropdownMenu({
     ),
   };
 
-  const menuClassName = [
+  const menuClassName = cx(
     "gridra-dropdown-menu",
     `gridra-dropdown-menu--${resolvedPlacement}`,
     `gridra-dropdown-menu--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   const menuStyle = useMemo(
     () =>
@@ -442,7 +401,7 @@ export function GridraDropdownMenu({
 
             return (
               <button
-                className={[
+                className={cx(
                   "gridra-dropdown-menu__item",
                   item.disabled
                     ? "gridra-dropdown-menu__item--disabled"
@@ -451,9 +410,7 @@ export function GridraDropdownMenu({
                     ? "gridra-dropdown-menu__item--destructive"
                     : null,
                   isActive ? "gridra-dropdown-menu__item--active" : null,
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
+                )}
                 disabled={item.disabled}
                 id={item.id}
                 key={item.id}
