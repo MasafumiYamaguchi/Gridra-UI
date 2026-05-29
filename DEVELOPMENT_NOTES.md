@@ -36,6 +36,18 @@ Use controlled and uncontrolled APIs consistently when a component owns user-edi
 - Keep sanitization in the component when it depends on component-specific data such as valid item ids, disabled items, page counts, or min/max ranges.
 - Use `useControllableValue` for simple state contracts. Keep a local implementation only when resolved state needs component-specific fallback or validation before callback emission.
 
+## Option Surface Guidelines
+
+Treat option complexity as an API design problem, not only a typing problem.
+
+- Start with the smallest prop surface that supports the primary use case.
+- Prefer explicit domain props over generic `options` bags when the setting changes public behavior.
+- Group settings into an object only when consumers naturally think about them as one concept, such as positioning, pagination, or formatting.
+- Prefer composition slots or item metadata when the caller needs to customize rendered content, not just toggle a visual variant.
+- Avoid adding booleans that can conflict with existing variants or modes; use a single discriminated mode when states are mutually exclusive.
+- Document the recommended path before documenting every escape hatch.
+- When an option affects controlled state, accessibility, layout, or event timing, add at least one focused test around that interaction.
+
 Test case coverage should include both expected paths and failure or edge paths.
 
 When adding or changing behavior, consider these test angles:

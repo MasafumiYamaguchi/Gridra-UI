@@ -210,6 +210,17 @@ These tasks should reduce repeated implementation patterns before the component 
 5. [x] Test checklist: define the common behavior checks expected for new components and meaningful refactors.
 6. [x] Docs data migration: plan the remaining migration to usage, avoid, compositions, accessibility, notes, and states fields.
 
+## Future API Simplification
+
+Track option complexity as a design risk before adding more option-heavy components.
+
+1. [ ] Option surface audit: identify components where variants, booleans, item metadata, callback props, and nested option objects are starting to compete or duplicate intent.
+2. [ ] Primary path rule: keep the common use case available through a small, readable prop surface before adding advanced configuration.
+3. [ ] Preset and composition split: decide when repeated option combinations should become named variants, examples, compound composition, or data-driven item contracts instead of more props.
+4. [ ] Advanced options boundary: group advanced settings only when they travel together conceptually; avoid generic `options` bags that hide the public API.
+5. [ ] Documentation check: explain recommended usage and avoid cases before listing every prop, so readers can choose the simple path first.
+6. [ ] Test strategy check: cover representative option interactions and boundaries without locking every possible combination.
+
 ## Suggested Implementation Order
 
 1. Harden the current exported components and ensure their APIs feel consistent.
