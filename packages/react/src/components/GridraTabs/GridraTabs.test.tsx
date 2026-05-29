@@ -77,6 +77,30 @@ describe("GridraTabs", () => {
     expect(screen.getByRole("tabpanel").textContent).toContain("Content A");
   });
 
+  it("uses the fallback selected tab as previous when controlled selectedId is invalid", () => {
+    const onChange = vi.fn();
+    render(
+      <GridraTabs items={basicItems} selectedId="missing" onSelectionChange={onChange} />,
+    );
+
+    expect(screen.getByRole("tab", { name: "Tab A" }).getAttribute("aria-selected")).toBe("true");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tab B" }));
+
+    expect(onChange).toHaveBeenCalledWith("b", "a");
+  });
+
+  it("does not fire onSelectionChange when clicking the fallback selected tab", () => {
+    const onChange = vi.fn();
+    render(
+      <GridraTabs items={basicItems} selectedId="missing" onSelectionChange={onChange} />,
+    );
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tab A" }));
+
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it("navigates with ArrowRight in horizontal mode", () => {
     render(<GridraTabs items={basicItems} />);
     const list = screen.getByRole("tablist");

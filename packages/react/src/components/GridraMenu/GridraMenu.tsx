@@ -90,9 +90,13 @@ export function GridraMenu({
     () => normalizeActiveId(defaultActiveId, commandItems),
     [defaultActiveId, commandItems],
   );
+  const safeActiveIdProp = useMemo(
+    () => normalizeActiveId(activeId, commandItems),
+    [activeId, commandItems],
+  );
 
   const [currentActiveId, setActiveId] = useControllableValue(
-    activeId,
+    safeActiveIdProp,
     safeDefaultActiveId,
     onActiveIdChange,
   );

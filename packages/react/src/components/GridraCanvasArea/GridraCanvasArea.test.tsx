@@ -389,6 +389,60 @@ describe("GridraCanvasArea", () => {
     expect(movedPlacements.at(-1)).toMatchObject({ column: 2, row: 3 });
   });
 
+  it("does not start range selection while dragging a node", () => {
+    const selectedIdGroups: string[][] = [];
+    const movedPlacements: Array<{ column: number; row: number }> = [];
+    const { container } = render(
+      <GridraCanvasArea
+        defaultSelectedId="drag"
+        defaultSelectedIds={["drag"]}
+        enableNodeDragging
+        gridColumns={4}
+        gridRows={4}
+        nodes={[
+          {
+            id: "drag",
+            placement: { column: 1, row: 1 }
+          },
+          {
+            id: "other",
+            placement: { column: 4, row: 4 }
+          }
+        ]}
+        onNodeMove={(_, placement) => movedPlacements.push(placement)}
+        onSelectionIdsChange={(selectedIds) => selectedIdGroups.push(selectedIds)}
+      />
+    );
+    const canvas = container.querySelector(".gridra-canvas-area") as HTMLDivElement;
+
+    setCanvasGeometry(canvas, { width: 400, height: 400 });
+
+    const handle = container.querySelector(".gridra-drag-handle") as HTMLElement;
+
+    firePointerEvent(handle, "pointerdown", {
+      button: 0,
+      clientX: 50,
+      clientY: 50,
+      pointerId: 25
+    });
+    firePointerEvent(canvas, "pointermove", {
+      clientX: 160,
+      clientY: 160,
+      pointerId: 25
+    });
+
+    expect(container.querySelector(".gridra-selection-box")).toBeNull();
+
+    firePointerEvent(canvas, "pointerup", {
+      clientX: 160,
+      clientY: 160,
+      pointerId: 25
+    });
+
+    expect(movedPlacements.length).toBeGreaterThan(0);
+    expect(selectedIdGroups).toEqual([]);
+  });
+
   it("renders snap guides while dragging a selected node", () => {
     const { container } = render(
       <GridraCanvasArea

@@ -37,6 +37,46 @@ describe("GridraDropdownMenu", () => {
     expect(menu.className).toContain("gridra-dropdown-menu--md");
   });
 
+  it("flips placement with start alignment when the menu would overflow", () => {
+    render(
+      <GridraDropdownMenu items={basicItems} placement="bottom">
+        <button type="button">Menu</button>
+      </GridraDropdownMenu>,
+    );
+    const trigger = screen.getByRole("button", { name: "Menu" }) as HTMLElement;
+    Object.defineProperty(trigger, "getBoundingClientRect", {
+      value: () => ({
+        top: 720,
+        left: 120,
+        width: 80,
+        height: 32,
+        right: 200,
+        bottom: 752,
+      }),
+      configurable: true,
+    });
+
+    fireEvent.click(trigger);
+    const menu = screen.getByRole("menu") as HTMLElement;
+    Object.defineProperty(menu, "getBoundingClientRect", {
+      value: () => ({
+        top: 0,
+        left: 0,
+        width: 160,
+        height: 80,
+        right: 160,
+        bottom: 80,
+      }),
+      configurable: true,
+    });
+
+    fireEvent(window, new Event("resize"));
+
+    expect(menu.className).toContain("gridra-dropdown-menu--top");
+    expect(menu.style.left).toBe("120px");
+    expect(menu.style.top).toBe("636px");
+  });
+
   it("renders menuitem and separator roles", () => {
     render(
       <GridraDropdownMenu items={basicItems} defaultOpen>

@@ -103,6 +103,17 @@ describe("GridraMenu", () => {
     expect(screen.getByRole("button", { name: "Dashboard" }).getAttribute("aria-current")).toBe("page");
   });
 
+  it("uses undefined as previous activeId when controlled activeId is invalid", () => {
+    const onChange = vi.fn();
+    render(
+      <GridraMenu items={basicItems} activeId="missing" onActiveIdChange={onChange} />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Projects" }));
+
+    expect(onChange).toHaveBeenCalledWith("projects", undefined);
+  });
+
   it("ignores non-existent defaultActiveId", () => {
     render(<GridraMenu items={basicItems} defaultActiveId="nonexistent" />);
     const items = screen.getAllByRole("button");

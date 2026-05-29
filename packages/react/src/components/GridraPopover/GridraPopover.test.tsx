@@ -4,6 +4,7 @@ import { GridraPopover } from "./GridraPopover";
 
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
 });
 
 describe("GridraPopover", () => {
@@ -89,6 +90,28 @@ describe("GridraPopover", () => {
     expect(screen.queryByText("Popover content")).toBeNull();
 
     outside.remove();
+  });
+
+  it("removes document listeners after closing", () => {
+    const addSpy = vi.spyOn(document, "addEventListener");
+    const removeSpy = vi.spyOn(document, "removeEventListener");
+
+    render(
+      <GridraPopover content="Popover content" defaultOpen>
+        <button type="button">Trigger</button>
+      </GridraPopover>,
+    );
+
+    const keydownCall = addSpy.mock.calls.find(([type]) => type === "keydown");
+    const pointerdownCall = addSpy.mock.calls.find(([type]) => type === "pointerdown");
+
+    expect(keydownCall).toBeDefined();
+    expect(pointerdownCall).toBeDefined();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    expect(removeSpy).toHaveBeenCalledWith("keydown", keydownCall![1], undefined);
+    expect(removeSpy).toHaveBeenCalledWith("pointerdown", pointerdownCall![1], true);
   });
 
   it("does not close on pointerdown inside popover content", () => {

@@ -53,9 +53,14 @@ export function GridraTabs({
   );
 
   const fallbackId = enabledIds[0] ?? "";
+  const safeSelectedIdProp = selectedId === undefined
+    ? undefined
+    : enabledIds.includes(selectedId)
+      ? selectedId
+      : fallbackId;
 
   const [currentId, setCurrentId] = useControllableValue(
-    selectedId,
+    safeSelectedIdProp,
     enabledIds.includes(defaultSelectedId ?? "") ? defaultSelectedId! : fallbackId,
     onSelectionChange,
   );
