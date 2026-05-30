@@ -4,9 +4,61 @@
 
 GRIDRA UI is a React-first component library for building dense, panel-based GRIDRA-style interfaces.
 
+## Status
+
+- Current version: `0.1.0`
+- Package distribution through npm is planned.
+- The repository is currently organized as a local npm workspaces monorepo.
+
+## Packages
+
+- `@gridra-ui/react`: React components and interaction wiring.
+- `@gridra-ui/core`: framework-independent IDs, geometry types, and state helpers.
+- `@gridra-ui/theme`: CSS variable tokens and light/dark theme presets.
+- `@gridra-ui/playground`: Vite app for local visual checks and component documentation.
+
+## Installation
+
+npm distribution is planned. Once the packages are published, the intended installation flow is:
+
+```bash
+npm install @gridra-ui/react @gridra-ui/theme
+```
+
+Applications should import the theme CSS explicitly:
+
+```ts
+import "@gridra-ui/theme/base.css";
+import "@gridra-ui/theme/dark.css";
+```
+
+Use `light.css` instead of `dark.css` when the light preset is preferred.
+
+## Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the playground:
+
+```bash
+npm run dev
+```
+
+Run checks:
+
+```bash
+npm run test
+npm run typecheck
+npm run build
+```
+
 ## Architecture
 
-GRIDRA UI is organized as an npm workspaces monorepo. The runtime packages are kept small and layered so the React components can stay focused on rendering and interaction, while framework-neutral primitives and styling tokens remain reusable.
+GRIDRA UI is organized as an npm workspaces monorepo. Runtime packages are kept layered so React components can focus on rendering and interaction while framework-neutral primitives and styling tokens remain reusable.
 
 ```text
 apps/playground
@@ -33,154 +85,39 @@ The main dependency direction is:
 
 `@gridra-ui/theme` is consumed through explicit CSS imports rather than a JavaScript dependency. This keeps visual tokens opt-in for application consumers.
 
-## Runtime Layers
+## Component Surface
 
-- **Core layer**: `packages/core/src/index.ts` defines shared identifiers, geometry primitives, selection state helpers, and simple point/rect utilities.
-- **React component layer**: `packages/react/src/components/*` contains the public UI primitives. Components are exported from `packages/react/src/index.ts`.
-- **Canvas interaction layer**: `GridraCanvasArea` coordinates node selection, drag, resize, range selection, and node-to-node connections.
-- **Connection rendering layer**: `GridraConnectionLayer` receives normalized nodes and connection records, converts them into SVG paths, and renders selected/preview connection lines.
-- **Theme layer**: `packages/theme/src/base.css` defines the CSS variable contract and structural classes. `light.css` and `dark.css` provide preset values.
-- **Playground/docs layer**: `apps/playground/src/main.tsx` mounts the demo app. `/docs` is routed to component documentation from `apps/playground/src/componentDocs`.
+GRIDRA UI includes primitives for dense application surfaces:
 
-## Canvas And Connection Model
+- Spatial editing: canvas area, nodes, minimap, selection, drag/resize handles, connection handles, snap guides.
+- Panels and layout: panels, sidebars, split panes, stack/inline/cluster/grid layout utilities.
+- Controls: buttons, icon buttons, inputs, selects, checkboxes, radios, switches, sliders, fields, labels.
+- Overlays and interaction: tooltips, popovers, dialogs, dropdown menus, context menus, command palettes, hover cards.
+- Navigation and feedback: tabs, breadcrumbs, accordions, tree views, pagination, steppers, alerts, toasts, progress, skeletons, empty states.
 
-The canvas is grid-based. A node has an ID and a grid placement:
+See [COMPONENT_ROADMAP.md](./COMPONENT_ROADMAP.md) for the current component status and planned additions.
 
-```text
-node
-  id
-  placement
-    column
-    row
-    columnSpan
-    rowSpan
-```
+## Styling And Themes
 
-Connections are stored as lightweight records:
+The theme package exposes CSS files instead of requiring a JavaScript runtime:
 
-```text
-connection
-  sourceId -> targetId
-```
+- `@gridra-ui/theme/base.css`: base class styles and CSS variable contract.
+- `@gridra-ui/theme/dark.css`: dark theme preset.
+- `@gridra-ui/theme/light.css`: light theme preset.
 
-The interaction flow is:
+Consumers can import a preset theme or override the CSS variables in their own application styles.
 
-```text
-pointer down on handle
-  -> GridraCanvasArea stores connection state
-  -> pointer move updates a preview grid point
-  -> GridraConnectionLayer draws a preview SVG path
-  -> pointer up over a compatible handle creates sourceId -> targetId
-  -> onNodeConnectionsChange / onNodeConnect notify the consumer
-```
+## Documentation
 
-The connection path calculation lives with the canvas geometry helpers. Node placement is normalized against the current grid size, then converted into input/output anchor points. The SVG connection layer uses the same grid coordinate space as the canvas:
+The playground contains local component documentation and visual examples. Run `npm run dev` and open the Vite URL printed in the terminal.
 
-```text
-node placement
-  -> input/output anchor point
-  -> cubic Bezier path
-  -> SVG path in grid viewBox
-```
-
-This keeps the connection layer mostly presentational: it does not own node state, placement state, or connection mutation. It receives data, computes drawable segments, and raises selection events for existing lines.
-
-## Controlled State Pattern
-
-Interactive canvas state supports both controlled and uncontrolled usage through `useControllableValue`.
-
-- `selectedId` / `defaultSelectedId`
-- `selectedIds` / `defaultSelectedIds`
-- `nodeConnections` / `defaultNodeConnections`
-- `nodePlacements` / `defaultNodePlacements`
-
-When a controlled prop is provided, GRIDRA UI calls the corresponding change callback and expects the consumer to pass the next value back in. When only a default value is provided, the component owns the state internally.
-
-## Packages
-
-- `@gridra-ui/core`: framework-independent types and state/geometry helpers.
-- `@gridra-ui/react`: React components.
-- `@gridra-ui/theme`: CSS variable tokens and preset themes.
-- `@gridra-ui/playground`: Vite app for local visual checks.
-
-## File Structure
-
-```text
-.
-|-- apps/
-|   `-- playground/
-|       |-- src/main.tsx                  # demo app and /docs route switch
-|       |-- src/styles.css                # playground-only styles
-|       `-- src/componentDocs/            # docs data, previews, and code examples
-|-- packages/
-|   |-- core/
-|   |   `-- src/index.ts                  # shared IDs, geometry types, state helpers
-|   |-- react/
-|   |   `-- src/
-|   |       |-- index.ts                  # public React package exports
-|   |       |-- hooks/                    # shared React hooks
-|   |       `-- components/
-|   |           |-- GridraCanvasArea/     # grid canvas, hit testing, geometry, connections
-|   |           |-- GridraNode/           # grid-positioned node primitive
-|   |           |-- GridraConnectionHandle/
-|   |           |-- GridraDragHandle/
-|   |           |-- GridraResizeHandle/
-|   |           `-- ...                   # panels, inputs, menus, layout primitives
-|   `-- theme/
-|       `-- src/
-|           |-- base.css                  # base class styles and CSS variable contract
-|           |-- dark.css                  # dark theme tokens
-|           `-- light.css                 # light theme tokens
-|-- COMPONENT_ROADMAP.md                  # component planning notes
-|-- DEVELOPMENT_NOTES.md                  # development and testing workflow
-|-- package.json                          # workspace scripts
-`-- tsconfig.base.json                    # shared TypeScript compiler options
-```
-
-Generated `dist` files may exist after builds, but source changes should usually happen under `src`.
+Documentation planning lives in [DOCUMENTATION_BACKLOG.md](./DOCUMENTATION_BACKLOG.md). Development workflow, testing expectations, and API design notes live in [DEVELOPMENT_NOTES.md](./DEVELOPMENT_NOTES.md).
 
 ## Technology Stack
 
-- **Language**: TypeScript
-- **UI runtime**: React 19 in the workspace, with `@gridra-ui/react` declaring React `>=18.2.0` as a peer dependency
-- **Build tooling**: TypeScript project references and Vite for the playground
-- **Testing**: Vitest, jsdom, and Testing Library for React component tests
-- **Styling**: CSS variables and package-level CSS exports from `@gridra-ui/theme`
-- **Documentation/demo**: Vite playground with docs data colocated under `apps/playground/src/componentDocs`
-
-## Scripts
-
-- `npm run build`: build all workspaces.
-- `npm run typecheck`: type-check all workspaces.
-- `npm run test`: run package tests.
-- `npm run dev`: start the playground.
-
-## Styling
-
-Consumers import the base CSS explicitly, then add a theme class such as `gridra-theme-dark` or override the CSS variables.
-
-```ts
-import "@gridra-ui/theme/base.css";
-import "@gridra-ui/theme/dark.css";
-```
-
-## Documentation And Syntax Highlighting
-
-The component library packages should stay focused on runtime UI primitives. Documentation-only tooling, including syntax highlighting, belongs in `@gridra-ui/playground` or a future dedicated docs app rather than in `@gridra-ui/react` or `@gridra-ui/theme`.
-
-Recommended direction:
-
-- Keep code examples as plain source strings in the docs data model.
-- Render them through a docs-only `CodeBlock` abstraction so the highlighter can be swapped without rewriting component docs.
-- Prefer Shiki for the eventual docs implementation because it matches VS Code-style highlighting, supports ahead-of-time output, and offers fine-grained browser bundles when client-side highlighting is required.
-- Avoid shipping a large all-language browser bundle by default. Restrict docs highlighting to the languages we actually show, initially `tsx`, `ts`, `css`, and `bash` if needed.
-- Keep the published UI packages free of syntax-highlighting dependencies. Adding or changing the docs highlighter must not affect consumer bundle size.
-
-Practical rollout:
-
-1. Continue using the current plain `<pre><code>` renderer while the docs structure is still moving.
-2. Introduce Shiki behind the docs `CodeBlock` boundary once the examples stabilize.
-3. Prefer build-time or pre-rendered highlighting if the docs app gains a build pipeline suited for it.
-4. If runtime highlighting remains necessary in the Vite playground, use a cached singleton highlighter and a fine-grained language/theme bundle rather than the full default bundle.
-
-Prism remains a viable lightweight fallback for very small browser-only highlighting needs, but the default plan is Shiki for fidelity and future documentation depth.
+- TypeScript
+- React 19 in the workspace, with `@gridra-ui/react` declaring React `>=18.2.0` as a peer dependency
+- TypeScript project references
+- Vite for the playground
+- Vitest, jsdom, and Testing Library for tests
+- CSS variables for styling and theme presets
