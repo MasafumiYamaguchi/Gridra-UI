@@ -50,4 +50,25 @@ describe("GridraList", () => {
     expect(screen.queryByRole("button")).toBeNull();
     expect(screen.queryByRole("status")).toBeNull();
   });
+
+  it("prefers items over children when both are provided", () => {
+    render(
+      <GridraList items={["From items"]}>
+        <li>From children</li>
+      </GridraList>,
+    );
+
+    expect(screen.getByText("From items")).toBeDefined();
+    expect(screen.queryByText("From children")).toBeNull();
+  });
+
+  it("keeps explicit child list items untouched", () => {
+    render(
+      <GridraList>
+        <li data-testid="custom-item">Custom</li>
+      </GridraList>,
+    );
+
+    expect(screen.getByTestId("custom-item").className).toBe("");
+  });
 });

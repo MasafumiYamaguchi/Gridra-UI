@@ -42,4 +42,17 @@ describe("GridraBadge", () => {
     expect(screen.queryByRole("button")).toBeNull();
     expect(screen.queryByRole("status")).toBeNull();
   });
+
+  it("allows explicit semantics without changing the span contract", () => {
+    render(
+      <GridraBadge aria-live="polite" role="status" tone="warning">
+        Syncing
+      </GridraBadge>,
+    );
+    const badge = screen.getByRole("status");
+
+    expect(badge.tagName).toBe("SPAN");
+    expect(badge.getAttribute("aria-live")).toBe("polite");
+    expect(badge.className).toContain("gridra-badge--warning");
+  });
 });

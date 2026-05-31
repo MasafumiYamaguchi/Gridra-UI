@@ -46,4 +46,46 @@ describe("GridraTextarea", () => {
 
     expect((screen.getByRole("textbox", { name: "Locked" }) as HTMLTextAreaElement).disabled).toBe(true);
   });
+
+  it("supports controlled value without mutating display before props change", () => {
+    const handleChange = vi.fn();
+    const { rerender } = render(
+      <GridraTextarea aria-label="Notes" onChange={handleChange} value="Draft" />,
+    );
+    const textarea = screen.getByRole("textbox", { name: "Notes" }) as HTMLTextAreaElement;
+
+    fireEvent.change(textarea, { target: { value: "Published" } });
+
+    expect(textarea.value).toBe("Draft");
+    expect(handleChange).toHaveBeenCalledTimes(1);
+
+    rerender(<GridraTextarea aria-label="Notes" onChange={handleChange} value="Published" />);
+
+    expect(textarea.value).toBe("Published");
+  });
+
+  it("forwards className, size class, form metadata, and aria-describedby", () => {
+    render(
+      <GridraTextarea
+        aria-describedby="description-help"
+        aria-label="Description"
+        className="custom-textarea"
+        data-testid="description"
+        name="description"
+        placeholder="Explain changes"
+        readOnly
+        required
+        size="lg"
+      />,
+    );
+    const textarea = screen.getByTestId("description") as HTMLTextAreaElement;
+
+    expect(textarea.getAttribute("aria-describedby")).toBe("description-help");
+    expect(textarea.name).toBe("description");
+    expect(textarea.placeholder).toBe("Explain changes");
+    expect(textarea.readOnly).toBe(true);
+    expect(textarea.required).toBe(true);
+    expect(textarea.className).toContain("gridra-textarea--lg");
+    expect(textarea.className).toContain("custom-textarea");
+  });
 });

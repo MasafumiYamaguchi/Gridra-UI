@@ -37,4 +37,48 @@ describe("GridraInput", () => {
 
     expect((screen.getByRole("textbox", { name: "Locked" }) as HTMLInputElement).disabled).toBe(true);
   });
+
+  it("supports controlled value without mutating display before props change", () => {
+    const handleChange = vi.fn();
+    const { rerender } = render(
+      <GridraInput aria-label="Token" onChange={handleChange} value="alpha" />,
+    );
+    const input = screen.getByRole("textbox", { name: "Token" }) as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: "beta" } });
+
+    expect(input.value).toBe("alpha");
+    expect(handleChange).toHaveBeenCalledTimes(1);
+
+    rerender(<GridraInput aria-label="Token" onChange={handleChange} value="beta" />);
+
+    expect(input.value).toBe("beta");
+  });
+
+  it("forwards native form metadata, className, size class, and aria-describedby", () => {
+    render(
+      <GridraInput
+        aria-describedby="name-help"
+        aria-label="Project name"
+        autoComplete="off"
+        className="custom-input"
+        data-testid="name"
+        name="project"
+        placeholder="Untitled"
+        readOnly
+        required
+        size="lg"
+      />,
+    );
+    const input = screen.getByTestId("name") as HTMLInputElement;
+
+    expect(input.getAttribute("aria-describedby")).toBe("name-help");
+    expect(input.autocomplete).toBe("off");
+    expect(input.name).toBe("project");
+    expect(input.placeholder).toBe("Untitled");
+    expect(input.readOnly).toBe(true);
+    expect(input.required).toBe(true);
+    expect(input.className).toContain("gridra-input--lg");
+    expect(input.className).toContain("custom-input");
+  });
 });

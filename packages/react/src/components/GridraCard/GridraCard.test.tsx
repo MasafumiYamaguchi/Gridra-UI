@@ -63,4 +63,23 @@ describe("GridraCard", () => {
 
     expect(screen.getByText("0").className).toContain("gridra-card__body");
   });
+
+  it("omits optional slot wrappers when their content is absent", () => {
+    render(<GridraCard data-testid="card" />);
+    const card = screen.getByTestId("card");
+
+    expect(card.querySelector(".gridra-card__media")).toBeNull();
+    expect(card.querySelector(".gridra-card__header")).toBeNull();
+    expect(card.querySelector(".gridra-card__body")).toBeNull();
+    expect(card.querySelector(".gridra-card__footer")).toBeNull();
+  });
+
+  it("keeps header structure when only actions are provided", () => {
+    render(<GridraCard actions={<button type="button">Edit</button>} data-testid="card" />);
+    const card = screen.getByTestId("card");
+
+    expect(card.querySelector(".gridra-card__header")).not.toBeNull();
+    expect(card.querySelector(".gridra-card__heading")).toBeNull();
+    expect(screen.getByRole("button", { name: "Edit" }).closest(".gridra-card__actions")).not.toBeNull();
+  });
 });

@@ -49,4 +49,38 @@ describe("GridraIconButton", () => {
     expect(button.textContent).toBe("Z");
     expect((button as HTMLButtonElement).type).toBe("button");
   });
+
+  it("preserves explicit title, forwards attributes, and omits pressed semantics by default", () => {
+    render(
+      <GridraIconButton
+        aria-controls="viewport"
+        className="custom-icon-button"
+        data-testid="fit"
+        label="Fit view"
+        name="tool"
+        title="Zoom to fit"
+        value="fit"
+        variant="primary"
+      />,
+    );
+    const button = screen.getByTestId("fit") as HTMLButtonElement;
+
+    expect(button.getAttribute("aria-controls")).toBe("viewport");
+    expect(button.getAttribute("aria-pressed")).toBeNull();
+    expect(button.getAttribute("title")).toBe("Zoom to fit");
+    expect(button.name).toBe("tool");
+    expect(button.value).toBe("fit");
+    expect(button.className).toContain("gridra-icon-button--primary");
+    expect(button.className).toContain("custom-icon-button");
+  });
+
+  it("does not report clicks while disabled", () => {
+    const onClick = vi.fn();
+
+    render(<GridraIconButton disabled label="Delete" onClick={onClick} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+
+    expect(onClick).not.toHaveBeenCalled();
+  });
 });
