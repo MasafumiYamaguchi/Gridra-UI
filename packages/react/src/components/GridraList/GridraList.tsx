@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { createElement } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraListAs = "ul" | "ol";
 export type GridraListSize = "sm" | "md" | "lg";
@@ -25,16 +26,14 @@ export function GridraList({
   spacing = "normal",
   ...props
 }: GridraListProps) {
-  const rootClassName = [
+  const rootClassName = cx(
     "gridra-list",
     `gridra-list--${size}`,
     `gridra-list--${spacing}`,
     `gridra-list--marker-${marker}`,
-    dividers ? "gridra-list--dividers" : null,
+    dividers && "gridra-list--dividers",
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   const content = items
     ? items.map((item, index) => (

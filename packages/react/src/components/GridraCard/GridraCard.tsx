@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraCardPadding = "sm" | "md" | "lg";
 export type GridraCardSurface = "surface" | "raised" | "input";
@@ -25,15 +26,13 @@ export function GridraCard({
   surface = "surface",
   ...props
 }: GridraCardProps) {
-  const rootClassName = [
+  const rootClassName = cx(
     "gridra-card",
     `gridra-card--${surface}`,
     `gridra-card--padding-${padding}`,
-    media ? "gridra-card--with-media" : null,
+    Boolean(media) && "gridra-card--with-media",
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <div className={rootClassName} {...props}>

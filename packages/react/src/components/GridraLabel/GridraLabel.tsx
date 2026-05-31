@@ -1,9 +1,8 @@
 import type { LabelHTMLAttributes } from "react";
+import { cx } from "../../internal/classNames";
 
 export interface GridraLabelProps extends LabelHTMLAttributes<HTMLLabelElement> {}
 
 export function GridraLabel({ className, ...props }: GridraLabelProps) {
-  const labelClassName = ["gridra-label", className].filter(Boolean).join(" ");
-
-  return <label className={labelClassName} {...props} />;
+  return <label className={cx("gridra-label", className)} {...props} />;
 }

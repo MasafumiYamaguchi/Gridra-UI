@@ -1,4 +1,6 @@
-import { useId, type InputHTMLAttributes, type ReactNode } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
+import { resolveAriaInvalid, useControlDescriptionIds } from "../../internal/formControl";
 
 export type GridraCheckboxSize = "sm" | "md" | "lg";
 
@@ -19,24 +21,19 @@ export function GridraCheckbox({
   size = "md",
   ...props
 }: GridraCheckboxProps) {
-  const generatedId = useId();
-  const controlId = props.id ?? generatedId;
-  const descriptionId = description ? `${controlId}-description` : undefined;
-  const checkboxClassName = [
+  const { controlId, descriptionId } = useControlDescriptionIds(props.id, Boolean(description));
+  const checkboxClassName = cx(
     "gridra-checkbox",
     `gridra-checkbox--${size}`,
-    invalid ? "gridra-checkbox--invalid" : null,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const resolvedAriaInvalid = ariaInvalid ?? (invalid ? true : undefined);
+    invalid && "gridra-checkbox--invalid",
+    className,
+  );
 
   return (
     <label className={checkboxClassName}>
       <input
         aria-describedby={descriptionId}
-        aria-invalid={resolvedAriaInvalid}
+        aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}
         className="gridra-checkbox__input"
         id={controlId}
         type="checkbox"

@@ -1,4 +1,5 @@
 import { Fragment, type HTMLAttributes, type ReactNode } from "react";
+import { cx } from "../../internal/classNames";
 import { GridraButton, type GridraButtonProps } from "../GridraButton";
 
 export interface GridraToolbarAction {
@@ -22,10 +23,8 @@ export function GridraToolbar({
   renderAction,
   ...props
 }: GridraToolbarProps) {
-  const toolbarClassName = ["gridra-toolbar", className].filter(Boolean).join(" ");
-
   return (
-    <div className={toolbarClassName} role="toolbar" {...props}>
+    <div className={cx("gridra-toolbar", className)} role="toolbar" {...props}>
       {actions.map((action) => (
         <Fragment key={action.id}>
           {renderAction ? (
@@ -50,7 +49,5 @@ export function GridraToolbarButton({
   className,
   ...props
 }: GridraButtonProps) {
-  const buttonClassName = ["gridra-toolbar__button", className].filter(Boolean).join(" ");
-
-  return <GridraButton className={buttonClassName} {...props} />;
+  return <GridraButton className={cx("gridra-toolbar__button", className)} {...props} />;
 }

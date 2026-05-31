@@ -1,4 +1,6 @@
 import type { InputHTMLAttributes } from "react";
+import { cx } from "../../internal/classNames";
+import { resolveAriaInvalid } from "../../internal/formControl";
 
 export type GridraInputSize = "sm" | "md" | "lg";
 
@@ -15,15 +17,10 @@ export function GridraInput({
   type = "text",
   ...props
 }: GridraInputProps) {
-  const inputClassName = ["gridra-input", `gridra-input--${size}`, className]
-    .filter(Boolean)
-    .join(" ");
-  const resolvedAriaInvalid = ariaInvalid ?? (invalid ? true : undefined);
-
   return (
     <input
-      aria-invalid={resolvedAriaInvalid}
-      className={inputClassName}
+      aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}
+      className={cx("gridra-input", `gridra-input--${size}`, className)}
       type={type}
       {...props}
     />

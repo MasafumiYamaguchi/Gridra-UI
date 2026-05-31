@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
 import { GridraSpinner } from "../GridraSpinner";
 
 export type GridraIconButtonSize = "sm" | "md" | "lg";
@@ -25,16 +26,14 @@ export function GridraIconButton({
   variant = "default",
   ...props
 }: GridraIconButtonProps) {
-  const iconButtonClassName = [
+  const iconButtonClassName = cx(
     "gridra-icon-button",
     `gridra-icon-button--${variant}`,
     `gridra-icon-button--${size}`,
-    pressed ? "gridra-icon-button--pressed" : null,
-    loading ? "gridra-icon-button--loading" : null,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
+    pressed && "gridra-icon-button--pressed",
+    loading && "gridra-icon-button--loading",
+    className,
+  );
   const icon: ReactNode = loading ? (
     <GridraSpinner aria-hidden="true" label="Loading" size="sm" />
   ) : (

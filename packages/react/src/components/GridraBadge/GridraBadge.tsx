@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraBadgeShape = "square" | "rounded" | "pill";
 export type GridraBadgeSize = "sm" | "md";
@@ -23,15 +24,13 @@ export function GridraBadge({
   tone = "default",
   ...props
 }: GridraBadgeProps) {
-  const badgeClassName = [
+  const badgeClassName = cx(
     "gridra-badge",
     `gridra-badge--${tone}`,
     `gridra-badge--${size}`,
     `gridra-badge--${shape}`,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
+    className,
+  );
 
   return <span className={badgeClassName} {...props} />;
 }

@@ -1,4 +1,6 @@
-import { useId, type InputHTMLAttributes, type ReactNode } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
+import { resolveAriaInvalid, useControlDescriptionIds } from "../../internal/formControl";
 
 export type GridraRadioSize = "sm" | "md" | "lg";
 
@@ -19,24 +21,19 @@ export function GridraRadio({
   size = "md",
   ...props
 }: GridraRadioProps) {
-  const generatedId = useId();
-  const controlId = props.id ?? generatedId;
-  const descriptionId = description ? `${controlId}-description` : undefined;
-  const radioClassName = [
+  const { controlId, descriptionId } = useControlDescriptionIds(props.id, Boolean(description));
+  const radioClassName = cx(
     "gridra-radio",
     `gridra-radio--${size}`,
-    invalid ? "gridra-radio--invalid" : null,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const resolvedAriaInvalid = ariaInvalid ?? (invalid ? true : undefined);
+    invalid && "gridra-radio--invalid",
+    className,
+  );
 
   return (
     <label className={radioClassName}>
       <input
         aria-describedby={descriptionId}
-        aria-invalid={resolvedAriaInvalid}
+        aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}
         className="gridra-radio__input"
         id={controlId}
         type="radio"

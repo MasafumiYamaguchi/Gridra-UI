@@ -1,4 +1,6 @@
 import type { TextareaHTMLAttributes } from "react";
+import { cx } from "../../internal/classNames";
+import { resolveAriaInvalid } from "../../internal/formControl";
 
 export type GridraTextareaSize = "sm" | "md" | "lg";
 
@@ -14,10 +16,11 @@ export function GridraTextarea({
   size = "md",
   ...props
 }: GridraTextareaProps) {
-  const textareaClassName = ["gridra-textarea", `gridra-textarea--${size}`, className]
-    .filter(Boolean)
-    .join(" ");
-  const resolvedAriaInvalid = ariaInvalid ?? (invalid ? true : undefined);
-
-  return <textarea aria-invalid={resolvedAriaInvalid} className={textareaClassName} {...props} />;
+  return (
+    <textarea
+      aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}
+      className={cx("gridra-textarea", `gridra-textarea--${size}`, className)}
+      {...props}
+    />
+  );
 }
