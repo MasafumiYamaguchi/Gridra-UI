@@ -9,13 +9,11 @@ import {
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
 
-// Accordionに必要なpropsと型定義
 export type GridraAccordionType = "single" | "multiple";
 export type GridraAccordionSize = "sm" | "md" | "lg";
 export type GridraAccordionVariant = "default" | "divided";
 export type GridraAccordionValue = string | string[];
 
-// AccordionItemの型定義
 export interface GridraAccordionItem {
   id: string;
   title: ReactNode;
@@ -23,7 +21,6 @@ export interface GridraAccordionItem {
   disabled?: boolean;
 }
 
-// Accordionのprops定義
 export interface GridraAccordionProps extends HTMLAttributes<HTMLDivElement> {
   items: GridraAccordionItem[];
   type?: GridraAccordionType;
@@ -35,7 +32,6 @@ export interface GridraAccordionProps extends HTMLAttributes<HTMLDivElement> {
   variant?: GridraAccordionVariant;
 }
 
-// 値の正規化関数
 function normalizeToSingle(value: GridraAccordionValue): string {
   if (typeof value === "string") return value;
   if (Array.isArray(value)) return value[0] ?? "";
@@ -46,7 +42,7 @@ function normalizeToMultiple(value: GridraAccordionValue): string[] {
   return Array.isArray(value) ? value : [];
 }
 
-// アイテムのIDを検証するためのマップを構築する関数
+// アイテムのIDをキー、アイテム自体を値とするマップを返す。重複するIDがある場合は最初のものが優先される
 function buildValidMap(items: GridraAccordionItem[]) {
   const seen = new Map<string, GridraAccordionItem>();
   for (const item of items) {
@@ -69,7 +65,7 @@ export function GridraAccordion({
   variant = "default",
   ...props
 }: GridraAccordionProps) {
-  const baseId = useId(); // ユニークなIDを生成
+  const baseId = useId();
   const headerRefs = useRef<Map<string, HTMLButtonElement>>(new Map()); // ヘッダーボタンの参照を保持するためのMap
 
   const validMap = useMemo(() => buildValidMap(items), [items]);  // アイテムのIDを検証するためのマップを構築
@@ -80,37 +76,37 @@ export function GridraAccordion({
     [items, validMap],
   );
 
+  // defaultValueを現在のitems/typeに合わせて安全な値に変換する
   const sanitizedDefault = useMemo(() => {
     if (type === "single") {
-      if (defaultValue !== undefined) { // defaultValueが提供されている場合の処理
+      if (defaultValue !== undefined) { 
         const val = normalizeToSingle(defaultValue);
-        if (val && validMap.has(val)) { // defaultValueが有効なIDであるかを確認
+        if (val && validMap.has(val)) { 
           const resolved = validMap.get(val)!;
-          if (!resolved.disabled) return val; // defaultValueが有効で、かつdisabledでない場合はそのIDを返す
+          if (!resolved.disabled) return val;
         }
-        if (val && !validMap.has(val)) {  // defaultValueが有効なIDでない場合の処理
-          if (enabledIds.length > 0) return enabledIds[0];  // 有効なIDが存在する場合は最初のIDを返す
-          return "";  // 有効なIDが存在しない場合は空文字を返す
+        if (val && !validMap.has(val)) {  
+          if (enabledIds.length > 0) return enabledIds[0];  
+          return ""; 
         }
-        return "";  // defaultValueが提供されているが無効なIDである場合は空文字を返す
+        return "";
       }
       if (enabledIds.length > 0) {
-        return enabledIds[0]; // defaultValueが提供されていない場合は有効なIDの最初のものを返す
+        return enabledIds[0]; 
       }
-      return "";  // 有効なIDが存在しない場合は空文字を返す
+      return "";
     }
-    // 以下はtypeが"multiple"の場合の処理
+
     if (defaultValue !== undefined) {
       const arr = normalizeToMultiple(defaultValue);
       return arr.filter((id) => {
         const resolved = validMap.get(id);
-        return resolved && !resolved.disabled;  // defaultValueのIDが有効で、かつdisabledでない場合のみ返す
+        return resolved && !resolved.disabled;
       });
     }
     return [];
   }, [type, defaultValue, validMap, enabledIds]);
 
-  // useControllableValueフックを使用して、制御された値と非制御の内部状態を管理する
   const [rawValue, setRawValue] = useControllableValue<GridraAccordionValue>(
     valueProp,
     sanitizedDefault,
