@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { cx } from "../../internal/classNames";
 
 export type GridraAccordionType = "single" | "multiple";
 export type GridraAccordionSize = "sm" | "md" | "lg";
@@ -214,19 +215,17 @@ export function GridraAccordion({
   // アイテムが空の場合は、基本的なクラス名だけを持つ空のコンテナを返す
   if (items.length === 0) {
     return (
-      <div {...props} className={["gridra-accordion", `gridra-accordion--${variant}`, `gridra-accordion--${size}`, className].filter(Boolean).join(" ")} />
+      <div {...props} className={cx("gridra-accordion", `gridra-accordion--${variant}`, `gridra-accordion--${size}`, className)} />
     );
   }
 
   // ルート要素のクラス名を組み立てる。variant、size、classNameを条件に応じて追加する
-  const rootClassName = [
+  const rootClassName = cx(
     "gridra-accordion",
     `gridra-accordion--${variant}`,
     `gridra-accordion--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <div {...props} className={rootClassName}>
@@ -239,13 +238,11 @@ export function GridraAccordion({
         return (
           <div
             key={item.id}
-            className={[
+            className={cx(
               "gridra-accordion__item",
               isDisabled ? "gridra-accordion__item--disabled" : null,
               isOpen ? "gridra-accordion__item--expanded" : null,
-            ]
-              .filter(Boolean)
-              .join(" ")}
+            )}
           >
             <button
               aria-controls={panelId}
