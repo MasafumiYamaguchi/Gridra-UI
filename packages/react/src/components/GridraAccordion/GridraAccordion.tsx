@@ -170,6 +170,7 @@ export function GridraAccordion({
     [type, toggleSingle, toggleMultiple],
   );
 
+  // キーボード移動はenabledIdsだけを対象にし、disabled itemと重複idの後続itemを飛ばす。
   const handleHeaderKeyDown = useCallback(
     (event: KeyboardEvent) => {
       const current = event.currentTarget as HTMLButtonElement;
@@ -201,6 +202,7 @@ export function GridraAccordion({
           break;
       }
 
+      // nextIndexが有効な範囲内であれば、対応するヘッダーボタンにフォーカスを移動する
       if (handled && nextIndex >= 0 && nextIndex < enabledIds.length) {
         const nextId = enabledIds[nextIndex];
         headerRefs.current.get(nextId)?.focus();
@@ -209,12 +211,14 @@ export function GridraAccordion({
     [enabledIds],
   );
 
+  // アイテムが空の場合は、基本的なクラス名だけを持つ空のコンテナを返す
   if (items.length === 0) {
     return (
       <div {...props} className={["gridra-accordion", `gridra-accordion--${variant}`, `gridra-accordion--${size}`, className].filter(Boolean).join(" ")} />
     );
   }
 
+  // ルート要素のクラス名を組み立てる。variant、size、classNameを条件に応じて追加する
   const rootClassName = [
     "gridra-accordion",
     `gridra-accordion--${variant}`,
