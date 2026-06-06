@@ -27,6 +27,7 @@ export function GridraAvatar({
   const avatarClassName = cx(
     "gridra-avatar",
     `gridra-avatar--${shape}`,
+    typeof size === "string" && isPresetSize(size) ? `gridra-avatar--${size}` : null,
     monochrome ? "gridra-avatar--monochrome" : null,
     className,
   );
