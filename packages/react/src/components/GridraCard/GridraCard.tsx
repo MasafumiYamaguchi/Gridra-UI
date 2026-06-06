@@ -26,13 +26,13 @@ export function GridraCard({
   surface = "surface",
   ...props
 }: GridraCardProps) {
-    const rootClassName = cx(
-        "gridra-card",
-        `gridra-card--${surface}`,
-        `gridra-card--padding-${padding}`,
-        media ? "gridra-card--with-media" : null,
-        className,
-    );
+  const rootClassName = cx(
+    "gridra-card",
+    `gridra-card--${surface}`,
+    `gridra-card--padding-${padding}`,
+    Boolean(media) && "gridra-card--with-media",
+    className,
+  );
 
   return (
     <div className={rootClassName} {...props}>

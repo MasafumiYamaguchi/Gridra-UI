@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { GridraToolbar } from "./GridraToolbar";
 
 afterEach(() => {
@@ -62,5 +62,40 @@ describe("GridraToolbar", () => {
 
     expect(button.disabled).toBe(true);
     expect(actions).toEqual([]);
+  });
+
+  it("forwards toolbar attributes and renders custom children after actions", () => {
+    render(
+      <GridraToolbar
+        actions={[{ id: "select", label: "Select" }]}
+        aria-label="Canvas tools"
+        className="custom-toolbar"
+        data-testid="toolbar"
+      >
+        <span>Extra</span>
+      </GridraToolbar>,
+    );
+    const toolbar = screen.getByRole("toolbar", { name: "Canvas tools" });
+
+    expect(toolbar).toBe(screen.getByTestId("toolbar"));
+    expect(toolbar.className).toContain("gridra-toolbar");
+    expect(toolbar.className).toContain("custom-toolbar");
+    expect(Array.from(toolbar.children).map((child) => child.textContent)).toEqual(["Select", "Extra"]);
+  });
+
+  it("does not call onAction while rendering custom actions", () => {
+    const onAction = vi.fn();
+
+    render(
+      <GridraToolbar
+        actions={[{ id: "select", label: "Select" }]}
+        onAction={onAction}
+        renderAction={(action) => <button type="button">{action.label}</button>}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Select" }));
+
+    expect(onAction).not.toHaveBeenCalled();
   });
 });

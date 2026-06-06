@@ -57,4 +57,43 @@ describe("GridraSelect", () => {
 
     expect((screen.getByRole("combobox", { name: "Locked" }) as HTMLSelectElement).disabled).toBe(true);
   });
+
+  it("supports invalid state while preserving an explicit aria-invalid value", () => {
+    render(
+      <>
+        <GridraSelect aria-label="Invalid" invalid>
+          <option>One</option>
+        </GridraSelect>
+        <GridraSelect aria-invalid="false" aria-label="Override" invalid>
+          <option>Two</option>
+        </GridraSelect>
+      </>,
+    );
+
+    expect(screen.getByRole("combobox", { name: "Invalid" }).getAttribute("aria-invalid")).toBe("true");
+    expect(screen.getByRole("combobox", { name: "Override" }).getAttribute("aria-invalid")).toBe("false");
+  });
+
+  it("forwards form metadata, className, size class, required, and aria-describedby", () => {
+    render(
+      <GridraSelect
+        aria-describedby="tool-help"
+        aria-label="Tool"
+        className="custom-select"
+        data-testid="tool"
+        name="tool"
+        required
+        size="lg"
+      >
+        <option value="select">Select</option>
+      </GridraSelect>,
+    );
+    const select = screen.getByTestId("tool") as HTMLSelectElement;
+
+    expect(select.getAttribute("aria-describedby")).toBe("tool-help");
+    expect(select.name).toBe("tool");
+    expect(select.required).toBe(true);
+    expect(select.className).toContain("gridra-select--lg");
+    expect(select.className).toContain("custom-select");
+  });
 });

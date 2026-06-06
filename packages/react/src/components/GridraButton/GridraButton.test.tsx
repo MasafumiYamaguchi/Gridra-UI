@@ -63,4 +63,32 @@ describe("GridraButton", () => {
 
     expect((screen.getByRole("button", { name: "Run" }) as HTMLButtonElement).type).toBe("submit");
   });
+
+  it("forwards standard button attributes without adding pressed semantics by default", () => {
+    render(
+      <>
+        <form id="settings" />
+        <GridraButton
+          aria-label="Save changes"
+          className="custom-button"
+          data-testid="save"
+          form="settings"
+          name="intent"
+          value="save"
+          variant="primary"
+        >
+          Save
+        </GridraButton>
+      </>,
+    );
+    const button = screen.getByTestId("save") as HTMLButtonElement;
+
+    expect(button.getAttribute("aria-label")).toBe("Save changes");
+    expect(button.getAttribute("aria-pressed")).toBeNull();
+    expect(button.form?.id).toBe("settings");
+    expect(button.name).toBe("intent");
+    expect(button.value).toBe("save");
+    expect(button.className).toContain("gridra-button--primary");
+    expect(button.className).toContain("custom-button");
+  });
 });

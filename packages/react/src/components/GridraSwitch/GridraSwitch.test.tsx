@@ -62,4 +62,41 @@ describe("GridraSwitch", () => {
 
     expect(handleCheckedChange).not.toHaveBeenCalled();
   });
+
+  it("defaults to type button and preserves explicit type", () => {
+    const { rerender } = render(<GridraSwitch label="Preview" />);
+
+    expect((screen.getByRole("switch", { name: "Preview" }) as HTMLButtonElement).type).toBe("button");
+
+    rerender(<GridraSwitch label="Preview" type="submit" />);
+
+    expect((screen.getByRole("switch", { name: "Preview" }) as HTMLButtonElement).type).toBe("submit");
+  });
+
+  it("forwards button attributes, size class, invalid state, and checked styling", () => {
+    render(
+      <GridraSwitch
+        aria-describedby="preview-help"
+        checked
+        className="custom-switch"
+        data-testid="preview"
+        invalid
+        label="Preview"
+        name="preview"
+        size="lg"
+        value="enabled"
+      />,
+    );
+    const control = screen.getByTestId("preview") as HTMLButtonElement;
+
+    expect(control.getAttribute("aria-checked")).toBe("true");
+    expect(control.getAttribute("aria-describedby")).toBe("preview-help");
+    expect(control.getAttribute("aria-invalid")).toBe("true");
+    expect(control.name).toBe("preview");
+    expect(control.value).toBe("enabled");
+    expect(control.className).toContain("gridra-switch--lg");
+    expect(control.className).toContain("gridra-switch--checked");
+    expect(control.className).toContain("gridra-switch--invalid");
+    expect(control.className).toContain("custom-switch");
+  });
 });

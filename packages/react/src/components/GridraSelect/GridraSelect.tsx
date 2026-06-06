@@ -1,4 +1,6 @@
 import type { SelectHTMLAttributes } from "react";
+import { cx } from "../../internal/classNames";
+import { resolveAriaInvalid } from "../../internal/formControl";
 
 export type GridraSelectSize = "sm" | "md" | "lg";
 
@@ -14,10 +16,11 @@ export function GridraSelect({
   size = "md",
   ...props
 }: GridraSelectProps) {
-  const selectClassName = ["gridra-select", `gridra-select--${size}`, className]
-    .filter(Boolean)
-    .join(" ");
-  const resolvedAriaInvalid = ariaInvalid ?? (invalid ? true : undefined);
-
-  return <select aria-invalid={resolvedAriaInvalid} className={selectClassName} {...props} />;
+  return (
+    <select
+      aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}
+      className={cx("gridra-select", `gridra-select--${size}`, className)}
+      {...props}
+    />
+  );
 }

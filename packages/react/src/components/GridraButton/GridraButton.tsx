@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes } from "react";
+import { cx } from "../../internal/classNames";
 import { GridraSpinner } from "../GridraSpinner";
 
 export type GridraButtonSize = "sm" | "md" | "lg";
@@ -24,17 +25,15 @@ export function GridraButton({
   variant = "default",
   ...props
 }: GridraButtonProps) {
-  const buttonClassName = [
+  const buttonClassName = cx(
     "gridra-button",
     `gridra-button--${variant}`,
     `gridra-button--${size}`,
-    pressed ? "gridra-button--pressed" : null,
-    fullWidth ? "gridra-button--full-width" : null,
-    loading ? "gridra-button--loading" : null,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
+    pressed && "gridra-button--pressed",
+    fullWidth && "gridra-button--full-width",
+    loading && "gridra-button--loading",
+    className,
+  );
   const isDisabled = disabled || loading;
 
   return (

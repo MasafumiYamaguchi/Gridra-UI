@@ -1,4 +1,5 @@
 import type { CSSProperties, HTMLAttributes } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraAvatarSize = "sm" | "md" | "lg" | number | string;
 export type GridraAvatarShape = "square" | "rounded" | "circle";
@@ -23,21 +24,19 @@ export function GridraAvatar({
   style,
   ...props
 }: GridraAvatarProps) {
-  const avatarClassName = [
+  const avatarClassName = cx(
     "gridra-avatar",
     `gridra-avatar--${shape}`,
-    typeof size === "string" && isPresetSize(size) ? `gridra-avatar--${size}` : null,
     monochrome ? "gridra-avatar--monochrome" : null,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
+    className,
+  );
   const avatarStyle = {
     ...style,
     ...getCustomSizeStyle(size)
   } as CSSProperties;
   const fallbackAccessibleName = !src ? (alt || fallback || undefined) : undefined;
 
+  // imgソースがなければfallbackテキストを表示し、アクセシブルな名前を提供するためにrole="img"とaria-labelを設定する。
   return (
     <span
       className={avatarClassName}
@@ -61,11 +60,13 @@ function isPresetSize(size: string): size is "sm" | "md" | "lg" {
   return size === "sm" || size === "md" || size === "lg";
 }
 
+// sizeが数値の場合css変数にpx単位の値を設定する
 function getCustomSizeStyle(size: GridraAvatarSize): CSSProperties | undefined {
   if (typeof size === "string" && isPresetSize(size)) {
     return undefined;
   }
 
+  // sizeの方が数値の場合はpx単位の文字列に変換し、そうでない場合はそのまま使用する。
   const normalizedSize = typeof size === "number" ? `${size}px` : size;
 
   return {

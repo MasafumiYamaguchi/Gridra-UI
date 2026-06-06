@@ -1,6 +1,8 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { createElement } from "react";
+import { cx } from "../../internal/classNames";
 
+// ここにBoxのスタイルのバリエーションを定義する
 export type GridraBoxAs =
   | "div"
   | "section"
@@ -55,7 +57,7 @@ export function GridraBox({
   surface,
   ...props
 }: GridraBoxProps) {
-  const boxClassName = [
+  const boxClassName = cx(
     "gridra-box",
     padding ? `gridra-box--padding-${padding}` : null,
     paddingX ? `gridra-box--padding-x-${paddingX}` : null,
@@ -71,9 +73,7 @@ export function GridraBox({
     minWidthZero ? "gridra-box--min-width-zero" : null,
     minHeightZero ? "gridra-box--min-height-zero" : null,
     className
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return createElement(
     as,

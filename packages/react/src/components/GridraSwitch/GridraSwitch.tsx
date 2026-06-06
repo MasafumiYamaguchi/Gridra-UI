@@ -1,4 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
+import { resolveAriaInvalid } from "../../internal/formControl";
 
 export type GridraSwitchSize = "sm" | "md" | "lg";
 
@@ -24,20 +26,18 @@ export function GridraSwitch({
   type = "button",
   ...props
 }: GridraSwitchProps) {
-  const switchClassName = [
+  const switchClassName = cx(
     "gridra-switch",
     `gridra-switch--${size}`,
-    checked ? "gridra-switch--checked" : null,
-    invalid ? "gridra-switch--invalid" : null,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
+    checked && "gridra-switch--checked",
+    invalid && "gridra-switch--invalid",
+    className,
+  );
 
   return (
     <button
       aria-checked={checked}
-      aria-invalid={invalid || undefined}
+      aria-invalid={resolveAriaInvalid(undefined, invalid)}
       className={switchClassName}
       onClick={(event) => {
         onClick?.(event);

@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraAlertTone = "info" | "success" | "warning" | "danger";
 
@@ -19,15 +20,14 @@ export function GridraAlert({
   tone = "info",
   ...props
 }: GridraAlertProps) {
-  const alertClassName = [
+
+  const alertClassName = cx(
     "gridra-alert",
     `gridra-alert--${tone}`,
     icon ? "gridra-alert--with-icon" : null,
     action ? "gridra-alert--with-action" : null,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
+    className,
+  );
 
   return (
     <div className={alertClassName} role={role ?? getDefaultRole(tone)} {...props}>
