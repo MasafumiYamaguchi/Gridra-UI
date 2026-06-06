@@ -15,12 +15,15 @@ import {
 import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
+import { cx } from "../../internal/classNames";
 
 export type GridraCommandPaletteSize = "sm" | "md" | "lg";
 
+// Focus trap用: Tabキーで移動できる要素を取得するためのセレクタ
 const FOCUSABLE_SELECTOR =
   'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])';
 
+// コマンドの意味を表すための識別子役割のためにstring型を用いている
 export interface GridraCommandPaletteCommandItem {
   id: string;
   label: ReactNode;
@@ -31,6 +34,7 @@ export interface GridraCommandPaletteCommandItem {
   destructive?: boolean;
 }
 
+// separatorにも安定したkeyを与えたい場合にidを指定できる
 export type GridraCommandPaletteSeparatorItem = {
   type: "separator";
   id?: string;
@@ -40,8 +44,11 @@ export type GridraCommandPaletteItem =
   | GridraCommandPaletteCommandItem
   | GridraCommandPaletteSeparatorItem;
 
-export interface GridraCommandPaletteProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "title"> {
+// HTML属性とぶつかるので、onChangeとtitleは除外する
+export interface GridraCommandPaletteProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "onChange" | "title"
+> {
   items: GridraCommandPaletteItem[];
   onAction?: (id: string) => void;
   open?: boolean;
@@ -65,10 +72,14 @@ function isCommand(
   return !("type" in item) || item.type !== "separator";
 }
 
-function itemMatchesQuery(item: GridraCommandPaletteCommandItem, query: string): boolean {
+function itemMatchesQuery(
+  item: GridraCommandPaletteCommandItem,
+  query: string,
+): boolean {
   if (!query) {
     return true;
   }
+  // 大文字小文字を区別せず、コマンドのlabel、description、group、keywordsに対して部分一致するかどうかで判定する
   const lower = query.toLowerCase();
   const fields = [
     getPlainSearchText(item.label),
@@ -106,8 +117,17 @@ export function GridraCommandPalette({
   title = "Command Palette",
   ...props
 }: GridraCommandPaletteProps) {
-  const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
-  const [currentQuery, setCurrentQuery] = useControllableValue(query, defaultQuery, onQueryChange);
+  const [currentOpen, setCurrentOpen] = useControllableValue(
+    open,
+    defaultOpen,
+    onOpenChange,
+  );
+  const [currentQuery, setCurrentQuery] = useControllableValue(
+    query,
+    defaultQuery,
+    onQueryChange,
+  );
+  // queryがcontrolledかどうかのフラグ
   const isQueryControlled = query !== undefined;
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -116,30 +136,34 @@ export function GridraCommandPalette({
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [portalMounted, setPortalMounted] = useState(false);
-  const [portalThemeClassName, setPortalThemeClassName] = useState<string | undefined>(() =>
-    getGridraThemeClassName(),
-  );
+  // portal内でテーマクラスを適用するための状態。ダイアログが開かれるたびに更新する必要がある
+  const [portalThemeClassName, setPortalThemeClassName] = useState<
+    string | undefined
+  >(() => getGridraThemeClassName());
   const titleId = useId();
   const inputId = useId();
 
+  // SSR対策: クライアントでマウントされた後にPortalを表示する
   useEffect(() => {
     setPortalMounted(true);
   }, []);
 
   const commandItems = useMemo(() => items.filter(isCommand), [items]);
 
+  // 3段階でフィルタリングする
+  // 1. クエリにマッチするアイテムだけを残す
   const filteredCommands = useMemo(() => {
     if (!currentQuery) {
       return commandItems;
     }
     return commandItems.filter((item) => itemMatchesQuery(item, currentQuery));
   }, [commandItems, currentQuery]);
-
+  // 2. フィルタリングされたアイテムの中から、disabledでないアイテムだけを残す
   const enabledFiltered = useMemo(
     () => filteredCommands.filter((item) => !item.disabled),
     [filteredCommands],
   );
-
+  // 3. enabledなアイテムのidだけの配列を作る
   const enabledIds = useMemo(
     () => enabledFiltered.map((item) => item.id),
     [enabledFiltered],
@@ -160,6 +184,7 @@ export function GridraCommandPalette({
     [activeIndex, clampIndex],
   );
 
+  // isQueryControlledがtrueの場合は、クエリは外部で管理されているため、コマンドパレット内部でクエリをリセットしないようにする
   const close = useCallback(() => {
     setCurrentOpen(false);
     if (!isQueryControlled) {
@@ -167,6 +192,7 @@ export function GridraCommandPalette({
     }
   }, [isQueryControlled, setCurrentOpen, setCurrentQuery]);
 
+  // 押したアイテムを有効なコマンドとして処理するための関数
   const activateItem = useCallback(
     (id: string) => {
       const item = commandItems.find((c) => c.id === id);
@@ -207,6 +233,7 @@ export function GridraCommandPalette({
       inputRef.current?.focus();
     });
 
+    // コマンドパレットが閉じられたときに、前回フォーカスされていた要素にフォーカスを戻す
     return () => {
       const prev = previousFocusRef.current;
       if (prev && typeof prev.focus === "function") {
@@ -221,6 +248,7 @@ export function GridraCommandPalette({
     setActiveIndex(0);
   }, [currentQuery]);
 
+  // Portalはテーマ配下から外れるため、開くタイミングで現在のテーマクラスをbackdropへコピーする
   useLayoutEffect(() => {
     if (!currentOpen) {
       return;
@@ -228,6 +256,8 @@ export function GridraCommandPalette({
     setPortalThemeClassName(getGridraThemeClassName());
   }, [currentOpen]);
 
+  // useCallbackで毎回関数を作らないようにする！（n回目)
+  // 毎回関数作るとuseEffectが走るかもしれない
   const handleEscape = useCallback(
     (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape" && closeOnEscape && currentOpen) {
@@ -240,6 +270,7 @@ export function GridraCommandPalette({
 
   const handleBackdropPointerDown = useCallback(
     (event: React.PointerEvent) => {
+      // もともとの要素(target)とモーダル(currentTarget)を比較している
       if (event.target === event.currentTarget) {
         close();
       }
@@ -251,6 +282,7 @@ export function GridraCommandPalette({
     if (!currentOpen) {
       return;
     }
+    // useEffectで実行からのhandleEffectで関数を作ると、参照が変わるときに毎回イベントリスナーが追加されてしまうため、useCallbackで関数をメモ化する
     document.addEventListener("keydown", handleEscape);
     return () => {
       document.removeEventListener("keydown", handleEscape);
@@ -272,7 +304,8 @@ export function GridraCommandPalette({
           return;
         }
 
-        const focusable = dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+        const focusable =
+          dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
         if (focusable.length === 0) {
           event.preventDefault();
           event.stopPropagation();
@@ -283,11 +316,17 @@ export function GridraCommandPalette({
         const last = focusable[focusable.length - 1];
 
         if (event.shiftKey) {
-          if (document.activeElement === first || !dialog.contains(document.activeElement)) {
+          if (
+            document.activeElement === first ||
+            !dialog.contains(document.activeElement)
+          ) {
             event.preventDefault();
             last.focus();
           }
-        } else if (document.activeElement === last || !dialog.contains(document.activeElement)) {
+        } else if (
+          document.activeElement === last ||
+          !dialog.contains(document.activeElement)
+        ) {
           event.preventDefault();
           first.focus();
         }
@@ -342,22 +381,22 @@ export function GridraCommandPalette({
     [enabledIds, safeActiveIndex, focusItemByIndex, activateItem],
   );
 
-  const dialogClassName = [
+  const dialogClassName = cx(
     "gridra-command-palette",
     `gridra-command-palette--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const backdropClassName = [
+  );
+
+  const backdropClassName = cx(
     "gridra-root",
     portalThemeClassName,
     "gridra-command-palette__backdrop",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
   const portalTarget = getPortalTarget();
 
+  // reactのrenderでmap()するために配列に変換して返す
+  // 表示時にgroupごとにmapできるよう、filteredCommandsをgroup単位にまとめる
+  // 例: [["File", [item1, item2]], ["Edit", [item3]], ["", [item4]]]]
   const groups = useMemo(() => {
     const map = new Map<string, GridraCommandPaletteCommandItem[]>();
     for (const item of filteredCommands) {
@@ -421,7 +460,10 @@ export function GridraCommandPalette({
                 </div>
               ) : hasGrouping ? (
                 groups.map(([group, groupItems]) => (
-                  <div className="gridra-command-palette__group" key={group || "__ungrouped"}>
+                  <div
+                    className="gridra-command-palette__group"
+                    key={group || "__ungrouped"}
+                  >
                     {group ? (
                       <div className="gridra-command-palette__group-label">
                         {group}
@@ -431,7 +473,7 @@ export function GridraCommandPalette({
                       const isActive = enabledIds[safeActiveIndex] === item.id;
                       return (
                         <button
-                          className={[
+                          className={cx(
                             "gridra-command-palette__item",
                             item.disabled
                               ? "gridra-command-palette__item--disabled"
@@ -439,10 +481,10 @@ export function GridraCommandPalette({
                             item.destructive
                               ? "gridra-command-palette__item--destructive"
                               : null,
-                            isActive ? "gridra-command-palette__item--active" : null,
-                          ]
-                            .filter(Boolean)
-                            .join(" ")}
+                            isActive
+                              ? "gridra-command-palette__item--active"
+                              : null,
+                          )}
                           disabled={item.disabled}
                           key={item.id}
                           onClick={() => activateItem(item.id)}
@@ -482,7 +524,7 @@ export function GridraCommandPalette({
                   const isActive = enabledIds[safeActiveIndex] === item.id;
                   return (
                     <button
-                      className={[
+                      className={cx(
                         "gridra-command-palette__item",
                         item.disabled
                           ? "gridra-command-palette__item--disabled"
@@ -490,10 +532,10 @@ export function GridraCommandPalette({
                         item.destructive
                           ? "gridra-command-palette__item--destructive"
                           : null,
-                        isActive ? "gridra-command-palette__item--active" : null,
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
+                        isActive
+                          ? "gridra-command-palette__item--active"
+                          : null,
+                      )}
                       disabled={item.disabled}
                       key={item.id}
                       onClick={() => activateItem(item.id)}
@@ -534,4 +576,3 @@ export function GridraCommandPalette({
       )
     : null;
 }
-

@@ -222,6 +222,14 @@ Track option complexity as a design risk before adding more option-heavy compone
 5. [ ] Documentation check: explain recommended usage and avoid cases before listing every prop, so readers can choose the simple path first.
 6. [ ] Test strategy check: cover representative option interactions and boundaries without locking every possible combination.
 
+## Future Interaction Refactors
+
+Keep interaction extraction small enough that component-specific accessibility behavior stays readable.
+
+1. [ ] ID-based navigation resolver: extract only the shared item-switching decision for command-like components. The helper should accept enabled item ids, the current id or index, the requested key/action, and a boundary mode such as clamp or wrap, then return the next id/index plus whether the key was handled.
+2. [ ] Leave DOM effects local: keep `preventDefault`, `stopPropagation`, actual focus calls, action dispatch, Escape handling, Tab trapping, and overlay close behavior inside each component until repeated behavior is proven identical.
+3. [ ] Cover the resolver with pure tests first: include empty lists, single item, first/last boundaries, disabled items already filtered out, clamp behavior for `GridraCommandPalette`, and wrap behavior for menu-style components.
+
 ## Suggested Implementation Order
 
 1. Harden the current exported components and ensure their APIs feel consistent.

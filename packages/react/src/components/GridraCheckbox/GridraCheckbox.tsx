@@ -1,11 +1,17 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
-import { resolveAriaInvalid, useControlDescriptionIds } from "../../internal/formControl";
+import {
+  resolveAriaInvalid,
+  useControlDescriptionIds,
+} from "../../internal/formControl";
 
 export type GridraCheckboxSize = "sm" | "md" | "lg";
 
-export interface GridraCheckboxProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
+// Checkbox側で制御するためにsizeとtypeをInputHTMLAttributesから除外
+export interface GridraCheckboxProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size" | "type"
+> {
   description?: ReactNode;
   invalid?: boolean;
   label?: string;
@@ -21,7 +27,10 @@ export function GridraCheckbox({
   size = "md",
   ...props
 }: GridraCheckboxProps) {
-  const { controlId, descriptionId } = useControlDescriptionIds(props.id, Boolean(description));
+  const { controlId, descriptionId } = useControlDescriptionIds(
+    props.id,
+    Boolean(description),
+  );
   const checkboxClassName = cx(
     "gridra-checkbox",
     `gridra-checkbox--${size}`,
@@ -40,11 +49,17 @@ export function GridraCheckbox({
         {...props}
       />
       <span className="gridra-checkbox__mark" aria-hidden="true" />
-      {label || description ? (
+      {label || description ? ( // ラベルか説明の存在をふるいにして、内容の有無を判断
         <span className="gridra-checkbox__content">
-          {label ? <span className="gridra-checkbox__label">{label}</span> : null}
+          {label ? (
+            <span className="gridra-checkbox__label">{label}</span>
+          ) : null}
           {description ? (
-            <span id={descriptionId} className="gridra-checkbox__description" aria-hidden="true">
+            <span
+              id={descriptionId}
+              className="gridra-checkbox__description"
+              aria-hidden="true"
+            >
               {description}
             </span>
           ) : null}
