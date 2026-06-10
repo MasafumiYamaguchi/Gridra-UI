@@ -364,7 +364,7 @@ export function GridraContextMenu({
   };
 
   const menuClassName = [
-    "gridra-root",
+    "gridra-portal-root",
     getGridraThemeClassName(targetRef.current),
     "gridra-context-menu",
     "gridra-dropdown-menu",

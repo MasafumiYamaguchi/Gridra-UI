@@ -177,7 +177,7 @@ export function GridraHoverCard({
   };
 
   const cardClassName = cx(
-    "gridra-root",
+    "gridra-portal-root",
     getGridraThemeClassName(anchorRef.current),
     "gridra-hover-card",
     `gridra-hover-card--${resolvedPlacement}`,

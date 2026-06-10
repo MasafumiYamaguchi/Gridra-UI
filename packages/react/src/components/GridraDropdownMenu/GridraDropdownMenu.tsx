@@ -348,7 +348,7 @@ export function GridraDropdownMenu({
   };
 
   const menuClassName = cx(
-    "gridra-root",
+    "gridra-portal-root",
     getGridraThemeClassName(triggerRef.current),
     "gridra-dropdown-menu",
     `gridra-dropdown-menu--${resolvedPlacement}`,

@@ -132,7 +132,7 @@ export function GridraPopover({
   };
 
   const popoverClassName = cx(
-    "gridra-root",
+    "gridra-portal-root",
     getGridraThemeClassName(anchorRef.current),
     "gridra-popover",
     `gridra-popover--${resolvedPlacement}`,

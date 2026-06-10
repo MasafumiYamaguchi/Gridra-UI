@@ -36,9 +36,43 @@
   letter-spacing: 0;
 }
 
+.gridra-portal-root {
+  --gridra-color-background: #000000;
+  --gridra-color-surface: #050505;
+  --gridra-color-surface-raised: #080808;
+  --gridra-color-surface-input: #0d0d0d;
+  --gridra-color-node-pattern: rgba(255, 255, 255, 0.11);
+  --gridra-color-text: #f8f8f8;
+  --gridra-color-muted-text: #9f9f9f;
+  --gridra-color-border: #2e2e2e;
+  --gridra-color-border-strong: #3a3a3a;
+  --gridra-color-accent: rgba(255, 255, 255, 0.86);
+  --gridra-color-selected: rgba(255, 255, 255, 0.08);
+  --gridra-color-focus: rgba(255, 255, 255, 0.92);
+  --gridra-shadow-selected: 0 0 0 1px rgba(255, 255, 255, 0.18);
+  --gridra-font-mono: "JetBrains Mono", "Fira Code", "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  --gridra-font-brand: ui-monospace, "SFMono-Light", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --gridra-radius-sm: 0;
+  --gridra-radius-md: 0;
+  --gridra-space-xs: 4px;
+  --gridra-space-sm: 6px;
+  --gridra-space-md: 10px;
+  --gridra-space-lg: 12px;
+  --gridra-panel-width: 280px;
+  --gridra-node-pattern-size: 12px;
+  box-sizing: border-box;
+  color: var(--gridra-color-text);
+  font-family: var(--gridra-font-mono);
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
 .gridra-root *,
 .gridra-root *::before,
-.gridra-root *::after {
+.gridra-root *::after,
+.gridra-portal-root *,
+.gridra-portal-root *::before,
+.gridra-portal-root *::after {
   box-sizing: border-box;
 }
 

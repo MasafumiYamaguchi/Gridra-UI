@@ -114,7 +114,7 @@ export function GridraTooltip({
   };
 
   const tooltipClassName = cx(
-    "gridra-root",
+    "gridra-portal-root",
     getGridraThemeClassName(anchorRef.current),
     "gridra-tooltip",
     `gridra-tooltip--${resolvedPlacement}`,
