@@ -1,7 +1,6 @@
 import {
   cloneElement,
   isValidElement,
-  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -112,41 +111,35 @@ export function GridraContextMenu({
 
   const safeActiveIndex = clampIndex(activeIndex, enabledIds.length);
 
-  const close = useCallback(() => {
+  const close = () => {
     setCurrentOpen(false);
     targetRef.current?.focus();
-  }, [setCurrentOpen]);
+  };
 
-  const activateItem = useCallback(
-    (id: string) => {
-      if (disabled) {
-        return;
-      }
-      const item = commandItems.find((c) => c.id === id);
-      if (!item || item.disabled) {
-        return;
-      }
-      onAction?.(id);
-      if (closeOnAction) {
-        close();
-      }
-    },
-    [disabled, commandItems, onAction, closeOnAction, close],
-  );
+  const activateItem = (id: string) => {
+    if (disabled) {
+      return;
+    }
+    const item = commandItems.find((c) => c.id === id);
+    if (!item || item.disabled) {
+      return;
+    }
+    onAction?.(id);
+    if (closeOnAction) {
+      close();
+    }
+  };
 
-  const focusItemByIndex = useCallback(
-    (index: number) => {
-      if (enabledIds.length === 0) {
-        return;
-      }
-      const clamped = clampIndex(index, enabledIds.length);
-      setActiveIndex(clamped);
-      const id = enabledIds[clamped];
-      const el = itemRefs.current.get(id);
-      el?.focus();
-    },
-    [enabledIds],
-  );
+  const focusItemByIndex = (index: number) => {
+    if (enabledIds.length === 0) {
+      return;
+    }
+    const clamped = clampIndex(index, enabledIds.length);
+    setActiveIndex(clamped);
+    const id = enabledIds[clamped];
+    const el = itemRefs.current.get(id);
+    el?.focus();
+  };
 
   useEffect(() => {
     if (!currentOpen) {
@@ -165,23 +158,6 @@ export function GridraContextMenu({
     };
   }, [currentOpen, enabledIds]);
 
-  const handleOutsidePointerDown = useCallback(
-    (event: PointerEvent) => {
-      if (!closeOnOutsidePointerDown || !currentOpen) {
-        return;
-      }
-      const target = event.target as Node | null;
-      if (
-        target &&
-        !menuRef.current?.contains(target) &&
-        !targetRef.current?.contains(target)
-      ) {
-        close();
-      }
-    },
-    [closeOnOutsidePointerDown, currentOpen, close],
-  );
-
   useEffect(() => {
     if (!currentOpen) {
       return;
@@ -190,6 +166,20 @@ export function GridraContextMenu({
     const handleEscape = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape" && closeOnEscape) {
         event.preventDefault();
+        close();
+      }
+    };
+
+    const handleOutsidePointerDown = (event: PointerEvent) => {
+      if (!closeOnOutsidePointerDown) {
+        return;
+      }
+      const target = event.target as Node | null;
+      if (
+        target &&
+        !menuRef.current?.contains(target) &&
+        !targetRef.current?.contains(target)
+      ) {
         close();
       }
     };
@@ -204,7 +194,12 @@ export function GridraContextMenu({
         true,
       );
     };
-  }, [currentOpen, closeOnEscape, close, handleOutsidePointerDown]);
+  }, [
+    closeOnEscape,
+    closeOnOutsidePointerDown,
+    currentOpen,
+    setCurrentOpen,
+  ]);
 
   useLayoutEffect(() => {
     if (!currentOpen) {
@@ -242,103 +237,91 @@ export function GridraContextMenu({
     };
   }, [currentOpen, items, size, minWidth, maxWidth]);
 
-  const openAt = useCallback(
-    (clientX: number, clientY: number) => {
-      if (disabled) {
-        return;
-      }
-      pointerCoordsRef.current = { top: clientY, left: clientX };
-      setActiveIndex(0);
-      setCurrentOpen(true);
-    },
-    [disabled, setCurrentOpen],
-  );
+  const openAt = (clientX: number, clientY: number) => {
+    if (disabled) {
+      return;
+    }
+    pointerCoordsRef.current = { top: clientY, left: clientX };
+    setActiveIndex(0);
+    setCurrentOpen(true);
+  };
 
-  const handleContextMenu = useCallback(
-    (event: ReactMouseEvent) => {
+  const handleContextMenu = (event: ReactMouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openAt(event.clientX, event.clientY);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (disabled) {
+      return;
+    }
+
+    const isContextMenuKey = event.key === "ContextMenu";
+    const isShiftF10 = event.key === "F10" && event.shiftKey;
+
+    if (isContextMenuKey || isShiftF10) {
       event.preventDefault();
-      event.stopPropagation();
-      openAt(event.clientX, event.clientY);
-    },
-    [openAt],
-  );
-
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (disabled) {
-        return;
+      const target = targetRef.current;
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        openAt(rect.left, rect.bottom);
       }
+    }
+  };
 
-      const isContextMenuKey = event.key === "ContextMenu";
-      const isShiftF10 = event.key === "F10" && event.shiftKey;
+  const handleMenuKeyDown = (event: KeyboardEvent) => {
+    if (enabledIds.length === 0) {
+      return;
+    }
 
-      if (isContextMenuKey || isShiftF10) {
+    let handled = true;
+
+    switch (event.key) {
+      case "ArrowDown": {
         event.preventDefault();
-        const target = targetRef.current;
-        if (target) {
-          const rect = target.getBoundingClientRect();
-          openAt(rect.left, rect.bottom);
-        }
+        const nextIndex = (safeActiveIndex + 1) % enabledIds.length;
+        focusItemByIndex(nextIndex);
+        break;
       }
-    },
-    [disabled, openAt],
-  );
-
-  const handleMenuKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (enabledIds.length === 0) {
-        return;
+      case "ArrowUp": {
+        event.preventDefault();
+        const prevIndex =
+          (safeActiveIndex - 1 + enabledIds.length) % enabledIds.length;
+        focusItemByIndex(prevIndex);
+        break;
       }
-
-      let handled = true;
-
-      switch (event.key) {
-        case "ArrowDown": {
-          event.preventDefault();
-          const nextIndex = (safeActiveIndex + 1) % enabledIds.length;
-          focusItemByIndex(nextIndex);
-          break;
-        }
-        case "ArrowUp": {
-          event.preventDefault();
-          const prevIndex =
-            (safeActiveIndex - 1 + enabledIds.length) % enabledIds.length;
-          focusItemByIndex(prevIndex);
-          break;
-        }
-        case "Home": {
-          event.preventDefault();
-          focusItemByIndex(0);
-          break;
-        }
-        case "End": {
-          event.preventDefault();
-          focusItemByIndex(enabledIds.length - 1);
-          break;
-        }
-        case "Enter":
-        case " ": {
-          event.preventDefault();
-          const activeId = enabledIds[safeActiveIndex];
-          if (activeId) {
-            activateItem(activeId);
-          }
-          break;
-        }
-        case "Tab": {
-          close();
-          break;
-        }
-        default:
-          handled = false;
+      case "Home": {
+        event.preventDefault();
+        focusItemByIndex(0);
+        break;
       }
-
-      if (handled) {
-        event.stopPropagation();
+      case "End": {
+        event.preventDefault();
+        focusItemByIndex(enabledIds.length - 1);
+        break;
       }
-    },
-    [enabledIds, safeActiveIndex, focusItemByIndex, activateItem, close],
-  );
+      case "Enter":
+      case " ": {
+        event.preventDefault();
+        const activeId = enabledIds[safeActiveIndex];
+        if (activeId) {
+          activateItem(activeId);
+        }
+        break;
+      }
+      case "Tab": {
+        close();
+        break;
+      }
+      default:
+        handled = false;
+    }
+
+    if (handled) {
+      event.stopPropagation();
+    }
+  };
 
   const targetProps = {
     "aria-expanded": !disabled ? currentOpen : undefined,
