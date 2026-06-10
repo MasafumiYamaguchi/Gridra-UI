@@ -23,6 +23,7 @@ import type {
   GridraDropdownMenuItem,
   GridraDropdownMenuSize,
 } from "../GridraDropdownMenu/GridraDropdownMenu";
+import { cx } from "../../internal/classNames";
 
 export type { GridraDropdownMenuItem };
 
@@ -194,12 +195,7 @@ export function GridraContextMenu({
         true,
       );
     };
-  }, [
-    closeOnEscape,
-    closeOnOutsidePointerDown,
-    currentOpen,
-    setCurrentOpen,
-  ]);
+  }, [closeOnEscape, closeOnOutsidePointerDown, currentOpen, setCurrentOpen]);
 
   useLayoutEffect(() => {
     if (!currentOpen) {
@@ -346,16 +342,14 @@ export function GridraContextMenu({
     ),
   };
 
-  const menuClassName = [
+  const menuClassName = cx(
     "gridra-portal-root",
     getGridraThemeClassName(targetRef.current),
     "gridra-context-menu",
     "gridra-dropdown-menu",
     `gridra-dropdown-menu--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   const menuStyle = useMemo(
     () =>
@@ -413,18 +407,13 @@ export function GridraContextMenu({
 
                 return (
                   <button
-                    className={[
+                    className={cx(
                       "gridra-dropdown-menu__item",
-                      item.disabled
-                        ? "gridra-dropdown-menu__item--disabled"
-                        : null,
-                      item.destructive
-                        ? "gridra-dropdown-menu__item--destructive"
-                        : null,
-                      isActive ? "gridra-dropdown-menu__item--active" : null,
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
+                      item.disabled && "gridra-dropdown-menu__item--disabled",
+                      item.destructive &&
+                        "gridra-dropdown-menu__item--destructive",
+                      isActive && "gridra-dropdown-menu__item--active",
+                    )}
                     disabled={item.disabled}
                     key={item.id}
                     onClick={() => activateItem(item.id)}
