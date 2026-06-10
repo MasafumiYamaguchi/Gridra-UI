@@ -1,7 +1,6 @@
 import {
   cloneElement,
   isValidElement,
-  useCallback,
   useEffect,
   useId,
   useMemo,
@@ -19,7 +18,6 @@ import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
-import { useDocumentEvent } from "../../internal/useDocumentEvent";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraDropdownMenuPlacement = "top" | "right" | "bottom" | "left";
@@ -41,8 +39,11 @@ export type GridraDropdownMenuItem =
   | GridraDropdownMenuCommandItem
   | GridraDropdownMenuSeparatorItem;
 
-export interface GridraDropdownMenuProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "onChange"> {
+// HTML属性とぶつかるので、onChangeとchildrenは除外する
+export interface GridraDropdownMenuProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "children" | "onChange"
+> {
   children: ReactElement<Record<string, unknown>>;
   items: GridraDropdownMenuItem[];
   onAction?: (id: string) => void;
@@ -65,6 +66,10 @@ function isCommand(
   item: GridraDropdownMenuItem,
 ): item is GridraDropdownMenuCommandItem {
   return !("type" in item) || item.type !== "separator";
+}
+
+function clampIndex(index: number, itemCount: number) {
+  return itemCount === 0 ? 0 : Math.max(0, Math.min(index, itemCount - 1));
 }
 
 export function GridraDropdownMenu({
@@ -90,7 +95,11 @@ export function GridraDropdownMenu({
   const triggerRef = useRef<HTMLElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
-  const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
+  const [currentOpen, setCurrentOpen] = useControllableValue(
+    open,
+    defaultOpen,
+    onOpenChange,
+  );
   const [activeIndex, setActiveIndex] = useState(0);
   const [portalMounted, setPortalMounted] = useState(false);
   const menuId = useId();
@@ -99,70 +108,55 @@ export function GridraDropdownMenu({
     setPortalMounted(true);
   }, []);
 
+  // 1. コマンドアイテムだけを抽出
   const commandItems = useMemo(() => items.filter(isCommand), [items]);
-
+  // 2. 有効なアイテムだけを抽出
   const enabledItems = useMemo(
     () => commandItems.filter((item) => !item.disabled),
     [commandItems],
   );
-
+  // 3. 有効なアイテムのIDだけを抽出
   const enabledIds = useMemo(
     () => enabledItems.map((item) => item.id),
     [enabledItems],
   );
 
-  const clampIndex = useCallback(
-    (index: number) => {
-      if (enabledIds.length === 0) {
-        return 0;
-      }
-      return Math.max(0, Math.min(index, enabledIds.length - 1));
-    },
-    [enabledIds.length],
-  );
+  const safeActiveIndex = clampIndex(activeIndex, enabledIds.length);
 
-  const safeActiveIndex = useMemo(
-    () => clampIndex(activeIndex),
-    [activeIndex, clampIndex],
-  );
-
-  const openMenu = useCallback(() => {
+  const openMenu = () => {
     if (disabled) {
       return;
     }
     setCurrentOpen(true);
     setActiveIndex(0);
-  }, [disabled, setCurrentOpen]);
+  };
 
-  const close = useCallback(() => {
+  const close = () => {
     setCurrentOpen(false);
     triggerRef.current?.focus();
-  }, [setCurrentOpen]);
+  };
 
-  const toggleOpen = useCallback(() => {
+  const toggleOpen = () => {
     if (currentOpen) {
       close();
     } else {
       openMenu();
     }
-  }, [currentOpen, close, openMenu]);
+  };
 
-  const activateItem = useCallback(
-    (id: string) => {
-      if (disabled) {
-        return;
-      }
-      const item = commandItems.find((c) => c.id === id);
-      if (!item || item.disabled) {
-        return;
-      }
-      onAction?.(id);
-      if (closeOnAction) {
-        close();
-      }
-    },
-    [disabled, commandItems, onAction, closeOnAction, close],
-  );
+  const activateItem = (id: string) => {
+    if (disabled) {
+      return;
+    }
+    const item = commandItems.find((c) => c.id === id);
+    if (!item || item.disabled) {
+      return;
+    }
+    onAction?.(id);
+    if (closeOnAction) {
+      close();
+    }
+  };
 
   const { coords, resolvedPlacement } = useFloatingPosition({
     alignment: "start",
@@ -180,47 +174,43 @@ export function GridraDropdownMenu({
       return;
     }
 
-    requestAnimationFrame(() => {
-      if (enabledIds.length === 0) {
-        return;
-      }
-      const firstId = enabledIds[0];
-      const el = itemRefs.current.get(firstId);
-      el?.focus();
-    });
+    if (enabledIds.length === 0) {
+      return;
+    }
+    const firstId = enabledIds[0];
+    const el = itemRefs.current.get(firstId);
+    el?.focus();
 
     return () => {
       itemRefs.current.clear();
     };
   }, [currentOpen, enabledIds]);
 
-  const focusItemByIndex = useCallback(
-    (index: number) => {
-      if (enabledIds.length === 0) {
-        return;
-      }
-      const clamped = clampIndex(index);
-      setActiveIndex(clamped);
-      const id = enabledIds[clamped];
-      const el = itemRefs.current.get(id);
-      el?.focus();
-    },
-    [enabledIds, clampIndex],
-  );
+  const focusItemByIndex = (index: number) => {
+    if (enabledIds.length === 0) {
+      return;
+    }
+    const clamped = clampIndex(index, enabledIds.length);
+    setActiveIndex(clamped);
+    const id = enabledIds[clamped];
+    const el = itemRefs.current.get(id);
+    el?.focus();
+  };
 
-  const handleEscape = useCallback(
-    (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape" && closeOnEscape && currentOpen) {
+  useEffect(() => {
+    if (!currentOpen) {
+      return;
+    }
+
+    const handleEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape" && closeOnEscape) {
         event.preventDefault();
         close();
       }
-    },
-    [closeOnEscape, currentOpen, close],
-  );
+    };
 
-  const handleOutsidePointerDown = useCallback(
-    (event: PointerEvent) => {
-      if (!closeOnOutsidePointerDown || !currentOpen) {
+    const handleOutsidePointerDown = (event: PointerEvent) => {
+      if (!closeOnOutsidePointerDown) {
         return;
       }
       const target = event.target as Node | null;
@@ -231,99 +221,100 @@ export function GridraDropdownMenu({
       ) {
         close();
       }
-    },
-    [closeOnOutsidePointerDown, currentOpen, close],
-  );
+    };
 
-  useDocumentEvent("keydown", handleEscape, currentOpen);
-  useDocumentEvent("pointerdown", handleOutsidePointerDown, currentOpen, true);
+    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("pointerdown", handleOutsidePointerDown, true);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener(
+        "pointerdown",
+        handleOutsidePointerDown,
+        true,
+      );
+    };
+  }, [closeOnEscape, closeOnOutsidePointerDown, currentOpen, setCurrentOpen]);
 
-  const handleMenuKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (enabledIds.length === 0) {
-        return;
+  const handleMenuKeyDown = (event: KeyboardEvent) => {
+    if (enabledIds.length === 0) {
+      return;
+    }
+
+    let handled = true;
+
+    switch (event.key) {
+      case "ArrowDown": {
+        event.preventDefault();
+        const nextIndex = (safeActiveIndex + 1) % enabledIds.length;
+        focusItemByIndex(nextIndex);
+        break;
       }
-
-      let handled = true;
-
-      switch (event.key) {
-        case "ArrowDown": {
-          event.preventDefault();
-          const nextIndex = (safeActiveIndex + 1) % enabledIds.length;
-          focusItemByIndex(nextIndex);
-          break;
-        }
-        case "ArrowUp": {
-          event.preventDefault();
-          const prevIndex =
-            (safeActiveIndex - 1 + enabledIds.length) % enabledIds.length;
-          focusItemByIndex(prevIndex);
-          break;
-        }
-        case "Home": {
-          event.preventDefault();
-          focusItemByIndex(0);
-          break;
-        }
-        case "End": {
-          event.preventDefault();
-          focusItemByIndex(enabledIds.length - 1);
-          break;
-        }
-        case "Enter":
-        case " ": {
-          event.preventDefault();
-          const activeId = enabledIds[safeActiveIndex];
-          if (activeId) {
-            activateItem(activeId);
-          }
-          break;
-        }
-        case "Tab": {
-          close();
-          break;
-        }
-        default:
-          handled = false;
+      case "ArrowUp": {
+        event.preventDefault();
+        const prevIndex =
+          (safeActiveIndex - 1 + enabledIds.length) % enabledIds.length;
+        focusItemByIndex(prevIndex);
+        break;
       }
-
-      if (handled) {
-        event.stopPropagation();
+      case "Home": {
+        event.preventDefault();
+        focusItemByIndex(0);
+        break;
       }
-    },
-    [enabledIds, safeActiveIndex, focusItemByIndex, activateItem, close],
-  );
-
-  const handleTriggerKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (disabled) {
-        return;
+      case "End": {
+        event.preventDefault();
+        focusItemByIndex(enabledIds.length - 1);
+        break;
       }
-
-      switch (event.key) {
-        case "ArrowDown":
-        case "Enter":
-        case " ": {
-          event.preventDefault();
-          if (!currentOpen) {
-            openMenu();
-          }
-          break;
+      case "Enter":
+      case " ": {
+        event.preventDefault();
+        const activeId = enabledIds[safeActiveIndex];
+        if (activeId) {
+          activateItem(activeId);
         }
-        case "ArrowUp": {
-          event.preventDefault();
-          if (!currentOpen) {
-            openMenu();
-            setActiveIndex(enabledIds.length > 0 ? enabledIds.length - 1 : 0);
-          }
-          break;
-        }
-        default:
-          break;
+        break;
       }
-    },
-    [disabled, currentOpen, openMenu, enabledIds.length],
-  );
+      case "Tab": {
+        close();
+        break;
+      }
+      default:
+        handled = false;
+    }
+
+    if (handled) {
+      event.stopPropagation();
+    }
+  };
+
+  const handleTriggerKeyDown = (event: KeyboardEvent) => {
+    if (disabled) {
+      return;
+    }
+
+    switch (event.key) {
+      case "ArrowDown":
+      case "Enter":
+      case " ": {
+        event.preventDefault();
+        if (!currentOpen) {
+          openMenu();
+        }
+        break;
+      }
+      case "ArrowUp": {
+        event.preventDefault();
+        if (!currentOpen) {
+          openMenu();
+          setActiveIndex(enabledIds.length > 0 ? enabledIds.length - 1 : 0);
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  };
 
   const triggerProps = {
     "aria-controls": !disabled && currentOpen ? menuId : undefined,
@@ -458,4 +449,3 @@ export function GridraDropdownMenu({
     </>
   );
 }
-

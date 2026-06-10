@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraDividerOrientation = "horizontal" | "vertical";
 export type GridraDividerSpacing = "none" | "sm" | "md" | "lg";
@@ -19,16 +20,14 @@ export function GridraDivider({
   tone = "default",
   ...props
 }: GridraDividerProps) {
-  const dividerClassName = [
+  const dividerClassName = cx(
     "gridra-divider",
     `gridra-divider--${orientation}`,
     `gridra-divider--${spacing}`,
     `gridra-divider--${tone}`,
     inset ? "gridra-divider--inset" : null,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
+    className,
+  );
 
   return (
     <hr

@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraDragHandlePosition =
   | "top-left"
@@ -18,16 +19,18 @@ export function GridraDragHandle({
   position = "top-left",
   ...props
 }: GridraDragHandleProps) {
-  const handleClassName = [
+  const handleClassName = cx(
     "gridra-drag-handle",
     `gridra-drag-handle--${position}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
-    <span aria-hidden={children ? undefined : true} className={handleClassName} {...props}>
+    <span
+      aria-hidden={children ? undefined : true}
+      className={handleClassName}
+      {...props}
+    >
       {children ?? <span className="gridra-drag-handle__grip" />}
     </span>
   );
