@@ -1,5 +1,4 @@
 import {
-  useCallback,
   useId,
   useMemo,
   useRef,
@@ -134,83 +133,71 @@ export function GridraAccordion({
   const openSet = useMemo(() => new Set(resolvedValue), [resolvedValue]);
 
   // 単一選択モードのトグル関数
-  const toggleSingle = useCallback(
-    (id: string) => {
-      if (openSet.has(id)) {
-        if (collapsible) {
-          setRawValue("");  // idが存在していて、かつcollapsibleがtrueの場合は空文字をセットして全て閉じる
-        }
-      } else {
-        setRawValue(id);  // idが存在していない場合はそのIDをセットして開く。単一選択モードなので、他のIDは自動的に閉じる
+  const toggleSingle = (id: string) => {
+    if (openSet.has(id)) {
+      if (collapsible) {
+        setRawValue("");  // idが存在していて、かつcollapsibleがtrueの場合は空文字をセットして全て閉じる
       }
-    },
-    [openSet, collapsible, setRawValue],
-  );
+    } else {
+      setRawValue(id);  // idが存在していない場合はそのIDをセットして開く。単一選択モードなので、他のIDは自動的に閉じる
+    }
+  };
 
   // 複数選択モードのトグル関数
-  const toggleMultiple = useCallback(
-    (id: string) => {
-      if (openSet.has(id)) {
-        setRawValue(resolvedValue.filter((v) => v !== id)); // idが存在している場合は、そのIDを除外した配列をセットして閉じる
-      } else {
-        setRawValue([...resolvedValue, id]);  // idが存在していない場合は、そのIDを追加した配列をセットして開く。複数選択モードなので、他のIDはそのまま維持される
-      }
-    },
-    [openSet, resolvedValue, setRawValue],
-  );
+  const toggleMultiple = (id: string) => {
+    if (openSet.has(id)) {
+      setRawValue(resolvedValue.filter((v) => v !== id)); // idが存在している場合は、そのIDを除外した配列をセットして閉じる
+    } else {
+      setRawValue([...resolvedValue, id]);  // idが存在していない場合は、そのIDを追加した配列をセットして開く。複数選択モードなので、他のIDはそのまま維持される
+    }
+  };
 
   // トグル関数
-  const handleToggle = useCallback(
-    (id: string) => {
-      if (type === "single") {
-        toggleSingle(id);
-      } else {
-        toggleMultiple(id);
-      }
-    },
-    [type, toggleSingle, toggleMultiple],
-  );
+  const handleToggle = (id: string) => {
+    if (type === "single") {
+      toggleSingle(id);
+    } else {
+      toggleMultiple(id);
+    }
+  };
 
   // キーボード移動はenabledIdsだけを対象にし、disabled itemと重複idの後続itemを飛ばす。
-  const handleHeaderKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      const current = event.currentTarget as HTMLButtonElement;
-      const currentIndex = enabledIds.indexOf(current.getAttribute("data-accordion-id") ?? "");
+  const handleHeaderKeyDown = (event: KeyboardEvent) => {
+    const current = event.currentTarget as HTMLButtonElement;
+    const currentIndex = enabledIds.indexOf(current.getAttribute("data-accordion-id") ?? "");
 
-      let nextIndex = -1;
-      let handled = false;
+    let nextIndex = -1;
+    let handled = false;
 
-      switch (event.key) {
-        case "ArrowDown":
-          event.preventDefault();
-          nextIndex = currentIndex + 1;
-          handled = true;
-          break;
-        case "ArrowUp":
-          event.preventDefault();
-          nextIndex = currentIndex - 1;
-          handled = true;
-          break;
-        case "Home":
-          event.preventDefault();
-          nextIndex = 0;
-          handled = true;
-          break;
-        case "End":
-          event.preventDefault();
-          nextIndex = enabledIds.length - 1;
-          handled = true;
-          break;
-      }
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        nextIndex = currentIndex + 1;
+        handled = true;
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        nextIndex = currentIndex - 1;
+        handled = true;
+        break;
+      case "Home":
+        event.preventDefault();
+        nextIndex = 0;
+        handled = true;
+        break;
+      case "End":
+        event.preventDefault();
+        nextIndex = enabledIds.length - 1;
+        handled = true;
+        break;
+    }
 
-      // nextIndexが有効な範囲内であれば、対応するヘッダーボタンにフォーカスを移動する
-      if (handled && nextIndex >= 0 && nextIndex < enabledIds.length) {
-        const nextId = enabledIds[nextIndex];
-        headerRefs.current.get(nextId)?.focus();
-      }
-    },
-    [enabledIds],
-  );
+    // nextIndexが有効な範囲内であれば、対応するヘッダーボタンにフォーカスを移動する
+    if (handled && nextIndex >= 0 && nextIndex < enabledIds.length) {
+      const nextId = enabledIds[nextIndex];
+      headerRefs.current.get(nextId)?.focus();
+    }
+  };
 
   // アイテムが空の場合は、基本的なクラス名だけを持つ空のコンテナを返す
   if (items.length === 0) {

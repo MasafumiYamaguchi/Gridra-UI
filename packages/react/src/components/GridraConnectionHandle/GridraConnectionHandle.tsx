@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraConnectionHandlePosition =
   | "top"
@@ -9,8 +10,7 @@ export type GridraConnectionHandlePosition =
 
 export type GridraConnectionHandleKind = "input" | "output";
 
-export interface GridraConnectionHandleProps
-  extends HTMLAttributes<HTMLSpanElement> {
+export interface GridraConnectionHandleProps extends HTMLAttributes<HTMLSpanElement> {
   active?: boolean;
   children?: ReactNode;
   kind?: GridraConnectionHandleKind;
@@ -25,15 +25,13 @@ export function GridraConnectionHandle({
   position = "right",
   ...props
 }: GridraConnectionHandleProps) {
-  const handleClassName = [
+  const handleClassName = cx(
     "gridra-connection-handle",
     `gridra-connection-handle--${kind}`,
     `gridra-connection-handle--${position}`,
     active ? "gridra-connection-handle--active" : null,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <span

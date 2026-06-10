@@ -6,14 +6,18 @@ import {
   type ReactElement,
   type ReactNode,
   useCallback,
+  useEffect,
   useId,
   useMemo,
   useRef,
+  useState,
 } from "react";
+import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
+import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 import { useDocumentEvent } from "../../internal/useDocumentEvent";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
@@ -57,7 +61,13 @@ export function GridraPopover({
   const anchorRef = useRef<HTMLElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
+  const [portalMounted, setPortalMounted] = useState(false);
   const popoverId = useId();
+
+  useEffect(() => {
+    setPortalMounted(true);
+  }, []);
+
   const { coords, resolvedPlacement } = useFloatingPosition({
     anchorRef,
     disabled,
@@ -122,6 +132,8 @@ export function GridraPopover({
   };
 
   const popoverClassName = cx(
+    "gridra-root",
+    getGridraThemeClassName(anchorRef.current),
     "gridra-popover",
     `gridra-popover--${resolvedPlacement}`,
     `gridra-popover--${size}`,
@@ -143,6 +155,7 @@ export function GridraPopover({
       }) as CSSProperties,
     [coords.left, coords.top, maxWidth, style],
   );
+  const portalTarget = getPortalTarget();
 
   if (!isValidElement(children)) {
     return null;
@@ -151,17 +164,20 @@ export function GridraPopover({
   return (
     <>
       {cloneElement(children, anchorProps)}
-      {currentOpen && !disabled ? (
-        <div
-          {...props}
-          className={popoverClassName}
-          id={popoverId}
-          ref={popoverRef}
-          style={popoverStyle}
-        >
-          {content}
-        </div>
-      ) : null}
+      {currentOpen && !disabled && portalMounted && portalTarget
+        ? createPortal(
+            <div
+              {...props}
+              className={popoverClassName}
+              id={popoverId}
+              ref={popoverRef}
+              style={popoverStyle}
+            >
+              {content}
+            </div>,
+            portalTarget,
+          )
+        : null}
     </>
   );
 }

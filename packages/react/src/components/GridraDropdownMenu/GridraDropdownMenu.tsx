@@ -13,10 +13,12 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
+import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 import { useDocumentEvent } from "../../internal/useDocumentEvent";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
@@ -90,7 +92,12 @@ export function GridraDropdownMenu({
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
   const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [portalMounted, setPortalMounted] = useState(false);
   const menuId = useId();
+
+  useEffect(() => {
+    setPortalMounted(true);
+  }, []);
 
   const commandItems = useMemo(() => items.filter(isCommand), [items]);
 
@@ -341,6 +348,8 @@ export function GridraDropdownMenu({
   };
 
   const menuClassName = cx(
+    "gridra-root",
+    getGridraThemeClassName(triggerRef.current),
     "gridra-dropdown-menu",
     `gridra-dropdown-menu--${resolvedPlacement}`,
     `gridra-dropdown-menu--${size}`,
@@ -368,6 +377,7 @@ export function GridraDropdownMenu({
       }) as CSSProperties,
     [coords.top, coords.left, minWidth, maxWidth, style],
   );
+  const portalTarget = getPortalTarget();
 
   if (!isValidElement(children)) {
     return null;
@@ -376,72 +386,75 @@ export function GridraDropdownMenu({
   return (
     <>
       {cloneElement(triggerElement, triggerProps)}
-      {currentOpen && !disabled ? (
-        <div
-          {...props}
-          className={menuClassName}
-          id={menuId}
-          onKeyDown={handleMenuKeyDown}
-          ref={menuRef}
-          role="menu"
-          style={menuStyle}
-        >
-          {items.map((item, index) => {
-            if (!isCommand(item)) {
-              return (
-                <div
-                  className="gridra-dropdown-menu__separator"
-                  key={item.id ?? `sep-${index}`}
-                  role="separator"
-                />
-              );
-            }
+      {currentOpen && !disabled && portalMounted && portalTarget
+        ? createPortal(
+            <div
+              {...props}
+              className={menuClassName}
+              id={menuId}
+              onKeyDown={handleMenuKeyDown}
+              ref={menuRef}
+              role="menu"
+              style={menuStyle}
+            >
+              {items.map((item, index) => {
+                if (!isCommand(item)) {
+                  return (
+                    <div
+                      className="gridra-dropdown-menu__separator"
+                      key={item.id ?? `sep-${index}`}
+                      role="separator"
+                    />
+                  );
+                }
 
-            const isActive = enabledIds[safeActiveIndex] === item.id;
+                const isActive = enabledIds[safeActiveIndex] === item.id;
 
-            return (
-              <button
-                className={cx(
-                  "gridra-dropdown-menu__item",
-                  item.disabled
-                    ? "gridra-dropdown-menu__item--disabled"
-                    : null,
-                  item.destructive
-                    ? "gridra-dropdown-menu__item--destructive"
-                    : null,
-                  isActive ? "gridra-dropdown-menu__item--active" : null,
-                )}
-                disabled={item.disabled}
-                id={item.id}
-                key={item.id}
-                onClick={() => activateItem(item.id)}
-                onMouseEnter={() => {
-                  if (!item.disabled) {
-                    const idx = enabledIds.indexOf(item.id);
-                    if (idx !== -1) {
-                      setActiveIndex(idx);
-                    }
-                  }
-                }}
-                ref={(el) => {
-                  if (el) {
-                    itemRefs.current.set(item.id, el);
-                  } else {
-                    itemRefs.current.delete(item.id);
-                  }
-                }}
-                role="menuitem"
-                tabIndex={isActive ? 0 : -1}
-                type="button"
-              >
-                <span className="gridra-dropdown-menu__item-label">
-                  {item.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
+                return (
+                  <button
+                    className={cx(
+                      "gridra-dropdown-menu__item",
+                      item.disabled
+                        ? "gridra-dropdown-menu__item--disabled"
+                        : null,
+                      item.destructive
+                        ? "gridra-dropdown-menu__item--destructive"
+                        : null,
+                      isActive ? "gridra-dropdown-menu__item--active" : null,
+                    )}
+                    disabled={item.disabled}
+                    id={item.id}
+                    key={item.id}
+                    onClick={() => activateItem(item.id)}
+                    onMouseEnter={() => {
+                      if (!item.disabled) {
+                        const idx = enabledIds.indexOf(item.id);
+                        if (idx !== -1) {
+                          setActiveIndex(idx);
+                        }
+                      }
+                    }}
+                    ref={(el) => {
+                      if (el) {
+                        itemRefs.current.set(item.id, el);
+                      } else {
+                        itemRefs.current.delete(item.id);
+                      }
+                    }}
+                    role="menuitem"
+                    tabIndex={isActive ? 0 : -1}
+                    type="button"
+                  >
+                    <span className="gridra-dropdown-menu__item-label">
+                      {item.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>,
+            portalTarget,
+          )
+        : null}
     </>
   );
 }

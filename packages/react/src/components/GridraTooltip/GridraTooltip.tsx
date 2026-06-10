@@ -9,11 +9,14 @@ import {
   useId,
   useMemo,
   useRef,
+  useState,
 } from "react";
+import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
+import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraTooltipPlacement = "top" | "right" | "bottom" | "left";
@@ -56,9 +59,11 @@ export function GridraTooltip({
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const openTimerRef = useRef<number | null>(null);
   const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
+  const [portalMounted, setPortalMounted] = useState(false);
   const tooltipId = useId();
 
   useEffect(() => {
+    setPortalMounted(true);
     return () => {
       if (openTimerRef.current !== null) {
         window.clearTimeout(openTimerRef.current);
@@ -109,6 +114,8 @@ export function GridraTooltip({
   };
 
   const tooltipClassName = cx(
+    "gridra-root",
+    getGridraThemeClassName(anchorRef.current),
     "gridra-tooltip",
     `gridra-tooltip--${resolvedPlacement}`,
     `gridra-tooltip--${size}`,
@@ -130,6 +137,7 @@ export function GridraTooltip({
       }) as CSSProperties,
     [coords.left, coords.top, maxWidth, style],
   );
+  const portalTarget = getPortalTarget();
 
   if (!isValidElement(children)) {
     return null;
@@ -138,18 +146,21 @@ export function GridraTooltip({
   return (
     <>
       {cloneElement(children, anchorProps)}
-      {currentOpen && !disabled ? (
-        <div
-          {...props}
-          className={tooltipClassName}
-          id={tooltipId}
-          ref={tooltipRef}
-          role="tooltip"
-          style={tooltipStyle}
-        >
-          {content}
-        </div>
-      ) : null}
+      {currentOpen && !disabled && portalMounted && portalTarget
+        ? createPortal(
+            <div
+              {...props}
+              className={tooltipClassName}
+              id={tooltipId}
+              ref={tooltipRef}
+              role="tooltip"
+              style={tooltipStyle}
+            >
+              {content}
+            </div>,
+            portalTarget,
+          )
+        : null}
     </>
   );
 }

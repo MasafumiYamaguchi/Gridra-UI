@@ -226,9 +226,11 @@ Track option complexity as a design risk before adding more option-heavy compone
 
 Keep interaction extraction small enough that component-specific accessibility behavior stays readable.
 
-1. [ ] ID-based navigation resolver: extract only the shared item-switching decision for command-like components. The helper should accept enabled item ids, the current id or index, the requested key/action, and a boundary mode such as clamp or wrap, then return the next id/index plus whether the key was handled.
-2. [ ] Leave DOM effects local: keep `preventDefault`, `stopPropagation`, actual focus calls, action dispatch, Escape handling, Tab trapping, and overlay close behavior inside each component until repeated behavior is proven identical.
-3. [ ] Cover the resolver with pure tests first: include empty lists, single item, first/last boundaries, disabled items already filtered out, clamp behavior for `GridraCommandPalette`, and wrap behavior for menu-style components.
+1. [ ] Shared item helpers first: before extracting keyboard behavior, add small internal helpers for repeated command-item derivation such as filtering command items, filtering enabled items, mapping enabled ids, and resolving a bounded active index. Keep these helpers pure and data-only so `GridraDropdownMenu`, `GridraContextMenu`, and `GridraCommandPalette` can share the same item preparation rules without sharing DOM or focus behavior.
+2. [ ] Shared boundary helpers: centralize simple index boundary logic such as clamp and wrap in internal pure functions. Use clamp where the component should stay at the nearest valid item, and wrap where menu-style arrow navigation should cycle from end to start.
+3. [ ] ID-based navigation resolver: extract only the shared item-switching decision for command-like components. The helper should accept enabled item ids, the current id or index, the requested key/action, and a boundary mode such as clamp or wrap, then return the next id/index plus whether the key was handled.
+4. [ ] Leave DOM effects local: keep `preventDefault`, `stopPropagation`, actual focus calls, action dispatch, Escape handling, Tab trapping, and overlay close behavior inside each component until repeated behavior is proven identical.
+5. [ ] Cover the helpers and resolver with pure tests first: include empty lists, single item, first/last boundaries, disabled items already filtered out, enabled-id derivation, clamp behavior for `GridraCommandPalette`, and wrap behavior for menu-style components.
 
 ## Suggested Implementation Order
 

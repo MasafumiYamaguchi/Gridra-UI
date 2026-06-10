@@ -10,11 +10,14 @@ import {
   useId,
   useMemo,
   useRef,
+  useState,
 } from "react";
+import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
+import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 import { useDocumentEvent } from "../../internal/useDocumentEvent";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
@@ -74,6 +77,7 @@ export function GridraHoverCard({
   const showTimerRef = useRef<number | null>(null);
   const hideTimerRef = useRef<number | null>(null);
   const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
+  const [portalMounted, setPortalMounted] = useState(false);
   const cardId = useId();
 
   const clearTimers = useCallback(() => {
@@ -88,6 +92,7 @@ export function GridraHoverCard({
   }, []);
 
   useEffect(() => {
+    setPortalMounted(true);
     return clearTimers;
   }, [clearTimers]);
 
@@ -172,6 +177,8 @@ export function GridraHoverCard({
   };
 
   const cardClassName = cx(
+    "gridra-root",
+    getGridraThemeClassName(anchorRef.current),
     "gridra-hover-card",
     `gridra-hover-card--${resolvedPlacement}`,
     `gridra-hover-card--${size}`,
@@ -203,6 +210,7 @@ export function GridraHoverCard({
       width,
     ],
   );
+  const portalTarget = getPortalTarget();
 
   if (!isValidElement(children)) {
     return null;
@@ -211,19 +219,22 @@ export function GridraHoverCard({
   return (
     <>
       {cloneElement(children, anchorProps)}
-      {currentOpen && !disabled ? (
-        <div
-          {...props}
-          className={cardClassName}
-          id={cardId}
-          onMouseEnter={cancelHide}
-          onMouseLeave={startHide}
-          ref={cardRef}
-          style={cardStyle}
-        >
-          {content}
-        </div>
-      ) : null}
+      {currentOpen && !disabled && portalMounted && portalTarget
+        ? createPortal(
+            <div
+              {...props}
+              className={cardClassName}
+              id={cardId}
+              onMouseEnter={cancelHide}
+              onMouseLeave={startHide}
+              ref={cardRef}
+              style={cardStyle}
+            >
+              {content}
+            </div>,
+            portalTarget,
+          )
+        : null}
     </>
   );
 }

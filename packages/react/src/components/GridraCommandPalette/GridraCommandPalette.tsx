@@ -1,5 +1,4 @@
 import {
-  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -97,6 +96,10 @@ function getPlainSearchText(value: ReactNode): string {
   return "";
 }
 
+function clampIndex(index: number, itemCount: number) {
+  return itemCount === 0 ? 0 : Math.max(0, Math.min(index, itemCount - 1));
+}
+
 export function GridraCommandPalette({
   className,
   closeOnAction = true,
@@ -169,57 +172,38 @@ export function GridraCommandPalette({
     [enabledFiltered],
   );
 
-  const clampIndex = useCallback(
-    (index: number) => {
-      if (enabledIds.length === 0) {
-        return 0;
-      }
-      return Math.max(0, Math.min(index, enabledIds.length - 1));
-    },
-    [enabledIds.length],
-  );
-
-  const safeActiveIndex = useMemo(
-    () => clampIndex(activeIndex),
-    [activeIndex, clampIndex],
-  );
+  const safeActiveIndex = clampIndex(activeIndex, enabledIds.length);
 
   // isQueryControlledがtrueの場合は、クエリは外部で管理されているため、コマンドパレット内部でクエリをリセットしないようにする
-  const close = useCallback(() => {
+  const close = () => {
     setCurrentOpen(false);
     if (!isQueryControlled) {
       setCurrentQuery("");
     }
-  }, [isQueryControlled, setCurrentOpen, setCurrentQuery]);
+  };
 
   // 押したアイテムを有効なコマンドとして処理するための関数
-  const activateItem = useCallback(
-    (id: string) => {
-      const item = commandItems.find((c) => c.id === id);
-      if (!item || item.disabled) {
-        return;
-      }
-      onAction?.(id);
-      if (closeOnAction) {
-        close();
-      }
-    },
-    [commandItems, onAction, closeOnAction, close],
-  );
+  const activateItem = (id: string) => {
+    const item = commandItems.find((c) => c.id === id);
+    if (!item || item.disabled) {
+      return;
+    }
+    onAction?.(id);
+    if (closeOnAction) {
+      close();
+    }
+  };
 
-  const focusItemByIndex = useCallback(
-    (index: number) => {
-      if (enabledIds.length === 0) {
-        return;
-      }
-      const clamped = clampIndex(index);
-      setActiveIndex(clamped);
-      const id = enabledIds[clamped];
-      const el = itemRefs.current.get(id);
-      el?.focus();
-    },
-    [enabledIds, clampIndex],
-  );
+  const focusItemByIndex = (index: number) => {
+    if (enabledIds.length === 0) {
+      return;
+    }
+    const clamped = clampIndex(index, enabledIds.length);
+    setActiveIndex(clamped);
+    const id = enabledIds[clamped];
+    const el = itemRefs.current.get(id);
+    el?.focus();
+  };
 
   useEffect(() => {
     if (!currentOpen) {
@@ -229,9 +213,7 @@ export function GridraCommandPalette({
     previousFocusRef.current = document.activeElement as HTMLElement | null;
     setActiveIndex(0);
 
-    requestAnimationFrame(() => {
-      inputRef.current?.focus();
-    });
+    inputRef.current?.focus();
 
     // コマンドパレットが閉じられたときに、前回フォーカスされていた要素にフォーカスを戻す
     return () => {
@@ -256,130 +238,121 @@ export function GridraCommandPalette({
     setPortalThemeClassName(getGridraThemeClassName());
   }, [currentOpen]);
 
-  // useCallbackで毎回関数を作らないようにする！（n回目)
-  // 毎回関数作るとuseEffectが走るかもしれない
-  const handleEscape = useCallback(
-    (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape" && closeOnEscape && currentOpen) {
-        event.preventDefault();
-        close();
-      }
-    },
-    [closeOnEscape, currentOpen, close],
-  );
-
-  const handleBackdropPointerDown = useCallback(
-    (event: React.PointerEvent) => {
-      // もともとの要素(target)とモーダル(currentTarget)を比較している
-      if (event.target === event.currentTarget) {
-        close();
-      }
-    },
-    [close],
-  );
+  const handleBackdropPointerDown = (event: React.PointerEvent) => {
+    // もともとの要素(target)とモーダル(currentTarget)を比較している
+    if (event.target === event.currentTarget) {
+      close();
+    }
+  };
 
   useEffect(() => {
     if (!currentOpen) {
       return;
     }
-    // useEffectで実行からのhandleEffectで関数を作ると、参照が変わるときに毎回イベントリスナーが追加されてしまうため、useCallbackで関数をメモ化する
+    const handleEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape" && closeOnEscape) {
+        event.preventDefault();
+        close();
+      }
+    };
+
     document.addEventListener("keydown", handleEscape);
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [currentOpen, handleEscape]);
+  }, [
+    closeOnEscape,
+    currentOpen,
+    isQueryControlled,
+    setCurrentOpen,
+    setCurrentQuery,
+  ]);
 
-  const handleSearchChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setCurrentQuery(event.target.value);
-    },
-    [setCurrentQuery],
-  );
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setCurrentQuery(event.target.value);
+  };
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Tab") {
-        const dialog = dialogRef.current;
-        if (!dialog) {
-          return;
-        }
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Tab") {
+      const dialog = dialogRef.current;
+      if (!dialog) {
+        return;
+      }
 
-        const focusable =
-          dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
-        if (focusable.length === 0) {
-          event.preventDefault();
-          event.stopPropagation();
-          return;
-        }
+      const focusable =
+        dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      if (focusable.length === 0) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
 
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
 
-        if (event.shiftKey) {
-          if (
-            document.activeElement === first ||
-            !dialog.contains(document.activeElement)
-          ) {
-            event.preventDefault();
-            last.focus();
-          }
-        } else if (
-          document.activeElement === last ||
+      if (event.shiftKey) {
+        if (
+          document.activeElement === first ||
           !dialog.contains(document.activeElement)
         ) {
           event.preventDefault();
-          first.focus();
+          last.focus();
         }
-
-        event.stopPropagation();
-        return;
+      } else if (
+        document.activeElement === last ||
+        !dialog.contains(document.activeElement)
+      ) {
+        event.preventDefault();
+        first.focus();
       }
 
-      if (enabledIds.length === 0) {
-        return;
-      }
+      event.stopPropagation();
+      return;
+    }
 
-      let handled = true;
+    if (enabledIds.length === 0) {
+      return;
+    }
 
-      switch (event.key) {
-        case "ArrowDown": {
-          event.preventDefault();
-          focusItemByIndex(safeActiveIndex + 1);
-          break;
-        }
-        case "ArrowUp": {
-          event.preventDefault();
-          focusItemByIndex(safeActiveIndex - 1);
-          break;
-        }
-        case "Home": {
-          event.preventDefault();
-          focusItemByIndex(0);
-          break;
-        }
-        case "End": {
-          event.preventDefault();
-          focusItemByIndex(enabledIds.length - 1);
-          break;
-        }
-        case "Enter": {
-          event.preventDefault();
-          const activeId = enabledIds[safeActiveIndex];
-          if (activeId) {
-            activateItem(activeId);
-          }
-          break;
-        }
-        default:
-          handled = false;
-      }
+    let handled = true;
 
-      if (handled) {
-        event.stopPropagation();
+    switch (event.key) {
+      case "ArrowDown": {
+        event.preventDefault();
+        focusItemByIndex(safeActiveIndex + 1);
+        break;
       }
-    },
-    [enabledIds, safeActiveIndex, focusItemByIndex, activateItem],
-  );
+      case "ArrowUp": {
+        event.preventDefault();
+        focusItemByIndex(safeActiveIndex - 1);
+        break;
+      }
+      case "Home": {
+        event.preventDefault();
+        focusItemByIndex(0);
+        break;
+      }
+      case "End": {
+        event.preventDefault();
+        focusItemByIndex(enabledIds.length - 1);
+        break;
+      }
+      case "Enter": {
+        event.preventDefault();
+        const activeId = enabledIds[safeActiveIndex];
+        if (activeId) {
+          activateItem(activeId);
+        }
+        break;
+      }
+      default:
+        handled = false;
+    }
+
+    if (handled) {
+      event.stopPropagation();
+    }
+  };
 
   const dialogClassName = cx(
     "gridra-command-palette",
