@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraDescriptionListDensity = "compact" | "normal";
 
@@ -20,19 +21,20 @@ export function GridraDescriptionList({
   items,
   ...props
 }: GridraDescriptionListProps) {
-  const rootClassName = [
+  const rootClassName = cx(
     "gridra-description-list",
     `gridra-description-list--${density}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <dl className={rootClassName} {...props}>
       {items
         ? items.map((item, index) => (
-            <div className="gridra-description-list__item" key={item.key ?? index}>
+            <div
+              className="gridra-description-list__item"
+              key={item.key ?? index}
+            >
               <dt className="gridra-description-list__term">{item.term}</dt>
               <dd className="gridra-description-list__description">
                 {item.description}

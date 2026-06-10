@@ -1,7 +1,6 @@
 import {
   cloneElement,
   isValidElement,
-  useCallback,
   useEffect,
   useId,
   useRef,
@@ -17,11 +16,15 @@ import { useControllableValue } from "../../hooks/useControllableValue";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
+import { cx } from "../../internal/classNames";
 
 export type GridraDialogSize = "sm" | "md" | "lg" | "fullscreen";
 
-export interface GridraDialogProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "content" | "title" | "children" | "onChange"> {
+// HTML属性とぶつかるので、content、title、childrenとonChangeは除外する
+export interface GridraDialogProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "content" | "title" | "children" | "onChange"
+> {
   children?: ReactElement<Record<string, unknown>>;
   title: ReactNode;
   description?: ReactNode;
@@ -37,6 +40,7 @@ export interface GridraDialogProps
   initialFocusRef?: RefObject<HTMLElement | null>;
 }
 
+// Focus trap用: Tabキーで移動できる要素を取得するためのセレクタ
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -62,7 +66,11 @@ export function GridraDialog({
   const triggerRef = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
-  const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
+  const [currentOpen, setCurrentOpen] = useControllableValue(
+    open,
+    defaultOpen,
+    onOpenChange,
+  );
   const [portalMounted, setPortalMounted] = useState(false);
   const titleId = useId();
   const descriptionId = useId();
@@ -71,21 +79,21 @@ export function GridraDialog({
     setPortalMounted(true);
   }, []);
 
-  const close = useCallback(() => {
+  const close = () => {
     setCurrentOpen(false);
-  }, [setCurrentOpen]);
+  };
 
-  const openDialog = useCallback(() => {
+  const openDialog = () => {
     setCurrentOpen(true);
-  }, [setCurrentOpen]);
+  };
 
-  const toggleOpen = useCallback(() => {
+  const toggleOpen = () => {
     if (currentOpen) {
       close();
     } else {
       openDialog();
     }
-  }, [currentOpen, close, openDialog]);
+  };
 
   useEffect(() => {
     if (!currentOpen) {
@@ -94,24 +102,19 @@ export function GridraDialog({
 
     previousFocusRef.current = document.activeElement as HTMLElement | null;
 
-    requestAnimationFrame(() => {
-      if (initialFocusRef?.current) {
-        initialFocusRef.current.focus();
-        return;
-      }
-
+    if (initialFocusRef?.current) {
+      initialFocusRef.current.focus();
+    } else {
       const dialog = dialogRef.current;
-      if (!dialog) {
-        return;
+      if (dialog) {
+        const focusable = dialog.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+        if (focusable) {
+          focusable.focus();
+        } else {
+          dialog.focus();
+        }
       }
-
-      const focusable = dialog.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-      if (focusable) {
-        focusable.focus();
-      } else {
-        dialog.focus();
-      }
-    });
+    }
 
     return () => {
       const prev = previousFocusRef.current;
@@ -132,7 +135,7 @@ export function GridraDialog({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && closeOnEscape) {
         event.preventDefault();
-        close();
+        setCurrentOpen(false);
         return;
       }
 
@@ -145,7 +148,8 @@ export function GridraDialog({
         return;
       }
 
-      const focusable = dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      const focusable =
+        dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
       if (focusable.length === 0) {
         event.preventDefault();
         return;
@@ -155,12 +159,18 @@ export function GridraDialog({
       const last = focusable[focusable.length - 1];
 
       if (event.shiftKey) {
-        if (document.activeElement === first || !dialog.contains(document.activeElement)) {
+        if (
+          document.activeElement === first ||
+          !dialog.contains(document.activeElement)
+        ) {
           event.preventDefault();
           last.focus();
         }
       } else {
-        if (document.activeElement === last || !dialog.contains(document.activeElement)) {
+        if (
+          document.activeElement === last ||
+          !dialog.contains(document.activeElement)
+        ) {
           event.preventDefault();
           first.focus();
         }
@@ -171,19 +181,16 @@ export function GridraDialog({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [currentOpen, closeOnEscape, close]);
+  }, [currentOpen, closeOnEscape, setCurrentOpen]);
 
-  const handleBackdropPointerDown = useCallback(
-    (event: React.PointerEvent) => {
-      if (!closeOnBackdropPointerDown) {
-        return;
-      }
-      if (event.target === event.currentTarget) {
-        close();
-      }
-    },
-    [closeOnBackdropPointerDown, close],
-  );
+  const handleBackdropPointerDown = (event: React.PointerEvent) => {
+    if (!closeOnBackdropPointerDown) {
+      return;
+    }
+    if (event.target === event.currentTarget) {
+      close();
+    }
+  };
 
   const triggerProps =
     triggerElement && isValidElement(triggerElement)
@@ -192,7 +199,9 @@ export function GridraDialog({
           "aria-expanded": currentOpen,
           "aria-haspopup": "dialog" as const,
           onClick: composeHandlers(
-            triggerElement.props.onClick as ((event: MouseEvent) => void) | undefined,
+            triggerElement.props.onClick as
+              | ((event: MouseEvent) => void)
+              | undefined,
             toggleOpen,
           ),
           ref: mergeRefs(
@@ -204,20 +213,16 @@ export function GridraDialog({
         }
       : undefined;
 
-  const dialogClassName = [
+  const dialogClassName = cx(
     "gridra-dialog",
     `gridra-dialog--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const backdropClassName = [
+  );
+  const backdropClassName = cx(
     "gridra-root",
     getGridraThemeClassName(triggerRef.current),
     "gridra-dialog__backdrop",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
   const portalTarget = getPortalTarget();
 
   return (
@@ -246,7 +251,10 @@ export function GridraDialog({
                     {title}
                   </h2>
                   {description ? (
-                    <p className="gridra-dialog__description" id={descriptionId}>
+                    <p
+                      className="gridra-dialog__description"
+                      id={descriptionId}
+                    >
                       {description}
                     </p>
                   ) : null}
@@ -270,4 +278,3 @@ export function GridraDialog({
     </>
   );
 }
-
