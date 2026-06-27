@@ -1,9 +1,9 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraErrorMessageTone = "danger" | "warning" | "muted";
 
-export interface GridraErrorMessageProps
-  extends HTMLAttributes<HTMLDivElement> {
+export interface GridraErrorMessageProps extends HTMLAttributes<HTMLDivElement> {
   icon?: ReactNode;
   tone?: GridraErrorMessageTone;
 }
@@ -15,13 +15,11 @@ export function GridraErrorMessage({
   tone = "danger",
   ...props
 }: GridraErrorMessageProps) {
-  const rootClassName = [
+  const rootClassName = cx(
     "gridra-error-message",
     `gridra-error-message--${tone}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <div className={rootClassName} {...props}>

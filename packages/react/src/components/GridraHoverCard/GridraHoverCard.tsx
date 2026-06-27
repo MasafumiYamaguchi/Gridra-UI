@@ -24,8 +24,11 @@ import { useFloatingPosition } from "../../internal/useFloatingPosition";
 export type GridraHoverCardPlacement = "top" | "right" | "bottom" | "left";
 export type GridraHoverCardSize = "sm" | "md" | "lg";
 
-export interface GridraHoverCardProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "content" | "children" | "onChange"> {
+// HTML属性とぶつかるので、content, children, onChangeは除外する
+export interface GridraHoverCardProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "content" | "children" | "onChange"
+> {
   children: ReactElement<Record<string, unknown>>;
   content: ReactNode;
   placement?: GridraHoverCardPlacement;
@@ -76,7 +79,11 @@ export function GridraHoverCard({
   const cardRef = useRef<HTMLDivElement | null>(null);
   const showTimerRef = useRef<number | null>(null);
   const hideTimerRef = useRef<number | null>(null);
-  const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
+  const [currentOpen, setCurrentOpen] = useControllableValue(
+    open,
+    defaultOpen,
+    onOpenChange,
+  );
   const [portalMounted, setPortalMounted] = useState(false);
   const cardId = useId();
 
@@ -103,7 +110,16 @@ export function GridraHoverCard({
     offset: HOVER_CARD_OFFSET,
     open: currentOpen,
     placement,
-    updateDeps: [content, size, width, minWidth, maxWidth, height, minHeight, maxHeight],
+    updateDeps: [
+      content,
+      size,
+      width,
+      minWidth,
+      maxWidth,
+      height,
+      minHeight,
+      maxHeight,
+    ],
   });
 
   const startShow = useCallback(() => {
@@ -111,18 +127,24 @@ export function GridraHoverCard({
       return;
     }
     clearTimers();
-    showTimerRef.current = window.setTimeout(() => {
-      setCurrentOpen(true);
-      showTimerRef.current = null;
-    }, Math.max(0, showDelay));
+    showTimerRef.current = window.setTimeout(
+      () => {
+        setCurrentOpen(true);
+        showTimerRef.current = null;
+      },
+      Math.max(0, showDelay),
+    );
   }, [disabled, clearTimers, showDelay, setCurrentOpen]);
 
   const startHide = useCallback(() => {
     clearTimers();
-    hideTimerRef.current = window.setTimeout(() => {
-      setCurrentOpen(false);
-      hideTimerRef.current = null;
-    }, Math.max(0, hideDelay));
+    hideTimerRef.current = window.setTimeout(
+      () => {
+        setCurrentOpen(false);
+        hideTimerRef.current = null;
+      },
+      Math.max(0, hideDelay),
+    );
   }, [clearTimers, hideDelay, setCurrentOpen]);
 
   const closeImmediately = useCallback(() => {
@@ -161,11 +183,15 @@ export function GridraHoverCard({
       startShow,
     ),
     onMouseEnter: composeHandlers(
-      anchorElement.props.onMouseEnter as ((event: MouseEvent) => void) | undefined,
+      anchorElement.props.onMouseEnter as
+        | ((event: MouseEvent) => void)
+        | undefined,
       startShow,
     ),
     onMouseLeave: composeHandlers(
-      anchorElement.props.onMouseLeave as ((event: MouseEvent) => void) | undefined,
+      anchorElement.props.onMouseLeave as
+        | ((event: MouseEvent) => void)
+        | undefined,
       startHide,
     ),
     ref: mergeRefs(
@@ -238,4 +264,3 @@ export function GridraHoverCard({
     </>
   );
 }
-

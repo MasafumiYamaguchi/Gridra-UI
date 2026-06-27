@@ -1,12 +1,16 @@
 import type { CSSProperties, ReactNode } from "react";
 import { formatCssLength } from "../../internal/numeric";
 import { GridraBox, type GridraBoxProps } from "../GridraBox";
+import { cx } from "../../internal/classNames";
 
 export type GridraGridLayoutGap = "none" | "xs" | "sm" | "md" | "lg";
 export type GridraGridLayoutAlign = "start" | "center" | "end" | "stretch";
 export type GridraGridLayoutJustify = "start" | "center" | "end" | "stretch";
 
-export interface GridraGridLayoutProps extends Omit<GridraBoxProps, "display" | "gap"> {
+export interface GridraGridLayoutProps extends Omit<
+  GridraBoxProps,
+  "display" | "gap"
+> {
   align?: GridraGridLayoutAlign;
   columnGap?: GridraGridLayoutGap;
   columns?: number | "auto";
@@ -29,7 +33,8 @@ export function GridraGridLayout({
   style,
   ...props
 }: GridraGridLayoutProps) {
-  const layoutClassName = [
+  // こっちは列挙可能なCSS状態をクラス名に変換するための処理
+  const layoutClassName = cx(
     "gridra-grid-layout",
     `gridra-grid-layout--columns-${typeof columns === "number" ? "fixed" : columns}`,
     `gridra-grid-layout--gap-${gap}`,
@@ -37,20 +42,26 @@ export function GridraGridLayout({
     rowGap ? `gridra-grid-layout--row-gap-${rowGap}` : null,
     `gridra-grid-layout--align-${align}`,
     `gridra-grid-layout--justify-${justify}`,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
-
+    className,
+  );
+  // こっちは可変値をCSS変数に変換するための処理
   const layoutStyle: CSSProperties = {
     ...style,
     ...(typeof columns === "number"
       ? { "--gridra-grid-layout-columns": safeRepeatCount(columns).toString() }
-      : { "--gridra-grid-layout-min-column-width": formatCssLength(minColumnWidth) })
+      : {
+          "--gridra-grid-layout-min-column-width":
+            formatCssLength(minColumnWidth),
+        }),
   } as CSSProperties;
 
   return (
-    <GridraBox className={layoutClassName} display="grid" style={layoutStyle} {...props}>
+    <GridraBox
+      className={layoutClassName}
+      display="grid"
+      style={layoutStyle}
+      {...props}
+    >
       {children as ReactNode}
     </GridraBox>
   );

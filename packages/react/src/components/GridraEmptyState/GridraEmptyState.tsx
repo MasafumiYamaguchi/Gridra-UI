@@ -1,9 +1,9 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraEmptyStateSize = "sm" | "md" | "lg";
 
-export interface GridraEmptyStateProps
-  extends HTMLAttributes<HTMLDivElement> {
+export interface GridraEmptyStateProps extends HTMLAttributes<HTMLDivElement> {
   children?: ReactNode;
   description?: ReactNode;
   heading?: ReactNode;
@@ -24,13 +24,11 @@ export function GridraEmptyState({
   size = "md",
   ...props
 }: GridraEmptyStateProps) {
-  const rootClassName = [
+  const rootClassName = cx(
     "gridra-empty-state",
     `gridra-empty-state--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   return (
     <div className={rootClassName} {...props}>
@@ -44,9 +42,7 @@ export function GridraEmptyState({
           <div className="gridra-empty-state__heading">{heading}</div>
         ) : null}
         {description ? (
-          <div className="gridra-empty-state__description">
-            {description}
-          </div>
+          <div className="gridra-empty-state__description">{description}</div>
         ) : null}
         {children ? (
           <div className="gridra-empty-state__body">{children}</div>
