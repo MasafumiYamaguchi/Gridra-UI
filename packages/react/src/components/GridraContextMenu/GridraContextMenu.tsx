@@ -243,8 +243,8 @@ export function GridraContextMenu({
   };
 
   const handleContextMenu = (event: ReactMouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
+    event.preventDefault(); // デフォルトの右クリックメニューを無効化
+    event.stopPropagation();  // イベントの伝播を停止
     openAt(event.clientX, event.clientY);
   };
 
@@ -313,7 +313,8 @@ export function GridraContextMenu({
       default:
         handled = false;
     }
-
+    
+    // 親要素にキー入力が伝播しないようにする
     if (handled) {
       event.stopPropagation();
     }

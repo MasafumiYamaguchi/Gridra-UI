@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { GridraBox, type GridraBoxProps } from "../GridraBox";
 import { cx } from "../../internal/classNames";
 
@@ -42,7 +41,7 @@ export function GridraCluster({
 
   return (
     <GridraBox className={clusterClassName} display="flex" {...props}>
-      {children as ReactNode}
+      {children}
     </GridraBox>
   );
 }

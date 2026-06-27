@@ -34,6 +34,7 @@ export function GridraButton({
     loading && "gridra-button--loading",
     className,
   );
+  // TODO:disabledかloadingのどちらかでロックかけた方がいいかも
   const isDisabled = disabled || loading;
 
   return (
