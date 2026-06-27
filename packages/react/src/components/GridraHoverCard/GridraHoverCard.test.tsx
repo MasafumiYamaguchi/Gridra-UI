@@ -193,6 +193,38 @@ describe("GridraHoverCard", () => {
     const card = screen.getByText("Accessible");
     expect(anchor.getAttribute("aria-expanded")).toBe("true");
     expect(anchor.getAttribute("aria-controls")).toBe(card.id);
+    expect(anchor.getAttribute("aria-haspopup")).toBe("dialog");
+    expect(card.getAttribute("role")).toBe("dialog");
+  });
+
+  it("stays open when focus moves from anchor into the card", () => {
+    vi.useFakeTimers();
+    render(
+      <GridraHoverCard
+        content={<button type="button">Inside action</button>}
+        showDelay={0}
+        hideDelay={0}
+      >
+        <button type="button">Anchor</button>
+      </GridraHoverCard>,
+    );
+    const anchor = screen.getByRole("button", { name: "Anchor" }) as HTMLElement;
+    Object.defineProperty(anchor, "getBoundingClientRect", {
+      value: () => ({ top: 100, left: 100, width: 80, height: 32, right: 180, bottom: 132 }),
+      configurable: true,
+    });
+
+    fireEvent.focus(anchor);
+    act(() => vi.advanceTimersByTime(10));
+
+    const insideButton = screen.getByRole("button", { name: "Inside action" });
+    const card = insideButton.closest(".gridra-hover-card");
+
+    fireEvent.blur(anchor, { relatedTarget: insideButton });
+    fireEvent.focus(insideButton);
+
+    expect(screen.getByRole("button", { name: "Inside action" })).toBeDefined();
+    expect(card).not.toBeNull();
   });
 
   it("composes with existing trigger handlers", () => {
@@ -216,6 +248,47 @@ describe("GridraHoverCard", () => {
 
     fireEvent.mouseLeave(anchor);
     expect(onMouseLeave).toHaveBeenCalledTimes(1);
+  });
+
+  it("composes with existing card handlers", () => {
+    vi.useFakeTimers();
+    const onMouseEnter = vi.fn();
+    const onMouseLeave = vi.fn();
+    const onFocus = vi.fn();
+    const onBlur = vi.fn();
+
+    render(
+      <GridraHoverCard
+        content="Composed card"
+        hideDelay={0}
+        onBlur={onBlur}
+        onFocus={onFocus}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        showDelay={0}
+      >
+        <button type="button">Anchor</button>
+      </GridraHoverCard>,
+    );
+    const anchor = screen.getByRole("button", { name: "Anchor" }) as HTMLElement;
+    Object.defineProperty(anchor, "getBoundingClientRect", {
+      value: () => ({ top: 100, left: 100, width: 80, height: 32, right: 180, bottom: 132 }),
+      configurable: true,
+    });
+
+    fireEvent.mouseEnter(anchor);
+    act(() => vi.advanceTimersByTime(10));
+
+    const card = screen.getByText("Composed card");
+    fireEvent.mouseEnter(card);
+    fireEvent.focus(card);
+    fireEvent.mouseLeave(card);
+    fireEvent.blur(card);
+
+    expect(onMouseEnter).toHaveBeenCalledTimes(1);
+    expect(onMouseLeave).toHaveBeenCalledTimes(1);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
   it("applies size class and string maxWidth", () => {

@@ -1,6 +1,8 @@
 import {
   cloneElement,
   isValidElement,
+  type FocusEvent as ReactFocusEvent,
+  type MouseEvent as ReactMouseEvent,
   type CSSProperties,
   type HTMLAttributes,
   type ReactElement,
@@ -74,11 +76,19 @@ export function GridraHoverCard({
   width,
   ...props
 }: GridraHoverCardProps) {
-  const anchorElement = children;
+  // childrenが有効なReact要素でない場合は何もレンダリングしない
+  if (!isValidElement(children)) {
+    console.warn("GridraHoverCard: children must be a valid React element.");
+    return null;
+  }
+
   const anchorRef = useRef<HTMLElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
+  // show/hideの遅延処理をまたいでtimerIDを保持する。
+  // 再レンダリングしても値を失わず、不要なタイマーを確実にクリアできるようにするため。
   const showTimerRef = useRef<number | null>(null);
   const hideTimerRef = useRef<number | null>(null);
+  // open が渡された場合は controlled、未指定の場合は defaultOpen を初期値にした uncontrolled として扱う。
   const [currentOpen, setCurrentOpen] = useControllableValue(
     open,
     defaultOpen,
@@ -87,6 +97,7 @@ export function GridraHoverCard({
   const [portalMounted, setPortalMounted] = useState(false);
   const cardId = useId();
 
+  // hover/focus の出入りが短時間に連続しても古い show/hide 処理が残らないよう、両方のタイマーを解除する。
   const clearTimers = useCallback(() => {
     if (showTimerRef.current !== null) {
       window.clearTimeout(showTimerRef.current);
@@ -98,11 +109,15 @@ export function GridraHoverCard({
     }
   }, []);
 
+  // Portal の描画先は document に依存するため、クライアントでマウントされた後にだけ参照する。
+  // SSR 時や初回レンダリング時に document へアクセスしないようにする。
   useEffect(() => {
     setPortalMounted(true);
     return clearTimers;
   }, [clearTimers]);
 
+  // anchor と card の位置・サイズから表示座標を計算する。
+  // content やサイズ指定が変わると card の寸法が変わるため、updateDeps に含めて再計算させる。
   const { coords, resolvedPlacement } = useFloatingPosition({
     anchorRef,
     disabled,
@@ -171,31 +186,74 @@ export function GridraHoverCard({
 
   useDocumentEvent("keydown", handleEscape, currentOpen);
 
+  // focus が anchor と card の間を移動しただけの場合は HoverCard を閉じない。
+  // relatedTarget が DOM Node でない場合もあるため、contains の前に型を確認する。
+  const isWithinHoverCard = useCallback((target: EventTarget | null) => {
+    if (!(target instanceof Node)) {
+      return false;
+    }
+    return (
+      anchorRef.current?.contains(target) === true ||
+      cardRef.current?.contains(target) === true
+    );
+  }, []);
+
+  // anchor から card 内へ focus が移った場合は、操作継続中として閉じない。
+  const handleAnchorBlur = useCallback(
+    (event: ReactFocusEvent<HTMLElement>) => {
+      if (isWithinHoverCard(event.relatedTarget)) {
+        cancelHide();
+        return;
+      }
+      startHide();
+    },
+    [cancelHide, isWithinHoverCard, startHide],
+  );
+
+  const handleCardBlur = useCallback(
+    (event: ReactFocusEvent<HTMLDivElement>) => {
+      if (isWithinHoverCard(event.relatedTarget)) {
+        cancelHide();
+        return;
+      }
+      startHide();
+    },
+    [cancelHide, isWithinHoverCard, startHide],
+  );
+
+  // children を HoverCard の anchor として扱うため、ARIA 属性とイベントハンドラを合成して渡す。
+  // 既存の children.props のハンドラは composeHandlers で維持する。
   const anchorProps = {
     "aria-controls": !disabled && currentOpen ? cardId : undefined,
     "aria-expanded": !disabled ? currentOpen : undefined,
+    "aria-haspopup": "dialog",
     onBlur: composeHandlers(
-      anchorElement.props.onBlur as ((event: FocusEvent) => void) | undefined,
-      startHide,
+      children.props.onBlur as
+        | ((event: ReactFocusEvent<HTMLElement>) => void)
+        | undefined,
+      handleAnchorBlur,
     ),
     onFocus: composeHandlers(
-      anchorElement.props.onFocus as ((event: FocusEvent) => void) | undefined,
+      children.props.onFocus as
+        | ((event: ReactFocusEvent<HTMLElement>) => void)
+        | undefined,
       startShow,
     ),
     onMouseEnter: composeHandlers(
-      anchorElement.props.onMouseEnter as
-        | ((event: MouseEvent) => void)
+      children.props.onMouseEnter as
+        | ((event: ReactMouseEvent<HTMLElement>) => void)
         | undefined,
       startShow,
     ),
     onMouseLeave: composeHandlers(
-      anchorElement.props.onMouseLeave as
-        | ((event: MouseEvent) => void)
+      children.props.onMouseLeave as
+        | ((event: ReactMouseEvent<HTMLElement>) => void)
         | undefined,
       startHide,
     ),
+    // children が元々持っている ref を壊さず、内部でも anchor 要素を参照できるようにする。
     ref: mergeRefs(
-      (anchorElement as ReactElement & { ref?: unknown }).ref,
+      (children as ReactElement & { ref?: unknown }).ref,
       (node: HTMLElement | null) => {
         anchorRef.current = node;
       },
@@ -211,6 +269,8 @@ export function GridraHoverCard({
     className,
   );
 
+  // ユーザー指定の style を保ちつつ、計算済み座標とサイズ指定用 CSS 変数を付与する。
+  // style オブジェクトの参照を安定させ、不要な再生成を避ける。
   const cardStyle = useMemo(
     () =>
       ({
@@ -238,10 +298,6 @@ export function GridraHoverCard({
   );
   const portalTarget = getPortalTarget();
 
-  if (!isValidElement(children)) {
-    return null;
-  }
-
   return (
     <>
       {cloneElement(children, anchorProps)}
@@ -251,9 +307,32 @@ export function GridraHoverCard({
               {...props}
               className={cardClassName}
               id={cardId}
-              onMouseEnter={cancelHide}
-              onMouseLeave={startHide}
+              onBlur={composeHandlers(
+                props.onBlur as
+                  | ((event: ReactFocusEvent<HTMLDivElement>) => void)
+                  | undefined,
+                handleCardBlur,
+              )}
+              onFocus={composeHandlers(
+                props.onFocus as
+                  | ((event: ReactFocusEvent<HTMLDivElement>) => void)
+                  | undefined,
+                cancelHide,
+              )}
+              onMouseEnter={composeHandlers(
+                props.onMouseEnter as
+                  | ((event: ReactMouseEvent<HTMLDivElement>) => void)
+                  | undefined,
+                cancelHide,
+              )}
+              onMouseLeave={composeHandlers(
+                props.onMouseLeave as
+                  | ((event: ReactMouseEvent<HTMLDivElement>) => void)
+                  | undefined,
+                startHide,
+              )}
               ref={cardRef}
+              role="dialog"
               style={cardStyle}
             >
               {content}
