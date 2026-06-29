@@ -24,6 +24,7 @@ export function GridraEmptyState({
   size = "md",
   ...props
 }: GridraEmptyStateProps) {
+  // EmptyStateは空状態の意味づけよりも、icon/content/actionsの配置slotを提供する責務に絞る。
   const rootClassName = cx(
     "gridra-empty-state",
     `gridra-empty-state--${size}`,

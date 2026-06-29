@@ -25,6 +25,7 @@ export function GridraConnectionHandle({
   position = "right",
   ...props
 }: GridraConnectionHandleProps) {
+  // 接続処理の状態はCanvas側が持ち、Handleはkind/position/activeをDOM属性とclassで表すだけにする。
   const handleClassName = cx(
     "gridra-connection-handle",
     `gridra-connection-handle--${kind}`,

@@ -35,9 +35,9 @@ export function GridraAvatar({
     ...style,
     ...getCustomSizeStyle(size)
   } as CSSProperties;
+  // 画像がない場合だけfallback側にアクセシブル名を付与し、imgのaltと名前が二重にならないようにする。
   const fallbackAccessibleName = !src ? (alt || fallback || undefined) : undefined;
 
-  // imgソースがなければfallbackテキストを表示し、アクセシブルな名前を提供するためにrole="img"とaria-labelを設定する。
   return (
     <span
       className={avatarClassName}
@@ -61,13 +61,12 @@ function isPresetSize(size: string): size is "sm" | "md" | "lg" {
   return size === "sm" || size === "md" || size === "lg";
 }
 
-// sizeが数値の場合css変数にpx単位の値を設定する
+// プリセット以外のサイズはCSS変数に逃がし、classの組み合わせ数を増やさない。
 function getCustomSizeStyle(size: GridraAvatarSize): CSSProperties | undefined {
   if (typeof size === "string" && isPresetSize(size)) {
     return undefined;
   }
 
-  // sizeの方が数値の場合はpx単位の文字列に変換し、そうでない場合はそのまま使用する。
   const normalizedSize = typeof size === "number" ? `${size}px` : size;
 
   return {

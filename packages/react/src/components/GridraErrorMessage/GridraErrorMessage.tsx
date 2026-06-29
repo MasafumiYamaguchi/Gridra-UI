@@ -15,6 +15,7 @@ export function GridraErrorMessage({
   tone = "danger",
   ...props
 }: GridraErrorMessageProps) {
+  // Fieldなどから組み込まれる想定なので、role付与は親の文脈に任せて表示だけを担当する。
   const rootClassName = cx(
     "gridra-error-message",
     `gridra-error-message--${tone}`,

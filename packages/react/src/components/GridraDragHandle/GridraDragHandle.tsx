@@ -19,6 +19,7 @@ export function GridraDragHandle({
   position = "top-left",
   ...props
 }: GridraDragHandleProps) {
+  // DragHandleは操作開始点の見た目だけを担当し、ドラッグ状態や座標計算は親コンポーネントに委ねる。
   const handleClassName = cx(
     "gridra-drag-handle",
     `gridra-drag-handle--${position}`,

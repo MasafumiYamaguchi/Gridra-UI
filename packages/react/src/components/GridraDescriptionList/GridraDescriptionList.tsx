@@ -21,6 +21,7 @@ export function GridraDescriptionList({
   items,
   ...props
 }: GridraDescriptionListProps) {
+  // items指定時は一貫したdt/dd構造を生成し、children指定時は利用者が細かいマークアップを制御できる。
   const rootClassName = cx(
     "gridra-description-list",
     `gridra-description-list--${density}`,

@@ -18,11 +18,11 @@ import { cx } from "../../internal/classNames";
 
 export type GridraCommandPaletteSize = "sm" | "md" | "lg";
 
-// Focus trap用: Tabキーで移動できる要素を取得するためのセレクタ
+// Dialog内でTabを循環させるため、focus可能な要素だけをDOMから拾う。
 const FOCUSABLE_SELECTOR =
   'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])';
 
-// コマンドの意味を表すための識別子役割のためにstring型を用いている
+// idは選択状態・action通知・ref管理をつなぐ安定したコマンド識別子として使う。
 export interface GridraCommandPaletteCommandItem {
   id: string;
   label: ReactNode;
@@ -33,7 +33,7 @@ export interface GridraCommandPaletteCommandItem {
   destructive?: boolean;
 }
 
-// separatorにも安定したkeyを与えたい場合にidを指定できる
+// separatorにも安定したkeyを与えたい場合があるため、任意idを許可する。
 export type GridraCommandPaletteSeparatorItem = {
   type: "separator";
   id?: string;
@@ -43,7 +43,7 @@ export type GridraCommandPaletteItem =
   | GridraCommandPaletteCommandItem
   | GridraCommandPaletteSeparatorItem;
 
-// HTML属性とぶつかるので、onChangeとtitleは除外する
+// HTML属性とぶつかるonChange/titleは、検索queryと見出しの意味に合わせて独自propsとして定義する。
 export interface GridraCommandPaletteProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   "onChange" | "title"
@@ -78,7 +78,7 @@ function itemMatchesQuery(
   if (!query) {
     return true;
   }
-  // 大文字小文字を区別せず、コマンドのlabel、description、group、keywordsに対して部分一致するかどうかで判定する
+  // ReactNodeは完全なテキスト抽出をしない。検索対象は文字列として安全に読める範囲に限定する。
   const lower = query.toLowerCase();
   const fields = [
     getPlainSearchText(item.label),
@@ -139,34 +139,31 @@ export function GridraCommandPalette({
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [portalMounted, setPortalMounted] = useState(false);
-  // portal内でテーマクラスを適用するための状態。ダイアログが開かれるたびに更新する必要がある
+  // PortalはテーマDOMの外へ出るため、開くたびに現在のテーマclassをbackdropへコピーする。
   const [portalThemeClassName, setPortalThemeClassName] = useState<
     string | undefined
   >(() => getGridraThemeClassName());
   const titleId = useId();
   const inputId = useId();
 
-  // SSR対策: クライアントでマウントされた後にPortalを表示する
+  // document.bodyへPortalするため、SSR/初回renderでは描画先を参照しない。
   useEffect(() => {
     setPortalMounted(true);
   }, []);
 
   const commandItems = useMemo(() => items.filter(isCommand), [items]);
 
-  // 3段階でフィルタリングする
-  // 1. クエリにマッチするアイテムだけを残す
+  // 表示対象、操作対象、focus対象を段階的に分けることでseparator/disabled itemを誤って実行しない。
   const filteredCommands = useMemo(() => {
     if (!currentQuery) {
       return commandItems;
     }
     return commandItems.filter((item) => itemMatchesQuery(item, currentQuery));
   }, [commandItems, currentQuery]);
-  // 2. フィルタリングされたアイテムの中から、disabledでないアイテムだけを残す
   const enabledFiltered = useMemo(
     () => filteredCommands.filter((item) => !item.disabled),
     [filteredCommands],
   );
-  // 3. enabledなアイテムのidだけの配列を作る
   const enabledIds = useMemo(
     () => enabledFiltered.map((item) => item.id),
     [enabledFiltered],
@@ -174,7 +171,7 @@ export function GridraCommandPalette({
 
   const safeActiveIndex = clampIndex(activeIndex, enabledIds.length);
 
-  // isQueryControlledがtrueの場合は、クエリは外部で管理されているため、コマンドパレット内部でクエリをリセットしないようにする
+  // queryがcontrolledの場合、閉じる時のリセット判断も呼び出し側の責務として残す。
   const close = () => {
     setCurrentOpen(false);
     if (!isQueryControlled) {
@@ -182,7 +179,7 @@ export function GridraCommandPalette({
     }
   };
 
-  // 押したアイテムを有効なコマンドとして処理するための関数
+  // action実行前に現在のitemsから再解決し、disabled化されたコマンドを実行しない。
   const activateItem = (id: string) => {
     const item = commandItems.find((c) => c.id === id);
     if (!item || item.disabled) {
@@ -215,7 +212,7 @@ export function GridraCommandPalette({
 
     inputRef.current?.focus();
 
-    // コマンドパレットが閉じられたときに、前回フォーカスされていた要素にフォーカスを戻す
+    // Modalを閉じたあと、操作開始前のfocus位置へ戻してキーボード操作の文脈を保つ。
     return () => {
       const prev = previousFocusRef.current;
       if (prev && typeof prev.focus === "function") {
@@ -230,7 +227,6 @@ export function GridraCommandPalette({
     setActiveIndex(0);
   }, [currentQuery]);
 
-  // Portalはテーマ配下から外れるため、開くタイミングで現在のテーマクラスをbackdropへコピーする
   useLayoutEffect(() => {
     if (!currentOpen) {
       return;
@@ -239,7 +235,7 @@ export function GridraCommandPalette({
   }, [currentOpen]);
 
   const handleBackdropPointerDown = (event: React.PointerEvent) => {
-    // もともとの要素(target)とモーダル(currentTarget)を比較している
+    // dialog内のクリックでは閉じず、backdrop自体を押した時だけ閉じる。
     if (event.target === event.currentTarget) {
       close();
     }
@@ -367,9 +363,7 @@ export function GridraCommandPalette({
   );
   const portalTarget = getPortalTarget();
 
-  // reactのrenderでmap()するために配列に変換して返す
-  // 表示時にgroupごとにmapできるよう、filteredCommandsをgroup単位にまとめる
-  // 例: [["File", [item1, item2]], ["Edit", [item3]], ["", [item4]]]]
+  // グループ表示は描画構造だけの責務。検索・disabled判定済みのfilteredCommandsを並べ替えずにまとめる。
   const groups = useMemo(() => {
     const map = new Map<string, GridraCommandPaletteCommandItem[]>();
     for (const item of filteredCommands) {

@@ -29,7 +29,7 @@ export type { GridraDropdownMenuItem };
 
 export type GridraContextMenuSize = GridraDropdownMenuSize;
 
-// HTML属性とぶつかるので、onChangeとchildrenは除外する
+// HTML属性とぶつかるonChange/childrenは、menu状態とtrigger要素の意味に合わせて独自propsとして定義する。
 export interface GridraContextMenuProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   "children" | "onChange"
@@ -55,7 +55,7 @@ function isCommand(
   return !("type" in item) || item.type !== "separator";
 }
 
-// clamp処理の共通化しのためのヘルパ
+// activeIndexはitems変更で範囲外になり得るため、focusや実行の直前に安全な範囲へ丸める。
 function clampIndex(index: number, itemCount: number) {
   return itemCount === 0 ? 0 : Math.max(0, Math.min(index, itemCount - 1));
 }
@@ -93,18 +93,17 @@ export function GridraContextMenu({
   const [portalMounted, setPortalMounted] = useState(false);
   const menuId = useId();
 
+  // document.bodyへPortalするため、クライアントでmountされた後だけmenuを出す。
   useEffect(() => {
     setPortalMounted(true);
   }, []);
 
-  // 1. コマンドアイテムだけを抽出
+  // separatorを描画対象に残しつつ、実行・focus対象はcommand itemだけに限定する。
   const commandItems = useMemo(() => items.filter(isCommand), [items]);
-  // 2. 有効なコマンドアイテムだけを抽出
   const enabledItems = useMemo(
     () => commandItems.filter((item) => !item.disabled),
     [commandItems],
   );
-  // 3. 有効なアイテムのIDリストを作成
   const enabledIds = useMemo(
     () => enabledItems.map((item) => item.id),
     [enabledItems],
@@ -112,6 +111,7 @@ export function GridraContextMenu({
 
   const safeActiveIndex = clampIndex(activeIndex, enabledIds.length);
 
+  // Context menuを閉じた後はtriggerへfocusを戻し、キーボード操作の復帰先を失わないようにする。
   const close = () => {
     setCurrentOpen(false);
     targetRef.current?.focus();
@@ -212,6 +212,7 @@ export function GridraContextMenu({
       const rawTop = pointerCoordsRef.current.top;
       const rawLeft = pointerCoordsRef.current.left;
 
+      // 右クリック位置を起点にしつつ、menu全体がviewport内に残るように座標を丸める。
       const nextLeft = Math.max(
         0,
         Math.min(rawLeft, window.innerWidth - menuRect.width),
@@ -243,8 +244,8 @@ export function GridraContextMenu({
   };
 
   const handleContextMenu = (event: ReactMouseEvent) => {
-    event.preventDefault(); // デフォルトの右クリックメニューを無効化
-    event.stopPropagation();  // イベントの伝播を停止
+    event.preventDefault();
+    event.stopPropagation();
     openAt(event.clientX, event.clientY);
   };
 
@@ -261,6 +262,7 @@ export function GridraContextMenu({
       const target = targetRef.current;
       if (target) {
         const rect = target.getBoundingClientRect();
+        // キーボード起動ではポインタ座標がないため、triggerの左下をmenu起点にする。
         openAt(rect.left, rect.bottom);
       }
     }
@@ -313,13 +315,12 @@ export function GridraContextMenu({
       default:
         handled = false;
     }
-    
-    // 親要素にキー入力が伝播しないようにする
     if (handled) {
       event.stopPropagation();
     }
   };
 
+  // triggerの既存handler/refを壊さず、右クリックmenuとして必要なARIAとイベントだけを足す。
   const targetProps = {
     "aria-expanded": !disabled ? currentOpen : undefined,
     "aria-haspopup": "menu" as const,
@@ -358,6 +359,7 @@ export function GridraContextMenu({
         ...style,
         top: `${coords.top}px`,
         left: `${coords.left}px`,
+        // min/max幅は任意値なのでCSS変数でtheme側へ渡し、classの種類を増やさない。
         "--gridra-dropdown-menu-min-width":
           minWidth === undefined
             ? undefined

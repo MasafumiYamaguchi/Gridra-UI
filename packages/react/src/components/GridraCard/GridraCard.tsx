@@ -26,6 +26,7 @@ export function GridraCard({
   surface = "surface",
   ...props
 }: GridraCardProps) {
+  // Cardはslotの有無から構造classを決めるだけにし、各slotの中身の責務は呼び出し側に残す。
   const rootClassName = cx(
     "gridra-card",
     `gridra-card--${surface}`,

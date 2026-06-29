@@ -27,6 +27,7 @@ export function GridraField({
   required = false,
   ...props
 }: GridraFieldProps) {
+  // Fieldはlabel/hint/errorの配置と状態classだけを持ち、control本体の属性接続は子コンポーネントへ委ねる。
   const fieldClassName = cx(
     "gridra-field",
     `gridra-field--${orientation}`,

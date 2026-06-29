@@ -10,7 +10,7 @@ export type GridraClusterAlign =
   | "baseline";
 export type GridraClusterJustify = "start" | "center" | "end" | "between";
 
-// Cluster側でdisplayとgapを制御するため、GridraBoxPropsから除外する
+// Clusterは横並びレイアウト専用なので、display/gapはGridraBoxから受け取らずここで固定管理する。
 export interface GridraClusterProps extends Omit<
   GridraBoxProps,
   "display" | "gap"
@@ -30,6 +30,7 @@ export function GridraCluster({
   rowGap,
   ...props
 }: GridraClusterProps) {
+  // GridraBoxを土台にしつつ、flex用のalign/justify/gapだけをClusterの責務として足す。
   const clusterClassName = cx(
     "gridra-cluster",
     `gridra-cluster--gap-${gap}`,

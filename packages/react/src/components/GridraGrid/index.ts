@@ -1,5 +1,4 @@
-// GridraGrid is a compatibility alias for GridraSelectableGrid.
-// Prefer GridraSelectableGrid for new code.
+// GridraGridは旧API互換のalias。新規実装では責務が明確なGridraSelectableGridを直接使う。
 export {
   GridraSelectableGrid as GridraGrid,
   GridraSelectableGrid,

@@ -24,6 +24,7 @@ export function GridraBadge({
   tone = "default",
   ...props
 }: GridraBadgeProps) {
+  // Badgeは状態を持たない表示プリミティブなので、tone/size/shapeをclassへ写すだけに留める。
   const badgeClassName = cx(
     "gridra-badge",
     `gridra-badge--${tone}`,

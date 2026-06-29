@@ -32,6 +32,7 @@ export interface GridraAccordionProps extends HTMLAttributes<HTMLDivElement> {
   variant?: GridraAccordionVariant;
 }
 
+// 外部APIではsingle/multipleのどちらでも値を受け取れるため、内部処理の入口で扱いやすい形へ寄せる。
 function normalizeToSingle(value: GridraAccordionValue): string {
   if (typeof value === "string") return value;
   if (Array.isArray(value)) return value[0] ?? "";
@@ -42,7 +43,7 @@ function normalizeToMultiple(value: GridraAccordionValue): string[] {
   return Array.isArray(value) ? value : [];
 }
 
-// アイテムのIDをキー、アイテム自体を値とするマップを返す。重複するIDがある場合は最初のものが優先される
+// 重複IDは最初のアイテムだけを有効扱いにし、開閉状態・focus移動・ARIAの参照先が分裂しないようにする。
 function buildValidMap(items: GridraAccordionItem[]) {
   const seen = new Map<string, GridraAccordionItem>();
   for (const item of items) {
@@ -66,17 +67,18 @@ export function GridraAccordion({
   ...props
 }: GridraAccordionProps) {
   const baseId = useId();
-  const headerRefs = useRef<Map<string, HTMLButtonElement>>(new Map()); // ヘッダーボタンの参照を保持するためのMap
+  // キーボード操作で次のヘッダーへ直接focusするため、id単位でbutton要素を保持する。
+  const headerRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-  const validMap = useMemo(() => buildValidMap(items), [items]);  // アイテムのIDを検証するためのマップを構築
+  const validMap = useMemo(() => buildValidMap(items), [items]);
 
-  // 有効なアイテムのIDのみを抽出するための配列を作成
+  // 開閉対象とキーボード移動対象を同じ定義にそろえ、disabled itemと重複IDの後続itemを除外する。
   const enabledIds = useMemo(
     () => items.filter((item) => !item.disabled && validMap.get(item.id) === item).map((item) => item.id),
     [items, validMap],
   );
 
-  // defaultValueを現在のitems/typeに合わせて安全な値に変換する
+  // defaultValueはitems/type変更で無効になり得るため、初期状態として安全なidだけに正規化する。
   const sanitizedDefault = useMemo(() => {
     if (type === "single") {
       if (defaultValue !== undefined) { 
@@ -113,46 +115,46 @@ export function GridraAccordion({
     onValueChange,
   );
 
-  // rawValueを正規化して、実際に開いているアイテムのIDの配列を作成する
+  // controlled valueも古いitemsを参照している可能性があるため、描画前に現在有効なidだけへ絞る。
   const resolvedValue = useMemo((): string[] => {
-    if (type === "single") {  // typeが"single"の場合はrawValueを単一のIDとして処理する
+    if (type === "single") {
       const val = normalizeToSingle(rawValue);
       if (!val) return [];
       const resolved = validMap.get(val);
-      if (resolved && !resolved.disabled) return [val]; // rawValueが有効で、かつdisabledでない場合はそのIDを配列にして返す
+      if (resolved && !resolved.disabled) return [val];
       return [];
     }
-    const arr = normalizeToMultiple(rawValue);  // typeが"multiple"の場合はrawValueを複数のIDの配列として処理する
-    return arr.filter((id) => { // rawValueのIDが有効で、かつdisabledでない場合のみ返す
+    const arr = normalizeToMultiple(rawValue);
+    return arr.filter((id) => {
       const resolved = validMap.get(id);
       return resolved && !resolved.disabled;
     });
   }, [type, rawValue, validMap]);
 
-  // resolvedValueをSetに変換して、開いているアイテムのIDの存在チェックを高速化する
+  // 描画ループでは各itemごとに開閉判定するため、Setにして存在チェックを安定させる。
   const openSet = useMemo(() => new Set(resolvedValue), [resolvedValue]);
 
-  // 単一選択モードのトグル関数
+  // singleでは常に1件だけを開く。collapsible=falseのときは開いているitemを再クリックしても閉じない。
   const toggleSingle = (id: string) => {
     if (openSet.has(id)) {
       if (collapsible) {
-        setRawValue("");  // idが存在していて、かつcollapsibleがtrueの場合は空文字をセットして全て閉じる
+        setRawValue("");
       }
     } else {
-      setRawValue(id);  // idが存在していない場合はそのIDをセットして開く。単一選択モードなので、他のIDは自動的に閉じる
+      setRawValue(id);
     }
   };
 
-  // 複数選択モードのトグル関数
+  // multipleでは現在有効な開閉状態を基準に、対象idだけを追加/除外する。
   const toggleMultiple = (id: string) => {
     if (openSet.has(id)) {
-      setRawValue(resolvedValue.filter((v) => v !== id)); // idが存在している場合は、そのIDを除外した配列をセットして閉じる
+      setRawValue(resolvedValue.filter((v) => v !== id));
     } else {
-      setRawValue([...resolvedValue, id]);  // idが存在していない場合は、そのIDを追加した配列をセットして開く。複数選択モードなので、他のIDはそのまま維持される
+      setRawValue([...resolvedValue, id]);
     }
   };
 
-  // トグル関数
+  // UIイベント側はtype分岐を知らなくてよいよう、開閉ルールをここで集約する。
   const handleToggle = (id: string) => {
     if (type === "single") {
       toggleSingle(id);
@@ -161,7 +163,7 @@ export function GridraAccordion({
     }
   };
 
-  // キーボード移動はenabledIdsだけを対象にし、disabled itemと重複idの後続itemを飛ばす。
+  // キーボード移動は開閉可否と同じenabledIdsを使い、操作できないitemへfocusしない。
   const handleHeaderKeyDown = (event: KeyboardEvent) => {
     const current = event.currentTarget as HTMLButtonElement;
     const currentIndex = enabledIds.indexOf(current.getAttribute("data-accordion-id") ?? "");
@@ -192,21 +194,20 @@ export function GridraAccordion({
         break;
     }
 
-    // nextIndexが有効な範囲内であれば、対応するヘッダーボタンにフォーカスを移動する
     if (handled && nextIndex >= 0 && nextIndex < enabledIds.length) {
       const nextId = enabledIds[nextIndex];
       headerRefs.current.get(nextId)?.focus();
     }
   };
 
-  // アイテムが空の場合は、基本的なクラス名だけを持つ空のコンテナを返す
+  // 空配列でもroot classを返し、レイアウト上のプレースホルダーとして扱えるようにする。
   if (items.length === 0) {
     return (
       <div {...props} className={cx("gridra-accordion", `gridra-accordion--${variant}`, `gridra-accordion--${size}`, className)} />
     );
   }
 
-  // ルート要素のクラス名を組み立てる。variant、size、classNameを条件に応じて追加する
+  // 見た目の責務はvariant/size/classNameのclass合成に閉じ、開閉ロジックから分離する。
   const rootClassName = cx(
     "gridra-accordion",
     `gridra-accordion--${variant}`,

@@ -20,7 +20,7 @@ export function GridraAlert({
   tone = "info",
   ...props
 }: GridraAlertProps) {
-
+  // Alert本体は表示構造だけを持ち、通知の緊急度はtoneから既定roleへ変換する。
   const alertClassName = cx(
     "gridra-alert",
     `gridra-alert--${tone}`,
@@ -45,6 +45,7 @@ export function GridraAlert({
   );
 }
 
+// warning/dangerは即時通知、それ以外は穏やかなステータス通知として扱う。
 function getDefaultRole(tone: GridraAlertTone): "status" | "alert" {
   return tone === "warning" || tone === "danger" ? "alert" : "status";
 }

@@ -26,7 +26,7 @@ import { useFloatingPosition } from "../../internal/useFloatingPosition";
 export type GridraHoverCardPlacement = "top" | "right" | "bottom" | "left";
 export type GridraHoverCardSize = "sm" | "md" | "lg";
 
-// HTML属性とぶつかるので、content, children, onChangeは除外する
+// HTML属性とぶつかるcontent/children/onChangeは、anchor・card内容・開閉状態の意味に合わせて独自定義する。
 export interface GridraHoverCardProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   "content" | "children" | "onChange"
@@ -137,6 +137,7 @@ export function GridraHoverCard({
     ],
   });
 
+  // 表示開始はhover/focus共通の入口にし、delay中に状態がぶつからないようtimerを一本化する。
   const startShow = useCallback(() => {
     if (disabled) {
       return;
@@ -151,6 +152,7 @@ export function GridraHoverCard({
     );
   }, [disabled, clearTimers, showDelay, setCurrentOpen]);
 
+  // 非表示もmouse/focusの両方から呼ばれるため、即閉じせずhideDelayで操作の揺れを吸収する。
   const startHide = useCallback(() => {
     clearTimers();
     hideTimerRef.current = window.setTimeout(
@@ -162,11 +164,13 @@ export function GridraHoverCard({
     );
   }, [clearTimers, hideDelay, setCurrentOpen]);
 
+  // Escapeなど明示的な閉じ操作ではdelayを待たず、残っているtimerも同時に破棄する。
   const closeImmediately = useCallback(() => {
     clearTimers();
     setCurrentOpen(false);
   }, [clearTimers, setCurrentOpen]);
 
+  // card内へ入った時はhideだけを止め、すでに予約されたshowはclearTimers側で管理する。
   const cancelHide = useCallback(() => {
     if (hideTimerRef.current !== null) {
       window.clearTimeout(hideTimerRef.current);
@@ -184,6 +188,7 @@ export function GridraHoverCard({
     [closeOnEscape, currentOpen, closeImmediately],
   );
 
+  // document listenerの登録/解除は共通hookへ寄せ、HoverCard本体は閉じる条件だけを持つ。
   useDocumentEvent("keydown", handleEscape, currentOpen);
 
   // focus が anchor と card の間を移動しただけの場合は HoverCard を閉じない。
@@ -270,7 +275,7 @@ export function GridraHoverCard({
   );
 
   // ユーザー指定の style を保ちつつ、計算済み座標とサイズ指定用 CSS 変数を付与する。
-  // style オブジェクトの参照を安定させ、不要な再生成を避ける。
+  // 任意サイズはCSS変数でtheme側へ渡し、classの種類を増やさない。
   const cardStyle = useMemo(
     () =>
       ({

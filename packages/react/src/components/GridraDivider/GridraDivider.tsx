@@ -20,6 +20,7 @@ export function GridraDivider({
   tone = "default",
   ...props
 }: GridraDividerProps) {
+  // 視覚的な線でも支援技術にはseparatorとして伝わるよう、orientationをARIAにも反映する。
   const dividerClassName = cx(
     "gridra-divider",
     `gridra-divider--${orientation}`,

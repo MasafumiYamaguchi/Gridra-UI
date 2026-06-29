@@ -39,7 +39,7 @@ export type GridraDropdownMenuItem =
   | GridraDropdownMenuCommandItem
   | GridraDropdownMenuSeparatorItem;
 
-// HTML属性とぶつかるので、onChangeとchildrenは除外する
+// HTML属性とぶつかるonChange/childrenは、menu状態とtrigger要素の意味に合わせて独自propsとして定義する。
 export interface GridraDropdownMenuProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   "children" | "onChange"
@@ -104,18 +104,17 @@ export function GridraDropdownMenu({
   const [portalMounted, setPortalMounted] = useState(false);
   const menuId = useId();
 
+  // document.bodyへPortalするため、SSR/初回renderではmenuを出さない。
   useEffect(() => {
     setPortalMounted(true);
   }, []);
 
-  // 1. コマンドアイテムだけを抽出
+  // separatorを描画対象に残しつつ、実行・focus対象はcommand itemだけに限定する。
   const commandItems = useMemo(() => items.filter(isCommand), [items]);
-  // 2. 有効なアイテムだけを抽出
   const enabledItems = useMemo(
     () => commandItems.filter((item) => !item.disabled),
     [commandItems],
   );
-  // 3. 有効なアイテムのIDだけを抽出
   const enabledIds = useMemo(
     () => enabledItems.map((item) => item.id),
     [enabledItems],
@@ -123,6 +122,7 @@ export function GridraDropdownMenu({
 
   const safeActiveIndex = clampIndex(activeIndex, enabledIds.length);
 
+  // 開くたびにactiveIndexを先頭へ戻し、前回hoverしていたitemへ誤ってfocusしないようにする。
   const openMenu = () => {
     if (disabled) {
       return;
@@ -158,6 +158,7 @@ export function GridraDropdownMenu({
     }
   };
 
+  // anchor基準の位置計算は共通hookに寄せ、DropdownMenu本体は開閉・focus・actionに集中する。
   const { coords, resolvedPlacement } = useFloatingPosition({
     alignment: "start",
     anchorRef: triggerRef,
@@ -316,6 +317,7 @@ export function GridraDropdownMenu({
     }
   };
 
+  // triggerの既存handler/refを壊さず、DropdownMenuとして必要なARIAとイベントだけを足す。
   const triggerProps = {
     "aria-controls": !disabled && currentOpen ? menuId : undefined,
     "aria-expanded": !disabled ? currentOpen : undefined,
@@ -353,6 +355,7 @@ export function GridraDropdownMenu({
         ...style,
         top: `${coords.top}px`,
         left: `${coords.left}px`,
+        // min/max幅は任意値なのでCSS変数でtheme側へ渡し、classの種類を増やさない。
         "--gridra-dropdown-menu-min-width":
           minWidth === undefined
             ? undefined

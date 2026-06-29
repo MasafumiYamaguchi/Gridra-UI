@@ -33,7 +33,7 @@ export function GridraGridLayout({
   style,
   ...props
 }: GridraGridLayoutProps) {
-  // こっちは列挙可能なCSS状態をクラス名に変換するための処理
+  // 列挙可能な状態はclassへ、任意値になり得る列数/幅はCSS変数へ分けて扱う。
   const layoutClassName = cx(
     "gridra-grid-layout",
     `gridra-grid-layout--columns-${typeof columns === "number" ? "fixed" : columns}`,
@@ -44,7 +44,6 @@ export function GridraGridLayout({
     `gridra-grid-layout--justify-${justify}`,
     className,
   );
-  // こっちは可変値をCSS変数に変換するための処理
   const layoutStyle: CSSProperties = {
     ...style,
     ...(typeof columns === "number"
@@ -67,6 +66,7 @@ export function GridraGridLayout({
   );
 }
 
+// CSS repeat()に渡す列数が無効値にならないよう、コンポーネント境界で丸める。
 function safeRepeatCount(value: number): number {
   if (!Number.isFinite(value) || value <= 0) return 1;
   return Math.floor(value);

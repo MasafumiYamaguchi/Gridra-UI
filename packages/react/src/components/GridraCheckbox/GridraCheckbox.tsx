@@ -7,7 +7,7 @@ import {
 
 export type GridraCheckboxSize = "sm" | "md" | "lg";
 
-// Checkbox側で制御するためにsizeとtypeをInputHTMLAttributesから除外
+// native inputのsize/typeと衝突するpropsは、GridraCheckbox側の見た目・意味として管理する。
 export interface GridraCheckboxProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "type"
@@ -27,6 +27,7 @@ export function GridraCheckbox({
   size = "md",
   ...props
 }: GridraCheckboxProps) {
+  // id/descriptionIdの接続はformControl helperに寄せ、Checkbox本体はlabel構造と見た目に集中する。
   const { controlId, descriptionId } = useControlDescriptionIds(
     props.id,
     Boolean(description),
@@ -49,7 +50,7 @@ export function GridraCheckbox({
         {...props}
       />
       <span className="gridra-checkbox__mark" aria-hidden="true" />
-      {label || description ? ( // ラベルか説明の存在をふるいにして、内容の有無を判断
+      {label || description ? (
         <span className="gridra-checkbox__content">
           {label ? (
             <span className="gridra-checkbox__label">{label}</span>

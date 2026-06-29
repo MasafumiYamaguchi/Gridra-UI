@@ -20,7 +20,7 @@ import { cx } from "../../internal/classNames";
 
 export type GridraDialogSize = "sm" | "md" | "lg" | "fullscreen";
 
-// HTML属性とぶつかるので、content、title、childrenとonChangeは除外する
+// HTML属性とぶつかるcontent/title/children/onChangeは、Dialogのslotと開閉状態の意味に合わせて独自定義する。
 export interface GridraDialogProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   "content" | "title" | "children" | "onChange"
@@ -40,7 +40,7 @@ export interface GridraDialogProps extends Omit<
   initialFocusRef?: RefObject<HTMLElement | null>;
 }
 
-// Focus trap用: Tabキーで移動できる要素を取得するためのセレクタ
+// Modal内にfocusを閉じ込めるため、Tab移動できる要素だけを拾う。
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -75,6 +75,7 @@ export function GridraDialog({
   const titleId = useId();
   const descriptionId = useId();
 
+  // Portal先のdocument.bodyはクライアントでしか存在しないため、mount後にだけ描画する。
   useEffect(() => {
     setPortalMounted(true);
   }, []);
@@ -102,6 +103,7 @@ export function GridraDialog({
 
     previousFocusRef.current = document.activeElement as HTMLElement | null;
 
+    // initialFocusRefを優先し、なければdialog内の最初の操作可能要素へfocusを移す。
     if (initialFocusRef?.current) {
       initialFocusRef.current.focus();
     } else {
@@ -117,6 +119,7 @@ export function GridraDialog({
     }
 
     return () => {
+      // 閉じた後は開く前のfocus、なければtriggerへ戻して操作の文脈を保つ。
       const prev = previousFocusRef.current;
       if (prev && typeof prev.focus === "function") {
         prev.focus();
@@ -143,6 +146,7 @@ export function GridraDialog({
         return;
       }
 
+      // Tabはdialog内で循環させ、背後のページへfocusが抜けないようにする。
       const dialog = dialogRef.current;
       if (!dialog) {
         return;
@@ -192,6 +196,7 @@ export function GridraDialog({
     }
   };
 
+  // triggerをcloneして開閉handlerとrefだけを合成する。利用者側のonClick/refはcompose/mergeで維持する。
   const triggerProps =
     triggerElement && isValidElement(triggerElement)
       ? {

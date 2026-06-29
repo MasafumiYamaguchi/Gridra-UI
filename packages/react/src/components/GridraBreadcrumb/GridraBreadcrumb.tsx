@@ -26,7 +26,7 @@ export interface GridraBreadcrumbProps extends HTMLAttributes<HTMLElement> {
   onHierarchyInvalid?: (issues: GridraBreadcrumbHierarchyIssue[]) => void;
 }
 
-// itemsの階層構造を検証する。親IDが存在しない、または前のアイテムと親子関係がない場合に問題を報告する。
+// Breadcrumbは表示順そのものが階層を表すため、parentIdがある場合だけ軽く整合性を検証する。
 function validateHierarchy(items: GridraBreadcrumbItem[]): GridraBreadcrumbHierarchyIssue[] {
   const anyParentId = items.some((item) => item.parentId != null);
   if (!anyParentId) return [];
@@ -60,7 +60,7 @@ export function GridraBreadcrumb({
 }: GridraBreadcrumbProps) {
   const issues = useMemo(() => validateHierarchy(items), [items]);
 
-  // 階層構造に問題がある場合、onHierarchyInvalidコールバックを呼び出して問題を通知する。
+  // 表示は継続しつつ、呼び出し側がデータ不整合を検知できるように通知する。
   useEffect(() => {
     if (issues.length > 0 && onHierarchyInvalid) {
       onHierarchyInvalid(issues);
@@ -69,7 +69,7 @@ export function GridraBreadcrumb({
 
   const effectiveMaxItems = maxItems != null ? Math.max(3, maxItems) : undefined;
 
-  // maxItemsが指定されていて、アイテム数がmaxItemsを超える場合は、最初のアイテムと最後のアイテムを表示し、残りのアイテムを省略して表示する。
+  // 省略表示でも現在地の文脈を失わないよう、先頭と末尾側のitemは必ず残す。
   const visibleItems = useMemo(() => {
     if (effectiveMaxItems == null || items.length <= effectiveMaxItems) {
       return items.map((item, i) => ({ type: "item" as const, item, index: i }));
@@ -81,8 +81,8 @@ export function GridraBreadcrumb({
 
     result.push({ type: "ellipsis", index: -1 }); // 省略を表すエントリを追加
 
-    const tailCount = effectiveMaxItems - 2;  // 最初と最後のアイテムを表示するため、残りのスペースから2を引く
-    const tailStart = items.length - tailCount; // 表示する最後のアイテムの開始インデックスを計算
+    const tailCount = effectiveMaxItems - 2;
+    const tailStart = items.length - tailCount;
     for (let i = tailStart; i < items.length; i++) {
       result.push({ type: "item", item: items[i], index: i });
     }
@@ -122,9 +122,9 @@ export function GridraBreadcrumb({
             );
           }
 
-          const item = entry.item!; // タイプガードでitemが存在することが保証されているため、非nullアサーションを使用してアクセスする。
+          const item = entry.item!;
           const isLast = visibleIndex === visibleItems.length - 1;
-          const isCurrent = item.current; // アイテムのcurrentプロパティを使用して現在のページを判断する。
+          const isCurrent = item.current;
           const isDisabled = item.disabled;
 
           const itemClassName = cx(
@@ -132,7 +132,7 @@ export function GridraBreadcrumb({
             isDisabled ? "gridra-breadcrumb__item--disabled" : null,
           );
 
-          // 現在か向こうの場合リンクを表示せず、span要素でテキストを表示する。そうでない場合はa要素でリンクを表示する。
+          // current/disabled/hrefなしは遷移できない状態なので、リンクではなくテキストとして描画する。
           const content = isCurrent || isDisabled || !item.href ? (
             <span
               {...(isCurrent ? { "aria-current": "page" as const } : {})}
