@@ -34,11 +34,14 @@ export function GridraIconButton({
     loading && "gridra-icon-button--loading",
     className,
   );
+  // loading中はchildrenを表示せず、labelの先頭文字を表示する
+  // aria-hiddenをtrueにすることで、スクリーンリーダーがchildrenを読み上げないようにする
   const icon: ReactNode = loading ? (
     <GridraSpinner aria-hidden="true" label="Loading" size="sm" />
   ) : (
     children ?? label.slice(0, 1)
   );
+  // loading中とdisabled中を同時に管理して、ボタンのdisabled属性を制御する
   const isDisabled = disabled || loading;
 
   return (
