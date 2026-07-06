@@ -1,5 +1,4 @@
 import {
-  useCallback,
   useMemo,
   useRef,
   type HTMLAttributes,
@@ -7,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { cx } from "../../internal/classNames";
 
 export type GridraMenuOrientation = "vertical" | "horizontal";
 export type GridraMenuSize = "sm" | "md" | "lg";
@@ -19,6 +19,7 @@ export interface GridraMenuCommandItem {
   destructive?: boolean;
 }
 
+// separatorは操作対象ではないため、idなしでも描画できる。
 export interface GridraMenuSeparatorItem {
   type: "separator";
   id?: string;
@@ -49,6 +50,7 @@ function isCommand(item: GridraMenuItem): item is GridraMenuCommandItem {
   return !("type" in item) || item.type !== "separator";
 }
 
+// activeIdが有効なidかどうかを判定する
 function normalizeActiveId(
   requestedId: string | undefined,
   commandItems: GridraMenuCommandItem[],
@@ -72,6 +74,7 @@ export function GridraMenu({
   size = "md",
   ...props
 }: GridraMenuProps) {
+  // itemをidで参照するため、itemのidをキーにしたMapを保持する
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
 
   const commandItems = useMemo(() => items.filter(isCommand), [items]);
@@ -86,10 +89,13 @@ export function GridraMenu({
     [enabledItems],
   );
 
+  // 初期値が存在しないitemやdisabled itemを指している場合は未選択として扱う。
   const safeDefaultActiveId = useMemo(
     () => normalizeActiveId(defaultActiveId, commandItems),
     [defaultActiveId, commandItems],
   );
+
+  // controlledなactiveIdも、有効なcommand itemだけを選択状態として受け入れる。
   const safeActiveIdProp = useMemo(
     () => normalizeActiveId(activeId, commandItems),
     [activeId, commandItems],
@@ -101,6 +107,7 @@ export function GridraMenu({
     onActiveIdChange,
   );
 
+  // items変更で現在のactiveIdが無効になる場合があるため、描画直前にも正規化する。
   const safeActiveId = useMemo(
     () => normalizeActiveId(currentActiveId, commandItems),
     [currentActiveId, commandItems],
@@ -115,94 +122,77 @@ export function GridraMenu({
 
   const focusedIndexRef = useRef(safeActiveIndex);
 
-  // Keep ref in sync when activeId changes externally
+  // 外部からactiveIdが変更された場合、focusedIndexも更新する。
   focusedIndexRef.current = safeActiveIndex;
 
-  const handleActivate = useCallback(
-    (id: string) => {
-      const item = commandItems.find((c) => c.id === id);
-      if (!item || item.disabled) return;
-      setActiveId(id);
-      onAction?.(id);
-    },
-    [commandItems, setActiveId, onAction],
-  );
+  const handleActivate = (id: string) => {
+    const item = commandItems.find((c) => c.id === id);
+    if (!item || item.disabled) return;
+    setActiveId(id);
+    onAction?.(id);
+  };
 
-  const focusItemById = useCallback(
-    (id: string) => {
-      const el = itemRefs.current.get(id);
-      el?.focus();
-    },
-    [],
-  );
+  const focusItemById = (id: string) => {
+    const el = itemRefs.current.get(id);
+    el?.focus();
+  };
 
-  const clampIndex = useCallback(
-    (index: number) => {
-      if (enabledIds.length === 0) return 0;
-      return Math.max(0, Math.min(index, enabledIds.length - 1));
-    },
-    [enabledIds.length],
-  );
+  const clampIndex = (index: number) => {
+    if (enabledIds.length === 0) return 0;
+    return Math.max(0, Math.min(index, enabledIds.length - 1));
+  };
+  // 処理された安全なindexをもとに、対応するidを取得してfocusする
+  const navigateByIndex = (index: number) => {
+    const clamped = clampIndex(index);
+    const id = enabledIds[clamped];
+    if (id) focusItemById(id);
+  };
 
-  const navigateByIndex = useCallback(
-    (index: number) => {
-      const clamped = clampIndex(index);
-      const id = enabledIds[clamped];
-      if (id) focusItemById(id);
-    },
-    [enabledIds, clampIndex, focusItemById],
-  );
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (enabledIds.length === 0) return;
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (enabledIds.length === 0) return;
+    const nextKey = orientation === "vertical" ? "ArrowDown" : "ArrowRight";
+    const prevKey = orientation === "vertical" ? "ArrowUp" : "ArrowLeft";
 
-      const nextKey = orientation === "vertical" ? "ArrowDown" : "ArrowRight";
-      const prevKey = orientation === "vertical" ? "ArrowUp" : "ArrowLeft";
+    const currentIndex = focusedIndexRef.current;
 
-      const currentIndex = focusedIndexRef.current;
-
-      switch (event.key) {
-        case nextKey: {
-          event.preventDefault();
-          const next = (currentIndex + 1) % enabledIds.length;
-          focusedIndexRef.current = next;
-          navigateByIndex(next);
-          break;
-        }
-        case prevKey: {
-          event.preventDefault();
-          const prev =
-            (currentIndex - 1 + enabledIds.length) % enabledIds.length;
-          focusedIndexRef.current = prev;
-          navigateByIndex(prev);
-          break;
-        }
-        case "Home": {
-          event.preventDefault();
-          focusedIndexRef.current = 0;
-          navigateByIndex(0);
-          break;
-        }
-        case "End": {
-          event.preventDefault();
-          focusedIndexRef.current = enabledIds.length - 1;
-          navigateByIndex(enabledIds.length - 1);
-          break;
-        }
+    switch (event.key) {
+      case nextKey: {
+        event.preventDefault();
+        const next = (currentIndex + 1) % enabledIds.length;
+        focusedIndexRef.current = next;
+        navigateByIndex(next);
+        break;
       }
-    },
-    [orientation, enabledIds, navigateByIndex],
-  );
+      case prevKey: {
+        event.preventDefault();
+        const prev =
+          (currentIndex - 1 + enabledIds.length) % enabledIds.length;
+        focusedIndexRef.current = prev;
+        navigateByIndex(prev);
+        break;
+      }
+      case "Home": {
+        event.preventDefault();
+        focusedIndexRef.current = 0;
+        navigateByIndex(0);
+        break;
+      }
+      case "End": {
+        event.preventDefault();
+        focusedIndexRef.current = enabledIds.length - 1;
+        navigateByIndex(enabledIds.length - 1);
+        break;
+      }
+    }
+  };
 
-  const rootClassName = [
+  const rootClassName = cx(
     "gridra-menu",
     `gridra-menu--${orientation}`,
     `gridra-menu--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
   if (items.length === 0) {
     return (
@@ -232,14 +222,12 @@ export function GridraMenu({
           }
 
           const isActive = item.id === safeActiveId;
-          const tagClassName = [
+          const tagClassName = cx(
             "gridra-menu__item",
             item.disabled ? "gridra-menu__item--disabled" : null,
             item.destructive ? "gridra-menu__item--destructive" : null,
             isActive ? "gridra-menu__item--active" : null,
-          ]
-            .filter(Boolean)
-            .join(" ");
+          );
 
           const state: GridraMenuItemState = {
             active: isActive,
@@ -254,7 +242,8 @@ export function GridraMenu({
           ) : (
             <span className="gridra-menu__item-label">{item.label}</span>
           );
-
+          
+          // itemのDOM要素を参照するためのコールバック関数
           const refCallback = (el: HTMLElement | null) => {
             if (el) {
               itemRefs.current.set(item.id, el);

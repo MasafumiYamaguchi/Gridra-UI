@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from "react";
+import { cx } from "../../internal/classNames";
 
 export type GridraKbdSize = "sm" | "md";
 
@@ -11,13 +12,12 @@ export function GridraKbd({
   size = "md",
   ...props
 }: GridraKbdProps) {
-  const rootClassName = [
+  const rootClassName = cx(
     "gridra-kbd",
     `gridra-kbd--${size}`,
     className,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  );
 
+  // kbdタグなんてあるんだね
   return <kbd className={rootClassName} {...props} />;
 }

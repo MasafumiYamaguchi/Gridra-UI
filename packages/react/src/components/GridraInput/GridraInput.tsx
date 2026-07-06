@@ -4,6 +4,7 @@ import { resolveAriaInvalid } from "../../internal/formControl";
 
 export type GridraInputSize = "sm" | "md" | "lg";
 
+// HTML属性とぶつかるため、InputHTMLAttributesからsizeを除外して独自定義する
 export interface GridraInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
   invalid?: boolean;
   size?: GridraInputSize;
