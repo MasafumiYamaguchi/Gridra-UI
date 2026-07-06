@@ -27,18 +27,25 @@ export function wrapIndex(index: number, itemCount: number): number {
   return ((index % itemCount) + itemCount) % itemCount;
 }
 
-export function normalizeGridLine(value: number): number {
+export function normalizeGridLine(value: number, max?: number): number {
   if (!Number.isFinite(value)) {
     return 1;
   }
-  return Math.max(1, Math.floor(value));
+  const line = Math.max(1, Math.floor(value));
+  return max === undefined ? line : Math.min(line, max);
 }
 
-export function normalizeGridSpan(value = 1): number {
+export function normalizeGridSpan(value = 1, max?: number, start = 1): number {
   if (!Number.isFinite(value)) {
     return 1;
   }
-  return Math.max(1, Math.floor(value));
+  const span = Math.max(1, Math.floor(value));
+
+  if (max === undefined) {
+    return span;
+  }
+
+  return Math.min(span, Math.max(1, max - start + 1));
 }
 
 export function formatCssLength(value: number | string): string {
@@ -49,4 +56,26 @@ export function formatCssLength(value: number | string): string {
     return `${Math.max(0, value)}px`;
   }
   return value;
+}
+
+export function formatCssLengthWithMin(
+  value: number | string,
+  minValue: number,
+): string {
+  if (typeof value === "number") {
+    return `${Math.max(minValue, value)}px`;
+  }
+  return value;
+}
+
+export function parseCssPx(value: string, fallback = 0): number {
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+export function resolveCssLengthToPx(
+  value: number | string,
+  fallback: number,
+): number {
+  return typeof value === "number" ? value : parseCssPx(value, fallback);
 }

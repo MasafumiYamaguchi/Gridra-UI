@@ -1,7 +1,15 @@
 import type { PointerEvent } from "react";
 import type { GridraPoint, GridraRect } from "@gridra-ui/core";
-import { clampNumber } from "../../internal/numeric";
+import {
+  clampNumber,
+  formatCssLength,
+  normalizeGridLine,
+  normalizeGridSpan,
+  parseCssPx,
+} from "../../internal/numeric";
 import type { GridraNodePlacement } from "../GridraNode";
+
+export { formatCssLength, normalizeGridLine, normalizeGridSpan };
 
 export function normalizeGridCount(value: number): number {
   if (!Number.isFinite(value)) {
@@ -44,30 +52,6 @@ export function normalizeGridPlacementForDrag(
     columnSpan,
     rowSpan,
   };
-}
-
-export function normalizeGridLine(value: number, max?: number): number {
-  if (!Number.isFinite(value)) {
-    return 1;
-  }
-
-  const line = Math.max(1, Math.floor(value));
-
-  return max === undefined ? line : Math.min(line, max);
-}
-
-export function normalizeGridSpan(value = 1, max?: number, start = 1): number {
-  if (!Number.isFinite(value)) {
-    return 1;
-  }
-
-  const span = Math.max(1, Math.floor(value));
-
-  if (max === undefined) {
-    return span;
-  }
-
-  return Math.min(span, Math.max(1, max - start + 1));
 }
 
 export function getCanvasPoint(
@@ -256,22 +240,4 @@ export function placementsEqual(
     normalizeGridSpan(first.columnSpan) === normalizeGridSpan(second.columnSpan) &&
     normalizeGridSpan(first.rowSpan) === normalizeGridSpan(second.rowSpan)
   );
-}
-
-export function formatCssLength(value: number | string): string {
-  if (typeof value === "number") {
-    if (!Number.isFinite(value)) {
-      return "0px";
-    }
-
-    return `${Math.max(0, value)}px`;
-  }
-
-  return value;
-}
-
-function parseCssPx(value: string): number {
-  const parsed = Number.parseFloat(value);
-
-  return Number.isFinite(parsed) ? parsed : 0;
 }

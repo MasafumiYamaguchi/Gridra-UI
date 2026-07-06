@@ -14,14 +14,11 @@ import {
 import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
+import { getFocusableElements } from "../../internal/focus";
 import { clampIndex } from "../../internal/numeric";
 import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 
 export type GridraCommandPaletteSize = "sm" | "md" | "lg";
-
-// Dialog内でTabを循環させるため、focus可能な要素だけをDOMから拾う。
-const FOCUSABLE_SELECTOR =
-  'a[href]:not([tabindex="-1"]), button:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])';
 
 // idは選択状態・action通知・ref管理をつなぐ安定したコマンド識別子として使う。
 export interface GridraCommandPaletteCommandItem {
@@ -272,8 +269,7 @@ export function GridraCommandPalette({
         return;
       }
 
-      const focusable =
-        dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      const focusable = getFocusableElements(dialog);
       if (focusable.length === 0) {
         event.preventDefault();
         event.stopPropagation();

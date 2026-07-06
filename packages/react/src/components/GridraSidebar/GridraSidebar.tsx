@@ -1,7 +1,12 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
-import { clampNumber } from "../../internal/numeric";
+import {
+  clampNumber,
+  formatCssLength,
+  formatCssLengthWithMin,
+  resolveCssLengthToPx,
+} from "../../internal/numeric";
 
 export type GridraSidebarSide = "left" | "right";
 
@@ -48,17 +53,17 @@ export function GridraSidebar({
     onOpenChange,
   );
   const [resizedWidth, setResizedWidth] = useState(() =>
-    resolveLengthToPx(width, DEFAULT_OPEN_WIDTH),
+    resolveCssLengthToPx(width, DEFAULT_OPEN_WIDTH),
   );
   const dragStartXRef = useRef<number | null>(null);
   const dragStartWidthRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setResizedWidth(resolveLengthToPx(width, DEFAULT_OPEN_WIDTH));
+    setResizedWidth(resolveCssLengthToPx(width, DEFAULT_OPEN_WIDTH));
   }, [width]);
 
-  const collapsedLength = toCssLength(collapsedWidth);
-  const baseOpenLength = toCssLength(width);
+  const collapsedLength = formatCssLength(collapsedWidth);
+  const baseOpenLength = formatCssLength(width);
   const activeOpenWidth = resizable ? `${clampWidth(resizedWidth, minWidth, maxWidth)}px` : baseOpenLength;
   const sidebarWidth = currentOpen ? activeOpenWidth : collapsedLength;
 
@@ -77,7 +82,10 @@ export function GridraSidebar({
       ({
         ...style,
         "--gridra-sidebar-width": sidebarWidth,
-        "--gridra-sidebar-toggle-size": toCssLengthWithMin(toggleSize, DEFAULT_TOGGLE_SIZE),
+        "--gridra-sidebar-toggle-size": formatCssLengthWithMin(
+          toggleSize,
+          DEFAULT_TOGGLE_SIZE,
+        ),
       }) as CSSProperties,
     [sidebarWidth, style, toggleSize],
   );
@@ -217,25 +225,6 @@ export function GridraSidebar({
       ) : null}
     </aside>
   );
-}
-
-function toCssLength(value: number | string): string {
-  return typeof value === "number" ? `${value}px` : value;
-}
-
-function toCssLengthWithMin(value: number | string, minValue: number): string {
-  if (typeof value === "number") {
-    return `${Math.max(minValue, value)}px`;
-  }
-  return value;
-}
-
-function resolveLengthToPx(value: number | string, fallback: number): number {
-  if (typeof value === "number") {
-    return value;
-  }
-  const parsed = Number.parseFloat(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
 }
 
 function clampWidth(value: number, minWidth: number, maxWidth: number): number {

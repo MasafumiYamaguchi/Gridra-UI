@@ -13,10 +13,11 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
+import { FOCUSABLE_SELECTOR, getFocusableElements } from "../../internal/focus";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
-import { cx } from "../../internal/classNames";
 
 export type GridraDialogSize = "sm" | "md" | "lg" | "fullscreen";
 
@@ -39,10 +40,6 @@ export interface GridraDialogProps extends Omit<
   showCloseButton?: boolean;
   initialFocusRef?: RefObject<HTMLElement | null>;
 }
-
-// Modal内にfocusを閉じ込めるため、Tab移動できる要素だけを拾う。
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function GridraDialog({
   children,
@@ -152,8 +149,7 @@ export function GridraDialog({
         return;
       }
 
-      const focusable =
-        dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      const focusable = getFocusableElements(dialog);
       if (focusable.length === 0) {
         event.preventDefault();
         return;
