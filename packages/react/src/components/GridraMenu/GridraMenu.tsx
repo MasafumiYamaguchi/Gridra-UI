@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
+import { clampIndex } from "../../internal/numeric";
 
 export type GridraMenuOrientation = "vertical" | "horizontal";
 export type GridraMenuSize = "sm" | "md" | "lg";
@@ -137,13 +138,9 @@ export function GridraMenu({
     el?.focus();
   };
 
-  const clampIndex = (index: number) => {
-    if (enabledIds.length === 0) return 0;
-    return Math.max(0, Math.min(index, enabledIds.length - 1));
-  };
   // 処理された安全なindexをもとに、対応するidを取得してfocusする
   const navigateByIndex = (index: number) => {
-    const clamped = clampIndex(index);
+    const clamped = clampIndex(index, enabledIds.length);
     const id = enabledIds[clamped];
     if (id) focusItemById(id);
   };

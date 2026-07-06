@@ -16,14 +16,15 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
+import { clampIndex, clampNumber } from "../../internal/numeric";
 import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 import type {
   GridraDropdownMenuItem,
   GridraDropdownMenuSize,
 } from "../GridraDropdownMenu/GridraDropdownMenu";
-import { cx } from "../../internal/classNames";
 
 export type { GridraDropdownMenuItem };
 
@@ -53,11 +54,6 @@ function isCommand(
   item: GridraDropdownMenuItem,
 ): item is Extract<GridraDropdownMenuItem, { id: string; label: ReactNode }> {
   return !("type" in item) || item.type !== "separator";
-}
-
-// activeIndexはitems変更で範囲外になり得るため、focusや実行の直前に安全な範囲へ丸める。
-function clampIndex(index: number, itemCount: number) {
-  return itemCount === 0 ? 0 : Math.max(0, Math.min(index, itemCount - 1));
 }
 
 export function GridraContextMenu({
@@ -213,13 +209,15 @@ export function GridraContextMenu({
       const rawLeft = pointerCoordsRef.current.left;
 
       // 右クリック位置を起点にしつつ、menu全体がviewport内に残るように座標を丸める。
-      const nextLeft = Math.max(
+      const nextLeft = clampNumber(
+        rawLeft,
         0,
-        Math.min(rawLeft, window.innerWidth - menuRect.width),
+        Math.max(0, window.innerWidth - menuRect.width),
       );
-      const nextTop = Math.max(
+      const nextTop = clampNumber(
+        rawTop,
         0,
-        Math.min(rawTop, window.innerHeight - menuRect.height),
+        Math.max(0, window.innerHeight - menuRect.height),
       );
 
       setCoords({ top: nextTop, left: nextLeft });

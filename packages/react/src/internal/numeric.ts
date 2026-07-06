@@ -13,6 +13,20 @@ export function clampInt(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, intValue));
 }
 
+export function clampIndex(index: number, itemCount: number): number {
+  if (itemCount <= 0) {
+    return 0;
+  }
+  return clampInt(index, 0, itemCount - 1);
+}
+
+export function wrapIndex(index: number, itemCount: number): number {
+  if (itemCount <= 0) {
+    return 0;
+  }
+  return ((index % itemCount) + itemCount) % itemCount;
+}
+
 export function normalizeGridLine(value: number): number {
   if (!Number.isFinite(value)) {
     return 1;

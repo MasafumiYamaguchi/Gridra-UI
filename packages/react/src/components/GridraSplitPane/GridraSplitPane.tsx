@@ -6,6 +6,7 @@ import {
   useRef,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { clampNumber } from "../../internal/numeric";
 
 export type GridraSplitPaneOrientation = "horizontal" | "vertical";
 
@@ -290,15 +291,15 @@ export function GridraSplitPane({
 function clampSize(value: number, minSize: number, maxSize: number): number {
   const { min, max } = normalizeSizeConstraints(minSize, maxSize);
   const safeValue = Number.isFinite(value) ? value : min;
-  return Math.min(max, Math.max(min, safeValue));
+  return clampNumber(safeValue, min, max);
 }
 
 function normalizeSizeConstraints(
   minSize: number,
   maxSize: number,
 ): { min: number; max: number } {
-  const rawMin = Number.isFinite(minSize) ? Math.max(0, Math.min(100, minSize)) : 0;
-  const rawMax = Number.isFinite(maxSize) ? Math.max(0, Math.min(100, maxSize)) : 100;
+  const rawMin = Number.isFinite(minSize) ? clampNumber(minSize, 0, 100) : 0;
+  const rawMax = Number.isFinite(maxSize) ? clampNumber(maxSize, 0, 100) : 100;
 
   return rawMin <= rawMax
     ? { min: rawMin, max: rawMax }
@@ -344,7 +345,7 @@ function clampSizeInPair(
   const upper = Math.max(minBound, maxBound);
   const safeValue = Number.isFinite(value) ? value : lower;
 
-  return Math.min(upper, Math.max(lower, safeValue));
+  return clampNumber(safeValue, lower, upper);
 }
 
 function applyAdjacentResize(

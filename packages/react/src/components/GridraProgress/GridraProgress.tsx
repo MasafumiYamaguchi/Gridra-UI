@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from "react";
+import { clampNumber } from "../../internal/numeric";
 
 export type GridraProgressSize = "sm" | "md" | "lg";
 export type GridraProgressTone =
@@ -16,10 +17,6 @@ export interface GridraProgressProps
   size?: GridraProgressSize;
   tone?: GridraProgressTone;
   value?: number;
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
 }
 
 function normalizeMax(max: number): number {
@@ -44,7 +41,7 @@ export function GridraProgress({
   const normalizedValue = isIndeterminate ? 0 : normalizeValue(value);
   const clampedValue = isIndeterminate
     ? 0
-    : clamp(normalizedValue, 0, normalizedMax);
+    : clampNumber(normalizedValue, 0, normalizedMax);
   const fraction = isIndeterminate ? 0 : clampedValue / normalizedMax;
   const percent = fraction * 100;
 

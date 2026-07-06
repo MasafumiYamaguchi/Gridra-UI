@@ -17,6 +17,7 @@ import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
+import { clampIndex } from "../../internal/numeric";
 import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
@@ -66,10 +67,6 @@ function isCommand(
   item: GridraDropdownMenuItem,
 ): item is GridraDropdownMenuCommandItem {
   return !("type" in item) || item.type !== "separator";
-}
-
-function clampIndex(index: number, itemCount: number) {
-  return itemCount === 0 ? 0 : Math.max(0, Math.min(index, itemCount - 1));
 }
 
 export function GridraDropdownMenu({

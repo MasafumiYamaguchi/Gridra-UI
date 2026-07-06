@@ -1,6 +1,7 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { clampNumber } from "../../internal/numeric";
 
 export type GridraSidebarSide = "left" | "right";
 
@@ -241,5 +242,5 @@ function clampWidth(value: number, minWidth: number, maxWidth: number): number {
   if (minWidth > maxWidth) {
     return minWidth;
   }
-  return Math.min(maxWidth, Math.max(minWidth, value));
+  return clampNumber(value, minWidth, maxWidth);
 }

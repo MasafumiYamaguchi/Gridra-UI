@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
+import { wrapIndex } from "../../internal/numeric";
 
 export type GridraTabsOrientation = "horizontal" | "vertical";
 export type GridraTabsSize = "sm" | "md" | "lg";
@@ -80,17 +81,9 @@ export function GridraTabs({
 
   const enabledCount = enabledIds.length;
 
-  const clampIndex = useCallback(
-    (index: number) => {
-      if (enabledCount === 0) return 0;
-      return ((index % enabledCount) + enabledCount) % enabledCount;
-    },
-    [enabledCount],
-  );
-
   const focusTab = useCallback(
     (index: number) => {
-      const clamped = clampIndex(index);
+      const clamped = wrapIndex(index, enabledCount);
       setFocusedIndex(clamped);
       const id = enabledIds[clamped];
       tabRefs.current.get(id)?.focus();
@@ -99,7 +92,7 @@ export function GridraTabs({
         setCurrentId(id);
       }
     },
-    [clampIndex, enabledIds, activationMode, setCurrentId],
+    [enabledCount, enabledIds, activationMode, setCurrentId],
   );
 
   const selectTab = useCallback(

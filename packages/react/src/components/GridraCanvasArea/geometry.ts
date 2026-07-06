@@ -1,5 +1,6 @@
 import type { PointerEvent } from "react";
 import type { GridraPoint, GridraRect } from "@gridra-ui/core";
+import { clampNumber } from "../../internal/numeric";
 import type { GridraNodePlacement } from "../GridraNode";
 
 export function normalizeGridCount(value: number): number {
@@ -273,12 +274,4 @@ function parseCssPx(value: string): number {
   const parsed = Number.parseFloat(value);
 
   return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function clampNumber(value: number, min: number, max: number): number {
-  if (!Number.isFinite(value)) {
-    return min;
-  }
-
-  return Math.min(max, Math.max(min, value));
 }

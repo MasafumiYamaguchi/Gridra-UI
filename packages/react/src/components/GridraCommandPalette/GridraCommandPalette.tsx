@@ -13,8 +13,9 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { useControllableValue } from "../../hooks/useControllableValue";
-import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 import { cx } from "../../internal/classNames";
+import { clampIndex } from "../../internal/numeric";
+import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
 
 export type GridraCommandPaletteSize = "sm" | "md" | "lg";
 
@@ -94,10 +95,6 @@ function getPlainSearchText(value: ReactNode): string {
     return String(value);
   }
   return "";
-}
-
-function clampIndex(index: number, itemCount: number) {
-  return itemCount === 0 ? 0 : Math.max(0, Math.min(index, itemCount - 1));
 }
 
 export function GridraCommandPalette({
