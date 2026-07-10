@@ -24,6 +24,17 @@ Applications that use only one palette may import its individual CSS file.
 Omitting `theme` keeps the backward-compatible Dark fallback. Legacy
 `gridra-theme-*` classes are also supported when the `theme` prop is absent.
 
+The built-in palettes use editor themes as visual references:
+
+- Dark preserves Gridra's original monochrome palette.
+- Light follows VS Code's built-in Light Modern UI colors.
+- Midnight follows the Tokyo Night extension palette.
+- Forest follows Everforest's medium dark palette.
+- Ember follows the warm Gruvbox Material palette.
+
+The Gridra names describe Gridra presets; they are not redistributed copies of
+the referenced editor themes.
+
 ## Custom themes
 
 Custom theme names must use lowercase kebab-case. Define a class using the

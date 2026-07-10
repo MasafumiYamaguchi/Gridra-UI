@@ -24,6 +24,17 @@ import "@gridra-ui/theme/themes.css";
 場合は後方互換のDark fallbackが使われます。`theme` propがない場合は、従来の
 `gridra-theme-*` classも引き続き認識されます。
 
+組み込みパレットは、次のエディターテーマを配色の参考にしています。
+
+- Dark: Gridra本来のモノクロパレット
+- Light: VS Code標準のLight Modern
+- Midnight: Tokyo Night拡張のパレット
+- Forest: Everforestのmedium darkパレット
+- Ember: Gruvbox Materialの暖色パレット
+
+各名称はGridra側のプリセット名であり、参照元テーマそのものを再配布するものでは
+ありません。
+
 ## カスタムテーマ
 
 カスタム名は小文字英数字のkebab-caseにします。`gridra-theme-`接頭辞を持つ
