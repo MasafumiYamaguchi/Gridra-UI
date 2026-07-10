@@ -13,6 +13,7 @@ export function GridraRoot({
   ...props
 }: GridraRootProps) {
   const rootClassName = ["gridra-root", className].filter(Boolean).join(" ");
+  // panelがある場合だけ左右配置用のmodifierを付ける。
   const shellClassName = [
     "gridra-root__shell",
     panel ? `gridra-root__shell--${panelPosition}` : null
@@ -23,6 +24,7 @@ export function GridraRoot({
   return (
     <div className={rootClassName} {...props}>
       <div className={shellClassName}>
+        {/* panelPositionに応じてmainの前後へ同じpanelスロットを差し込む。 */}
         {panel && panelPosition === "left" ? panel : null}
         <main className="gridra-main">{children}</main>
         {panel && panelPosition === "right" ? panel : null}

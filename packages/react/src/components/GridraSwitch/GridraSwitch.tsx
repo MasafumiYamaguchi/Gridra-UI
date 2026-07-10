@@ -26,6 +26,7 @@ export function GridraSwitch({
   type = "button",
   ...props
 }: GridraSwitchProps) {
+  // checkedは外部が保持するcontrolled値で、コンポーネント内では反転後の値だけを通知する。
   const switchClassName = cx(
     "gridra-switch",
     `gridra-switch--${size}`,
@@ -40,6 +41,7 @@ export function GridraSwitch({
       aria-invalid={resolveAriaInvalid(undefined, invalid)}
       className={switchClassName}
       onClick={(event) => {
+        // 利用側のonClickがpreventDefaultした場合は、状態変更通知を行わない。
         onClick?.(event);
         if (!event.defaultPrevented) {
           onCheckedChange?.(!checked);
@@ -49,6 +51,7 @@ export function GridraSwitch({
       type={type}
       {...props}
     >
+      {/* trackとthumbは装飾として隠し、状態はroleとaria-checkedで伝える。 */}
       <span className="gridra-switch__track" aria-hidden="true">
         <span className="gridra-switch__thumb" />
       </span>

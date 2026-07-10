@@ -25,6 +25,7 @@ export function GridraToolbar({
 }: GridraToolbarProps) {
   return (
     <div className={cx("gridra-toolbar", className)} role="toolbar" {...props}>
+      {/* actionsを既定ButtonまたはrenderActionへ変換し、追加のchildrenも同じ列へ合成する。 */}
       {actions.map((action) => (
         <Fragment key={action.id}>
           {renderAction ? (
@@ -49,5 +50,6 @@ export function GridraToolbarButton({
   className,
   ...props
 }: GridraButtonProps) {
+  // GridraButtonのAPIを保ったまま、Toolbar内専用のclassだけを追加する。
   return <GridraButton className={cx("gridra-toolbar__button", className)} {...props} />;
 }

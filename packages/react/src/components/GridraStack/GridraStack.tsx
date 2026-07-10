@@ -26,6 +26,7 @@ export function GridraStack({
   wrap = false,
   ...props
 }: GridraStackProps) {
+  // レイアウト指定をmodifier classへ変換し、組み合わせをCSS側で表現する。
   const stackClassName = [
     "gridra-stack",
     `gridra-stack--${direction}${reverse ? "-reverse" : ""}`,
@@ -39,6 +40,7 @@ export function GridraStack({
     .join(" ");
 
   return (
+    // DOM要素や余白などの共通propsはGridraBoxへ委譲し、displayだけflexに固定する。
     <GridraBox className={stackClassName} display="flex" {...props}>
       {children as ReactNode}
     </GridraBox>

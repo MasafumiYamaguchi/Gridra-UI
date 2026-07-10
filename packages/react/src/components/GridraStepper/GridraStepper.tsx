@@ -32,6 +32,7 @@ export function GridraStepper({
   size = "md",
   ...props
 }: GridraStepperProps) {
+  // disabledなstepを現在位置の候補から除外する。
   const enabledIds = useMemo(
     () => items.filter((item) => !item.disabled).map((item) => item.id),
     [items],
@@ -41,7 +42,9 @@ export function GridraStepper({
     () => defaultCurrentId ?? "",
   );
 
+  // currentId propがあればcontrolled、なければ内部stateを使う。
   const rawCurrentId = currentIdProp ?? internalCurrentId;
+  // 指定されたidが無効な場合は、最初の有効stepへフォールバックする。
   const fallbackId = enabledIds[0] ?? null;
   const currentId = enabledIds.includes(rawCurrentId) ? rawCurrentId : fallbackId;
 
@@ -49,6 +52,7 @@ export function GridraStepper({
 
   const handleStepClick = useCallback(
     (id: string) => {
+      // 現在位置や無効状態からは遷移せず、戻れる完了stepだけを処理する。
       if (disabled) return;
       if (currentId == null) return;
       if (id === currentId) return;
@@ -75,12 +79,14 @@ export function GridraStepper({
     <nav {...props} aria-label={ariaLabel} className={rootClassName}>
       <ol className="gridra-stepper__list">
         {items.map((item, index) => {
+          // 現在位置との前後関係からcompleted/current/pendingを分類する。
           const hasCurrent = currentIndex >= 0;
           const isBefore = hasCurrent && index < currentIndex;
           const isCurrent = hasCurrent && index === currentIndex;
           const isAfter = hasCurrent && index > currentIndex;
           const isExplicitlyDisabled = item.disabled || disabled;
           const isPending = (isAfter || !hasCurrent) && !isExplicitlyDisabled;
+          // 未来のstepは表示のみとし、完了済みstepだけを戻り先として操作可能にする。
           const isInteractive = isBefore && !isExplicitlyDisabled;
           const isButtonDisabled = isExplicitlyDisabled || isPending || !hasCurrent;
 

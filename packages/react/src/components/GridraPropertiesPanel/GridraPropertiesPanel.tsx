@@ -15,6 +15,7 @@ export interface GridraPropertyFieldSchema {
   step?: number;
 }
 
+// ノード種別をキーに、その種別で表示するフィールド一覧を引けるようにする。
 export type GridraNodePropertiesSchema = Record<
   string,
   GridraPropertyFieldSchema[]
@@ -47,6 +48,7 @@ export function GridraPropertiesPanel({
   value,
   ...props
 }: GridraPropertiesPanelProps) {
+  // 選択対象・型・schema・現在値が揃った場合だけ編集可能な状態とみなす。
   const hasSelection =
     selectedNodeId != null &&
     selectedNodeType != null &&
@@ -57,6 +59,7 @@ export function GridraPropertiesPanel({
   const hasFields = fields != null && fields.length > 0;
 
   const handleChange = (fieldId: string, nextValue: string | number | boolean) => {
+    // 無効状態や選択情報が不足している場合は、patchを外部へ通知しない。
     if (disabled || !hasSelection) {
       return;
     }
@@ -100,6 +103,7 @@ export function GridraPropertiesPanel({
                     min={field.min}
                     onChange={(event) => {
                       const raw = event.target.value;
+                      // 空文字や非有限値は、数値プロパティのpatchとして確定させない。
                       if (raw.trim() === "" || Number.isNaN(Number(raw)) || !Number.isFinite(Number(raw))) {
                         return;
                       }
@@ -165,6 +169,7 @@ export function GridraPropertiesPanel({
 }
 
 function formatNumberValue(value: unknown): string | number {
+  // 不正な値はinputへNaNを渡さず、未入力として表示する。
   if (typeof value !== "number" || !Number.isFinite(value)) return "";
   return value;
 }

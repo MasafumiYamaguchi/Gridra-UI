@@ -21,6 +21,7 @@ export function GridraRadio({
   size = "md",
   ...props
 }: GridraRadioProps) {
+  // inputと説明文をARIAで結び付けるため、衝突しないidの組を用意する。
   const { controlId, descriptionId } = useControlDescriptionIds(props.id, Boolean(description));
   const radioClassName = cx(
     "gridra-radio",
@@ -29,6 +30,7 @@ export function GridraRadio({
     className,
   );
 
+  // 明示されたaria-invalidを優先しつつ、invalid propもアクセシビリティ属性へ反映する。
   return (
     <label className={radioClassName}>
       <input
@@ -44,6 +46,7 @@ export function GridraRadio({
         <span className="gridra-radio__content">
           {label ? <span className="gridra-radio__label">{label}</span> : null}
           {description ? (
+            // 説明はaria-describedby経由で読ませ、label内での重複読み上げを避ける。
             <span id={descriptionId} className="gridra-radio__description" aria-hidden="true">
               {description}
             </span>

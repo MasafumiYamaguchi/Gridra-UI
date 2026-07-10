@@ -25,6 +25,7 @@ export interface GridraToastContextValue {
 
 interface QueuedToast {
   message: ReactNode;
+  // キューへ入れる時点で既定値を補い、表示処理では未定義を扱わない。
   options: Required<GridraToastOptions>;
 }
 
@@ -34,10 +35,12 @@ const EXIT_ANIMATION_DURATION = 150;
 
 let nextId = 0;
 
+// Provider配下の任意の子孫から、Toast表示関数だけを参照できるようにする。
 const ToastContext = createContext<GridraToastContextValue | null>(null);
 
 export function useToast(): GridraToastContextValue {
   const context = useContext(ToastContext);
+  // Provider外での利用を早期に検出し、表示されないまま進む状態を防ぐ。
   if (!context) {
     throw new Error("useToast must be used within a <GridraToastProvider>");
   }
@@ -53,9 +56,11 @@ export function GridraToastProvider({
 }) {
   const [currentToast, setCurrentToast] = useState<QueuedToast | null>(null);
   const [exiting, setExiting] = useState(false);
+  // 待機キューとタイマーは再描画の対象ではないためrefで保持する。
   const queueRef = useRef<QueuedToast[]>([]);
   const timerRef = useRef<number | null>(null);
   const exitTimerRef = useRef<number | null>(null);
+  // show内から最新の表示有無を同期的に判定するため、stateと同じ値をrefにも持つ。
   const currentRef = useRef<QueuedToast | null>(null);
 
   const [portalThemeClassName, setPortalThemeClassName] = useState<
@@ -77,6 +82,7 @@ export function GridraToastProvider({
   }, []);
 
   const showNextToast = useCallback(() => {
+    // 先頭を次の表示対象にし、残りだけを待機キューへ戻す。
     const [next, ...rest] = queueRef.current;
     queueRef.current = rest;
 
@@ -86,6 +92,7 @@ export function GridraToastProvider({
   }, []);
 
   const beginExit = useCallback(() => {
+    // 表示タイマーを止め、終了アニメーション完了後に次のToastへ進む。
     clearTimer();
     clearExitTimer();
     setExiting(true);
@@ -100,6 +107,7 @@ export function GridraToastProvider({
     if (!currentToast) {
       return;
     }
+    // Portal先でも配色が一致するよう、表示開始時のテーマclassを取得する。
     setPortalThemeClassName(getGridraThemeClassName());
     timerRef.current = window.setTimeout(() => {
       beginExit();
@@ -108,6 +116,7 @@ export function GridraToastProvider({
   }, [currentToast, beginExit, clearTimer]);
 
   useEffect(() => {
+    // Provider破棄後にタイマーがstateを更新しないよう、両方を必ず解除する。
     return () => {
       clearTimer();
       clearExitTimer();
@@ -116,6 +125,7 @@ export function GridraToastProvider({
 
   const show = useCallback(
     (message: ReactNode, options?: GridraToastOptions) => {
+      // id未指定時は、キュー内でも一意になる連番を割り当てる。
       const id = options?.id ?? String(++nextId);
       const toast: QueuedToast = {
         message,
@@ -127,6 +137,7 @@ export function GridraToastProvider({
         },
       };
 
+      // 表示中でなければ即時表示し、表示中ならFIFOキューの末尾へ追加する。
       if (currentRef.current === null) {
         currentRef.current = toast;
         setCurrentToast(toast);
@@ -149,6 +160,7 @@ export function GridraToastProvider({
   return (
     <ToastContext.Provider value={{ show }}>
       {children}
+      {/* アプリのレイアウトに影響させないため、表示中のToastだけをbody直下へPortalする。 */}
       {currentToast &&
         createPortal(
           <div className={viewportClassName}>

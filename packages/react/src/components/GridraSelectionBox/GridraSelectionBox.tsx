@@ -23,6 +23,7 @@ export function GridraSelectionBox({
   visible = true,
   ...props
 }: GridraSelectionBoxProps) {
+  // 非表示、または座標情報がない場合は選択枠自体をDOMへ残さない。
   if (!visible) {
     return null;
   }
@@ -38,6 +39,7 @@ export function GridraSelectionBox({
   ]
     .filter(Boolean)
     .join(" ");
+  // rectは絶対座標、placementはCSS Grid座標として同じ枠へ変換する。
   const selectionBoxStyle = {
     ...style,
     ...(rect
@@ -67,6 +69,7 @@ export function GridraSelectionBox({
 }
 
 function normalizeCoordinate(value: number): number {
+  // CSSへNaNやInfinityが渡ると枠が消えるため、座標は0へフォールバックする。
   if (!Number.isFinite(value)) {
     return 0;
   }
@@ -75,6 +78,7 @@ function normalizeCoordinate(value: number): number {
 }
 
 function normalizeSize(value: number): number {
+  // 幅・高さは有限かつ0以上に制限し、反転した選択枠を作らない。
   if (!Number.isFinite(value)) {
     return 0;
   }

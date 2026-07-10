@@ -8,6 +8,7 @@ export type GridraResizeHandlePosition =
 
 export interface GridraResizeHandleProps extends HTMLAttributes<HTMLSpanElement> {
   children?: ReactNode;
+  // positionは見た目とカーソル方向を決め、実際のリサイズ処理は親に委ねる。
   position?: GridraResizeHandlePosition;
 }
 
@@ -25,6 +26,7 @@ export function GridraResizeHandle({
     .filter(Boolean)
     .join(" ");
 
+  // 装飾だけの場合は支援技術から隠し、childrenがあれば内容を読めるようにする。
   return (
     <span aria-hidden={children ? undefined : true} className={handleClassName} {...props}>
       {children ?? <span className="gridra-resize-handle__corner" />}

@@ -47,12 +47,15 @@ export function GridraTabs({
   variant = "line",
   ...props
 }: GridraTabsProps) {
+  // tabとtabpanelをARIAで結び付けるため、インスタンス固有のidを作る。
   const baseId = useId();
+  // disabledなtabは選択・フォーカス移動の候補から除外する。
   const enabledIds = useMemo(
     () => items.filter((item) => !item.disabled).map((item) => item.id),
     [items],
   );
 
+  // controlled値が無効になった場合は、最初の有効tabへフォールバックする。
   const fallbackId = enabledIds[0] ?? "";
   const safeSelectedIdProp = selectedId === undefined
     ? undefined
@@ -72,9 +75,11 @@ export function GridraTabs({
     () => enabledIds.indexOf(safeSelectedId),
   );
 
+  // roving tabIndexでフォーカスする実DOMをidから参照する。
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   useEffect(() => {
+    // 外部から選択値やitemsが変わった場合、フォーカス位置も選択tabへ同期する。
     const idx = enabledIds.indexOf(safeSelectedId);
     setFocusedIndex(idx >= 0 ? idx : 0);
   }, [safeSelectedId, enabledIds]);
@@ -83,11 +88,13 @@ export function GridraTabs({
 
   const focusTab = useCallback(
     (index: number) => {
+      // 端を越えた移動は先頭・末尾へ循環させる。
       const clamped = wrapIndex(index, enabledCount);
       setFocusedIndex(clamped);
       const id = enabledIds[clamped];
       tabRefs.current.get(id)?.focus();
 
+      // automaticではフォーカス移動と選択を同時に行い、manualでは分離する。
       if (activationMode === "automatic") {
         setCurrentId(id);
       }
@@ -106,6 +113,7 @@ export function GridraTabs({
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
+      // orientationに合わせて有効な矢印キーの軸を切り替える。
       const isHorizontal = orientation === "horizontal";
       let handled = true;
 
@@ -128,6 +136,7 @@ export function GridraTabs({
           break;
         case "Enter":
         case " ":
+          // manual時だけEnter/Spaceでフォーカス中のtabを確定する。
           if (activationMode === "manual") {
             event.preventDefault();
             const id = enabledIds[focusedIndex];
@@ -170,6 +179,7 @@ export function GridraTabs({
           const tabId = `${baseId}-tab-${item.id}`;
           const panelId = `${baseId}-panel-${item.id}`;
 
+          // 有効tabのうちフォーカス対象だけをTabキーの停止位置にする。
           return (
             <button
               aria-controls={panelId}

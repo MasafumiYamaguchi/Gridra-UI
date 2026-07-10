@@ -48,9 +48,11 @@ interface FlatItem {
 }
 
 function buildIdMap(items: GridraTreeItem[]): { validMap: Map<string, GridraTreeItem> } {
+  // 入れ子全体を走査し、展開idの妥当性を一定時間で確認できるMapを作る。
   const validMap = new Map<string, GridraTreeItem>();
   const walk = (list: GridraTreeItem[]) => {
     for (const item of list) {
+      // idが重複した場合は、先に現れた項目を正規の参照先として残す。
       if (!validMap.has(item.id)) {
         validMap.set(item.id, item);
       }
@@ -67,8 +69,10 @@ function flattenItems(
   depth: number = 0,
   parentKey: string = "",
 ): FlatItem[] {
+  // 展開中の枝だけを再帰的に追加し、現在画面に見える行の順序へ変換する。
   const result: FlatItem[] = [];
   for (const [index, item] of items.entries()) {
+    // React keyは同一idがあっても階層と位置で区別できるようパス化する。
     const key = parentKey ? `${parentKey}/${item.id}-${index}` : `${item.id}-${index}`;
     const hasChildren = (item.children?.length ?? 0) > 0;
     result.push({ item, depth, hasChildren, key });
@@ -91,12 +95,15 @@ export function GridraTreeView({
   size = "md",
   ...props
 }: GridraTreeViewProps) {
+  // treeitem内の関連要素に衝突しないidを付けるための基点。
   const baseId = useId();
+  // roving tabIndexで移動先の行を直接focusするため、idとDOMを対応付ける。
   const rowRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const { validMap } = useMemo(() => buildIdMap(items), [items]);
 
   const sanitizeIds = useCallback(
+    // 存在しないidやdisabled項目は展開状態として受け入れない。
     (ids: string[]): string[] =>
       ids.filter((id) => {
         const resolved = validMap.get(id);
@@ -111,8 +118,10 @@ export function GridraTreeView({
     onExpandedIdsChange,
   );
 
+  // 描画と判定を効率化するため、有効な展開idだけをSetへ変換する。
   const expandedSet = useMemo(() => new Set(sanitizeIds(rawExpandedIds)), [rawExpandedIds, sanitizeIds]);
 
+  // キーボード移動は、展開状態から生成した可視行だけを対象にする。
   const flatItems = useMemo(() => flattenItems(items, expandedSet), [items, expandedSet]);
 
   const enabledFlatIds = useMemo(
@@ -123,6 +132,7 @@ export function GridraTreeView({
   const [focusedId, setFocusedId] = useState<string | null>(null);
 
   useEffect(() => {
+    // 折りたたみでフォーカス行が消えた場合は、最初の有効な可視行へ戻す。
     if (focusedId && !flatItems.some((f) => f.item.id === focusedId)) {
       setFocusedId(enabledFlatIds[0] ?? null);
     }
@@ -150,6 +160,7 @@ export function GridraTreeView({
 
   const findParentId = useCallback(
     (currentId: string): string | null => {
+      // 平坦化された直前方向をたどり、depthが1つ浅い最寄りの親を探す。
       const idx = flatItems.findIndex((f) => f.item.id === currentId);
       if (idx <= 0) return null;
       const currentDepth = flatItems[idx].depth;
@@ -165,6 +176,7 @@ export function GridraTreeView({
 
   const toggleExpand = useCallback(
     (id: string) => {
+      // controlled/uncontrolledの違いはhookへ委ね、次のid配列だけを組み立てる。
       if (expandedSet.has(id)) {
         setRawExpandedIds(rawExpandedIds.filter((e) => e !== id));
       } else {
@@ -178,6 +190,7 @@ export function GridraTreeView({
     (event: KeyboardEvent, item: GridraTreeItem, hasChildren: boolean) => {
       const { id } = item;
 
+      // 上下は可視行間、左右は展開・折りたたみ・親子移動として扱う。
       switch (event.key) {
         case "ArrowDown":
           event.preventDefault();
@@ -229,6 +242,7 @@ export function GridraTreeView({
   );
 
   if (items.length === 0) {
+    // 空の場合はtree roleを作らず、任意のemptyStateだけを表示する。
     return (
       <div {...props} className={["gridra-tree-view", className].filter(Boolean).join(" ")}>
         {emptyState != null ? (
@@ -244,6 +258,7 @@ export function GridraTreeView({
     <div {...props} className={rootClassName}>
       <ul className="gridra-tree-view__list" role="tree">
         {flatItems.map(({ item, depth, hasChildren, key }) => {
+          // disabled項目は表示に残すが、フォーカス・クリック・展開の対象外にする。
           const isDisabled = item.disabled ?? false;
           const isExpanded = !isDisabled && hasChildren && expandedSet.has(item.id);
           const isFocused = focusedId === item.id;
@@ -271,6 +286,7 @@ export function GridraTreeView({
               <div
                 className={["gridra-tree-view__row", isFocused ? "gridra-tree-view__row--focused" : null].filter(Boolean).join(" ")}
                 ref={(el) => {
+                  // アンマウント時にはMapから削除し、古いDOM参照を残さない。
                   if (el) rowRefs.current.set(item.id, el);
                   else rowRefs.current.delete(item.id);
                 }}

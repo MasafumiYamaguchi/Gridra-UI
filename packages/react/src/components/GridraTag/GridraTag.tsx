@@ -14,6 +14,7 @@ export function GridraTag({
   tone = "default",
   ...props
 }: GridraTagProps) {
+  // Tagは状態を持たず、sizeとtoneを見た目のmodifierへ変換する表示用要素。
   const rootClassName = [
     "gridra-tag",
     `gridra-tag--${size}`,

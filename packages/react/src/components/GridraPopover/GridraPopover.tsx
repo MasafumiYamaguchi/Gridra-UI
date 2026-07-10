@@ -57,6 +57,7 @@ export function GridraPopover({
   style,
   ...props
 }: GridraPopoverProps) {
+  // childrenは表示内容ではなく、クリックで開閉するアンカー要素として扱う。
   const anchorElement = children as ReactElement<Record<string, unknown>>;
   const anchorRef = useRef<HTMLElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -65,9 +66,11 @@ export function GridraPopover({
   const popoverId = useId();
 
   useEffect(() => {
+    // documentが存在するクライアント側でのみPortalを描画する。
     setPortalMounted(true);
   }, []);
 
+  // アンカーとPopoverの実寸から、はみ出しを考慮した座標・向きを求める。
   const { coords, resolvedPlacement } = useFloatingPosition({
     anchorRef,
     disabled,
@@ -96,6 +99,7 @@ export function GridraPopover({
         return;
       }
       const target = event.target as Node | null;
+      // アンカーまたはPopover内部の操作では閉じない。
       if (
         target &&
         !popoverRef.current?.contains(target) &&
@@ -116,6 +120,7 @@ export function GridraPopover({
     setCurrentOpen(!currentOpen);
   };
 
+  // 元のイベントやrefを壊さず、Popover用の処理をアンカーへ合成する。
   const anchorProps = {
     "aria-controls": !disabled && currentOpen ? popoverId : undefined,
     "aria-expanded": !disabled ? currentOpen : undefined,
@@ -157,6 +162,7 @@ export function GridraPopover({
   );
   const portalTarget = getPortalTarget();
 
+  // cloneElementできないchildrenはアンカーとして成立しないため描画しない。
   if (!isValidElement(children)) {
     return null;
   }
@@ -164,6 +170,7 @@ export function GridraPopover({
   return (
     <>
       {cloneElement(children, anchorProps)}
+      {/* Portal化してもテーマが揃うよう、アンカー側のテーマclassを引き継ぐ。 */}
       {currentOpen && !disabled && portalMounted && portalTarget
         ? createPortal(
             <div
@@ -182,3 +189,4 @@ export function GridraPopover({
   );
 }
 
+// アンカーは元のDOM位置に残し、浮動部分だけをPortal先へ分離する。

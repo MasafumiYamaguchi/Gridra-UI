@@ -20,6 +20,7 @@ export function GridraSpinner({
   tone = "default",
   ...props
 }: GridraSpinnerProps) {
+  // preset名はmodifier class、それ以外のサイズはCSS変数で表現する。
   const spinnerClassName = [
     "gridra-spinner",
     typeof size === "string" && isPresetSize(size) ? `gridra-spinner--${size}` : null,
@@ -46,10 +47,12 @@ function isPresetSize(size: string): size is "sm" | "md" | "lg" {
 }
 
 function getCustomSizeStyle(size: GridraSpinnerSize): CSSProperties | undefined {
+  // presetはCSS側に定義済みなので、inline styleを追加しない。
   if (typeof size === "string" && isPresetSize(size)) {
     return undefined;
   }
 
+  // 数値はpxへ変換し、文字列なら任意のCSS長として扱う。
   const normalizedSize = typeof size === "number" ? `${size}px` : size;
 
   return {

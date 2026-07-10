@@ -49,6 +49,7 @@ export function GridraNode({
       aria-selected={selected}
       className={nodeClassName}
       onClick={(event) => {
+        // 利用側のonClickを先に実行し、preventDefaultされた場合は選択処理を行わない。
         onClick?.(event);
         if (!event.defaultPrevented) {
           onSelect?.(id);
@@ -58,6 +59,7 @@ export function GridraNode({
       type={type}
       {...props}
     >
+      {/* ハンドル類を独立したスロットとして受け取り、ノード本体の前後へ配置する。 */}
       {dragHandle}
       <div className="gridra-node__label">{children ?? id}</div>
       {connectionHandles}
@@ -66,3 +68,4 @@ export function GridraNode({
   );
 }
 
+// 選択状態そのものは親が管理し、Nodeは選択要求の通知と見た目の反映を担当する。

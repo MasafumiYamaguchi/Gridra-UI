@@ -16,6 +16,7 @@ export function GridraSelect({
   size = "md",
   ...props
 }: GridraSelectProps) {
+  // ネイティブselectを維持し、invalid状態とサイズvariantだけを共通化する。
   return (
     <select
       aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}

@@ -23,6 +23,7 @@ export function GridraStat({
   value,
   ...props
 }: GridraStatProps) {
+  // size・tone・alignを独立したmodifierにし、表示内容と見た目の指定を分離する。
   const rootClassName = [
     "gridra-stat",
     `gridra-stat--${size}`,
@@ -35,6 +36,7 @@ export function GridraStat({
 
   return (
     <div className={rootClassName} {...props}>
+      {/* labelとdescriptionは任意だが、中心となるvalueは常に描画する。 */}
       {label ? <div className="gridra-stat__label">{label}</div> : null}
       <div className="gridra-stat__value">{value}</div>
       {description ? (

@@ -32,6 +32,7 @@ export function GridraSnapGuide({
   visible = true,
   ...props
 }: GridraSnapGuideProps) {
+  // ガイドが無効な場合や、位置を決める情報がない場合は描画しない。
   if (!visible || !active) {
     return null;
   }
@@ -48,6 +49,7 @@ export function GridraSnapGuide({
   ]
     .filter(Boolean)
     .join(" ");
+  // placementはGrid配置、positionは絶対座標としてstyleへ変換する。
   const snapGuideStyle = {
     ...style,
     ...(placement ? getPlacementStyle(orientation, placement) : null),
@@ -70,6 +72,7 @@ function getPlacementStyle(
   orientation: GridraSnapGuideOrientation,
   placement: GridraSnapGuidePlacement
 ): CSSProperties {
+  // ガイドの向きに応じて、固定するGrid軸と伸ばすGrid軸を切り替える。
   if (orientation === "vertical") {
     return {
       gridColumn: `${normalizeGridLine(placement.column ?? 1)} / span 1`,
@@ -89,6 +92,7 @@ function getPositionStyle(
   start: number,
   end?: number
 ): CSSProperties {
+  // startとendから線分の長さを求め、end未指定ならコンテナ全体へ伸ばす。
   const normalizedPosition = normalizeCoordinate(position);
   const normalizedStart = normalizeCoordinate(start);
   const normalizedLength =
@@ -110,6 +114,7 @@ function getPositionStyle(
 }
 
 function normalizeCoordinate(value: number): number {
+  // 不正な座標をCSSへ渡さないよう、0へフォールバックする。
   if (!Number.isFinite(value)) {
     return 0;
   }
@@ -118,6 +123,7 @@ function normalizeCoordinate(value: number): number {
 }
 
 function normalizeSize(value: number): number {
+  // endがstartより前でも、負のwidth/heightを生成しない。
   if (!Number.isFinite(value)) {
     return 0;
   }

@@ -36,6 +36,7 @@ export function GridraProgress({
   value,
   ...props
 }: GridraProgressProps) {
+  // value未指定は、完了量を特定できないindeterminate表示として扱う。
   const isIndeterminate = value === undefined;
   const normalizedMax = normalizeMax(max);
   const normalizedValue = isIndeterminate ? 0 : normalizeValue(value);
@@ -43,6 +44,7 @@ export function GridraProgress({
     ? 0
     : clampNumber(normalizedValue, 0, normalizedMax);
   const fraction = isIndeterminate ? 0 : clampedValue / normalizedMax;
+  // 確定値がある場合だけ、maxに対する割合を表示幅へ変換する。
   const percent = fraction * 100;
 
   const rootClassName = [
@@ -55,6 +57,7 @@ export function GridraProgress({
     .filter(Boolean)
     .join(" ");
 
+  // indeterminate時は、確定値を示すARIA属性を公開しない。
   return (
     <div
       className={rootClassName}

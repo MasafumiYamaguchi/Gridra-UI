@@ -16,6 +16,7 @@ export function GridraTextarea({
   size = "md",
   ...props
 }: GridraTextareaProps) {
+  // ネイティブtextareaの挙動を保ち、invalid状態とサイズvariantだけを共通化する。
   return (
     <textarea
       aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}

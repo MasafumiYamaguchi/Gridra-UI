@@ -54,6 +54,7 @@ export function GridraTooltip({
   style,
   ...props
 }: GridraTooltipProps) {
+  // childrenはTooltipを表示するきっかけとなるアンカー要素として扱う。
   const anchorElement = children as ReactElement<Record<string, unknown>>;
   const anchorRef = useRef<HTMLElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
@@ -63,14 +64,17 @@ export function GridraTooltip({
   const tooltipId = useId();
 
   useEffect(() => {
+    // documentが使えるクライアント側でのみPortalを許可する。
     setPortalMounted(true);
     return () => {
+      // 表示待ちのまま破棄された場合に、遅延コールバックがstateを更新しないようにする。
       if (openTimerRef.current !== null) {
         window.clearTimeout(openTimerRef.current);
       }
     };
   }, []);
 
+  // アンカーとTooltipの実寸から、画面内に収まる座標と向きを求める。
   const { coords, resolvedPlacement } = useFloatingPosition({
     anchorRef,
     disabled,
@@ -86,6 +90,7 @@ export function GridraTooltip({
       return;
     }
     if (openTimerRef.current !== null) {
+      // hoverとfocusが連続しても、表示タイマーを重複させない。
       window.clearTimeout(openTimerRef.current);
     }
     openTimerRef.current = window.setTimeout(() => {
@@ -95,6 +100,7 @@ export function GridraTooltip({
   };
 
   const closeImmediately = () => {
+    // 表示前に離れた場合は待機タイマーも取り消す。
     if (openTimerRef.current !== null) {
       window.clearTimeout(openTimerRef.current);
       openTimerRef.current = null;
@@ -102,6 +108,7 @@ export function GridraTooltip({
     setCurrentOpen(false);
   };
 
+  // 元のイベントとrefを残したまま、hover・focusによる開閉処理を合成する。
   const anchorProps = {
     "aria-describedby": !disabled && currentOpen ? tooltipId : undefined,
     onMouseEnter: composeHandlers(anchorElement.props.onMouseEnter as ((event: unknown) => void) | undefined, openWithDelay),
@@ -139,6 +146,7 @@ export function GridraTooltip({
   );
   const portalTarget = getPortalTarget();
 
+  // cloneElementできないchildrenはアンカーとして成立しないため描画しない。
   if (!isValidElement(children)) {
     return null;
   }
@@ -146,6 +154,7 @@ export function GridraTooltip({
   return (
     <>
       {cloneElement(children, anchorProps)}
+      {/* Portal先でもテーマとARIA参照を維持したTooltipだけを開いている間描画する。 */}
       {currentOpen && !disabled && portalMounted && portalTarget
         ? createPortal(
             <div
@@ -165,3 +174,4 @@ export function GridraTooltip({
   );
 }
 
+// アンカーは元のDOM位置に残し、説明要素だけをPortal先へ分離する。

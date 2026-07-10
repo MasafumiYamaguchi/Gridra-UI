@@ -54,6 +54,7 @@ export function GridraPagination({
   disabled = false,
   ...props
 }: GridraPaginationProps) {
+  // 外部入力を先に正規化し、以降のページ計算を有限の正数だけで行う。
   const totalItems = normalizeTotalItems(totalItemsRaw);
   const pageSizeOptions = normalizePageSizeOptions(pageSizeOptionsRaw);
   const siblingCount = normalizeSiblingOrBoundaryCount(siblingCountRaw, DEFAULT_SIBLING_COUNT);
@@ -62,6 +63,7 @@ export function GridraPagination({
   const [uncontrolledPageSize, setUncontrolledPageSize] = useState(() =>
     normalizePageSize(defaultPageSizeProp ?? DEFAULT_PAGE_SIZE),
   );
+  // propが渡された場合はcontrolled、未指定なら内部stateを現在値として使う。
   const rawPageSize = pageSizeProp ?? uncontrolledPageSize;
   const currentPageSize = normalizePageSize(rawPageSize);
 
@@ -70,6 +72,7 @@ export function GridraPagination({
   const [uncontrolledPage, setUncontrolledPage] = useState(() =>
     normalizePage(defaultPageProp ?? DEFAULT_PAGE, pageCount),
   );
+  // 総件数やページサイズが変わった場合も、現在ページを有効範囲へ収める。
   const rawPage = pageProp ?? uncontrolledPage;
   const currentPage = normalizePage(rawPage, pageCount);
 
@@ -89,6 +92,7 @@ export function GridraPagination({
 
       onPageSizeChange?.(nextSize, currentPageSize);
 
+      // ページサイズ変更後の項目範囲を予測しやすくするため、ページは先頭へ戻す。
       if (currentPage !== 1) {
         if (pageProp === undefined) {
           setUncontrolledPage(1);
@@ -123,6 +127,7 @@ export function GridraPagination({
     [currentPage, disabled, onPageChange, pageCount, pageProp],
   );
 
+  // 全ページを並べず、境界・兄弟ページとellipsisからなる表示列を生成する。
   const pages = useMemo(
     () => generatePages(currentPage, pageCount, siblingCount, boundaryCount),
     [currentPage, pageCount, siblingCount, boundaryCount],
@@ -139,6 +144,7 @@ export function GridraPagination({
   const startItem = totalItems === 0 ? 0 : (currentPage - 1) * currentPageSize + 1;
   const endItem = Math.min(currentPage * currentPageSize, totalItems);
 
+  // controlledな値が候補にない場合も、selectの現在値として表示できるよう補完する。
   const pageSizeOptionValues = pageSizeOptions.includes(currentPageSize)
     ? pageSizeOptions
     : [...pageSizeOptions, currentPageSize].sort((a, b) => a - b);

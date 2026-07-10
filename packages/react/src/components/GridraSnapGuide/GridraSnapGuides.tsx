@@ -16,6 +16,7 @@ export function GridraSnapGuides({
 
   return (
     <div className={snapGuidesClassName} {...props}>
+      {/* 単一ガイドへpropsを委譲し、複数のスナップ候補を同じレイヤーに重ねる。 */}
       {guides.map((guide, index) => (
         <GridraSnapGuide
           key={`${guide.orientation ?? "vertical"}-${guide.position ?? "placement"}-${guide.start ?? 0}-${guide.end ?? "full"}-${index}`}
