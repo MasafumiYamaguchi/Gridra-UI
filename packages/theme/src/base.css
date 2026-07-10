@@ -1,17 +1,6 @@
+@import "./colors/default.css";
+
 .gridra-root {
-  --gridra-color-background: #000000;
-  --gridra-color-surface: #050505;
-  --gridra-color-surface-raised: #080808;
-  --gridra-color-surface-input: #0d0d0d;
-  --gridra-color-node-pattern: rgba(255, 255, 255, 0.11);
-  --gridra-color-text: #f8f8f8;
-  --gridra-color-muted-text: #9f9f9f;
-  --gridra-color-border: #2e2e2e;
-  --gridra-color-border-strong: #3a3a3a;
-  --gridra-color-accent: rgba(255, 255, 255, 0.86);
-  --gridra-color-selected: rgba(255, 255, 255, 0.08);
-  --gridra-color-focus: rgba(255, 255, 255, 0.92);
-  --gridra-shadow-selected: 0 0 0 1px rgba(255, 255, 255, 0.18);
   --gridra-font-mono: "JetBrains Mono", "Fira Code", "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
   --gridra-font-brand: ui-monospace, "SFMono-Light", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --gridra-radius-sm: 0;
@@ -37,19 +26,6 @@
 }
 
 .gridra-portal-root {
-  --gridra-color-background: #000000;
-  --gridra-color-surface: #050505;
-  --gridra-color-surface-raised: #080808;
-  --gridra-color-surface-input: #0d0d0d;
-  --gridra-color-node-pattern: rgba(255, 255, 255, 0.11);
-  --gridra-color-text: #f8f8f8;
-  --gridra-color-muted-text: #9f9f9f;
-  --gridra-color-border: #2e2e2e;
-  --gridra-color-border-strong: #3a3a3a;
-  --gridra-color-accent: rgba(255, 255, 255, 0.86);
-  --gridra-color-selected: rgba(255, 255, 255, 0.08);
-  --gridra-color-focus: rgba(255, 255, 255, 0.92);
-  --gridra-shadow-selected: 0 0 0 1px rgba(255, 255, 255, 0.18);
   --gridra-font-mono: "JetBrains Mono", "Fira Code", "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
   --gridra-font-brand: ui-monospace, "SFMono-Light", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --gridra-radius-sm: 0;
@@ -744,18 +720,18 @@
 }
 
 .gridra-badge--success {
-  border-color: #34d399;
-  color: #d1fae5;
+  border-color: var(--gridra-color-success);
+  color: var(--gridra-color-success-text);
 }
 
 .gridra-badge--warning {
-  border-color: #fbbf24;
-  color: #fef3c7;
+  border-color: var(--gridra-color-warning);
+  color: var(--gridra-color-warning-text);
 }
 
 .gridra-badge--danger {
-  border-color: #f87171;
-  color: #fee2e2;
+  border-color: var(--gridra-color-danger);
+  color: var(--gridra-color-danger-text);
 }
 
 .gridra-card {
@@ -1061,18 +1037,18 @@
 }
 
 .gridra-tag--success {
-  --gridra-tag-border: #34d399;
-  --gridra-tag-color: #d1fae5;
+  --gridra-tag-border: var(--gridra-color-success);
+  --gridra-tag-color: var(--gridra-color-success-text);
 }
 
 .gridra-tag--warning {
-  --gridra-tag-border: #fbbf24;
-  --gridra-tag-color: #fef3c7;
+  --gridra-tag-border: var(--gridra-color-warning);
+  --gridra-tag-color: var(--gridra-color-warning-text);
 }
 
 .gridra-tag--danger {
-  --gridra-tag-border: #f87171;
-  --gridra-tag-color: #fee2e2;
+  --gridra-tag-border: var(--gridra-color-danger);
+  --gridra-tag-color: var(--gridra-color-danger-text);
 }
 
 .gridra-kbd {
@@ -1127,31 +1103,31 @@
 }
 
 .gridra-alert--info {
-  --gridra-alert-border: #60a5fa;
-  --gridra-alert-background: rgba(96, 165, 250, 0.1);
+  --gridra-alert-border: var(--gridra-color-info);
+  --gridra-alert-background: var(--gridra-color-info-surface);
   --gridra-alert-color: var(--gridra-color-text);
-  --gridra-alert-accent: #bfdbfe;
+  --gridra-alert-accent: var(--gridra-color-info-text);
 }
 
 .gridra-alert--success {
-  --gridra-alert-border: #34d399;
-  --gridra-alert-background: rgba(52, 211, 153, 0.1);
+  --gridra-alert-border: var(--gridra-color-success);
+  --gridra-alert-background: var(--gridra-color-success-surface);
   --gridra-alert-color: var(--gridra-color-text);
-  --gridra-alert-accent: #d1fae5;
+  --gridra-alert-accent: var(--gridra-color-success-text);
 }
 
 .gridra-alert--warning {
-  --gridra-alert-border: #fbbf24;
-  --gridra-alert-background: rgba(251, 191, 36, 0.12);
+  --gridra-alert-border: var(--gridra-color-warning);
+  --gridra-alert-background: var(--gridra-color-warning-surface);
   --gridra-alert-color: var(--gridra-color-text);
-  --gridra-alert-accent: #fef3c7;
+  --gridra-alert-accent: var(--gridra-color-warning-text);
 }
 
 .gridra-alert--danger {
-  --gridra-alert-border: #f87171;
-  --gridra-alert-background: rgba(248, 113, 113, 0.12);
+  --gridra-alert-border: var(--gridra-color-danger);
+  --gridra-alert-background: var(--gridra-color-danger-surface);
   --gridra-alert-color: var(--gridra-color-text);
-  --gridra-alert-accent: #fee2e2;
+  --gridra-alert-accent: var(--gridra-color-danger-text);
 }
 
 .gridra-alert__icon {
@@ -1580,7 +1556,7 @@
 }
 
 .gridra-canvas-area--snap-guides-visible {
-  --gridra-snap-grid-line: rgba(255, 255, 255, 0.14);
+  --gridra-snap-grid-line: var(--gridra-color-snap-line);
   --gridra-snap-grid-column-size: calc((100% - var(--gridra-space-md) * 2) / var(--gridra-grid-columns, 12));
   --gridra-snap-grid-row-size: calc((100% - var(--gridra-space-md) * 2) / var(--gridra-grid-rows, 6));
 }
@@ -1604,13 +1580,13 @@
   mask-image:
     repeating-linear-gradient(
       to bottom,
-      #000000 0 2px,
+      var(--gridra-color-background) 0 2px,
       transparent 2px 6px
     );
   -webkit-mask-image:
     repeating-linear-gradient(
       to bottom,
-      #000000 0 2px,
+      var(--gridra-color-background) 0 2px,
       transparent 2px 6px
     );
 }
@@ -1625,13 +1601,13 @@
   mask-image:
     repeating-linear-gradient(
       to right,
-      #000000 0 2px,
+      var(--gridra-color-background) 0 2px,
       transparent 2px 6px
     );
   -webkit-mask-image:
     repeating-linear-gradient(
       to right,
-      #000000 0 2px,
+      var(--gridra-color-background) 0 2px,
       transparent 2px 6px
     );
 }
@@ -1867,7 +1843,7 @@
   border-radius: var(--gridra-radius-md);
   background:
     radial-gradient(circle, var(--gridra-color-node-pattern) 1px, transparent 1px),
-    rgba(255, 255, 255, 0.05);
+    var(--gridra-color-canvas-subtle);
   background-position: 0 0;
   background-size: var(--gridra-node-pattern-size) var(--gridra-node-pattern-size);
   color: var(--gridra-color-text);
@@ -1885,7 +1861,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--gridra-color-border-strong);
-  background: rgba(0, 0, 0, 0.62);
+  background: var(--gridra-color-handle);
   color: var(--gridra-color-muted-text);
   cursor: grab;
   touch-action: none;
@@ -1943,7 +1919,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--gridra-color-border-strong);
-  background: rgba(0, 0, 0, 0.62);
+  background: var(--gridra-color-handle);
   color: var(--gridra-color-muted-text);
   touch-action: none;
 }
@@ -1995,7 +1971,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--gridra-color-border-strong);
-  background: rgba(0, 0, 0, 0.72);
+  background: var(--gridra-color-handle-strong);
   color: var(--gridra-color-muted-text);
   cursor: crosshair;
   touch-action: none;
@@ -2060,7 +2036,7 @@
 
 .gridra-node__label {
   min-width: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--gridra-color-node-label);
   color: var(--gridra-color-muted-text);
   font-family: var(--gridra-font-brand);
   font-size: 11px;
@@ -2669,7 +2645,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--gridra-color-backdrop);
   padding: var(--gridra-space-md);
 }
 
@@ -3004,7 +2980,7 @@
   padding-top: 12vh;
   padding-left: var(--gridra-space-md);
   padding-right: var(--gridra-space-md);
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--gridra-color-backdrop);
 }
 
 .gridra-command-palette {
@@ -4104,10 +4080,6 @@
  * Toast
  * -------------------------------- */
 .gridra-toast__portal {
-  --gridra-color-surface-raised: #080808;
-  --gridra-color-text: #f8f8f8;
-  --gridra-color-border-strong: #3a3a3a;
-  --gridra-shadow-selected: 0 0 0 1px rgba(255, 255, 255, 0.18);
   --gridra-space-sm: 6px;
   --gridra-space-md: 10px;
   --gridra-space-lg: 12px;
@@ -4271,15 +4243,15 @@
 }
 
 .gridra-progress--success {
-  --gridra-progress-fill: #1f854c;
+  --gridra-progress-fill: var(--gridra-color-success-solid);
 }
 
 .gridra-progress--warning {
-  --gridra-progress-fill: #d9a020;
+  --gridra-progress-fill: var(--gridra-color-warning-solid);
 }
 
 .gridra-progress--danger {
-  --gridra-progress-fill: #d93426;
+  --gridra-progress-fill: var(--gridra-color-danger-solid);
 }
 
 .gridra-progress__fill {
@@ -4513,19 +4485,19 @@
 /* Tones */
 .gridra-error-message--danger,
 .gridra-field__error {
-  color: #d93426;
+  color: var(--gridra-color-danger-solid);
 }
 
 .gridra-error-message--danger .gridra-error-message__icon {
-  color: #d93426;
+  color: var(--gridra-color-danger-solid);
 }
 
 .gridra-error-message--warning {
-  color: #d9a020;
+  color: var(--gridra-color-warning-solid);
 }
 
 .gridra-error-message--warning .gridra-error-message__icon {
-  color: #d9a020;
+  color: var(--gridra-color-warning-solid);
 }
 
 .gridra-error-message--muted {
@@ -4593,19 +4565,19 @@
 }
 
 .gridra-status-indicator--success .gridra-status-indicator__dot {
-  --gridra-status-indicator-color: #1f854c;
+  --gridra-status-indicator-color: var(--gridra-color-success-solid);
 }
 
 .gridra-status-indicator--warning .gridra-status-indicator__dot {
-  --gridra-status-indicator-color: #d9a020;
+  --gridra-status-indicator-color: var(--gridra-color-warning-solid);
 }
 
 .gridra-status-indicator--danger .gridra-status-indicator__dot {
-  --gridra-status-indicator-color: #d93426;
+  --gridra-status-indicator-color: var(--gridra-color-danger-solid);
 }
 
 .gridra-status-indicator--info .gridra-status-indicator__dot {
-  --gridra-status-indicator-color: #2070c8;
+  --gridra-status-indicator-color: var(--gridra-color-info-solid);
 }
 
 .gridra-status-indicator--accent .gridra-status-indicator__dot {

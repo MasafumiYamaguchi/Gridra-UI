@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { GridraRoot } from "../GridraRoot";
 import { GridraPopover } from "./GridraPopover";
 
 afterEach(() => {
@@ -314,5 +315,79 @@ describe("GridraPopover", () => {
     const trigger = screen.getByRole("button", { name: "Trigger" }) as HTMLElement;
     fireEvent.click(trigger);
     expect(screen.queryByText("Blocked content")).toBeNull();
+  });
+
+  it("inherits a custom GridraRoot theme and updates while open", () => {
+    const { rerender } = render(
+      <GridraRoot theme="studio-blue">
+        <GridraPopover content="Themed popover" open>
+          <button type="button">Trigger</button>
+        </GridraPopover>
+      </GridraRoot>,
+    );
+
+    expect(screen.getByText("Themed popover").className).toContain(
+      "gridra-theme-studio-blue",
+    );
+
+    rerender(
+      <GridraRoot theme="ember">
+        <GridraPopover content="Themed popover" open>
+          <button type="button">Trigger</button>
+        </GridraPopover>
+      </GridraRoot>,
+    );
+
+    const popover = screen.getByText("Themed popover");
+    expect(popover.className).toContain("gridra-theme-ember");
+    expect(popover.className).not.toContain("gridra-theme-studio-blue");
+  });
+
+  it("keeps portal themes isolated across multiple GridraRoot instances", () => {
+    render(
+      <>
+        <GridraRoot theme="midnight">
+          <GridraPopover content="Midnight popover" open>
+            <button type="button">Midnight trigger</button>
+          </GridraPopover>
+        </GridraRoot>
+        <GridraRoot theme="forest">
+          <GridraPopover content="Forest popover" open>
+            <button type="button">Forest trigger</button>
+          </GridraPopover>
+        </GridraRoot>
+      </>,
+    );
+
+    expect(screen.getByText("Midnight popover").className).toContain(
+      "gridra-theme-midnight",
+    );
+    expect(screen.getByText("Forest popover").className).toContain(
+      "gridra-theme-forest",
+    );
+  });
+
+  it("keeps the default fallback isolated from another themed root", () => {
+    render(
+      <>
+        <GridraRoot>
+          <GridraPopover content="Default popover" open>
+            <button type="button">Default trigger</button>
+          </GridraPopover>
+        </GridraRoot>
+        <GridraRoot theme="forest">
+          <GridraPopover content="Themed popover" open>
+            <button type="button">Themed trigger</button>
+          </GridraPopover>
+        </GridraRoot>
+      </>,
+    );
+
+    expect(screen.getByText("Default popover").className).not.toContain(
+      "gridra-theme-forest",
+    );
+    expect(screen.getByText("Themed popover").className).toContain(
+      "gridra-theme-forest",
+    );
   });
 });

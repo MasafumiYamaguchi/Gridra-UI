@@ -16,7 +16,8 @@ import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
 import { getFocusableElements } from "../../internal/focus";
 import { clampIndex } from "../../internal/numeric";
-import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
+import { getPortalTarget } from "../../internal/theme";
+import { useGridraThemeClassName } from "../../internal/themeContext";
 
 export type GridraCommandPaletteSize = "sm" | "md" | "lg";
 
@@ -133,10 +134,8 @@ export function GridraCommandPalette({
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [portalMounted, setPortalMounted] = useState(false);
-  // PortalはテーマDOMの外へ出るため、開くたびに現在のテーマclassをbackdropへコピーする。
-  const [portalThemeClassName, setPortalThemeClassName] = useState<
-    string | undefined
-  >(() => getGridraThemeClassName());
+  // PortalはテーマDOMの外へ出るため、現在のテーマclassをbackdropへコピーする。
+  const portalThemeClassName = useGridraThemeClassName();
   const titleId = useId();
   const inputId = useId();
 
@@ -220,13 +219,6 @@ export function GridraCommandPalette({
   useEffect(() => {
     setActiveIndex(0);
   }, [currentQuery]);
-
-  useLayoutEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-    setPortalThemeClassName(getGridraThemeClassName());
-  }, [currentOpen]);
 
   const handleBackdropPointerDown = (event: React.PointerEvent) => {
     // dialog内のクリックでは閉じず、backdrop自体を押した時だけ閉じる。
@@ -351,6 +343,7 @@ export function GridraCommandPalette({
 
   const backdropClassName = cx(
     "gridra-root",
+    "gridra-portal-root",
     portalThemeClassName,
     "gridra-command-palette__backdrop",
   );

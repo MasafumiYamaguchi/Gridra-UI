@@ -18,7 +18,8 @@ import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { clampIndex } from "../../internal/numeric";
-import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
+import { getPortalTarget } from "../../internal/theme";
+import { useGridraThemeClassName } from "../../internal/themeContext";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraDropdownMenuPlacement = "top" | "right" | "bottom" | "left";
@@ -337,9 +338,10 @@ export function GridraDropdownMenu({
     ),
   };
 
+  const portalThemeClassName = useGridraThemeClassName(triggerRef);
   const menuClassName = cx(
     "gridra-portal-root",
-    getGridraThemeClassName(triggerRef.current),
+    portalThemeClassName,
     "gridra-dropdown-menu",
     `gridra-dropdown-menu--${resolvedPlacement}`,
     `gridra-dropdown-menu--${size}`,

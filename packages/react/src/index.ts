@@ -62,3 +62,4 @@ export * from "./components/GridraTreeView";
 export * from "./components/GridraPopover";
 export * from "./components/GridraToast";
 export * from "./components/GridraTooltip";
+export * from "./theme";

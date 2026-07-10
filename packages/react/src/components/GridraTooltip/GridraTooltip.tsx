@@ -16,7 +16,8 @@ import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
-import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
+import { getPortalTarget } from "../../internal/theme";
+import { useGridraThemeClassName } from "../../internal/themeContext";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraTooltipPlacement = "top" | "right" | "bottom" | "left";
@@ -120,9 +121,10 @@ export function GridraTooltip({
     }),
   };
 
+  const portalThemeClassName = useGridraThemeClassName(anchorRef);
   const tooltipClassName = cx(
     "gridra-portal-root",
-    getGridraThemeClassName(anchorRef.current),
+    portalThemeClassName,
     "gridra-tooltip",
     `gridra-tooltip--${resolvedPlacement}`,
     `gridra-tooltip--${size}`,

@@ -17,7 +17,8 @@ import { useControllableValue } from "../../hooks/useControllableValue";
 import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
-import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
+import { getPortalTarget } from "../../internal/theme";
+import { useGridraThemeClassName } from "../../internal/themeContext";
 import { useDocumentEvent } from "../../internal/useDocumentEvent";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
@@ -136,9 +137,10 @@ export function GridraPopover({
     ),
   };
 
+  const portalThemeClassName = useGridraThemeClassName(anchorRef);
   const popoverClassName = cx(
     "gridra-portal-root",
-    getGridraThemeClassName(anchorRef.current),
+    portalThemeClassName,
     "gridra-popover",
     `gridra-popover--${resolvedPlacement}`,
     `gridra-popover--${size}`,

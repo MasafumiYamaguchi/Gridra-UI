@@ -1,0 +1,40 @@
+.gridra-theme-forest,
+.gridra-root.gridra-theme-forest,
+.gridra-portal-root.gridra-theme-forest {
+  color-scheme: dark;
+  --gridra-color-background: #07130d;
+  --gridra-color-surface: #0b1b12;
+  --gridra-color-surface-raised: #10251a;
+  --gridra-color-surface-input: #0d2016;
+  --gridra-color-node-pattern: rgba(74, 222, 128, 0.13);
+  --gridra-color-text: #e9f8ee;
+  --gridra-color-muted-text: #91ad9b;
+  --gridra-color-border: #244532;
+  --gridra-color-border-strong: #356348;
+  --gridra-color-accent: #4ade80;
+  --gridra-color-selected: rgba(74, 222, 128, 0.14);
+  --gridra-color-focus: #86efac;
+  --gridra-shadow-selected: 0 0 0 1px rgba(74, 222, 128, 0.24);
+  --gridra-color-info: #60a5fa;
+  --gridra-color-info-surface: rgba(96, 165, 250, 0.1);
+  --gridra-color-info-text: #bfdbfe;
+  --gridra-color-info-solid: #2070c8;
+  --gridra-color-success: #34d399;
+  --gridra-color-success-surface: rgba(52, 211, 153, 0.1);
+  --gridra-color-success-text: #d1fae5;
+  --gridra-color-success-solid: #1f854c;
+  --gridra-color-warning: #fbbf24;
+  --gridra-color-warning-surface: rgba(251, 191, 36, 0.12);
+  --gridra-color-warning-text: #fef3c7;
+  --gridra-color-warning-solid: #d9a020;
+  --gridra-color-danger: #f87171;
+  --gridra-color-danger-surface: rgba(248, 113, 113, 0.12);
+  --gridra-color-danger-text: #fee2e2;
+  --gridra-color-danger-solid: #d93426;
+  --gridra-color-backdrop: rgba(1, 10, 5, 0.66);
+  --gridra-color-handle: rgba(3, 16, 8, 0.7);
+  --gridra-color-handle-strong: rgba(3, 16, 8, 0.82);
+  --gridra-color-node-label: rgba(3, 16, 8, 0.68);
+  --gridra-color-canvas-subtle: rgba(74, 222, 128, 0.06);
+  --gridra-color-snap-line: rgba(134, 239, 172, 0.18);
+}

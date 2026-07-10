@@ -14,7 +14,7 @@ GRIDRA UI is a React-first component library for building dense, panel-based GRI
 
 - `@gridra-ui/react`: React components and interaction wiring.
 - `@gridra-ui/core`: framework-independent IDs, geometry types, and state helpers.
-- `@gridra-ui/theme`: CSS variable tokens and light/dark theme presets.
+- `@gridra-ui/theme`: CSS variable tokens and five built-in theme presets.
 - `@gridra-ui/playground`: Vite app for local visual checks and component documentation.
 
 ## Installation
@@ -29,10 +29,16 @@ Applications should import the theme CSS explicitly:
 
 ```ts
 import "@gridra-ui/theme/base.css";
-import "@gridra-ui/theme/dark.css";
+import "@gridra-ui/theme/themes.css";
 ```
 
-Use `light.css` instead of `dark.css` when the light preset is preferred.
+Then select a built-in or custom theme at runtime:
+
+```tsx
+<GridraRoot theme="midnight">...</GridraRoot>
+```
+
+Individual preset imports such as `dark.css` and `light.css` remain available.
 
 ## Development
 
@@ -71,7 +77,7 @@ packages/core
   provides framework-independent IDs, geometry types, and small state helpers
 
 packages/theme
-  publishes base CSS variables plus light/dark theme presets
+  publishes the color token contract plus five built-in theme presets
 ```
 
 The main dependency direction is:
@@ -102,10 +108,12 @@ See [COMPONENT_ROADMAP.md](./COMPONENT_ROADMAP.md) for the current component sta
 The theme package exposes CSS files instead of requiring a JavaScript runtime:
 
 - `@gridra-ui/theme/base.css`: base class styles and CSS variable contract.
-- `@gridra-ui/theme/dark.css`: dark theme preset.
-- `@gridra-ui/theme/light.css`: light theme preset.
+- `@gridra-ui/theme/themes.css`: all built-in themes for runtime switching.
+- `@gridra-ui/theme/{dark,light,midnight,forest,ember}.css`: individual presets.
 
-Consumers can import a preset theme or override the CSS variables in their own application styles.
+Consumers can select a preset with the `GridraRoot` `theme` prop or define a
+`.gridra-theme-<name>` class with the same required tokens. See
+[THEMING.md](./THEMING.md) for the complete contract and a custom theme example.
 
 ## Documentation
 

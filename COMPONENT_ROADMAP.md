@@ -180,10 +180,10 @@ These should keep animation libraries optional. Gridra UI should expose stable D
 
 Theme work should make colors easier to author, swap, and document without forcing consumers to edit component CSS.
 
-- [ ] Dedicated color token files
-- [ ] Named color theme exports
-- [ ] Runtime theme selection API/pattern
-- [ ] Playground theme selector
+- [x] Dedicated color token files
+- [x] Named color theme exports
+- [x] Runtime theme selection API/pattern
+- [x] Playground theme selector
 
 ## Priority 10: Advanced Controls
 

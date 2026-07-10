@@ -1,23 +1,34 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  GRIDRA_BUILT_IN_THEME_NAMES,
   GridraBadge,
   GridraButton,
   GridraField,
   GridraInline,
   GridraInput,
   GridraLabel,
+  GridraRoot,
   GridraSelect,
   GridraSidebar,
   GridraStack,
   GridraTreeView,
 } from "@gridra-ui/react";
-import type { GridraTreeItem } from "@gridra-ui/react";
+import type {
+  GridraBuiltInThemeName,
+  GridraTreeItem,
+} from "@gridra-ui/react";
 import { CodeBlock } from "./code-block";
 import { CopyButton } from "./copy-button";
 import { componentDocs } from "./data";
 import { PropsTable } from "./props-table";
 
-export function ComponentDocsPage() {
+export function ComponentDocsPage({
+  onThemeChange,
+  theme,
+}: {
+  onThemeChange: (theme: GridraBuiltInThemeName) => void;
+  theme: GridraBuiltInThemeName;
+}) {
   const detailRef = useRef<HTMLElement>(null);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -92,7 +103,8 @@ export function ComponentDocsPage() {
   }, [activeDocName]);
 
   return (
-    <section className="gridra-root gridra-theme-dark docs-page">
+    <GridraRoot className="docs-root" theme={theme}>
+      <section className="docs-page">
       <GridraStack
         align="center"
         as="header"
@@ -104,7 +116,22 @@ export function ComponentDocsPage() {
           <GridraLabel>Documentation</GridraLabel>
           <h1 className="docs-page__title">Gridra UI Components</h1>
         </div>
-        <GridraBadge tone="accent">{componentDocs.length} components</GridraBadge>
+        <GridraInline align="center" gap="sm">
+          <GridraSelect
+            aria-label="Documentation theme"
+            onChange={(event) =>
+              onThemeChange(event.target.value as GridraBuiltInThemeName)
+            }
+            value={theme}
+          >
+            {GRIDRA_BUILT_IN_THEME_NAMES.map((themeName) => (
+              <option key={themeName} value={themeName}>
+                {themeName[0].toUpperCase() + themeName.slice(1)}
+              </option>
+            ))}
+          </GridraSelect>
+          <GridraBadge tone="accent">{componentDocs.length} components</GridraBadge>
+        </GridraInline>
       </GridraStack>
       <div className="docs-page__filters" aria-label="Component categories">
         {categories.map((category) => (
@@ -335,6 +362,7 @@ export function ComponentDocsPage() {
           ) : null}
         </article>
       </div>
-    </section>
+      </section>
+    </GridraRoot>
   );
 }

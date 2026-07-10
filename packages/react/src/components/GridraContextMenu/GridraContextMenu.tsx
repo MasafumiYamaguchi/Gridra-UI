@@ -20,7 +20,8 @@ import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { clampIndex, clampNumber } from "../../internal/numeric";
-import { getGridraThemeClassName, getPortalTarget } from "../../internal/theme";
+import { getPortalTarget } from "../../internal/theme";
+import { useGridraThemeClassName } from "../../internal/themeContext";
 import type {
   GridraDropdownMenuItem,
   GridraDropdownMenuSize,
@@ -342,9 +343,10 @@ export function GridraContextMenu({
     ),
   };
 
+  const portalThemeClassName = useGridraThemeClassName(targetRef);
   const menuClassName = cx(
     "gridra-portal-root",
-    getGridraThemeClassName(targetRef.current),
+    portalThemeClassName,
     "gridra-context-menu",
     "gridra-dropdown-menu",
     `gridra-dropdown-menu--${size}`,

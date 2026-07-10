@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { GRIDRA_BUILT_IN_THEME_NAMES } from "../../theme";
 import { GridraRoot } from "./GridraRoot";
 
 afterEach(() => {
@@ -59,5 +60,71 @@ describe("GridraRoot", () => {
 
     expect(shell?.className).toBe("gridra-root__shell");
     expect(shell?.children).toHaveLength(1);
+  });
+
+  it.each(GRIDRA_BUILT_IN_THEME_NAMES)(
+    "applies the built-in %s theme",
+    (theme) => {
+      render(
+        <GridraRoot data-testid="root" theme={theme}>
+          Canvas
+        </GridraRoot>,
+      );
+
+      expect(screen.getByTestId("root").className).toContain(
+        `gridra-theme-${theme}`,
+      );
+    },
+  );
+
+  it("supports a custom kebab-case theme name", () => {
+    render(
+      <GridraRoot data-testid="root" theme="studio-blue">
+        Canvas
+      </GridraRoot>,
+    );
+
+    expect(screen.getByTestId("root").className).toContain(
+      "gridra-theme-studio-blue",
+    );
+  });
+
+  it("ignores an invalid custom theme name", () => {
+    render(
+      <GridraRoot data-testid="root" theme="Studio Blue">
+        Canvas
+      </GridraRoot>,
+    );
+
+    expect(screen.getByTestId("root").className).toBe("gridra-root");
+  });
+
+  it("keeps the legacy className theme pattern", () => {
+    render(
+      <GridraRoot className="gridra-theme-light" data-testid="root">
+        Canvas
+      </GridraRoot>,
+    );
+
+    expect(screen.getByTestId("root").className).toContain(
+      "gridra-theme-light",
+    );
+  });
+
+  it("prefers the theme prop over a legacy theme class", () => {
+    render(
+      <GridraRoot
+        className="custom-root gridra-theme-light"
+        data-testid="root"
+        theme="forest"
+      >
+        Canvas
+      </GridraRoot>,
+    );
+
+    const root = screen.getByTestId("root");
+    expect(root.className).toContain("custom-root");
+    expect(root.className).toContain("gridra-theme-forest");
+    expect(root.className).not.toContain("gridra-theme-light");
   });
 });

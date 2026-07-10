@@ -838,43 +838,44 @@ Design constraints:
 
 ## Theme And Color System Notes
 
-Current status: partially implemented.
+Current status: implemented.
 
 Existing state:
 
-- `@gridra-ui/theme` exports `base.css`, `dark.css`, and `light.css`.
-- Core component CSS consumes `--gridra-color-*` custom properties.
-- The playground already imports `base.css` plus theme CSS and toggles `gridra-theme-dark` / `gridra-theme-light`.
+- `@gridra-ui/theme` exports structural `base.css`, a five-theme aggregate, and individual named theme files.
+- Dark, Light, Midnight, Forest, and Ember implement the same 35-token color contract.
+- `GridraRoot theme` selects built-in or custom kebab-case themes without remounting components.
+- An internal React context carries the active theme class into Portal-based components.
+- The playground and component docs expose the five built-in themes through selectors.
 
 Goal:
 
-- Move color values into dedicated color theme files so palettes can be authored and reviewed independently from component layout CSS.
-- Support multiple named color themes that consumers can select by importing a CSS file and applying a theme class.
-- Keep `base.css` responsible for component structure, spacing, typography, and default token fallbacks rather than owning every color value.
+- Keep palette values in dedicated color files so they can be authored independently from component layout CSS.
+- Keep custom themes compatible by requiring the documented 35-token contract and `gridra-theme-<name>` class pattern.
+- Keep `base.css` responsible for structure, spacing, typography, component behavior, and the Dark fallback import.
 
-Candidate file structure:
+Implemented file structure:
 
 - `packages/theme/src/colors/dark.css`
 - `packages/theme/src/colors/light.css`
-- `packages/theme/src/colors/<theme-name>.css`
+- `packages/theme/src/colors/{midnight,forest,ember}.css`
+- `packages/theme/src/themes.css`
 - Keep compatibility exports for `@gridra-ui/theme/dark.css` and `@gridra-ui/theme/light.css`.
 
-Candidate theme selection patterns:
+Theme selection patterns:
 
-- CSS class selection: apply `gridra-theme-dark`, `gridra-theme-light`, or another named theme class to `GridraRoot`.
-- App-level state selection in playground docs with a theme selector control.
-- Optional future helper docs for persisting the selected theme in local storage.
+- Preferred React API: pass `dark`, `light`, `midnight`, `forest`, `ember`, or a custom name to `GridraRoot theme`.
+- Legacy CSS class selection remains supported when the `theme` prop is absent.
+- App-level state controls selection in the playground; persistence remains application-owned.
 
-Not implemented yet:
+Intentionally not implemented:
 
-- Dedicated `colors/` files separate from current `dark.css` and `light.css`.
-- A documented list of required color tokens for third-party themes.
-- Additional built-in palettes beyond light and dark.
-- A public React theme provider; current preferred path remains CSS custom properties plus classes.
+- A public React theme provider or JavaScript token object API.
+- Runtime token editors, local storage persistence, or URL synchronization.
 
 Design constraints:
 
-- Color theme files must define the same required `--gridra-color-*` and shadow tokens.
+- Color theme files must pass the automated 35-token contract validation.
 - New color themes should not change component sizing, spacing, typography, or interaction behavior.
 - Theme switching must not require remounting components.
 - Avoid hard-coded component colors in `base.css`; promote repeated literals into tokens over time.

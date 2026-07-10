@@ -2,12 +2,20 @@
   "name": "@gridra-ui/theme",
   "version": "0.1.0",
   "type": "module",
+  "scripts": {
+    "test": "node ./scripts/validate-themes.mjs"
+  },
   "sideEffects": [
     "**/*.css"
   ],
   "exports": {
     "./base.css": "./src/base.css",
     "./dark.css": "./src/dark.css",
-    "./light.css": "./src/light.css"
+    "./light.css": "./src/light.css",
+    "./midnight.css": "./src/colors/midnight.css",
+    "./forest.css": "./src/colors/forest.css",
+    "./ember.css": "./src/colors/ember.css",
+    "./themes.css": "./src/themes.css",
+    "./colors/*.css": "./src/colors/*.css"
   }
 }

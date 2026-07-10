@@ -1,5 +1,6 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { GridraRoot } from "../GridraRoot";
 import { GridraToastProvider, useToast } from "./GridraToast";
 
 function ToastTrigger({
@@ -210,10 +211,37 @@ describe("GridraToast", () => {
     const viewport = document.body.querySelector(".gridra-toast__viewport");
     expect(viewport).toBeTruthy();
     expect(viewport!.className).toContain("gridra-toast__portal");
+    expect(viewport!.className).toContain("gridra-portal-root");
     expect(viewport!.className).not.toContain("gridra-root");
     expect(viewport!.className).toContain("gridra-theme-dark");
 
     document.body.removeChild(root);
+  });
+
+  it("inherits a custom theme without an anchor element", () => {
+    const { rerender } = render(
+      <GridraRoot theme="studio-blue">
+        <GridraToastProvider>
+          <ToastTrigger />
+        </GridraToastProvider>
+      </GridraRoot>,
+    );
+
+    click(screen.getByRole("button", { name: "Show toast" }));
+
+    const viewport = document.body.querySelector(".gridra-toast__viewport");
+    expect(viewport?.className).toContain("gridra-theme-studio-blue");
+
+    rerender(
+      <GridraRoot theme="ember">
+        <GridraToastProvider>
+          <ToastTrigger />
+        </GridraToastProvider>
+      </GridraRoot>,
+    );
+
+    expect(viewport?.className).toContain("gridra-theme-ember");
+    expect(viewport?.className).not.toContain("gridra-theme-studio-blue");
   });
 
   it("keeps provider children visible while the viewport is mounted", () => {

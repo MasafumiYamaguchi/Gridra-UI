@@ -8,7 +8,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
-import { getGridraThemeClassName } from "../../internal/theme";
+import { useGridraThemeClassName } from "../../internal/themeContext";
 
 export type GridraToastPosition = "top" | "bottom";
 
@@ -63,9 +63,7 @@ export function GridraToastProvider({
   // show内から最新の表示有無を同期的に判定するため、stateと同じ値をrefにも持つ。
   const currentRef = useRef<QueuedToast | null>(null);
 
-  const [portalThemeClassName, setPortalThemeClassName] = useState<
-    string | undefined
-  >(() => getGridraThemeClassName());
+  const portalThemeClassName = useGridraThemeClassName();
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {
@@ -107,8 +105,6 @@ export function GridraToastProvider({
     if (!currentToast) {
       return;
     }
-    // Portal先でも配色が一致するよう、表示開始時のテーマclassを取得する。
-    setPortalThemeClassName(getGridraThemeClassName());
     timerRef.current = window.setTimeout(() => {
       beginExit();
     }, currentToast.options.duration);
@@ -149,6 +145,7 @@ export function GridraToastProvider({
   );
 
   const viewportClassName = [
+    "gridra-portal-root",
     "gridra-toast__portal",
     portalThemeClassName,
     "gridra-toast__viewport",

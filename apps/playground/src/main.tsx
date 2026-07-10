@@ -1,6 +1,7 @@
 import { StrictMode, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
+  GRIDRA_BUILT_IN_THEME_NAMES,
   GridraAvatar,
   GridraBadge,
   GridraBox,
@@ -38,8 +39,9 @@ import {
   GridraTooltip,
   GridraToolbar
 } from "@gridra-ui/react";
+import type { GridraBuiltInThemeName } from "@gridra-ui/react";
 import "@gridra-ui/theme/base.css";
-import "@gridra-ui/theme/dark.css";
+import "@gridra-ui/theme/themes.css";
 import { ComponentDocsPage } from "./componentDocs";
 import "./styles.css";
 
@@ -91,9 +93,14 @@ const baseNodes = [
   }
 ] as const;
 
-function Playground() {
+function Playground({
+  onThemeChange,
+  theme,
+}: {
+  onThemeChange: (theme: GridraBuiltInThemeName) => void;
+  theme: GridraBuiltInThemeName;
+}) {
   const avatarImageUrl = "https://i.pravatar.cc/96?img=12";
-  const [theme, setTheme] = useState<"gridra-theme-light" | "gridra-theme-dark">("gridra-theme-dark");
   const [viewMode, setViewMode] = useState<"canvas" | "components">("canvas");
   const [selectedId, setSelectedId] = useState<string | null>("node-input");
   const [selectedIds, setSelectedIds] = useState<string[]>(["node-input"]);
@@ -181,7 +188,7 @@ function Playground() {
 
   return (
     <GridraRoot
-      className={theme}
+      theme={theme}
       style={{ "--gridra-panel-width": "auto" } as React.CSSProperties}
       panel={
         <GridraSidebar defaultOpen side="left" toggleSize={28}>
@@ -189,16 +196,19 @@ function Playground() {
             <GridraStack gap="sm">
               <GridraInline align="center" justify="between">
                 <h2 className="gridra-panel__title">GRIDRA</h2>
-                <GridraButton
-                  onClick={() =>
-                    setTheme((current) =>
-                      current === "gridra-theme-dark" ? "gridra-theme-light" : "gridra-theme-dark"
-                    )
+                <GridraSelect
+                  aria-label="Theme"
+                  onChange={(event) =>
+                    onThemeChange(event.target.value as GridraBuiltInThemeName)
                   }
-                  variant="ghost"
+                  value={theme}
                 >
-                  Theme
-                </GridraButton>
+                  {GRIDRA_BUILT_IN_THEME_NAMES.map((themeName) => (
+                    <option key={themeName} value={themeName}>
+                      {themeName[0].toUpperCase() + themeName.slice(1)}
+                    </option>
+                  ))}
+                </GridraSelect>
               </GridraInline>
               <GridraStack gap="sm">
                 <GridraInline align="center" justify="between">
@@ -781,8 +791,18 @@ function Playground() {
   );
 }
 
+function App() {
+  const [theme, setTheme] = useState<GridraBuiltInThemeName>("dark");
+
+  return isDocsRoute ? (
+    <ComponentDocsPage onThemeChange={setTheme} theme={theme} />
+  ) : (
+    <Playground onThemeChange={setTheme} theme={theme} />
+  );
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {isDocsRoute ? <ComponentDocsPage /> : <Playground />}
+    <App />
   </StrictMode>
 );

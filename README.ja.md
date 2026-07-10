@@ -14,7 +14,7 @@ GRIDRA UI は、高密度でパネル中心の GRIDRA らしいインターフ�
 
 - `@gridra-ui/react`: React コンポーネントとインタラクション層。
 - `@gridra-ui/core`: フレームワークに依存しない ID、ジオメトリ型、状態ヘルパー。
-- `@gridra-ui/theme`: CSS 変数トークンと light/dark テーマプリセット。
+- `@gridra-ui/theme`: CSS 変数トークンと5つの組み込みテーマプリセット。
 - `@gridra-ui/playground`: ローカル確認とコンポーネントドキュメント用の Vite アプリ。
 
 ## 導入
@@ -29,10 +29,16 @@ npm install @gridra-ui/react @gridra-ui/theme
 
 ```ts
 import "@gridra-ui/theme/base.css";
-import "@gridra-ui/theme/dark.css";
+import "@gridra-ui/theme/themes.css";
 ```
 
-ライトテーマを使う場合は、`dark.css` の代わりに `light.css` を import します。
+実行時は、組み込みまたはカスタムテーマを選択します。
+
+```tsx
+<GridraRoot theme="midnight">...</GridraRoot>
+```
+
+`dark.css`や`light.css`など、個別プリセットのimportも引き続き利用できます。
 
 ## 開発
 
@@ -71,7 +77,7 @@ packages/core
   フレームワーク非依存の ID、ジオメトリ型、小さな状態ヘルパーを提供
 
 packages/theme
-  base CSS 変数と light/dark テーマプリセットを提供
+  カラートークン契約と5つの組み込みテーマプリセットを提供
 ```
 
 主な依存方向は次の通りです。
@@ -102,10 +108,12 @@ GRIDRA UI は、高密度なアプリケーション画面向けのプリミテ�
 theme パッケージは、JavaScript ランタイムではなく CSS ファイルを公開します。
 
 - `@gridra-ui/theme/base.css`: 基本クラススタイルと CSS 変数の契約。
-- `@gridra-ui/theme/dark.css`: ダークテーマプリセット。
-- `@gridra-ui/theme/light.css`: ライトテーマプリセット。
+- `@gridra-ui/theme/themes.css`: 実行時切り替え用の全組み込みテーマ。
+- `@gridra-ui/theme/{dark,light,midnight,forest,ember}.css`: 個別プリセット。
 
-利用側では、プリセットテーマを import するか、アプリケーション側の CSS で変数を上書きできます。
+利用側では`GridraRoot`の`theme` propでプリセットを選択するか、同じ必須トークンを持つ
+`.gridra-theme-<name>`クラスを定義できます。完全な契約とカスタム例は
+[THEMING.ja.md](./THEMING.ja.md)を参照してください。
 
 ## ドキュメント
 
