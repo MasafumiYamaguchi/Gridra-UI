@@ -7,19 +7,19 @@ GRIDRA UI は、高密度でパネル中心の GRIDRA らしいインターフ�
 ## ステータス
 
 - 現在のバージョン: `0.1.0`
-- npm でのパッケージ配布は今後対応予定です。
+- npm でパッケージを公開済みです。
 - 現時点では、ローカルの npm workspaces モノレポとして構成されています。
 
 ## パッケージ
 
-- `@gridra-ui/react`: React コンポーネントとインタラクション層。
-- `@gridra-ui/core`: フレームワークに依存しない ID、ジオメトリ型、状態ヘルパー。
-- `@gridra-ui/theme`: CSS 変数トークンと5つの組み込みテーマプリセット。
+- [`@gridra-ui/react`](https://www.npmjs.com/package/@gridra-ui/react): React コンポーネントとインタラクション層。
+- [`@gridra-ui/core`](https://www.npmjs.com/package/@gridra-ui/core): フレームワークに依存しない ID、ジオメトリ型、状態ヘルパー。
+- [`@gridra-ui/theme`](https://www.npmjs.com/package/@gridra-ui/theme): CSS 変数トークンと5つの組み込みテーマプリセット。
 - `@gridra-ui/playground`: ローカル確認とコンポーネントドキュメント用の Vite アプリ。
 
 ## 導入
 
-npm での配布は今後対応予定です。公開後は、次のように導入する想定です。
+公開済みのランタイムパッケージを、次のように導入します。
 
 ```bash
 npm install @gridra-ui/react @gridra-ui/theme

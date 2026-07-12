@@ -7,19 +7,19 @@ GRIDRA UI is a React-first component library for building dense, panel-based GRI
 ## Status
 
 - Current version: `0.1.0`
-- Package distribution through npm is planned.
+- Packages are published on npm.
 - The repository is currently organized as a local npm workspaces monorepo.
 
 ## Packages
 
-- `@gridra-ui/react`: React components and interaction wiring.
-- `@gridra-ui/core`: framework-independent IDs, geometry types, and state helpers.
-- `@gridra-ui/theme`: CSS variable tokens and five built-in theme presets.
+- [`@gridra-ui/react`](https://www.npmjs.com/package/@gridra-ui/react): React components and interaction wiring.
+- [`@gridra-ui/core`](https://www.npmjs.com/package/@gridra-ui/core): framework-independent IDs, geometry types, and state helpers.
+- [`@gridra-ui/theme`](https://www.npmjs.com/package/@gridra-ui/theme): CSS variable tokens and five built-in theme presets.
 - `@gridra-ui/playground`: Vite app for local visual checks and component documentation.
 
 ## Installation
 
-npm distribution is planned. Once the packages are published, the intended installation flow is:
+Install the published runtime packages with:
 
 ```bash
 npm install @gridra-ui/react @gridra-ui/theme
