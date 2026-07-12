@@ -3,6 +3,17 @@
   "version": "0.1.0",
   "description": "CSS variable tokens and built-in theme presets for Gridra UI.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MasafumiYamaguchi/Gridra-UI.git"
+  },
+  "homepage": "https://github.com/MasafumiYamaguchi/Gridra-UI#readme",
+  "bugs": {
+    "url": "https://github.com/MasafumiYamaguchi/Gridra-UI/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "files": ["src"],
   "scripts": {

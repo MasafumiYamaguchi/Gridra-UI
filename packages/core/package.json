@@ -3,6 +3,17 @@
   "version": "0.1.0",
   "description": "Framework-independent IDs, geometry types, and state helpers for Gridra UI.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MasafumiYamaguchi/Gridra-UI.git"
+  },
+  "homepage": "https://github.com/MasafumiYamaguchi/Gridra-UI#readme",
+  "bugs": {
+    "url": "https://github.com/MasafumiYamaguchi/Gridra-UI/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "sideEffects": false,
   "files": ["dist"],
@@ -15,7 +26,7 @@
     }
   },
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json --force",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run --pool=threads --environment node"
   }
