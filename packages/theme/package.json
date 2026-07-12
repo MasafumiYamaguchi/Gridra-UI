@@ -1,7 +1,10 @@
 {
   "name": "@gridra-ui/theme",
   "version": "0.1.0",
+  "description": "CSS variable tokens and built-in theme presets for Gridra UI.",
+  "license": "MIT",
   "type": "module",
+  "files": ["src"],
   "scripts": {
     "test": "node ./scripts/validate-themes.mjs"
   },

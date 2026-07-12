@@ -1,8 +1,11 @@
 {
   "name": "@gridra-ui/core",
   "version": "0.1.0",
+  "description": "Framework-independent IDs, geometry types, and state helpers for Gridra UI.",
+  "license": "MIT",
   "type": "module",
   "sideEffects": false,
+  "files": ["dist"],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -12,7 +15,7 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -b tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run --pool=threads --environment node"
   }
