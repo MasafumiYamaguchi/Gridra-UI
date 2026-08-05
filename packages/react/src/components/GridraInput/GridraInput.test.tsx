@@ -81,4 +81,20 @@ describe("GridraInput", () => {
     expect(input.className).toContain("gridra-input--lg");
     expect(input.className).toContain("custom-input");
   });
+
+  it("associates an optional label and generates an id when needed", () => {
+    render(<GridraInput label="Project name" placeholder="Untitled" required />);
+
+    const input = screen.getByLabelText(/Project name/) as HTMLInputElement;
+
+    expect(input.id).not.toBe("");
+    expect(input.required).toBe(true);
+    expect(input.closest(".gridra-field")).not.toBeNull();
+  });
+
+  it("preserves an explicit id when rendering its optional label", () => {
+    render(<GridraInput id="project-name" label="Project name" />);
+
+    expect(screen.getByLabelText("Project name").id).toBe("project-name");
+  });
 });
