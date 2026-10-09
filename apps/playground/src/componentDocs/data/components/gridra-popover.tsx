@@ -39,7 +39,7 @@ export const popoverDoc: ComponentDoc = {
     usage: "Use GridraPopover for controls-and-settings panels, selection palettes, and contextual pickers that open beside a trigger button. It is intentionally non-modal so the user can see and click the main surface while the popover is open.",
     avoid: "Avoid using GridraPopover as a modal dialog replacement — use a dedicated Dialog/Modal component for blocking overlays, focus traps, and backdrop behavior.",
     compositions: [
-      "GridraPopover + GridraStack/GridraCluster: layout popover content.",
+      "GridraPopover + GridraStack/GridraStack: layout popover content.",
       "GridraPopover + GridraButton: icon-triggered settings panel.",
       "GridraPopover + GridraCheckbox / GridraSelect: palette-style filters.",
     ],

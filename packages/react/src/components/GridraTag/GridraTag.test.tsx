@@ -15,6 +15,7 @@ describe("GridraTag", () => {
     expect(tag.className).toContain("gridra-tag");
     expect(tag.className).toContain("gridra-tag--md");
     expect(tag.className).toContain("gridra-tag--default");
+    expect(tag.className).toContain("gridra-badge--outline");
   });
 
   it("supports tone, size, className, and attributes", () => {

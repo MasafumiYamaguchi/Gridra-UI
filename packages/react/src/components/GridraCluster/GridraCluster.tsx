@@ -1,48 +1,27 @@
-import { GridraBox, type GridraBoxProps } from "../GridraBox";
 import { cx } from "../../internal/classNames";
+import { GridraStack, type GridraStackProps, type GridraStackGap, type GridraStackAlign, type GridraStackJustify } from "../GridraStack";
 
-export type GridraClusterGap = "none" | "xs" | "sm" | "md" | "lg";
-export type GridraClusterAlign =
-  | "start"
-  | "center"
-  | "end"
-  | "stretch"
-  | "baseline";
-export type GridraClusterJustify = "start" | "center" | "end" | "between";
+/** @deprecated Use GridraStackGap. */
+export type GridraClusterGap = GridraStackGap;
+/** @deprecated Use GridraStackAlign. */
+export type GridraClusterAlign = GridraStackAlign;
+/** @deprecated Use GridraStackJustify. */
+export type GridraClusterJustify = GridraStackJustify;
+/** @deprecated Use GridraStackProps with direction="horizontal" and wrap. */
+export type GridraClusterProps = Omit<GridraStackProps, "direction" | "inline" | "reverse" | "separator" | "wrap">;
 
-// Clusterは横並びレイアウト専用なので、display/gapはGridraBoxから受け取らずここで固定管理する。
-export interface GridraClusterProps extends Omit<
-  GridraBoxProps,
-  "display" | "gap"
-> {
-  align?: GridraClusterAlign;
-  gap?: GridraClusterGap;
-  justify?: GridraClusterJustify;
-  rowGap?: GridraClusterGap;
-}
-
-export function GridraCluster({
-  align = "center",
-  children,
-  className,
-  gap = "sm",
-  justify = "start",
-  rowGap,
-  ...props
-}: GridraClusterProps) {
-  // GridraBoxを土台にしつつ、flex用のalign/justify/gapだけをClusterの責務として足す。
-  const clusterClassName = cx(
-    "gridra-cluster",
-    `gridra-cluster--gap-${gap}`,
-    rowGap ? `gridra-cluster--row-gap-${rowGap}` : null,
-    `gridra-cluster--align-${align}`,
-    `gridra-cluster--justify-${justify}`,
-    className,
-  );
-
+/** @deprecated Use GridraStack direction="horizontal" wrap align="center" gap="sm". */
+export function GridraCluster({ align = "center", className, gap = "sm", justify = "start", rowGap, ...props }: GridraClusterProps) {
   return (
-    <GridraBox className={clusterClassName} display="flex" {...props}>
-      {children}
-    </GridraBox>
+    <GridraStack
+      {...props}
+      align={align}
+      className={cx("gridra-cluster", `gridra-cluster--gap-${gap}`, rowGap && `gridra-cluster--row-gap-${rowGap}`, `gridra-cluster--align-${align}`, `gridra-cluster--justify-${justify}`, className)}
+      direction="horizontal"
+      gap={gap}
+      justify={justify}
+      rowGap={rowGap}
+      wrap
+    />
   );
 }

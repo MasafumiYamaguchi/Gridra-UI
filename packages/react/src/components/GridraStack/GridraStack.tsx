@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
-import { GridraBox, type GridraBoxAs, type GridraBoxProps } from "../GridraBox";
+import { Children, type HTMLAttributes, type ReactNode } from "react";
+import { cx } from "../../internal/classNames";
+import { GridraBox, type GridraBoxProps } from "../GridraBox";
 
 export type GridraStackDirection = "vertical" | "horizontal";
 export type GridraStackGap = "none" | "xs" | "sm" | "md" | "lg";
@@ -10,8 +11,11 @@ export interface GridraStackProps extends Omit<GridraBoxProps, "display" | "gap"
   align?: GridraStackAlign;
   direction?: GridraStackDirection;
   gap?: GridraStackGap;
+  inline?: boolean;
   justify?: GridraStackJustify;
   reverse?: boolean;
+  rowGap?: GridraStackGap;
+  separator?: ReactNode;
   wrap?: boolean;
 }
 
@@ -21,28 +25,49 @@ export function GridraStack({
   className,
   direction = "vertical",
   gap = "md",
+  inline = false,
   justify = "start",
   reverse = false,
+  rowGap,
+  separator,
   wrap = false,
   ...props
 }: GridraStackProps) {
-  // レイアウト指定をmodifier classへ変換し、組み合わせをCSS側で表現する。
-  const stackClassName = [
+  const stackClassName = cx(
     "gridra-stack",
     `gridra-stack--${direction}${reverse ? "-reverse" : ""}`,
     `gridra-stack--gap-${gap}`,
+    rowGap ? `gridra-stack--row-gap-${rowGap}` : null,
     `gridra-stack--align-${align}`,
     `gridra-stack--justify-${justify}`,
     wrap ? "gridra-stack--wrap" : null,
-    className
-  ]
-    .filter(Boolean)
-    .join(" ");
-
+    className,
+  );
+  let content = children;
+  if (separator !== undefined) {
+    const items = Children.toArray(children).filter((child) => child !== "");
+    content = items.flatMap((child, index) => index === 0 ? [child] : [
+      <span className="gridra-stack__separator gridra-inline__separator" key={`separator-${index}`}>
+        {separator}
+      </span>,
+      child,
+    ]);
+  }
   return (
-    // DOM要素や余白などの共通propsはGridraBoxへ委譲し、displayだけflexに固定する。
-    <GridraBox className={stackClassName} display="flex" {...props}>
-      {children as ReactNode}
+    <GridraBox className={stackClassName} display={inline ? "inline-flex" : "flex"} {...props}>
+      {content}
     </GridraBox>
+  );
+}
+
+export interface GridraStackItemProps extends HTMLAttributes<HTMLSpanElement> {
+  grow?: boolean;
+}
+
+export function GridraStackItem({ children, className, grow = false, ...props }: GridraStackItemProps) {
+  return (
+    <span className={cx("gridra-stack-item", grow && "gridra-stack-item--grow", className)} {...props}>
+      {children}
+    </span>
   );
 }

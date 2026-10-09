@@ -1,6 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { GridraGrid } from "./index";
+import { GridraGrid, GridraSelectableGrid } from "./index";
 
 afterEach(() => {
   cleanup();
@@ -8,6 +8,7 @@ afterEach(() => {
 
 describe("GridraGrid (compatibility alias)", () => {
   it("exports the same component as GridraSelectableGrid", () => {
+    expect(GridraGrid).toBe(GridraSelectableGrid);
     const { container } = render(<GridraGrid items={[]} />);
     const grid = container.querySelector(".gridra-grid");
 
