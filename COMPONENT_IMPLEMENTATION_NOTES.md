@@ -756,30 +756,16 @@ GridraBox props + style (maxWidth/marginInline)
   -> constrained-width wrapper behavior when needed
 ```
 
-### GridraInline
+### GridraStack
 
-Current status: implemented and reviewed. No blocking defect identified in the current exported surface.
+Current status: the single flex layout primitive.
 
-Implemented:
-
-- Horizontal-only inline layout primitive built on `GridraBox` with `inline-flex`.
-- Supports `gap`, `align`, and `justify` modifiers aligned with the existing layout vocabulary.
-- Supports `separator` rendering between direct, valid children only.
-- Exports `GridraInlineItem` with `grow` for filling available horizontal space.
-- Playground docs cover basic rows, separators, and trailing-action layouts.
-
-Review notes:
-
-- `justify="between"` only becomes visually meaningful when `GridraInline` has available width, such as `fullWidth` or a constrained parent layout.
-- `GridraInlineItem grow` follows the same rule: it can only push later content when the inline row has horizontal space to distribute.
-- `GridraInline` is not the wrapping primitive. Multi-line loose grouping should remain a `Cluster` concern.
-- `separator` is a direct-child visual aid. It does not split inside fragments or provide semantic grouping on its own.
-
-Potential follow-ups:
-
-- Keep the docs explicit that spacing distribution examples assume `fullWidth` or equivalent parent width.
-- Re-check `GridraInline` versus `Cluster` responsibilities when the wrapping layout primitive is designed.
-- Add separator semantics and accessibility guidance if separators are promoted beyond purely decorative usage.
+- Owns vertical/horizontal direction, inline display, wrapping, and rowGap.
+- Renders separators between non-empty direct children; fragments are not expanded.
+- Exports GridraStackItem with grow. Growing/distribution needs available width.
+- GridraInline, GridraInlineItem, and GridraCluster and their associated types
+  have been removed before 1.0. See the Stack examples for migration recipes.
+- Legacy inline/cluster CSS selectors have been removed; use stack selectors.
 
 ## Animation Integration Notes
 

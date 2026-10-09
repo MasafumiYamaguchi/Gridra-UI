@@ -6,7 +6,7 @@ export const badgeDoc: ComponentDoc = {
     name: "GridraBadge",
     summary: "Small status or metadata chip.",
     description:
-      "GridraBadge is a compact inline chip for statuses, tags, and metadata. Use the solid variant for compact uppercase statuses, or outline for case-preserving metadata labels. GridraTag is a deprecated compatibility wrapper for the outline variant.",
+      "GridraBadge is a compact inline chip for statuses, tags, and metadata. Use the solid variant for compact uppercase statuses, or outline for case-preserving metadata labels. GridraTag has been removed; use the outline variant for metadata labels.",
     importExample: 'import { GridraBadge } from "@gridra-ui/react";',
     props: [
       { name: "variant", type: '"solid" | "outline"', default: '"solid"', description: "Solid uppercase status badge or outline metadata label (replaces GridraTag)." },

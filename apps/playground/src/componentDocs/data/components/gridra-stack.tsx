@@ -6,7 +6,7 @@ export const stackDoc: ComponentDoc = {
     name: "GridraStack",
     summary: "Flex-based layout primitive for vertical and horizontal stacking with alignment.",
     description:
-      "GridraStack builds on GridraBox with display=flex and adds direction, alignment, justification, and wrapping. Use it for columns, rows, wrapping groups, and inline rows. It replaces GridraInline and GridraCluster; these remain available as deprecated compatibility wrappers. All Box props like padding, surface, and border are inherited.",
+      "GridraStack builds on GridraBox with display=flex and adds direction, alignment, justification, and wrapping. Use it for columns, rows, wrapping groups, and inline rows. It replaces GridraInline and GridraCluster; the old components and their types have been removed. All Box props like padding, surface, and border are inherited.",
     importExample: 'import { GridraStack } from "@gridra-ui/react";',
     props: [
       { name: "inline", type: "boolean", default: "false", description: "Use inline-flex instead of flex. Set direction separately." },

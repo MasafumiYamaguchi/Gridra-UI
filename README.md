@@ -112,11 +112,25 @@ For new code, use `GridraBadge` for both status chips and metadata labels:
 <GridraBadge variant="outline">Production</GridraBadge>
 ```
 
-`GridraTag` remains available as a deprecated compatibility wrapper for
-`GridraBadge variant="outline"`, preserving its sizes, colors, casing, overflow
-constraints, legacy CSS classes, and `--gridra-tag-*` overrides.
-`GridraGrid` is a deprecated alias: use `GridraSelectableGrid` for item selection
-and `GridraGridLayout` for layout. Existing imports continue to work.
+Breaking changes before 1.0: `GridraTag` and `GridraGrid`, including their
+associated types, have been removed. Replace `GridraTag` with
+`GridraBadge variant="outline"`, and use `GridraSelectableGrid` for item
+selection or `GridraGridLayout` for layout. Outline labels retain their sizing,
+casing, and overflow constraints. Replace `.gridra-tag*` CSS selectors with
+Badge selectors and `--gridra-tag-*` overrides with `--gridra-badge-outline-*`.
+
+`GridraInline`, `GridraInlineItem`, and `GridraCluster`, including their types
+and `.gridra-inline*` / `.gridra-cluster*` selectors, have also been removed.
+Use Stack selectors and these replacements, retaining any other existing props:
+
+```tsx
+// 横並び（旧GridraInline）
+<GridraStack direction="horizontal" inline align="center" gap="sm" />
+// 折り返し（旧GridraCluster）
+<GridraStack direction="horizontal" wrap align="center" gap="sm" rowGap="md" />
+// 残りの幅を埋める子要素（旧GridraInlineItem）
+<GridraStackItem grow />
+```
 
 ## Styling And Themes
 
