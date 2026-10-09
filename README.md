@@ -112,11 +112,12 @@ For new code, use `GridraBadge` for both status chips and metadata labels:
 <GridraBadge variant="outline">Production</GridraBadge>
 ```
 
-`GridraTag` remains available as a deprecated compatibility wrapper for
-`GridraBadge variant="outline"`, preserving its sizes, colors, casing, overflow
-constraints, legacy CSS classes, and `--gridra-tag-*` overrides.
-`GridraGrid` is a deprecated alias: use `GridraSelectableGrid` for item selection
-and `GridraGridLayout` for layout. Existing imports continue to work.
+Breaking changes before 1.0: `GridraTag` and `GridraGrid`, including their
+associated types, have been removed. Replace `GridraTag` with
+`GridraBadge variant="outline"`, and use `GridraSelectableGrid` for item
+selection or `GridraGridLayout` for layout. Outline labels retain their sizing,
+casing, and overflow constraints. Replace `.gridra-tag*` CSS selectors with
+Badge selectors and `--gridra-tag-*` overrides with `--gridra-badge-outline-*`.
 
 ## Styling And Themes
 

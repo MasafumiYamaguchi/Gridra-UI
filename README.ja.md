@@ -134,7 +134,9 @@ playground には、ローカルのコンポーネントドキュメントと表
 
 新規コードでは、状態表示に `GridraBadge`、メタデータのラベル表示に
 `GridraBadge variant="outline"` を使用してください。
-`GridraTag` は非推奨の互換ラッパーとして引き続き利用できます。
-サイズ、色、文字の大小、はみ出し対策、CSSクラス、CSSの上書き設定は維持されます。
+1.0未満のAPI整理として、`GridraTag` と `GridraGrid` および関連する型を削除しました。
+`GridraTag` は `GridraBadge variant="outline"` へ移行してください。
+ラベルのサイズ、文字の大小、はみ出し対策は維持されます。
+`.gridra-tag*` のCSSセレクターはBadgeのセレクターへ、
+`--gridra-tag-*` の上書き設定は `--gridra-badge-outline-*` へ変更してください。
 項目の選択には `GridraSelectableGrid`、レイアウトには `GridraGridLayout` を使用してください。
-`GridraGrid` は非推奨の別名として引き続き利用できます。

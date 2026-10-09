@@ -79,7 +79,7 @@ To avoid confusion between the three grid-related surfaces:
   - Selectable item collection
   - Renders `items` as buttons with `aria-selected` support
   - Manages controlled/uncontrolled selection state
-  - `GridraGrid` is a compatibility alias for this component
+  - `GridraGrid` was the previous name and has been removed; use `GridraSelectableGrid`
 - `GridraCanvasArea`
   - Spatial editing canvas
   - Handles node placement, range selection, drag, resize, and connections
