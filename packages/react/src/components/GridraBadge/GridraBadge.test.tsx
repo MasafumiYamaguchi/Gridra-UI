@@ -1,3 +1,4 @@
+import themeCss from "../../../../theme/src/base.css?raw";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { GridraBadge } from "./GridraBadge";
@@ -7,6 +8,45 @@ afterEach(() => {
 });
 
 describe("GridraBadge", () => {
+  it("keeps outline typography, sizes, overflow and colors equivalent to legacy tag CSS", () => {
+    const style = document.createElement("style");
+    style.textContent = themeCss
+      .replace(/@import[^;]+;/g, "");
+    document.head.append(style);
+    try {
+      for (const size of ["sm", "md"] as const) {
+        for (const tone of ["default", "accent", "muted", "success", "warning", "danger"] as const) {
+          const { container, unmount } = render(<>
+            <span className={`gridra-tag gridra-tag--${size} gridra-tag--${tone}`}>Production</span>
+            <GridraBadge variant="outline" size={size} tone={tone}>Production</GridraBadge>
+          </>);
+          const [legacy, badge] = Array.from(container.children, (element) => getComputedStyle(element));
+          for (const property of ["min-height", "font-size", "padding", "max-width", "min-width", "text-transform", "letter-spacing", "border", "background", "color", "box-shadow"]) {
+            expect(badge.getPropertyValue(property), `${size}/${tone}: ${property}`).toBe(legacy.getPropertyValue(property));
+          }
+          unmount();
+        }
+      }
+    } finally {
+      style.remove();
+    }
+  });
+
+  it("supports outline metadata labels without changing solid defaults", () => {
+    render(
+      <>
+        <GridraBadge data-testid="outline" shape="pill" size="sm" tone="success" variant="outline">Production</GridraBadge>
+        <GridraBadge data-testid="solid">Active</GridraBadge>
+      </>,
+    );
+    const outline = screen.getByTestId("outline");
+    expect(outline.textContent).toBe("Production");
+    expect(outline.className).toContain("gridra-badge--outline");
+    expect(outline.className).toContain("gridra-badge--pill");
+    expect(outline.className).toContain("gridra-badge--success");
+    expect(screen.getByTestId("solid").className).toContain("gridra-badge--solid");
+  });
+
   it("renders default badge classes and children", () => {
     render(<GridraBadge>Draft</GridraBadge>);
     const badge = screen.getByText("Draft");
