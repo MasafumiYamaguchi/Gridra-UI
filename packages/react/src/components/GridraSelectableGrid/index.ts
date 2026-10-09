@@ -1,12 +1,11 @@
-export {
-  GridraSelectableGrid,
-  type GridraSelectableGridItem,
-  type GridraSelectableGridProps,
-} from "./GridraSelectableGrid";
+import { GridraSelectableGrid } from "./GridraSelectableGrid";
+import type { GridraSelectableGridItem, GridraSelectableGridProps } from "./GridraSelectableGrid";
 
-// Compatibility aliases for the previous name
-export {
-  GridraSelectableGrid as GridraGrid,
-  type GridraSelectableGridItem as GridraGridItem,
-  type GridraSelectableGridProps as GridraGridProps,
-} from "./GridraSelectableGrid";
+export { GridraSelectableGrid, type GridraSelectableGridItem, type GridraSelectableGridProps };
+
+/** @deprecated Use GridraSelectableGrid for item selection, or GridraGridLayout for layout. */
+export const GridraGrid = GridraSelectableGrid;
+/** @deprecated Use GridraSelectableGridItem. */
+export type GridraGridItem = GridraSelectableGridItem;
+/** @deprecated Use GridraSelectableGridProps. */
+export type GridraGridProps<TItem extends GridraSelectableGridItem = GridraSelectableGridItem> = GridraSelectableGridProps<TItem>;

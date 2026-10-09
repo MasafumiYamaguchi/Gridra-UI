@@ -3,6 +3,7 @@ import { cx } from "../../internal/classNames";
 
 export type GridraBadgeShape = "square" | "rounded" | "pill";
 export type GridraBadgeSize = "sm" | "md";
+export type GridraBadgeVariant = "solid" | "outline";
 export type GridraBadgeTone =
   | "default"
   | "accent"
@@ -15,6 +16,7 @@ export interface GridraBadgeProps extends HTMLAttributes<HTMLSpanElement> {
   shape?: GridraBadgeShape;
   size?: GridraBadgeSize;
   tone?: GridraBadgeTone;
+  variant?: GridraBadgeVariant;
 }
 
 export function GridraBadge({
@@ -22,6 +24,7 @@ export function GridraBadge({
   shape = "square",
   size = "md",
   tone = "default",
+  variant = "solid",
   ...props
 }: GridraBadgeProps) {
   // Badgeは状態を持たない表示プリミティブなので、tone/size/shapeをclassへ写すだけに留める。
@@ -30,6 +33,7 @@ export function GridraBadge({
     `gridra-badge--${tone}`,
     `gridra-badge--${size}`,
     `gridra-badge--${shape}`,
+    `gridra-badge--${variant}`,
     className,
   );
 

@@ -129,3 +129,12 @@ playground には、ローカルのコンポーネントドキュメントと表
 - playground は Vite
 - テストは Vitest、jsdom、Testing Library
 - スタイリングは CSS 変数とテーマプリセット
+
+## Component Selection
+
+For new code, use `GridraBadge` for status chips and
+`GridraBadge variant="outline"` for metadata labels.
+`GridraTag` remains available as a deprecated compatibility wrapper with the
+same sizes, colors, casing, overflow constraints, CSS classes, and CSS overrides.
+Use `GridraSelectableGrid` for selection and `GridraGridLayout` for layout;
+`GridraGrid` remains available as a deprecated alias.
