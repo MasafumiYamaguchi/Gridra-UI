@@ -15,7 +15,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 
 - [x] `GridraRoot`
 - [x] `GridraCanvasArea`
-- [x] `GridraSelectableGrid` (`GridraGrid` is a compatibility alias)
+- [x] `GridraSelectableGrid` (`GridraGrid` has been removed)
 - [x] `GridraPanel`
 - [x] `GridraNode`
 - [x] `GridraMinimap`

@@ -103,6 +103,22 @@ GRIDRA UI includes primitives for dense application surfaces:
 
 See [COMPONENT_ROADMAP.md](./COMPONENT_ROADMAP.md) for the current component status and planned additions.
 
+## Component Selection
+
+For new code, use `GridraBadge` for both status chips and metadata labels:
+
+```tsx
+<GridraBadge>Active</GridraBadge>
+<GridraBadge variant="outline">Production</GridraBadge>
+```
+
+Breaking changes before 1.0: `GridraTag` and `GridraGrid`, including their
+associated types, have been removed. Replace `GridraTag` with
+`GridraBadge variant="outline"`, and use `GridraSelectableGrid` for item
+selection or `GridraGridLayout` for layout. Outline labels retain their sizing,
+casing, and overflow constraints. Replace `.gridra-tag*` CSS selectors with
+Badge selectors and `--gridra-tag-*` overrides with `--gridra-badge-outline-*`.
+
 ## Styling And Themes
 
 The theme package exposes CSS files instead of requiring a JavaScript runtime:
