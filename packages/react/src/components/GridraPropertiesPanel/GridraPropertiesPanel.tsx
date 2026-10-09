@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import { useId, type HTMLAttributes } from "react";
 import { GridraField } from "../GridraField";
 import { GridraInput } from "../GridraInput";
 import { GridraPanel } from "../GridraPanel";
@@ -48,6 +48,7 @@ export function GridraPropertiesPanel({
   value,
   ...props
 }: GridraPropertiesPanelProps) {
+  const fieldId = useId();
   // 選択対象・型・schema・現在値が揃った場合だけ編集可能な状態とみなす。
   const hasSelection =
     selectedNodeId != null &&
@@ -79,9 +80,10 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "text") {
               return (
-                <GridraField key={field.id} label={field.label}>
+                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
                   <GridraInput
                     data-testid={`property-${field.id}`}
+                    id={`${fieldId}-${field.id}`}
                     disabled={disabled}
                     onChange={(event) =>
                       handleChange(field.id, event.target.value)
@@ -95,9 +97,10 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "number") {
               return (
-                <GridraField key={field.id} label={field.label}>
+                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
                   <GridraInput
                     data-testid={`property-${field.id}`}
+                    id={`${fieldId}-${field.id}`}
                     disabled={disabled}
                     max={field.max}
                     min={field.min}
@@ -119,9 +122,10 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "select") {
               return (
-                <GridraField key={field.id} label={field.label}>
+                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
                   <GridraSelect
                     data-testid={`property-${field.id}`}
+                    id={`${fieldId}-${field.id}`}
                     disabled={disabled}
                     onChange={(event) =>
                       handleChange(field.id, event.target.value)
@@ -140,10 +144,11 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "toggle") {
               return (
-                <GridraField key={field.id} label={field.label}>
+                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
                   <GridraSwitch
                     checked={Boolean(fieldValue)}
                     data-testid={`property-${field.id}`}
+                    id={`${fieldId}-${field.id}`}
                     disabled={disabled}
                     onCheckedChange={(checked) =>
                       handleChange(field.id, checked)
