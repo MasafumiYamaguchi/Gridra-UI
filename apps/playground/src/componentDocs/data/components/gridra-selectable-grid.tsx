@@ -6,7 +6,7 @@ export const selectableGridDoc: ComponentDoc = {
     name: "GridraSelectableGrid",
     summary: "Compact selectable item grid for dense lists and panel navigation.",
     description:
-      "GridraSelectableGrid renders a dense grid of selectable items. Each item is rendered as a button with aria-selected support. It supports controlled and uncontrolled selection, custom item rendering, and an empty state. GridraGrid is a compatibility alias for this component.",
+      "GridraSelectableGrid renders a dense grid of selectable items. Each item is rendered as a button with aria-selected support. It supports controlled and uncontrolled selection, custom item rendering, and an empty state. Use GridraGridLayout for layout without item selection.",
     importExample: 'import { GridraSelectableGrid } from "@gridra-ui/react";',
     props: [
       { name: "items", type: "TItem[]", required: true, description: "Array of grid items with id and optional label." },
@@ -19,7 +19,7 @@ export const selectableGridDoc: ComponentDoc = {
       { name: "className", type: "string", description: "Additional CSS classes." }
     ],
     options: ["items", "columns", "selectedId", "onSelectionChange", "emptyLabel", "HTML div attributes"],
-    features: ["Renders items as selectable buttons.", "Marks the selected item with aria-selected.", "GridraGrid is a compatibility alias."],
+    features: ["Renders items as selectable buttons.", "Marks the selected item with aria-selected.", "Selection and layout use separate components."],
     examples: [
       {
         title: "Selectable grid",

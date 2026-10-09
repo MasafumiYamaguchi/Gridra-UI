@@ -1,4 +1,4 @@
-import { GridraCard, GridraStack, GridraKbd, GridraTag } from "@gridra-ui/react";
+import { GridraCard, GridraStack, GridraKbd, GridraBadge } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const cardDoc: ComponentDoc = {
@@ -42,7 +42,7 @@ export const cardDoc: ComponentDoc = {
   description="Last run completed"
   footer="Updated 2m ago"
 >
-  <GridraTag tone="success">Healthy</GridraTag>
+  <GridraBadge variant="outline" tone="success">Healthy</GridraBadge>
 </GridraCard>`,
     },
   ],
@@ -56,8 +56,8 @@ export const cardDoc: ComponentDoc = {
     >
       <GridraStack gap="sm">
         <GridraStack direction="horizontal" inline align="center" gap="sm">
-          <GridraTag tone="success">Healthy</GridraTag>
-          <GridraTag tone="muted">Batch 1</GridraTag>
+          <GridraBadge variant="outline" tone="success">Healthy</GridraBadge>
+          <GridraBadge variant="outline" tone="muted">Batch 1</GridraBadge>
         </GridraStack>
         <span>24 nodes processed with no failed edges.</span>
       </GridraStack>

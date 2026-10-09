@@ -47,7 +47,7 @@ export function GridraStack({
   if (separator !== undefined) {
     const items = Children.toArray(children).filter((child) => child !== "");
     content = items.flatMap((child, index) => index === 0 ? [child] : [
-      <span className="gridra-stack__separator gridra-inline__separator" key={`separator-${index}`}>
+      <span className="gridra-stack__separator" key={`separator-${index}`}>
         {separator}
       </span>,
       child,

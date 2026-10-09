@@ -1,4 +1,5 @@
-import themeCss from "../../../../theme/src/base.css?raw";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { GridraStack, GridraStackItem } from "./GridraStack";
@@ -6,6 +7,8 @@ import { GridraStack, GridraStackItem } from "./GridraStack";
 afterEach(() => {
   cleanup();
 });
+
+const themeCss = readFileSync(resolve("../theme/src/base.css"), "utf8");
 
 describe("GridraStack", () => {
   it("supports inline rows, rowGap, separators and grow items", () => {
@@ -34,22 +37,29 @@ describe("GridraStack", () => {
     expect(container.querySelector(".gridra-stack__separator")).toBeNull();
   });
 
-  it("preserves legacy inline and cluster spacing, alignment and wrapping CSS", () => {
+  it("applies inline display, direction, wrapping, independent rowGap and grow styles", () => {
     const style = document.createElement("style");
     style.textContent = themeCss.replace(/@import[^;]+;/g, "");
     document.head.append(style);
     try {
-      for (const kind of ["inline", "cluster"] as const) {
-        const { container, unmount } = render(<>
-          <div className={`gridra-box gridra-box--display-${kind === "inline" ? "inline-flex" : "flex"} gridra-${kind} gridra-${kind}--gap-sm gridra-${kind}--align-center gridra-${kind}--justify-start`} />
-          <GridraStack direction="horizontal" inline={kind === "inline"} wrap={kind === "cluster"} align="center" gap="sm" />
-        </>);
-        const [legacy, stack] = Array.from(container.children, (element) => getComputedStyle(element));
-        for (const property of ["display", "min-width", "min-height", "gap", "align-items", "justify-content", "flex-wrap"]) {
-          expect(stack.getPropertyValue(property), `${kind}: ${property}`).toBe(legacy.getPropertyValue(property));
-        }
-        unmount();
-      }
+      const { container } = render(<>
+        <GridraStack data-testid="column" />
+        <GridraStack data-testid="row" direction="horizontal" inline wrap align="center" gap="sm" rowGap="md" separator="/">
+          <span>First</span><GridraStackItem data-testid="grow" grow>Second</GridraStackItem>
+        </GridraStack>
+      </>);
+      const column = getComputedStyle(screen.getByTestId("column"));
+      expect(column.display).toBe("flex");
+      expect(column.flexDirection).toBe("column");
+      const row = getComputedStyle(screen.getByTestId("row"));
+      expect(row.display).toBe("inline-flex");
+      expect(row.flexDirection).toBe("row");
+      expect(row.flexWrap).toBe("wrap");
+      expect(row.alignItems).toBe("center");
+      expect(row.gap).toBe("var(--gridra-space-sm)");
+      expect(row.rowGap).toBe("var(--gridra-space-md)");
+      expect(getComputedStyle(screen.getByTestId("grow")).flex).toBe("1 1 auto");
+      expect(getComputedStyle(container.querySelector(".gridra-stack__separator")!).flex).toBe("0 0 auto");
     } finally { style.remove(); }
   });
 

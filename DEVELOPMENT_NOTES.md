@@ -1,5 +1,12 @@
 # Development Notes
 
+## API整理の方針（1.0未満）
+
+重複したコンポーネントや曖昧なAPIを整理する際は、破壊的変更を許容する。
+旧APIとの互換性だけを理由に別名やラッパーを残さず、使い分けを減らす。
+削除するAPIと移行先は、PRの説明と該当ドキュメントに明記する。
+追加するコードの説明コメントは日本語で記述する。
+
 ## Testing Workflow
 
 Codex should add or update tests together with implementation changes when the behavior is meaningful enough to verify.
