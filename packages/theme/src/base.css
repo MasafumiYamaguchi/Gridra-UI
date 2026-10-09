@@ -335,6 +335,10 @@
 
 .gridra-field__label {
   color: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-transform: inherit;
 }
 
 .gridra-field__required {
