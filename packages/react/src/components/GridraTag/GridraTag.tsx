@@ -1,15 +1,15 @@
 import { cx } from "../../internal/classNames";
 import { GridraBadge, type GridraBadgeProps, type GridraBadgeSize, type GridraBadgeTone } from "../GridraBadge";
 
-/** @deprecated Use GridraBadgeSize. */
+/** @deprecated GridraBadgeSizeを使用してください。 */
 export type GridraTagSize = GridraBadgeSize;
-/** @deprecated Use GridraBadgeTone. */
+/** @deprecated GridraBadgeToneを使用してください。 */
 export type GridraTagTone = GridraBadgeTone;
 
-/** @deprecated Use GridraBadgeProps with variant="outline". */
+/** @deprecated GridraBadgePropsを使用し、variant="outline"を指定してください。 */
 export type GridraTagProps = Omit<GridraBadgeProps, "shape" | "variant">;
 
-/** @deprecated Use GridraBadge with variant="outline". */
+/** @deprecated GridraBadgeにvariant="outline"を指定して使用してください。 */
 export function GridraTag({
   className,
   size = "md",

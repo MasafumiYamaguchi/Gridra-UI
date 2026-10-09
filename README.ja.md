@@ -130,11 +130,11 @@ playground には、ローカルのコンポーネントドキュメントと表
 - テストは Vitest、jsdom、Testing Library
 - スタイリングは CSS 変数とテーマプリセット
 
-## Component Selection
+## コンポーネントの選び方
 
-For new code, use `GridraBadge` for status chips and
-`GridraBadge variant="outline"` for metadata labels.
-`GridraTag` remains available as a deprecated compatibility wrapper with the
-same sizes, colors, casing, overflow constraints, CSS classes, and CSS overrides.
-Use `GridraSelectableGrid` for selection and `GridraGridLayout` for layout;
-`GridraGrid` remains available as a deprecated alias.
+新規コードでは、状態表示に `GridraBadge`、メタデータのラベル表示に
+`GridraBadge variant="outline"` を使用してください。
+`GridraTag` は非推奨の互換ラッパーとして引き続き利用できます。
+サイズ、色、文字の大小、はみ出し対策、CSSクラス、CSSの上書き設定は維持されます。
+項目の選択には `GridraSelectableGrid`、レイアウトには `GridraGridLayout` を使用してください。
+`GridraGrid` は非推奨の別名として引き続き利用できます。
