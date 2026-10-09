@@ -1,4 +1,4 @@
-import { GridraBadge, GridraBox, GridraInline, GridraTreeView } from "@gridra-ui/react";
+import { GridraBadge, GridraBox, GridraStack, GridraTreeView } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const treeViewDoc: ComponentDoc = {
@@ -69,10 +69,10 @@ export const treeViewDoc: ComponentDoc = {
         code: `<GridraTreeView
   items={items}
   renderItem={(item, state) => (
-    <GridraInline gap="sm" align="center">
+    <GridraStack direction="horizontal" inline gap="sm" align="center">
       <span>{item.label}</span>
       {state.hasChildren ? <GridraBadge size="sm">Group</GridraBadge> : null}
-    </GridraInline>
+    </GridraStack>
   )}
 />`,
       },
@@ -82,10 +82,10 @@ export const treeViewDoc: ComponentDoc = {
         code: `<GridraTreeView
   items={items}
   renderItem={(item, state) => (
-    <GridraInline align="center" gap="xs">
+    <GridraStack direction="horizontal" inline align="center" gap="xs">
       {!state.hasChildren ? <span>-</span> : null}
       <span>{item.label}</span>
-    </GridraInline>
+    </GridraStack>
   )}
 />`,
       },
@@ -110,12 +110,12 @@ export const treeViewDoc: ComponentDoc = {
             { id: "package", label: "package.json" },
           ]}
           renderItem={(item, state) => (
-            <GridraInline align="center" gap="sm">
+            <GridraStack direction="horizontal" inline align="center" gap="sm">
               <span>{item.label}</span>
               {state.hasChildren ? (
                 <GridraBadge size="sm" tone="muted">Group</GridraBadge>
               ) : null}
-            </GridraInline>
+            </GridraStack>
           )}
         />
       </GridraBox>

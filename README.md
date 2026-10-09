@@ -119,6 +119,19 @@ selection or `GridraGridLayout` for layout. Outline labels retain their sizing,
 casing, and overflow constraints. Replace `.gridra-tag*` CSS selectors with
 Badge selectors and `--gridra-tag-*` overrides with `--gridra-badge-outline-*`.
 
+`GridraInline`, `GridraInlineItem`, and `GridraCluster`, including their types
+and `.gridra-inline*` / `.gridra-cluster*` selectors, have also been removed.
+Use Stack selectors and these replacements, retaining any other existing props:
+
+```tsx
+// 横並び（旧GridraInline）
+<GridraStack direction="horizontal" inline align="center" gap="sm" />
+// 折り返し（旧GridraCluster）
+<GridraStack direction="horizontal" wrap align="center" gap="sm" rowGap="md" />
+// 残りの幅を埋める子要素（旧GridraInlineItem）
+<GridraStackItem grow />
+```
+
 ## Styling And Themes
 
 The theme package exposes CSS files instead of requiring a JavaScript runtime:
