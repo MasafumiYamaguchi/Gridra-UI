@@ -6,7 +6,7 @@ export const dropdownMenuDoc: ComponentDoc = {
     name: "GridraDropdownMenu",
     summary: "Command dropdown menu with items-based API, full keyboard navigation, and WAI-ARIA menu semantics.",
     description:
-      "GridraDropdownMenu renders a role=menu near a trigger element with fixed positioning. It accepts an items array of commands and separators, handles arrow-key navigation, Home/End jumping, Enter/Space activation, and Escape/outside-click close. v1 is command-only  Echeckbox, radio, and submenu are deferred.",
+      "GridraDropdownMenu renders a role=menu near a trigger element with fixed positioning. It accepts an items array of commands and separators, handles arrow-key navigation, Home/End jumping, Enter/Space activation, and Escape/outside-click close. v1 is command-only — checkbox, radio, and submenu are deferred.",
     importExample: 'import { GridraDropdownMenu } from "@gridra-ui/react";',
     props: [
       { name: "children", type: "ReactElement", required: true, description: "A single trigger element that toggles the menu on click." },

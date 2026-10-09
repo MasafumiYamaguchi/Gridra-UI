@@ -34,6 +34,29 @@ const sampleValue = {
 };
 
 describe("GridraPropertiesPanel", () => {
+  it("names all field kinds and keeps ids unique across panels", () => {
+    const { container } = render(
+      <>
+        {["input", "input", "transform"].map((type, index) => (
+          <GridraPropertiesPanel
+            key={index}
+            schema={sampleSchema}
+            selectedNodeId={`node-${index}`}
+            selectedNodeType={type}
+            value={sampleValue}
+          />
+        ))}
+      </>,
+    );
+    expect(screen.getAllByRole("textbox", { name: "Source Name" })).toHaveLength(2);
+    expect(screen.getAllByRole("switch", { name: "Enabled" })).toHaveLength(2);
+    expect(screen.getByRole("combobox", { name: "Mode" })).toBeTruthy();
+    expect(screen.getByRole("spinbutton", { name: "Intensity" })).toBeTruthy();
+    const ids = Array.from(container.querySelectorAll("input, select, button[role=switch]"), (control) => control.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids.every(Boolean)).toBe(true);
+  });
+
   it("renders empty state when nothing is selected", () => {
     render(<GridraPropertiesPanel />);
     expect(screen.getByText("No properties available")).toBeTruthy();

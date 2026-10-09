@@ -6,7 +6,7 @@ export const hoverCardDoc: ComponentDoc = {
     name: "GridraHoverCard",
     summary: "Interactive hover card with show/hide delays, positioned between Tooltip and Popover.",
     description:
-      "GridraHoverCard shows rich preview content on hover/focus and stays open while the pointer is over the trigger or the card itself. It sits between GridraTooltip (short text) and GridraPopover (click-triggered)  Eideal for user profiles, item previews, and summary cards.",
+      "GridraHoverCard shows rich preview content on hover/focus and stays open while the pointer is over the trigger or the card itself. It sits between GridraTooltip (short text) and GridraPopover (click-triggered) — ideal for user profiles, item previews, and summary cards.",
     importExample: 'import { GridraHoverCard } from "@gridra-ui/react";',
     props: [
       { name: "children", type: "ReactElement", required: true, description: "A single trigger element." },
@@ -115,5 +115,5 @@ export const hoverCardDoc: ComponentDoc = {
       </div>
     ),
     accessibility:
-      "The trigger has aria-expanded reflecting the open state and aria-controls linking to the card ID while open. The card does not use role=tooltip or role=dialog  Eit is a non-modal preview panel. Interactive cards are inherently mouse-dependent; ensure critical information is also reachable via focus.",
+      "The trigger has aria-expanded reflecting the open state and aria-controls linking to the card ID while open. The card does not use role=tooltip or role=dialog — it is a non-modal preview panel. Interactive cards are inherently mouse-dependent; ensure critical information is also reachable via focus.",
   };

@@ -34,7 +34,7 @@ export const commandPaletteDoc: ComponentDoc = {
       "full keyboard navigation: Arrow keys, Home, End, Enter, Escape",
     ],
     features: [
-      "Portal-based modal surface with backdrop  Esame overlay strategy as GridraDialog.",
+      "Portal-based modal surface with backdrop — same overlay strategy as GridraDialog.",
       "Search input focused on open; filters commands in real time.",
       "Matches across plain string/number label and description values, group, and keywords.",
       "Use keywords for commands with JSX labels or rich descriptions.",

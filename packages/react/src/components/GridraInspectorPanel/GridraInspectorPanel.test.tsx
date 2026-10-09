@@ -13,6 +13,23 @@ describe("GridraInspectorPanel", () => {
     placement: { x: 2, y: 3, w: 4, h: 5 },
   };
 
+  it("associates every field label with its input and keeps ids unique across panels", () => {
+    const { container } = render(
+      <>
+        <GridraInspectorPanel selectedNode={baseNode} />
+        <GridraInspectorPanel selectedNode={baseNode} />
+      </>,
+    );
+    for (const label of ["Label", "X", "Y", "W", "H"]) {
+      expect(screen.getAllByLabelText(label)).toHaveLength(2);
+    }
+    expect(screen.getAllByRole("textbox", { name: "Label" })).toHaveLength(2);
+    expect(screen.getAllByRole("spinbutton", { name: "X" })).toHaveLength(2);
+    const ids = Array.from(container.querySelectorAll("input"), (input) => input.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids.every(Boolean)).toBe(true);
+  });
+
   it("renders empty state when no node is selected", () => {
     render(<GridraInspectorPanel />);
     expect(screen.getByText("No node selected")).toBeTruthy();
