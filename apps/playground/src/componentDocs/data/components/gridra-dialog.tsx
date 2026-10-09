@@ -34,7 +34,7 @@ export const dialogDoc: ComponentDoc = {
       "close button with configurable label",
     ],
     features: [
-      "Portal-based rendering via createPortal  Efirst component to use portals.",
+      "Portal-based rendering via createPortal — first component to use portals.",
       "role=dialog, aria-modal=true, aria-labelledby/aria-describedby wired automatically.",
       "Focus trap: Tab and Shift+Tab cycle through focusable elements inside the dialog.",
       "Focus restore: returns focus to the previously focused element or trigger on close.",
@@ -42,7 +42,7 @@ export const dialogDoc: ComponentDoc = {
       "Backdrop click only closes when the pointer event starts on the backdrop itself.",
     ],
     usage: "Use GridraDialog for confirmation prompts, settings forms, detail views, and any blocking overlay that requires user acknowledgment. Prefer it over Popover when the user should not interact with the main surface while the overlay is open.",
-    avoid: "Avoid nesting Dialogs inside other Dialogs or Popovers without a clear focus-management strategy. Avoid using GridraDialog for non-blocking tooltips or inline pickers  Euse Popover or Tooltip instead.",
+    avoid: "Avoid nesting Dialogs inside other Dialogs or Popovers without a clear focus-management strategy. Avoid using GridraDialog for non-blocking tooltips or inline pickers — use Popover or Tooltip instead.",
     compositions: [
       "GridraDialog + GridraStack/GridraField/GridraButton: confirmation or settings forms.",
       "GridraDialog + GridraCheckbox / GridraSelect: parameter panels.",

@@ -31,13 +31,13 @@ export const popoverDoc: ComponentDoc = {
     ],
     features: [
       "Click-triggered toggle with aria-expanded and aria-controls.",
-      "Positioned with fixed coordinates  Esame engine as GridraTooltip.",
+      "Positioned with fixed coordinates — same engine as GridraTooltip.",
       "Automatic viewport-collision flip to opposite placement.",
       "Composes with existing trigger onClick and ref without breaking them.",
-      "Non-modal overlay. No focus trap, arrow, or portal in v1.",
+      "Non-modal overlay rendered via portal. No focus trap or arrow in v1.",
     ],
     usage: "Use GridraPopover for controls-and-settings panels, selection palettes, and contextual pickers that open beside a trigger button. It is intentionally non-modal so the user can see and click the main surface while the popover is open.",
-    avoid: "Avoid using GridraPopover as a modal dialog replacement  Euse a dedicated Dialog/Modal component for blocking overlays, focus traps, and backdrop behavior.",
+    avoid: "Avoid using GridraPopover as a modal dialog replacement — use a dedicated Dialog/Modal component for blocking overlays, focus traps, and backdrop behavior.",
     compositions: [
       "GridraPopover + GridraStack/GridraCluster: layout popover content.",
       "GridraPopover + GridraButton: icon-triggered settings panel.",
