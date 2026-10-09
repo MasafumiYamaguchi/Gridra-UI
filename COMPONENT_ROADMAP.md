@@ -248,3 +248,27 @@ Keep interaction extraction small enough that component-specific accessibility b
 - [COMPONENT_IMPLEMENTATION_NOTES.md](./COMPONENT_IMPLEMENTATION_NOTES.md): detailed component, animation, theme, naming, and research notes.
 - [COMPONENT_REVIEW_FIXES.md](./COMPONENT_REVIEW_FIXES.md): fixed component-review findings and design cautions.
 - [DOCUMENTATION_BACKLOG.md](./DOCUMENTATION_BACKLOG.md): documentation experience backlog.
+
+## Component Simplification
+
+Prefer one entry point per task. Preserve published imports as deprecated
+compatibility APIs, and migrate active docs and playground code to the recommended path.
+
+- Flex layouts: `GridraStack` owns vertical/horizontal, inline display, wrapping,
+  independent rowGap, separators, and `GridraStackItem grow`. `GridraInline`,
+  `GridraInlineItem`, and `GridraCluster` remain compatibility wrappers with their
+  original defaults and CSS classes.
+- Item selection and layout: keep `GridraSelectableGrid` and `GridraGridLayout`
+  separate; the old `GridraGrid` name is a compatibility alias.
+- Form composition: consolidate label, hint/error association, and field state
+  through `GridraField` while preserving custom-control escape hatches.
+- Editor panels: share field rendering and numeric parsing; align Inspector
+  placement with the Node placement model before removing caller-side adapters.
+- Surfaces: make Panel a content surface, Sidebar the app-shell region, and Card
+  the media/description/footer surface. Preserve Panel's existing aside contract
+  until a migration path is introduced.
+- Navigation: `GridraMenu` is persistent navigation (`nav`/list and links).
+  DropdownMenu and ContextMenu are command menus (`role=menu`). Share command
+  metadata and keyboard helpers without treating navigation and actions as one widget.
+- Overlay and button internals: share modal focus handling and button state
+  rendering while retaining the useful purpose-specific public APIs.

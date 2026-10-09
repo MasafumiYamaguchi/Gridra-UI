@@ -1,4 +1,4 @@
-import { GridraAvatar, GridraBadge, GridraButton, GridraHoverCard, GridraInline, GridraLabel, GridraStack } from "@gridra-ui/react";
+import { GridraAvatar, GridraBadge, GridraButton, GridraHoverCard, GridraStack, GridraLabel } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const hoverCardDoc: ComponentDoc = {
@@ -95,10 +95,10 @@ export const hoverCardDoc: ComponentDoc = {
         <GridraHoverCard
           content={
             <GridraStack gap="sm" style={{ minWidth: 200 }}>
-              <GridraInline align="center" gap="sm">
+              <GridraStack direction="horizontal" inline align="center" gap="sm">
                 <GridraAvatar fallback="JD" shape="circle" size="sm" />
                 <GridraLabel>Jane Doe</GridraLabel>
-              </GridraInline>
+              </GridraStack>
               <GridraStack gap="xs">
                 <GridraBadge size="sm">Admin</GridraBadge>
                 <GridraBadge size="sm" tone="muted">jane@gridra.dev</GridraBadge>

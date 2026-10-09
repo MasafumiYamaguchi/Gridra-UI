@@ -1,4 +1,4 @@
-import { GridraCard, GridraInline, GridraKbd, GridraStack, GridraTag } from "@gridra-ui/react";
+import { GridraCard, GridraStack, GridraKbd, GridraTag } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const cardDoc: ComponentDoc = {
@@ -55,10 +55,10 @@ export const cardDoc: ComponentDoc = {
       surface="raised"
     >
       <GridraStack gap="sm">
-        <GridraInline align="center" gap="sm">
+        <GridraStack direction="horizontal" inline align="center" gap="sm">
           <GridraTag tone="success">Healthy</GridraTag>
           <GridraTag tone="muted">Batch 1</GridraTag>
-        </GridraInline>
+        </GridraStack>
         <span>24 nodes processed with no failed edges.</span>
       </GridraStack>
     </GridraCard>

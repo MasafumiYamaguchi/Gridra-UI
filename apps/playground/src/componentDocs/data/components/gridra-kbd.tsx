@@ -1,4 +1,4 @@
-import { GridraInline, GridraKbd } from "@gridra-ui/react";
+import { GridraStack, GridraKbd } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const kbdDoc: ComponentDoc = {
@@ -30,17 +30,17 @@ export const kbdDoc: ComponentDoc = {
   examples: [
     {
       title: "Shortcut hint",
-      code: `<GridraInline align="center" gap="xs">
+      code: `<GridraStack direction="horizontal" inline align="center" gap="xs">
   <GridraKbd>Ctrl</GridraKbd>
   <GridraKbd>K</GridraKbd>
-</GridraInline>`,
+</GridraStack>`,
     },
   ],
   preview: (
-    <GridraInline align="center" gap="xs">
+    <GridraStack direction="horizontal" inline align="center" gap="xs">
       <GridraKbd>Ctrl</GridraKbd>
       <GridraKbd>K</GridraKbd>
       <GridraKbd size="sm">Esc</GridraKbd>
-    </GridraInline>
+    </GridraStack>
   ),
 };

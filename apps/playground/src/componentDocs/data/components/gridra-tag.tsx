@@ -1,4 +1,4 @@
-import { GridraInline, GridraTag } from "@gridra-ui/react";
+import { GridraStack, GridraTag } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const tagDoc: ComponentDoc = {
@@ -38,13 +38,13 @@ export const tagDoc: ComponentDoc = {
     },
   ],
   preview: (
-    <GridraInline align="center" gap="sm">
+    <GridraStack direction="horizontal" inline align="center" gap="sm">
       <GridraTag>Default</GridraTag>
       <GridraTag tone="accent">Accent</GridraTag>
       <GridraTag tone="muted">Muted</GridraTag>
       <GridraTag size="sm" tone="success">Success</GridraTag>
       <GridraTag size="sm" tone="warning">Warning</GridraTag>
       <GridraTag size="sm" tone="danger">Danger</GridraTag>
-    </GridraInline>
+    </GridraStack>
   ),
 };
