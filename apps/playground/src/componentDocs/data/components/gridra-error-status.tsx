@@ -1,11 +1,4 @@
-import {
-  GridraBox,
-  GridraButton,
-  GridraCluster,
-  GridraErrorMessage,
-  GridraStack,
-  GridraStatusIndicator,
-} from "@gridra-ui/react";
+import { GridraBox, GridraButton, GridraStack, GridraErrorMessage, GridraStatusIndicator } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const errorMessageDoc: ComponentDoc = {
@@ -136,7 +129,7 @@ export const statusIndicatorDoc: ComponentDoc = {
   compositions: [
     "GridraStatusIndicator + toolbar: connection health dot.",
     "GridraStatusIndicator + panel header: document saved state.",
-    "GridraStatusIndicator + GridraCluster: multi-protocol status row.",
+    "GridraStatusIndicator + GridraStack: multi-protocol status row.",
     "GridraStatusIndicator + GridraLabel: detailed status description.",
   ],
   examples: [
@@ -156,13 +149,13 @@ export const statusIndicatorDoc: ComponentDoc = {
     },
   ],
   preview: (
-    <GridraCluster gap="md">
+    <GridraStack direction="horizontal" wrap align="center" gap="md">
       <GridraStatusIndicator label="Saved" tone="success" />
       <GridraStatusIndicator label="Online" tone="info" />
       <GridraStatusIndicator label="Pending" tone="warning" />
       <GridraStatusIndicator label="Error" tone="danger" />
       <GridraStatusIndicator label="Syncing" pulse size="sm" />
-    </GridraCluster>
+    </GridraStack>
   ),
   accessibility:
     "GridraStatusIndicator uses an inline span element without any auto-assigned ARIA role. The dot is aria-hidden since it is purely decorative. The label text carries the semantic meaning. If the status needs live-region announcement, wrap in a container with the appropriate role=status or role=alert.",

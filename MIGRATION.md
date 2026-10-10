@@ -15,6 +15,25 @@ and track ancestor class/style changes. Anchorless `GridraToastProvider` and
 `GridraCommandPalette` accept `theme="forest"`; omission inherits body/html.
 Themes elsewhere in the document are never used as fallback.
 
+## Flex layouts
+
+Use `GridraStack` for both inline rows and wrapping groups. `GridraInline`,
+`GridraInlineItem`, `GridraCluster`, their types, and the old
+`.gridra-inline*` / `.gridra-cluster*` CSS selectors have been removed.
+Keep the other layout props and migrate as follows:
+
+```tsx
+// 横並び（旧GridraInline）
+<GridraStack direction="horizontal" inline align="center" gap="sm" />
+// 折り返し（旧GridraCluster）
+<GridraStack direction="horizontal" wrap align="center" gap="sm" rowGap="md" />
+// 残りの幅を埋める子要素（旧GridraInlineItem）
+<GridraStackItem grow />
+```
+
+Replace custom inline/cluster CSS selectors with their Stack equivalents,
+including `.gridra-stack__separator` and `.gridra-stack-item--grow`.
+
 ## Controlled canvas state
 
 Use one `GridraCanvasState<TNode>` containing `nodes`, `connections`,

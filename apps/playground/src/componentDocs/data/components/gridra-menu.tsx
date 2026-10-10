@@ -1,4 +1,4 @@
-import { GridraBadge, GridraBox, GridraInline, GridraMenu } from "@gridra-ui/react";
+import { GridraBadge, GridraBox, GridraStack, GridraMenu } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const menuDoc: ComponentDoc = {
@@ -107,10 +107,10 @@ export const menuDoc: ComponentDoc = {
       code: `<GridraMenu
   items={items}
   renderItem={(item, state) => (
-    <GridraInline align="center" gap="sm" fullWidth justify="between">
+    <GridraStack direction="horizontal" inline align="center" gap="sm" fullWidth justify="between">
       <span>{item.label}</span>
       {state.active ? <GridraBadge size="sm" tone="accent">Active</GridraBadge> : null}
-    </GridraInline>
+    </GridraStack>
   )}
 />`,
     },

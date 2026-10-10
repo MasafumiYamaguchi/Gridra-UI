@@ -52,9 +52,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraSwitch`
 - [x] `GridraTextarea`
 - [x] `GridraBox`
-- [x] `GridraCluster`
 - [x] `GridraGridLayout`
-- [x] `GridraInline`
 - [x] `GridraStack`
 - [x] `GridraSplitPane`
 - [x] `GridraAccordion`
@@ -113,8 +111,8 @@ Layout components should support dense application surfaces rather than marketin
 - [x] Split Pane
 - [x] Resizable Panel Group (Integrated into `GridraSplitPane` three-pane mode)
 - [x] Sidebar
-- [x] Header (Out of scope as library component; compose with `GridraBox` / `GridraInline` / `GridraStack`)
-- [x] Footer (Out of scope as library component; compose with `GridraBox` / `GridraInline` / `GridraStack`)
+- [x] Header (Out of scope as library component; compose with `GridraBox` / `GridraStack`)
+- [x] Footer (Out of scope as library component; compose with `GridraBox` / `GridraStack`)
 
 ## Priority 4: Overlays And Interaction
 
@@ -248,3 +246,27 @@ Keep interaction extraction small enough that component-specific accessibility b
 - [COMPONENT_IMPLEMENTATION_NOTES.md](./COMPONENT_IMPLEMENTATION_NOTES.md): detailed component, animation, theme, naming, and research notes.
 - [COMPONENT_REVIEW_FIXES.md](./COMPONENT_REVIEW_FIXES.md): fixed component-review findings and design cautions.
 - [DOCUMENTATION_BACKLOG.md](./DOCUMENTATION_BACKLOG.md): documentation experience backlog.
+
+## Component Simplification
+
+Prefer one entry point per task. Before 1.0, remove redundant APIs instead of
+maintaining aliases and wrappers. Document breaking changes and migration paths.
+
+- Flex layouts: `GridraStack` owns vertical/horizontal, inline display, wrapping,
+  independent rowGap, separators, and `GridraStackItem grow`. `GridraInline`,
+  `GridraInlineItem`, and `GridraCluster`, their types, and legacy CSS selectors
+  have been removed. Migrate to Stack and StackItem.
+- Item selection and layout: keep `GridraSelectableGrid` and `GridraGridLayout`
+  separate; the old `GridraGrid` name and its types have been removed.
+- Form composition: consolidate label, hint/error association, and field state
+  through `GridraField` while preserving custom-control escape hatches.
+- Editor panels: share field rendering and numeric parsing; align Inspector
+  placement with the Node placement model before removing caller-side adapters.
+- Surfaces: make Panel a content surface, Sidebar the app-shell region, and Card
+  the media/description/footer surface. Simplify contracts and document migrations
+  rather than preserving a redundant sidebar role on Panel.
+- Navigation: `GridraMenu` is persistent navigation (`nav`/list and links).
+  DropdownMenu and ContextMenu are command menus (`role=menu`). Share command
+  metadata and keyboard helpers without treating navigation and actions as one widget.
+- Overlay and button internals: share modal focus handling and button state
+  rendering while retaining the useful purpose-specific public APIs.

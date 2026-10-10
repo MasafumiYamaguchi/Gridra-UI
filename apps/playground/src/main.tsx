@@ -13,13 +13,12 @@ import {
   useGridraCanvas,
   type GridraCanvasState,
   GridraCheckbox,
-  GridraCluster,
+  GridraStack,
   GridraDivider,
   GridraField,
   GridraGridLayout,
   GridraIconButton,
-  GridraInline,
-  GridraInlineItem,
+  GridraStackItem,
   GridraSelectableGrid,
   GridraInput,
   GridraInspectorPanel,
@@ -35,11 +34,10 @@ import {
   GridraSidebar,
   GridraSplitPane,
   GridraSpinner,
-  GridraStack,
   GridraSwitch,
   GridraTextarea,
   GridraTooltip,
-  GridraToolbar
+  GridraToolbar,
 } from "@gridra-ui/react";
 import type { GridraBuiltInThemeName } from "@gridra-ui/react";
 import "@gridra-ui/theme/base.css";
@@ -197,7 +195,7 @@ function Playground({
         <GridraSidebar defaultOpen side="left" toggleSize={28}>
           <GridraBox fullHeight minHeightZero minWidthZero padding="md">
             <GridraStack gap="sm">
-              <GridraInline align="center" justify="between">
+              <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
                 <h2 className="gridra-panel__title">GRIDRA</h2>
                 <GridraSelect
                   aria-label="Theme"
@@ -212,12 +210,12 @@ function Playground({
                     </option>
                   ))}
                 </GridraSelect>
-              </GridraInline>
+              </GridraStack>
               <GridraStack gap="sm">
-                <GridraInline align="center" justify="between">
+                <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
                   <GridraLabel>Canvas</GridraLabel>
                   <GridraBadge tone="muted">{gridColumns} x {gridRows}</GridraBadge>
-                </GridraInline>
+                </GridraStack>
                 <GridraField htmlFor="playground-selected-node" label="Selected Node">
                   <GridraSelect
                     id="playground-selected-node"
@@ -373,17 +371,17 @@ function Playground({
           padding="lg"
           scroll="auto"
         >
-          <GridraInline align="start" className="playground-component-header" justify="between">
+          <GridraStack direction="horizontal" inline gap="sm" align="start" className="playground-component-header" justify="between">
             <div>
               <GridraLabel>Basic Controls</GridraLabel>
               <h1 className="playground-component-title">Component Check Surface</h1>
             </div>
-            <GridraInline align="center" gap="sm">
+            <GridraStack direction="horizontal" inline align="center" gap="sm">
               <GridraAvatar alt="Demo avatar" fallback="UI" shape="circle" size="md" src={avatarImageUrl} />
               <GridraBadge tone="accent">{controlOpacity}%</GridraBadge>
               {controlPreviewEnabled ? <GridraSpinner label="Preview running" /> : null}
-            </GridraInline>
-          </GridraInline>
+            </GridraStack>
+          </GridraStack>
           <GridraGridLayout className="playground-component-grid" columns="auto" gap="md" minColumnWidth={220}>
             <GridraStack
               as="section"
@@ -393,11 +391,11 @@ function Playground({
               padding="md"
               surface="surface"
             >
-              <GridraInline align="center" justify="between">
+              <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
                 <GridraLabel>Actions</GridraLabel>
                 <GridraBadge tone="muted">Button family</GridraBadge>
-              </GridraInline>
-              <GridraCluster align="center" gap="sm">
+              </GridraStack>
+              <GridraStack direction="horizontal" wrap align="center" gap="sm">
                 <GridraButton variant="primary">Primary</GridraButton>
                 <GridraButton>Default</GridraButton>
                 <GridraButton variant="ghost">Ghost</GridraButton>
@@ -411,7 +409,7 @@ function Playground({
                 <GridraIconButton label="Add item" variant="ghost">
                   +
               </GridraIconButton>
-            </GridraCluster>
+            </GridraStack>
           </GridraStack>
           <GridraStack
             as="section"
@@ -421,11 +419,11 @@ function Playground({
             padding="md"
             surface="surface"
           >
-            <GridraInline align="center" justify="between">
+            <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
               <GridraLabel>Boolean</GridraLabel>
               <GridraBadge>{controlPreviewEnabled ? "active" : "idle"}</GridraBadge>
-            </GridraInline>
-            <GridraCluster align="center" gap="sm">
+            </GridraStack>
+            <GridraStack direction="horizontal" wrap align="center" gap="sm">
                 <GridraCheckbox
                   checked={controlSnapEnabled}
                   label="Snap"
@@ -436,7 +434,7 @@ function Playground({
                   label="Preview"
                   onClick={() => setControlPreviewEnabled((current) => !current)}
               />
-            </GridraCluster>
+            </GridraStack>
           </GridraStack>
           <GridraStack
             as="section"
@@ -446,11 +444,11 @@ function Playground({
             padding="md"
             surface="surface"
           >
-            <GridraInline align="center" justify="between">
+            <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
               <GridraLabel>Tooltip</GridraLabel>
               <GridraBadge tone="muted">top/right/bottom/left</GridraBadge>
-            </GridraInline>
-            <GridraCluster align="center" gap="sm">
+            </GridraStack>
+            <GridraStack direction="horizontal" wrap align="center" gap="sm">
               <GridraTooltip content="Top hint" placement="top">
                 <GridraButton size="sm">Top</GridraButton>
               </GridraTooltip>
@@ -463,7 +461,7 @@ function Playground({
               <GridraTooltip content="Left hint" placement="left" size="sm">
                 <GridraButton size="sm">Left</GridraButton>
               </GridraTooltip>
-            </GridraCluster>
+            </GridraStack>
           </GridraStack>
           <GridraStack
             as="section"
@@ -473,11 +471,11 @@ function Playground({
             padding="md"
             surface="surface"
           >
-            <GridraInline align="center" justify="between">
+            <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
               <GridraLabel>Choice</GridraLabel>
               <GridraBadge>{controlDensity}</GridraBadge>
-            </GridraInline>
-            <GridraCluster align="center" gap="sm" role="radiogroup" aria-label="Density">
+            </GridraStack>
+            <GridraStack direction="horizontal" wrap align="center" gap="sm" role="radiogroup" aria-label="Density">
                 <GridraRadio
                   checked={controlDensity === "compact"}
                   label="Compact"
@@ -492,7 +490,7 @@ function Playground({
                   onChange={() => setControlDensity("comfortable")}
                   value="comfortable"
                 />
-              </GridraCluster>
+              </GridraStack>
               <GridraField htmlFor="playground-demo-select" label="Selected Node">
                 <GridraSelect id="playground-demo-select" defaultValue="input">
                   <option value="input">Input</option>
@@ -509,13 +507,13 @@ function Playground({
             padding="md"
             surface="surface"
           >
-            <GridraInline align="center" justify="between">
+            <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
               <GridraLabel>Input</GridraLabel>
               <GridraBadge tone="accent">{controlOpacity}%</GridraBadge>
-            </GridraInline>
+            </GridraStack>
             <GridraField htmlFor="playground-opacity" label="Opacity">
-              <GridraInline align="center" gap="sm" fullWidth>
-                <GridraInlineItem grow>
+              <GridraStack direction="horizontal" inline align="center" gap="sm" fullWidth>
+                <GridraStackItem grow>
                   <GridraSlider
                   id="playground-opacity"
                   max={100}
@@ -523,9 +521,9 @@ function Playground({
                   onChange={(event) => setControlOpacity(Number(event.target.value))}
                   value={controlOpacity}
                 />
-                </GridraInlineItem>
+                </GridraStackItem>
                 <GridraBadge tone="accent">{controlOpacity}%</GridraBadge>
-              </GridraInline>
+              </GridraStack>
             </GridraField>
               <GridraField htmlFor="playground-notes" label="Notes">
               <GridraTextarea
@@ -543,13 +541,13 @@ function Playground({
             padding="md"
             surface="surface"
           >
-            <GridraInline align="center" justify="between">
+            <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
               <GridraLabel>Split Pane</GridraLabel>
               <GridraBadge tone="accent">
                 {splitPaneSizes.map((value) => Math.round(value)).join(" / ")}%
               </GridraBadge>
-            </GridraInline>
-            <GridraCluster align="center" gap="sm">
+            </GridraStack>
+            <GridraStack direction="horizontal" wrap align="center" gap="sm">
               <GridraButton
                 onClick={() => setSplitPaneOrientation("horizontal")}
                 pressed={splitPaneOrientation === "horizontal"}
@@ -564,7 +562,7 @@ function Playground({
               >
                 Vertical
               </GridraButton>
-            </GridraCluster>
+            </GridraStack>
             <GridraBox border="default" style={{ height: 180 }} surface="raised">
               <GridraSplitPane
                 maxSize={85}
@@ -596,11 +594,11 @@ function Playground({
             padding="md"
             surface="surface"
           >
-            <GridraInline align="center" justify="between">
+            <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
               <GridraLabel>Sidebar</GridraLabel>
               <GridraBadge tone="muted">{sidebarOpen ? "open" : "closed"}</GridraBadge>
-            </GridraInline>
-            <GridraCluster align="center" gap="sm">
+            </GridraStack>
+            <GridraStack direction="horizontal" wrap align="center" gap="sm">
               <GridraButton onClick={() => setSidebarOpen((current) => !current)} size="sm">
                 Toggle
               </GridraButton>
@@ -623,9 +621,9 @@ function Playground({
                 label="Resizable"
                 onChange={(event) => setSidebarResizable(event.target.checked)}
               />
-            </GridraCluster>
+            </GridraStack>
             <GridraBox border="default" style={{ height: 180 }} surface="raised">
-              <GridraInline fullWidth style={{ height: "100%" }}>
+              <GridraStack direction="horizontal" inline align="center" gap="sm" fullWidth style={{ height: "100%" }}>
                 {sidebarSide === "left" ? (
                   <>
                     <GridraSidebar
@@ -671,7 +669,7 @@ function Playground({
                     </GridraSidebar>
                   </>
                 )}
-              </GridraInline>
+              </GridraStack>
             </GridraBox>
           </GridraStack>
           <GridraStack
@@ -682,10 +680,10 @@ function Playground({
             padding="md"
             surface="surface"
           >
-            <GridraInline align="center" justify="between">
+            <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
               <GridraLabel>Constrained Box</GridraLabel>
               <GridraBadge tone="muted">maxWidth + marginInline</GridraBadge>
-            </GridraInline>
+            </GridraStack>
             <GridraBox border="default" padding="sm" surface="raised">
               <GridraBox
                 border="default"
@@ -715,11 +713,11 @@ function Playground({
             padding="md"
             surface="surface"
           >
-            <GridraInline align="center" justify="between">
+            <GridraStack direction="horizontal" inline gap="sm" align="center" justify="between">
               <GridraLabel>Display</GridraLabel>
               <GridraBadge tone="muted">Static</GridraBadge>
-            </GridraInline>
-            <GridraCluster align="center" gap="sm">
+            </GridraStack>
+            <GridraStack direction="horizontal" wrap align="center" gap="sm">
                 <GridraAvatar alt="Demo avatar" fallback="UI" shape="square" size="sm" src={avatarImageUrl} />
                 <GridraAvatar alt="Demo avatar" fallback="UI" shape="rounded" size="md" src={avatarImageUrl} />
                 <GridraAvatar alt="Demo avatar" fallback="UI" monochrome shape="circle" size="lg" src={avatarImageUrl} />
@@ -727,12 +725,12 @@ function Playground({
                 <GridraBadge>Default</GridraBadge>
                 <GridraBadge tone="accent">Accent</GridraBadge>
                 <GridraBadge tone="muted">Muted</GridraBadge>
-              </GridraCluster>
+              </GridraStack>
               <GridraDivider />
-              <GridraInline align="center" gap="sm">
+              <GridraStack direction="horizontal" inline align="center" gap="sm">
                 <GridraSpinner label="Preview running" />
                 <GridraLabel>Preview running</GridraLabel>
-              </GridraInline>
+              </GridraStack>
             </GridraStack>
           </GridraGridLayout>
         </GridraBox>

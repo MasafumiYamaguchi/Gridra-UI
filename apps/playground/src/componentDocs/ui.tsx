@@ -4,12 +4,11 @@ import {
   GridraBadge,
   GridraButton,
   GridraField,
-  GridraInline,
+  GridraStack,
   GridraInput,
   GridraLabel,
   GridraSelect,
   GridraSidebar,
-  GridraStack,
   GridraTreeView,
 } from "@gridra-ui/react";
 import type {
@@ -115,7 +114,7 @@ export function ComponentDocsPage({
           <GridraLabel>Documentation</GridraLabel>
           <h1 className="docs-page__title">Gridra UI Components</h1>
         </div>
-        <GridraInline align="center" gap="sm">
+        <GridraStack direction="horizontal" inline align="center" gap="sm">
           <GridraSelect
             aria-label="Documentation theme"
             onChange={(event) =>
@@ -130,7 +129,7 @@ export function ComponentDocsPage({
             ))}
           </GridraSelect>
           <GridraBadge tone="accent">{componentDocs.length} components</GridraBadge>
-        </GridraInline>
+        </GridraStack>
       </GridraStack>
       <div className="docs-page__filters" aria-label="Component categories">
         {categories.map((category) => (
@@ -212,12 +211,12 @@ export function ComponentDocsPage({
                   items={treeItems}
                   onItemClick={(id) => selectDoc(id)}
                   renderItem={(item, state) => (
-                    <GridraInline align="center" gap="xs">
+                    <GridraStack direction="horizontal" inline align="center" gap="xs">
                       {!state.hasChildren ? (
                         <span className="docs-tree-leaf-marker">-</span>
                       ) : null}
                       <span>{item.label}</span>
-                    </GridraInline>
+                    </GridraStack>
                   )}
                   size="md"
                 />
@@ -267,12 +266,12 @@ export function ComponentDocsPage({
               <div className="docs-examples">
                 {activeDoc.states.map((state, index) => (
                   <div className="docs-example" key={index}>
-                    <GridraInline align="baseline" className="docs-example__header" gap="sm">
+                    <GridraStack direction="horizontal" inline align="baseline" className="docs-example__header" gap="sm">
                       <span className="docs-example__title">{state.title}</span>
                       {state.description ? (
                         <span className="docs-example__description">{state.description}</span>
                       ) : null}
-                    </GridraInline>
+                    </GridraStack>
                     <CodeBlock code={state.code} language={state.language} />
                   </div>
                 ))}
@@ -293,12 +292,12 @@ export function ComponentDocsPage({
               <div className="docs-examples">
                 {activeDoc.examples.map((example, index) => (
                   <div className="docs-example" key={index}>
-                    <GridraInline align="baseline" className="docs-example__header" gap="sm">
+                    <GridraStack direction="horizontal" inline align="baseline" className="docs-example__header" gap="sm">
                       <span className="docs-example__title">{example.title}</span>
                       {example.description ? (
                         <span className="docs-example__description">{example.description}</span>
                       ) : null}
-                    </GridraInline>
+                    </GridraStack>
                     <CodeBlock code={example.code} language={example.language} />
                   </div>
                 ))}
