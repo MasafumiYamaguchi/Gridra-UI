@@ -12,6 +12,7 @@ export const canvasOverlayDoc: ComponentDoc = {
     { name: "previewPath", type: "string", description: "Transient connection path." },
     { name: "selectionRect", type: "GridraRect", description: "Transient range-selection rectangle." },
     { name: "snapGuides", type: "GridraCanvasSnapGuide[]", required: true, description: "Transient alignment guide geometry." },
+    { name: "gridLines", type: "GridraCanvasSnapGuide[]", description: "Dashed cell boundaries shown during dragging and resizing, including padding and gaps." },
     { name: "onConnectionSelect", type: "(connection) => void", description: "Provided by the hook for controlled connection selection." },
   ],
   options: ["overlayProps", "className", "style"],

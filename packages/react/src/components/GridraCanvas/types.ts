@@ -61,5 +61,6 @@ export interface GridraCanvasOverlayProps extends HTMLAttributes<HTMLDivElement>
   previewPath?: string;
   selectionRect?: GridraRect;
   snapGuides: GridraCanvasSnapGuide[];
+  gridLines?: GridraCanvasSnapGuide[];
   onConnectionSelect?: (connection: GridraNodeConnection) => void;
 }

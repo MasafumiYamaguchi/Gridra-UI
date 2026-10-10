@@ -5,12 +5,16 @@ import type { GridraCanvasOverlayProps } from "./types";
 
 /** 描画だけを担当し、座標と接続選択のイベント処理はHookから受け取る。 */
 export function GridraCanvasOverlay({
-  width, height, segments, previewPath, selectionRect, snapGuides,
+  width, height, segments, previewPath, selectionRect, snapGuides, gridLines = [],
   onConnectionSelect, className, style, ...props
 }: GridraCanvasOverlayProps) {
   return (
     <div {...props} className={cx("gridra-canvas-overlay", className)}
       style={{ ...style, width, height }}>
+      {gridLines.map((line) => (
+        <GridraSnapGuide {...line} className="gridra-canvas-grid-line"
+          key={`${line.orientation}:${line.position}`} />
+      ))}
       {(segments.length > 0 || previewPath) && width > 0 && height > 0 ? (
         <svg className="gridra-connection-layer" aria-hidden="true"
           width={width} height={height} viewBox={`0 0 ${width} ${height}`}>

@@ -1628,6 +1628,20 @@
   height: 1px;
 }
 
+.gridra-canvas-grid-line {
+  z-index: 0;
+  opacity: 1;
+  background: none;
+}
+
+.gridra-canvas-grid-line.gridra-snap-guide--vertical {
+  background: repeating-linear-gradient(to bottom, var(--gridra-color-snap-line) 0 2px, transparent 2px 6px);
+}
+
+.gridra-canvas-grid-line.gridra-snap-guide--horizontal {
+  background: repeating-linear-gradient(to right, var(--gridra-color-snap-line) 0 2px, transparent 2px 6px);
+}
+
 .gridra-snap-guide--placement.gridra-snap-guide--vertical {
   min-height: 100%;
 }

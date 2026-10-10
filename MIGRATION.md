@@ -83,8 +83,9 @@ resizing and connecting are opt-in.
 - Pass your handlers, styles and refs into getters. Spreading another handler
   afterward replaces the composed handler. `preventDefault()` skips the hook handler.
 - `overlayProps` contains container-content pixel dimensions, paths, selection
-  rectangle, snap guides and a connection-selection callback. Custom renderers can
-  consume the same data without using `GridraCanvasOverlay`.
+  rectangle, snap guides, dashed `gridLines` during dragging/resizing, and a
+  connection-selection callback. Custom renderers can consume the same data
+  without using `GridraCanvasOverlay`.
 - Set `--gridra-connection-line-width` on your container for stroke width.
 
 Selection modes remain `replace`, `additive`, and `toggle`. Configure range

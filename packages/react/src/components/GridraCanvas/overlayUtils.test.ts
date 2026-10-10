@@ -32,8 +32,32 @@ describe("overlay geometry without DOM access", () => {
       origin: { x: 0, y: 0 }, point: { x: 1, y: 1 } }, metrics);
     expect(overlay.snapGuides[0].position).toBe(type === "drag" ? 20 : 102.5);
     expect(overlay.snapGuides[1].position).toBe(type === "drag" ? 10 : 90);
+    expect(overlay.snapGuides[0].end).toBe(190);
+    expect(overlay.snapGuides[1].end).toBe(380);
+    const vertical = overlay.gridLines!.filter((line) => line.orientation === "vertical");
+    const horizontal = overlay.gridLines!.filter((line) => line.orientation === "horizontal");
+    expect(vertical.map((line) => line.position)).toEqual([20, 102.5, 112.5, 195, 205, 287.5, 297.5, 380]);
+    expect(horizontal.map((line) => line.position)).toEqual([10, 90, 110, 190]);
+    expect(vertical.every((line) => line.start === 10 && line.end === 190)).toBe(true);
+    expect(horizontal.every((line) => line.start === 20 && line.end === 380)).toBe(true);
+  });
+  it("does not duplicate shared cell boundaries without gaps", () => {
+    const overlay = computeOverlay(state, { type: "drag", id: "a", placement: { column: 1, row: 1 }, pointerId: 1,
+      origin: { x: 0, y: 0 }, point: { x: 1, y: 1 } }, { ...metrics,
+      columnGap: 0, rowGap: 0, cellWidth: 90, columnStep: 90, cellHeight: 90, rowStep: 90 });
+    expect(overlay.gridLines!.filter((line) => line.orientation === "vertical").map((line) => line.position))
+      .toEqual([20, 110, 200, 290, 380]);
+    expect(overlay.gridLines!.filter((line) => line.orientation === "horizontal").map((line) => line.position))
+      .toEqual([10, 100, 190]);
+  });
+  it("hides the grid outside moving and resizing operations", () => {
+    expect(computeOverlay(state, null, metrics).gridLines).toEqual([]);
+    const range = { type: "range" as const, pointerId: 1, origin: { x: 0, y: 0 }, point: { x: 1, y: 1 } };
+    expect(computeOverlay(state, range, metrics).gridLines).toEqual([]);
+    expect(computeOverlay(state, { ...range, type: "connect", id: "a", kind: "output" }, metrics).gridLines).toEqual([]);
+    expect(computeOverlay(state, { ...range, type: "drag", id: "missing", placement: { column: 1, row: 1 } }, metrics).gridLines).toEqual([]);
   });
   it("omits geometry before the container is measured", () => {
-    expect(computeOverlay(state, null, null)).toEqual({ width: 0, height: 0, segments: [], snapGuides: [] });
+    expect(computeOverlay(state, null, null)).toEqual({ width: 0, height: 0, segments: [], snapGuides: [], gridLines: [] });
   });
 });

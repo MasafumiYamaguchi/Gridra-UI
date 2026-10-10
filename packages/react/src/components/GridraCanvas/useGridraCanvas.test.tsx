@@ -146,7 +146,10 @@ describe("useGridraCanvas", () => {
   });
   it.each(["drag", "resize"])("updates %s placement and retains node data", (kind) => {
     const onChange = vi.fn(); render(<Fixture onChange={onChange} />); size(canvas());
+    expect(canvas().querySelector(".gridra-canvas-grid-line")).toBeNull();
     pointer(screen.getByTestId(`canvas-${kind}-a`), "pointerdown");
+    expect(canvas().querySelectorAll(".gridra-canvas-grid-line")).toHaveLength(10);
+    expect((canvas().querySelector(".gridra-canvas-grid-line") as HTMLElement).style.left).toBe("0px");
     pointer(canvas(), "pointermove", { clientX: 100, clientY: 100 });
     const latest = onChange.mock.calls.at(-1)![0];
     expect(latest.nodes[0].data).toBe("retained");
@@ -156,6 +159,7 @@ describe("useGridraCanvas", () => {
     expect(canvas().querySelector(".gridra-snap-guide")).not.toBeNull();
     pointer(canvas(), "pointerup", { clientX: 100, clientY: 100 });
     expect(canvas().querySelector(".gridra-snap-guide")).toBeNull();
+    expect(canvas().querySelector(".gridra-canvas-grid-line")).toBeNull();
   });
   it("clamps dragged spans to grid boundaries", () => {
     render(<Fixture initialState={{ ...initial, nodes: [{ id: "a", placement: { column: 1, row: 1, columnSpan: 2, rowSpan: 2 } }] }} />);
