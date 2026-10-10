@@ -21,7 +21,7 @@ import { canvasStatesEqual } from "./stateUtils";
 import type { Operation, OperationRequest } from "./operation";
 import type {
   GridraCanvasNode, GridraCanvasState, GridraCanvasOverlayProps,
-  GridraConnectionHandleAttributes, UseGridraCanvasOptions,
+  UseGridraCanvasOptions,
 } from "./types";
 
 type DOMProps<T extends HTMLElement> = HTMLAttributes<T> & { ref?: Ref<T> };
@@ -229,7 +229,7 @@ export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNod
   const getConnectionHandleProps = (id: GridraId, kind: GridraConnectionHandleKind, props: DOMProps<HTMLElement> = {}) => ({
     ...getHandleProps({ type: "connect", id, kind }, props),
     "data-gridra-connection-node-id": id, "data-gridra-connection-kind": kind, "data-gridra-canvas-owner": owner,
-  } satisfies GridraConnectionHandleAttributes & { ref?: Ref<HTMLElement>; "data-gridra-canvas-owner": string });
+  });
 
   const overlayData = useMemo(() => computeOverlay({ ...state, nodes }, operation, metrics), [state, nodes, operation, metrics]);
   const overlayProps: GridraCanvasOverlayProps = {
@@ -239,7 +239,7 @@ export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNod
       containerRef.current?.focus();
     },
   };
-  return { nodes, selectedId: state.selectedIds[0] ?? null,
+  return { nodes,
     getContainerProps, getNodeProps, getDragHandleProps, getResizeHandleProps,
     getConnectionHandleProps, overlayProps };
 }

@@ -36,11 +36,19 @@ describe("portal theme inheritance without a provider", () => {
     expect(screen.getByTestId("two").className).toBe("");
   });
   it("an explicit theme keeps its palette while inheriting non-color tokens", () => {
-    render(<Probe theme="forest" />);
+    const { rerender } = render(<Probe theme="forest" />);
     const portal = screen.getByTestId("probe");
     expect(portal.className).toBe("gridra-theme-forest");
     expect(portal.style.getPropertyValue("--gridra-color-accent")).toBe("");
     expect(portal.style.getPropertyValue("--gridra-space-md")).toBe("17px");
+    const observe = vi.spyOn(MutationObserver.prototype, "observe");
+    rerender(<Probe theme="ember" />);
+    expect(portal.className).toBe("gridra-theme-ember");
+    expect(portal.style.getPropertyValue("--gridra-color-accent")).toBe("");
+    rerender(<Probe />);
+    expect(portal.className).toBe("");
+    expect(portal.style.getPropertyValue("--gridra-color-accent")).toBe("red");
+    expect(observe).not.toHaveBeenCalled();
   });
   it("collects new Gridra tokens without a second token-name registry", () => {
     render(<Probe extraToken="123px" />);

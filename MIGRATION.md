@@ -22,16 +22,22 @@ Use one `GridraCanvasState<TNode>` containing `nodes`, `connections`,
 Remove the separate placement map, single-selection state, `default*` props,
 render callback and per-operation callbacks. The selected node is
 `state.selectedIds[0] ?? null`. Store history or reject edits in `onStateChange`.
+The hook no longer returns `selectedId`. `GridraCanvasNode` requires only `id`
+and `placement`; define display fields such as `label` in your own node type.
+The getter returns connection handle attributes directly; the
+`GridraConnectionHandleAttributes` export has been removed.
 
 ```tsx
 import { useState } from "react";
 import {
   useGridraCanvas, GridraCanvasOverlay, GridraNode, GridraDragHandle,
-  type GridraCanvasState,
+  type GridraCanvasNode, type GridraCanvasState,
 } from "@gridra-ui/react";
 
+type EditorNode = GridraCanvasNode & { label: string };
+
 function Editor() {
-  const [state, setState] = useState<GridraCanvasState>({
+  const [state, setState] = useState<GridraCanvasState<EditorNode>>({
     nodes: [{ id: "first", label: "First", placement: { column: 1, row: 1 } }],
     connections: [], selectedIds: [], selectedConnections: [],
   });

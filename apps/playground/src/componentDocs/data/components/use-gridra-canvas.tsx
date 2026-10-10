@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { GridraNode, GridraDragHandle, GridraResizeHandle, GridraConnectionHandle,
-  GridraCanvasOverlay, useGridraCanvas, type GridraCanvasState } from "@gridra-ui/react";
+  GridraCanvasOverlay, useGridraCanvas, type GridraCanvasNode, type GridraCanvasState } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export function CanvasPreview() {
-  const [state, setState] = useState<GridraCanvasState>({
+  const [state, setState] = useState<GridraCanvasState<GridraCanvasNode & { label: string }>>({
     nodes: [
       { id: "source", label: "Source", placement: { column: 1, row: 1, columnSpan: 2 } },
       { id: "target", label: "Target", placement: { column: 4, row: 2, columnSpan: 2 } },

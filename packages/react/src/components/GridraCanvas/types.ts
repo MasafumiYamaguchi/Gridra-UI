@@ -1,13 +1,11 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { HTMLAttributes } from "react";
 import type { GridraId, GridraRect } from "@gridra-ui/core";
 import type { GridraNodePlacement } from "../GridraNode";
-import type { GridraConnectionHandleKind } from "../GridraConnectionHandle";
 import type { GridraSnapGuideOrientation } from "../GridraSnapGuide";
 
 export interface GridraCanvasNode {
   id: GridraId;
   placement: GridraNodePlacement;
-  label?: ReactNode;
 }
 
 export interface GridraNodeConnection {
@@ -64,9 +62,4 @@ export interface GridraCanvasOverlayProps extends HTMLAttributes<HTMLDivElement>
   selectionRect?: GridraRect;
   snapGuides: GridraCanvasSnapGuide[];
   onConnectionSelect?: (connection: GridraNodeConnection) => void;
-}
-
-export interface GridraConnectionHandleAttributes extends HTMLAttributes<HTMLElement> {
-  "data-gridra-connection-kind": GridraConnectionHandleKind;
-  "data-gridra-connection-node-id": GridraId;
 }

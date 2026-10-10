@@ -22,6 +22,6 @@ export function useGridraPortalTheme(anchorRef?: RefObject<HTMLElement | null>, 
     const next = { className: explicitClass ?? getGridraThemeClassName(source), style: style as CSSProperties };
     setResult((previous) => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
   }, [theme]);
-  useAncestorAttributes(() => anchorRef?.current ?? document.body, update, enabled);
+  useAncestorAttributes(() => anchorRef?.current ?? document.body, update, enabled, theme);
   return result;
 }

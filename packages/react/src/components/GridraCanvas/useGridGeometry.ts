@@ -11,7 +11,7 @@ export function useGridGeometry(container: HTMLElement | null, columns: number, 
     setSnapshot((previous) => previous?.source === source && (Object.keys(next) as (keyof GridMetrics)[])
       .every((key) => previous.metrics[key] === next[key]) ? previous : { source, metrics: next });
   }, [columns, rows]);
-  useAncestorAttributes(() => container, measure, container !== null);
+  useAncestorAttributes(() => container, measure, container !== null, `${columns}:${rows}`);
   useClientLayoutEffect(() => {
     if (!container) return;
     const resize = () => measure(container);

@@ -6,7 +6,7 @@ import { GridraCanvasOverlay } from "./GridraCanvasOverlay";
 import type { GridraCanvasState, GridraCanvasNode, UseGridraCanvasOptions } from "./types";
 
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
-const initial: GridraCanvasState<GridraCanvasNode & { data?: string }> = {
+const initial: GridraCanvasState<GridraCanvasNode & { label?: string; data?: string }> = {
   nodes: [
     { id: "a", label: "A", data: "retained", placement: { column: 1, row: 1 } },
     { id: "b", label: "B", placement: { column: 4, row: 4 } },
@@ -344,6 +344,16 @@ describe("useGridraCanvas", () => {
       expect(canvas().querySelector("path")?.getAttribute("d")).toContain("M 102.5 61.25");
       expect(observe).not.toHaveBeenCalled();
     } finally { style.remove(); }
+  });
+
+  it("recomputes overlay geometry when grid counts change", () => {
+    const state = { ...initial, connections: [{ sourceId: "a", targetId: "b" }] };
+    const { rerender } = render(<Fixture state={state} grid={{ columns: 4, rows: 4 }} />);
+    size(canvas());
+    expect(canvas().querySelector("path")?.getAttribute("d")).toContain("M 100 50");
+    rerender(<Fixture state={state} grid={{ columns: 8, rows: 8 }} />);
+    expect(canvas().querySelector("path")?.getAttribute("d")).toContain("M 50 25");
+    expect(node("b").style.gridColumn).toBe("4 / span 1");
   });
 
 });
