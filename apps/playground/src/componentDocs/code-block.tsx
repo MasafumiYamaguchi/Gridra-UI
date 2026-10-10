@@ -5,10 +5,12 @@ import type { DocsCodeLanguage } from "./types";
 
 export function CodeBlock({
   code,
-  language = "tsx"
+  language = "tsx",
+  header = true,
 }: {
   code: string;
   language?: DocsCodeLanguage;
+  header?: boolean;
 }) {
   const [highlightedCode, setHighlightedCode] = useState<string>();
 
@@ -35,10 +37,10 @@ export function CodeBlock({
 
   return (
     <div className="docs-code-block">
-      <div className="docs-code-block__header">
+      {header && <div className="docs-code-block__header">
         <span className="docs-code-block__lang">{language}</span>
         <CopyButton text={code} />
-      </div>
+      </div>}
       {highlightedCode ? (
         <div
           className="docs-code-block__highlight"
