@@ -10,7 +10,7 @@ export const contextMenuDoc: ComponentDoc = {
     importExample: 'import { GridraContextMenu } from "@gridra-ui/react";',
     props: [
       { name: "children", type: "ReactElement", required: true, description: "A single target element that receives contextmenu and keyboard handlers." },
-      { name: "items", type: "GridraDropdownMenuItem[]", required: true, description: "Array of command and separator items  Esame type as GridraDropdownMenu." },
+      { name: "items", type: "GridraDropdownMenuItem[]", required: true, description: "Array of command and separator items — same type as GridraDropdownMenu." },
       { name: "onAction", type: "(id: string) => void", description: "Called with the item id when a command is activated." },
       { name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Size token for item padding and font." },
       { name: "minWidth", type: "number | string", description: "Minimum width override." },

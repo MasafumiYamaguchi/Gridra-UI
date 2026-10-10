@@ -148,7 +148,7 @@ describe("GridraField", () => {
       </GridraField>
     );
 
-    expect(screen.getByText("Required").className).toContain("gridra-field__error");
+    expect(screen.getByText("Required").closest(".gridra-field__error")?.className).toContain("gridra-field__error");
     expect(screen.queryByText("Optional hint")).toBeNull();
   });
 
@@ -180,7 +180,7 @@ describe("GridraField", () => {
       </GridraField>
     );
 
-    expect(screen.getByText("Required").getAttribute("id")).toBe("columns-error");
+    expect(screen.getByText("Required").closest(".gridra-field__error")?.getAttribute("id")).toBe("columns-error");
   });
 
   it("forwards root attributes and marks invalid fields by error state", () => {

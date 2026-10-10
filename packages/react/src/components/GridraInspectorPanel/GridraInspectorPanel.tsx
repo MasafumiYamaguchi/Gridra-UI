@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import { useId, type HTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { GridraField } from "../GridraField";
 import { GridraInput } from "../GridraInput";
@@ -45,6 +45,7 @@ export function GridraInspectorPanel({
   selectedNode,
   ...props
 }: GridraInspectorPanelProps) {
+  const fieldId = useId();
   const hasSelection = selectedNode != null;
 
   // 設定がdisabledまたは選択されていない場合は、onChangeを呼び出さない
@@ -79,9 +80,10 @@ export function GridraInspectorPanel({
     >
       {hasSelection ? (
         <div className="gridra-inspector-panel__fields">
-          <GridraField label="Label">
+          <GridraField htmlFor={`${fieldId}-label`} label="Label">
             <GridraInput
               data-testid="inspector-label"
+              id={`${fieldId}-label`}
               disabled={disabled}
               onChange={(event) => handleLabelChange(event.target.value)}
               onKeyDown={(event) => {
@@ -93,9 +95,10 @@ export function GridraInspectorPanel({
               value={String(selectedNode.label ?? "")}
             />
           </GridraField>
-          <GridraField label="X">
+          <GridraField htmlFor={`${fieldId}-x`} label="X">
             <GridraInput
               data-testid="inspector-x"
+              id={`${fieldId}-x`}
               disabled={disabled}
               onChange={(event) =>
                 handlePlacementChange("x", event.target.value)
@@ -104,9 +107,10 @@ export function GridraInspectorPanel({
               value={selectedNode.placement.x}
             />
           </GridraField>
-          <GridraField label="Y">
+          <GridraField htmlFor={`${fieldId}-y`} label="Y">
             <GridraInput
               data-testid="inspector-y"
+              id={`${fieldId}-y`}
               disabled={disabled}
               onChange={(event) =>
                 handlePlacementChange("y", event.target.value)
@@ -115,9 +119,10 @@ export function GridraInspectorPanel({
               value={selectedNode.placement.y}
             />
           </GridraField>
-          <GridraField label="W">
+          <GridraField htmlFor={`${fieldId}-w`} label="W">
             <GridraInput
               data-testid="inspector-w"
+              id={`${fieldId}-w`}
               disabled={disabled}
               onChange={(event) =>
                 handlePlacementChange("w", event.target.value)
@@ -126,9 +131,10 @@ export function GridraInspectorPanel({
               value={selectedNode.placement.w}
             />
           </GridraField>
-          <GridraField label="H">
+          <GridraField htmlFor={`${fieldId}-h`} label="H">
             <GridraInput
               data-testid="inspector-h"
+              id={`${fieldId}-h`}
               disabled={disabled}
               onChange={(event) =>
                 handlePlacementChange("h", event.target.value)

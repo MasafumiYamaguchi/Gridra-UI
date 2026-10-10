@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+const themeCss = readFileSync(resolve("../theme/src/base.css"), "utf8");
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { GridraBadge } from "./GridraBadge";
@@ -7,6 +10,46 @@ afterEach(() => {
 });
 
 describe("GridraBadge", () => {
+  it("keeps outline labels case-preserving and constrained for every size and tone", () => {
+    const style = document.createElement("style");
+    style.textContent = themeCss.replace(/@import[^;]+;/g, "");
+    document.head.append(style);
+    try {
+      for (const size of ["sm", "md"] as const) {
+        for (const tone of ["default", "accent", "muted", "success", "warning", "danger"] as const) {
+          const { container, unmount } = render(<GridraBadge variant="outline" size={size} tone={tone}>Production</GridraBadge>);
+          const badge = getComputedStyle(container.firstElementChild!);
+          expect(badge.textTransform).toBe("none");
+          expect(badge.maxWidth).toBe("100%");
+          expect(badge.minWidth).toBe("0");
+          expect(badge.minHeight).toBe(size === "sm" ? "18px" : "22px");
+          expect(badge.fontSize).toBe(size === "sm" ? "10px" : "11px");
+          expect(badge.padding).toBe(size === "sm" ? "0px 6px" : "0px 8px");
+          if (["success", "warning", "danger"].includes(tone)) {
+            expect(badge.getPropertyValue("--gridra-badge-outline-border")).toBe(`var(--gridra-color-${tone})`);
+            expect(badge.getPropertyValue("--gridra-badge-outline-color")).toBe(`var(--gridra-color-${tone}-text)`);
+          }
+          unmount();
+        }
+      }
+    } finally { style.remove(); }
+  });
+
+  it("supports outline metadata labels without changing solid defaults", () => {
+    render(
+      <>
+        <GridraBadge data-testid="outline" shape="pill" size="sm" tone="success" variant="outline">Production</GridraBadge>
+        <GridraBadge data-testid="solid">Active</GridraBadge>
+      </>,
+    );
+    const outline = screen.getByTestId("outline");
+    expect(outline.textContent).toBe("Production");
+    expect(outline.className).toContain("gridra-badge--outline");
+    expect(outline.className).toContain("gridra-badge--pill");
+    expect(outline.className).toContain("gridra-badge--success");
+    expect(screen.getByTestId("solid").className).toContain("gridra-badge--solid");
+  });
+
   it("renders default badge classes and children", () => {
     render(<GridraBadge>Draft</GridraBadge>);
     const badge = screen.getByText("Draft");

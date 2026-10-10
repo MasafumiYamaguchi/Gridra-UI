@@ -6,9 +6,10 @@ export const badgeDoc: ComponentDoc = {
     name: "GridraBadge",
     summary: "Small status or metadata chip.",
     description:
-      "GridraBadge is a compact inline chip for statuses, tags, and metadata. It supports multiple tones, sizes, and shapes, and uses uppercase typography.",
+      "GridraBadge is a compact inline chip for statuses, tags, and metadata. Use the solid variant for compact uppercase statuses, or outline for case-preserving metadata labels. GridraTag has been removed; use the outline variant for metadata labels.",
     importExample: 'import { GridraBadge } from "@gridra-ui/react";',
     props: [
+      { name: "variant", type: '"solid" | "outline"', default: '"solid"', description: "Solid uppercase status badge or outline metadata label (replaces GridraTag)." },
       { name: "tone", type: "\"default\" | \"accent\" | \"muted\" | \"success\" | \"warning\" | \"danger\"", default: "\"default\"", description: "Color tone." },
       { name: "size", type: "\"sm\" | \"md\"", default: "\"md\"", description: "Badge size." },
       { name: "shape", type: "\"square\" | \"rounded\" | \"pill\"", default: "\"square\"", description: "Border radius shape." },
@@ -16,6 +17,7 @@ export const badgeDoc: ComponentDoc = {
       { name: "className", type: "string", description: "Additional CSS classes." }
     ],
     options: [
+      "variant: solid | outline",
       "tone: default | accent | muted | success | warning | danger",
       "size: sm | md",
       "shape: square | rounded | pill",
@@ -28,6 +30,11 @@ export const badgeDoc: ComponentDoc = {
       "Uses compact uppercase typography."
     ],
     examples: [
+      {
+        title: "Metadata labels (formerly GridraTag)",
+        code: `<GridraBadge variant="outline">Production</GridraBadge>
+<GridraBadge variant="outline" tone="success" size="sm">Healthy</GridraBadge>`
+      },
       {
         title: "Tones",
         code: `<GridraBadge>Default</GridraBadge>
@@ -43,6 +50,10 @@ export const badgeDoc: ComponentDoc = {
     ],
     preview: (
       <GridraStack gap="sm">
+        <GridraInline gap="sm">
+          <GridraBadge variant="outline">Production</GridraBadge>
+          <GridraBadge variant="outline" tone="success" size="sm">Healthy</GridraBadge>
+        </GridraInline>
         <GridraInline align="center" gap="sm">
           <GridraBadge tone="default">Default</GridraBadge>
           <GridraBadge tone="accent">Accent</GridraBadge>

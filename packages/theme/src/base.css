@@ -335,6 +335,10 @@
 
 .gridra-field__label {
   color: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-transform: inherit;
 }
 
 .gridra-field__required {
@@ -1004,51 +1008,54 @@
   --gridra-stat-value-color: var(--gridra-color-muted-text);
 }
 
-.gridra-tag {
+.gridra-badge--outline {
   display: inline-flex;
   max-width: 100%;
   min-width: 0;
   align-items: center;
-  border: 1px solid var(--gridra-tag-border, var(--gridra-color-border));
-  background: var(--gridra-tag-background, transparent);
-  color: var(--gridra-tag-color, var(--gridra-color-text));
+  text-transform: none;
+  letter-spacing: normal;
+  box-shadow: none;
+  border: 1px solid var(--gridra-badge-outline-border, var(--gridra-color-border));
+  background: var(--gridra-badge-outline-background, transparent);
+  color: var(--gridra-badge-outline-color, var(--gridra-color-text));
   line-height: 1;
 }
 
-.gridra-tag--sm {
+.gridra-badge--outline.gridra-badge--sm {
   min-height: 18px;
   font-size: 10px;
   padding: 0 6px;
 }
 
-.gridra-tag--md {
+.gridra-badge--outline.gridra-badge--md {
   min-height: 22px;
   font-size: 11px;
   padding: 0 8px;
 }
 
-.gridra-tag--accent {
-  --gridra-tag-border: var(--gridra-color-accent);
-  --gridra-tag-background: var(--gridra-color-selected);
+.gridra-badge--outline.gridra-badge--accent {
+  --gridra-badge-outline-border: var(--gridra-color-accent);
+  --gridra-badge-outline-background: var(--gridra-color-selected);
 }
 
-.gridra-tag--muted {
-  --gridra-tag-color: var(--gridra-color-muted-text);
+.gridra-badge--outline.gridra-badge--muted {
+  --gridra-badge-outline-color: var(--gridra-color-muted-text);
 }
 
-.gridra-tag--success {
-  --gridra-tag-border: var(--gridra-color-success);
-  --gridra-tag-color: var(--gridra-color-success-text);
+.gridra-badge--outline.gridra-badge--success {
+  --gridra-badge-outline-border: var(--gridra-color-success);
+  --gridra-badge-outline-color: var(--gridra-color-success-text);
 }
 
-.gridra-tag--warning {
-  --gridra-tag-border: var(--gridra-color-warning);
-  --gridra-tag-color: var(--gridra-color-warning-text);
+.gridra-badge--outline.gridra-badge--warning {
+  --gridra-badge-outline-border: var(--gridra-color-warning);
+  --gridra-badge-outline-color: var(--gridra-color-warning-text);
 }
 
-.gridra-tag--danger {
-  --gridra-tag-border: var(--gridra-color-danger);
-  --gridra-tag-color: var(--gridra-color-danger-text);
+.gridra-badge--outline.gridra-badge--danger {
+  --gridra-badge-outline-border: var(--gridra-color-danger);
+  --gridra-badge-outline-color: var(--gridra-color-danger-text);
 }
 
 .gridra-kbd {

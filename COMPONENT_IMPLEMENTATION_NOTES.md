@@ -356,6 +356,8 @@ Current status: implemented.
 
 Implemented:
 
+- Renders via a portal with inherited Gridra theme context.
+
 - Click-triggered non-modal overlay component exported from `@gridra-ui/react`.
 - Supports `top` / `right` / `bottom` / `left` placement.
 - Supports controlled/uncontrolled open state (`open` / `defaultOpen` / `onOpenChange`).
@@ -367,7 +369,6 @@ Implemented:
 
 Not implemented yet:
 
-- Portal rendering.
 - Focus trap and automatic focus management.
 - Arrow rendering.
 - Start/end aligned placements.
@@ -432,6 +433,8 @@ Current status: implemented.
 
 Implemented:
 
+- Renders via a portal with inherited Gridra theme context.
+
 - Command dropdown menu component exported from `@gridra-ui/react`.
 - Items-based API with command items (`id`, `label`, `disabled?`, `destructive?`) and separator items (`{ type: "separator" }`).
 - Trigger receives `aria-haspopup="menu"`, `aria-expanded`, and `aria-controls`.
@@ -448,7 +451,6 @@ Implemented:
 Not implemented yet:
 
 - Checkbox, radio, submenu, or typeahead items.
-- Portal rendering (stays inline fixed-positioned like Popover).
 - Nested menu coordination.
 - Context menu trigger mode.
 
@@ -550,6 +552,8 @@ Current status: implemented.
 
 Implemented:
 
+- Renders via a portal with inherited Gridra theme context.
+
 - Interactive hover card component exported from `@gridra-ui/react`.
 - Opens on `mouseenter` and `focus` after configurable `showDelay`.
 - Closes after `hideDelay` on `mouseleave` / `blur` from both trigger and card.
@@ -564,7 +568,6 @@ Implemented:
 
 Not implemented yet:
 
-- Portal rendering (inline fixed-positioned like Popover).
 - Arrow rendering.
 - Start/end aligned placements.
 - Touch device-specific behavior.

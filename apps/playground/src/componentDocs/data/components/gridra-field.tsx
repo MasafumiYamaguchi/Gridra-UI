@@ -6,9 +6,10 @@ export const fieldDoc: ComponentDoc = {
     name: "GridraField",
     summary: "Label, control, hint, and error wrapper.",
     description:
-      "GridraField wraps a form control with a label, hint, and error message. It supports vertical and horizontal orientations, required/disabled styling, and exposes hint/error ids for accessibility wiring.",
+      "GridraField wraps a form control with a label, hint, and error message. Use the control slot to automatically connect label and description IDs and inherit disabled, required, and invalid state. Explicit control props take precedence. The children API remains a manual composition escape hatch for existing code and complex controls.",
     importExample: 'import { GridraField } from "@gridra-ui/react";',
     props: [
+      { name: "control", type: "ReactElement", description: "Recommended single control. Automatically receives ID, label association, descriptions, and field state. Takes precedence over children when supplied." },
       { name: "label", type: "ReactNode", required: true, description: "Field label text." },
       { name: "htmlFor", type: "string", description: "ID of the associated form control." },
       { name: "hint", type: "ReactNode", description: "Helper text shown below the control." },
@@ -22,6 +23,7 @@ export const fieldDoc: ComponentDoc = {
       { name: "className", type: "string", description: "Additional CSS classes." }
     ],
     options: [
+      "control (recommended) / children (manual composition)",
       "label",
       "htmlFor",
       "hint / hintId",
@@ -40,6 +42,11 @@ export const fieldDoc: ComponentDoc = {
     ],
     examples: [
       {
+        title: "Automatic label and state wiring",
+        code: `<GridraField label="Name" required error="Required" control={<GridraInput />} />
+<GridraField label="Columns" hint="1 to 24" control={<GridraInput type="number" defaultValue="12" />} />`
+      },
+      {
         title: "Vertical field with hint",
         code: `<GridraField hint="1 to 24" htmlFor="columns" label="Columns" required>
   <GridraInput id="columns" defaultValue="12" size="sm" />
@@ -54,6 +61,7 @@ export const fieldDoc: ComponentDoc = {
     ],
     preview: (
       <GridraStack gap="sm">
+        <GridraField label="Automatic wiring" hint="IDs and descriptions are connected automatically" required control={<GridraInput defaultValue="Value" />} />
         <GridraField hint="Normal hint text" htmlFor="docs-field-normal" label="Normal">
           <GridraInput id="docs-field-normal" defaultValue="Value" size="sm" />
         </GridraField>

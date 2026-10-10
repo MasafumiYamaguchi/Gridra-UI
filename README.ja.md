@@ -129,3 +129,14 @@ playground には、ローカルのコンポーネントドキュメントと表
 - playground は Vite
 - テストは Vitest、jsdom、Testing Library
 - スタイリングは CSS 変数とテーマプリセット
+
+## コンポーネントの選び方
+
+新規コードでは、状態表示に `GridraBadge`、メタデータのラベル表示に
+`GridraBadge variant="outline"` を使用してください。
+1.0未満のAPI整理として、`GridraTag` と `GridraGrid` および関連する型を削除しました。
+`GridraTag` は `GridraBadge variant="outline"` へ移行してください。
+ラベルのサイズ、文字の大小、はみ出し対策は維持されます。
+`.gridra-tag*` のCSSセレクターはBadgeのセレクターへ、
+`--gridra-tag-*` の上書き設定は `--gridra-badge-outline-*` へ変更してください。
+項目の選択には `GridraSelectableGrid`、レイアウトには `GridraGridLayout` を使用してください。
