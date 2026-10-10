@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GRIDRA_BUILT_IN_THEME_NAMES } from "@gridra-ui/react";
 import { ComponentDocsPage } from "./ui";
 import { componentDocs } from "./data";
@@ -7,6 +7,12 @@ import { componentDocs } from "./data";
 vi.mock("./code-block", () => ({
   CodeBlock: ({ code }: { code: string }) => <pre>{code}</pre>,
 }));
+
+const scrollTo = vi.fn();
+beforeEach(() => {
+  scrollTo.mockClear();
+  Object.defineProperty(HTMLElement.prototype, "scrollTo", { configurable: true, value: scrollTo });
+});
 
 afterEach(() => {
   cleanup();
@@ -20,7 +26,7 @@ function renderDocs(hash = "") {
 }
 
 function heading() {
-  return screen.getByRole("heading", { level: 2 }).textContent;
+  return within(screen.getByRole("article")).getByRole("heading", { level: 2 }).textContent;
 }
 
 describe("documentation navigation", () => {
@@ -83,5 +89,59 @@ describe("documentation navigation", () => {
     fireEvent.click(nav.getByText("Controls"));
     fireEvent.click(nav.getByText("GridraButton"));
     expect(screen.getByRole("button", { name: "Browse components" }).getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("switches between preview and code with the keyboard", () => {
+    renderDocs();
+    const preview = screen.getByRole("tab", { name: "preview" });
+    expect(screen.getByRole("tabpanel", { name: "preview" })).toBeTruthy();
+    fireEvent.keyDown(preview, { key: "ArrowRight" });
+    const code = screen.getByRole("tab", { name: "code" });
+    expect(code.getAttribute("aria-selected")).toBe("true");
+    expect(document.activeElement).toBe(code);
+    expect(screen.getByRole("tabpanel", { name: "code" })).toBeTruthy();
+    expect(screen.queryByRole("tabpanel", { name: "preview" })).toBeNull();
+    fireEvent.click(preview);
+    expect(screen.getByRole("tabpanel", { name: "preview" })).toBeTruthy();
+  });
+
+  it("changes the preview palette independently of the documentation theme", () => {
+    renderDocs();
+    fireEvent.click(screen.getByRole("button", { name: "forest preview theme" }));
+    const panel = screen.getByRole("tabpanel", { name: "preview" });
+    expect(panel.querySelector(".docs-preview__stage")?.classList.contains("gridra-theme-forest")).toBe(true);
+    expect(document.querySelector(".docs-root")?.classList.contains("gridra-theme-dark")).toBe(true);
+    expect(screen.getByRole("button", { name: "forest preview theme" }).getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("scrolls the reader from the page outline and preserves the component in the URL", () => {
+    renderDocs();
+    const reader = screen.getByRole("main");
+    const props = reader.querySelector<HTMLElement>('[data-section="props"]')!;
+    vi.spyOn(reader, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 40, 800, 600));
+    vi.spyOn(props, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 640, 700, 500));
+    reader.scrollTop = 100;
+    fireEvent.click(within(screen.getByRole("navigation", { name: "On this page" })).getByRole("link", { name: "Props" }));
+    expect(scrollTo).toHaveBeenCalledWith({ top: 668, behavior: "smooth" });
+    expect(window.location.hash).toBe("#docs-GridraBox/props");
+    expect(heading()).toBe("GridraBox");
+  });
+
+  it("restores a component and section from a direct link", () => {
+    renderDocs("#docs-GridraButton/props");
+    expect(heading()).toBe("GridraButton");
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "instant" });
+    expect(within(screen.getByRole("navigation", { name: "On this page" }))
+      .getByRole("link", { name: "Props" }).getAttribute("aria-current")).toBe("location");
+  });
+
+  it("moves to the next component and focuses search with Ctrl K", () => {
+    renderDocs();
+    fireEvent.keyDown(window, { key: "k", ctrlKey: true });
+    expect(document.activeElement).toBe(screen.getByRole("searchbox", { name: "Search components" }));
+    fireEvent.click(within(screen.getByRole("navigation", { name: "Previous and next components" }))
+      .getByRole("button", { name: /Next/ }));
+    expect(heading()).toBe("GridraStack");
+    expect(window.location.hash).toBe("#docs-GridraStack");
   });
 });

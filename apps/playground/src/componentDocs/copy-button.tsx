@@ -6,6 +6,7 @@ export function CopyButton({ text }: { text: string }) {
 
   return (
     <GridraButton
+      className="docs-copy-button"
       onClick={() => {
         navigator.clipboard.writeText(text).then(() => {
           setCopied(true);
