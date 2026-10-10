@@ -1,56 +1,12 @@
-import { getGridMetrics, getNodeRect } from "./geometry";
-import type { NodeSnapGuide } from "./types";
+import type { GridraRect } from "@gridra-ui/core";
+import type { GridMetrics } from "./geometry";
+import type { GridraCanvasSnapGuide } from "./types";
 
-export function createNodeDragSnapGuides(
-  placement: { column: number; row: number; columnSpan?: number; rowSpan?: number },
-  canvas: HTMLElement,
-  gridColumns: number,
-  gridRows: number,
-): NodeSnapGuide[] {
-  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
-  const rect = getNodeRect(placement, canvas, gridColumns, gridRows);
-  const verticalStart = metrics.paddingTop;
-  const horizontalStart = metrics.paddingLeft;
-
+export function createNodeSnapGuides(rect: GridraRect, metrics: GridMetrics, edge: "start" | "end"): GridraCanvasSnapGuide[] {
   return [
-    {
-      orientation: "vertical",
-      position: rect.x,
-      start: verticalStart,
-      end: verticalStart + metrics.rowStep * gridRows,
-    },
-    {
-      orientation: "horizontal",
-      position: rect.y,
-      start: horizontalStart,
-      end: horizontalStart + metrics.columnStep * gridColumns,
-    },
-  ];
-}
-
-export function createNodeResizeSnapGuides(
-  placement: { column: number; row: number; columnSpan?: number; rowSpan?: number },
-  canvas: HTMLElement,
-  gridColumns: number,
-  gridRows: number,
-): NodeSnapGuide[] {
-  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
-  const rect = getNodeRect(placement, canvas, gridColumns, gridRows);
-  const verticalStart = metrics.paddingTop;
-  const horizontalStart = metrics.paddingLeft;
-
-  return [
-    {
-      orientation: "vertical",
-      position: rect.x + rect.width,
-      start: verticalStart,
-      end: verticalStart + metrics.rowStep * gridRows,
-    },
-    {
-      orientation: "horizontal",
-      position: rect.y + rect.height,
-      start: horizontalStart,
-      end: horizontalStart + metrics.columnStep * gridColumns,
-    },
+    { orientation: "vertical", position: rect.x + (edge === "end" ? rect.width : 0),
+      start: metrics.paddingTop, end: metrics.paddingTop + metrics.rowStep * metrics.rows },
+    { orientation: "horizontal", position: rect.y + (edge === "end" ? rect.height : 0),
+      start: metrics.paddingLeft, end: metrics.paddingLeft + metrics.columnStep * metrics.columns },
   ];
 }

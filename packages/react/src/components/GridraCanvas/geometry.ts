@@ -1,15 +1,13 @@
 import type { PointerEvent } from "react";
 import type { GridraPoint, GridraRect } from "@gridra-ui/core";
 import {
-  clampNumber,
-  formatCssLength,
   normalizeGridLine,
   normalizeGridSpan,
   parseCssPx,
 } from "../../internal/numeric";
 import type { GridraNodePlacement } from "../GridraNode";
 
-export { formatCssLength, normalizeGridLine, normalizeGridSpan };
+export { normalizeGridLine, normalizeGridSpan };
 
 export function normalizeGridCount(value: number): number {
   if (!Number.isFinite(value)) {
@@ -78,88 +76,42 @@ export function createRect(origin: GridraPoint, current: GridraPoint): GridraRec
   };
 }
 
-export function getConnectionPath(
-  source: GridraNodePlacement,
-  target: GridraNodePlacement,
-  gridColumns: number,
-  gridRows: number,
-): string {
-  const sourcePoint = getConnectionPoint(source, "output", gridColumns, gridRows);
-  const targetPoint = getConnectionPoint(target, "input", gridColumns, gridRows);
-  return getPreviewConnectionPath(sourcePoint, targetPoint, gridColumns);
+/** 接続点と曲線は、描画とヒットテストで同じピクセル座標を使う。 */
+export function getConnectionPoint(rect: GridraRect, side: "input" | "output"): GridraPoint {
+  return { x: side === "output" ? rect.x + rect.width : rect.x, y: rect.y + rect.height / 2 };
 }
 
-export function getPreviewConnectionPath(
-  sourcePoint: GridraPoint,
-  targetPoint: GridraPoint,
-  gridColumns: number,
-): string {
-  const controlDistance = Math.max(0.5, Math.abs(targetPoint.x - sourcePoint.x) * 0.5);
-  const sourceControlX = Math.min(gridColumns, sourcePoint.x + controlDistance);
-  const targetControlX = Math.max(0, targetPoint.x - controlDistance);
-
-  return [
-    `M ${sourcePoint.x} ${sourcePoint.y}`,
-    `C ${sourceControlX} ${sourcePoint.y}`,
-    `${targetControlX} ${targetPoint.y}`,
-    `${targetPoint.x} ${targetPoint.y}`,
-  ].join(" ");
+export function getConnectionPath(source: GridraPoint, target: GridraPoint): string {
+  const bend = Math.max(16, Math.abs(target.x - source.x) / 2);
+  return `M ${source.x} ${source.y} C ${source.x + bend} ${source.y} ${target.x - bend} ${target.y} ${target.x} ${target.y}`;
 }
 
-export function getConnectionPoint(
-  placement: GridraNodePlacement,
-  side: "input" | "output",
-  gridColumns: number,
-  gridRows: number,
-): GridraPoint {
-  const column = normalizeGridLine(placement.column, gridColumns);
-  const row = normalizeGridLine(placement.row, gridRows);
-  const columnSpan = normalizeGridSpan(placement.columnSpan, gridColumns, column);
-  const rowSpan = normalizeGridSpan(placement.rowSpan, gridRows, row);
-  const x = side === "output" ? column - 1 + columnSpan : column - 1;
-  const y = row - 1 + rowSpan / 2;
-
-  return {
-    x: clampNumber(x, 0, gridColumns),
-    y: clampNumber(y, 0, gridRows),
-  };
+export function getConnectionRect(sourceRect: GridraRect, targetRect: GridraRect): GridraRect {
+  const source = getConnectionPoint(sourceRect, "output");
+  const target = getConnectionPoint(targetRect, "input");
+  return createRect(source, target);
 }
 
-export function getConnectionRect(
-  sourcePlacement: GridraNodePlacement,
-  targetPlacement: GridraNodePlacement,
-  canvas: HTMLElement,
-  gridColumns: number,
-  gridRows: number,
-): GridraRect {
-  const sourceRect = getNodeRect(sourcePlacement, canvas, gridColumns, gridRows);
-  const targetRect = getNodeRect(targetPlacement, canvas, gridColumns, gridRows);
-  const sourcePoint = {
-    x: sourceRect.x + sourceRect.width,
-    y: sourceRect.y + sourceRect.height / 2,
-  };
-  const targetPoint = {
-    x: targetRect.x,
-    y: targetRect.y + targetRect.height / 2,
-  };
-  const x = Math.min(sourcePoint.x, targetPoint.x);
-  const y = Math.min(sourcePoint.y, targetPoint.y);
-
-  return {
-    x,
-    y,
-    width: Math.abs(targetPoint.x - sourcePoint.x),
-    height: Math.abs(targetPoint.y - sourcePoint.y),
-  };
+export interface GridMetrics {
+  columns: number;
+  rows: number;
+  width: number;
+  height: number;
+  cellHeight: number;
+  cellWidth: number;
+  columnGap: number;
+  columnStep: number;
+  paddingLeft: number;
+  paddingTop: number;
+  rowGap: number;
+  rowStep: number;
 }
 
 export function getNodeRect(
   placement: GridraNodePlacement,
-  canvas: HTMLElement,
-  gridColumns: number,
-  gridRows: number,
+  metrics: GridMetrics,
 ): GridraRect {
-  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
+  const { columns: gridColumns, rows: gridRows } = metrics;
   const column = normalizeGridLine(placement.column, gridColumns);
   const row = normalizeGridLine(placement.row, gridRows);
   const columnSpan = normalizeGridSpan(placement.columnSpan, gridColumns, column);
@@ -177,7 +129,7 @@ export function getGridMetrics(
   canvas: HTMLElement,
   gridColumns: number,
   gridRows: number,
-) {
+): GridMetrics {
   const styles = getComputedStyle(canvas);
   const paddingLeft = parseCssPx(styles.paddingLeft);
   const paddingTop = parseCssPx(styles.paddingTop);
@@ -196,6 +148,7 @@ export function getGridMetrics(
     (contentHeight - rowGap * Math.max(0, gridRows - 1)) / gridRows;
 
   return {
+    columns: gridColumns, rows: gridRows, width: canvasWidth, height: canvasHeight,
     cellHeight,
     cellWidth,
     columnGap,
@@ -204,20 +157,6 @@ export function getGridMetrics(
     paddingTop,
     rowGap,
     rowStep: Math.max(1, cellHeight + rowGap),
-  };
-}
-
-export function getGridPoint(
-  point: GridraPoint,
-  canvas: HTMLElement,
-  gridColumns: number,
-  gridRows: number,
-): GridraPoint {
-  const metrics = getGridMetrics(canvas, gridColumns, gridRows);
-
-  return {
-    x: (point.x - metrics.paddingLeft) / metrics.columnStep,
-    y: (point.y - metrics.paddingTop) / metrics.rowStep,
   };
 }
 

@@ -303,4 +303,47 @@ describe("useGridraCanvas", () => {
     expect(node("").getAttribute("aria-pressed")).toBe("true");
   });
 
+  it("reuses metric snapshots during ordinary renders and connection previews", () => {
+    const state: State = { nodes: Array.from({ length: 51 }, (_, i) => ({
+      id: i === 0 ? "a" : `b-${i}`, placement: { column: 1, row: 1 },
+    })), connections: Array.from({ length: 50 }, (_, i) => ({ sourceId: "a", targetId: `b-${i + 1}` })),
+      selectedIds: [], selectedConnections: [] };
+    const spy = vi.spyOn(window, "getComputedStyle");
+    const { rerender } = render(<Fixture state={state} />); size(canvas());
+    spy.mockClear();
+    rerender(<Fixture state={state} containerProps={{ title: "unrelated update" }} />);
+    pointer(screen.getByTestId("canvas-output-a"), "pointerdown");
+    pointer(canvas(), "pointermove", { clientX: 100, clientY: 100 });
+    expect(spy.mock.calls.filter(([element]) => element === canvas())).toHaveLength(0);
+    expect(canvas().querySelectorAll(".gridra-connection-line")).toHaveLength(51);
+  });
+  it("remeasures inherited layout when an ancestor class changes", async () => {
+    const style = document.createElement("style");
+    style.textContent = ".tight .measured-grid { padding: 5px; gap: 2px } .loose .measured-grid { padding: 20px; gap: 10px }";
+    document.head.append(style);
+    try {
+      render(<div className="tight" data-testid="layout-host"><Fixture containerProps={{ className: "measured-grid" }}
+        initialState={{ ...initial, connections: [{ sourceId: "a", targetId: "b" }] }} /></div>);
+      size(canvas());
+      expect(canvas().querySelector("path")?.getAttribute("d")).toContain("M 101 53");
+      await act(async () => { screen.getByTestId("layout-host").className = "loose"; });
+      expect(canvas().querySelector("path")?.getAttribute("d")).toContain("M 102.5 61.25");
+    } finally { style.remove(); }
+  });
+
+  it("applies React ancestor layout changes synchronously without restarting attribute observers", () => {
+    const style = document.createElement("style");
+    style.textContent = ".tight .measured-grid { padding: 5px; gap: 2px } .loose .measured-grid { padding: 20px; gap: 10px }";
+    document.head.append(style);
+    try {
+      const observe = vi.spyOn(MutationObserver.prototype, "observe");
+      const state = { ...initial, connections: [{ sourceId: "a", targetId: "b" }] };
+      const { rerender } = render(<div className="tight"><Fixture state={state} containerProps={{ className: "measured-grid" }} /></div>);
+      size(canvas()); observe.mockClear();
+      rerender(<div className="loose"><Fixture state={state} containerProps={{ className: "measured-grid" }} /></div>);
+      expect(canvas().querySelector("path")?.getAttribute("d")).toContain("M 102.5 61.25");
+      expect(observe).not.toHaveBeenCalled();
+    } finally { style.remove(); }
+  });
+
 });

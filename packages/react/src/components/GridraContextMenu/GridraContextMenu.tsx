@@ -343,7 +343,7 @@ export function GridraContextMenu({
     ),
   };
 
-  const portalTheme = useGridraPortalTheme(targetRef);
+  const portalTheme = useGridraPortalTheme(targetRef, undefined, currentOpen && !disabled && portalMounted);
   const menuClassName = cx(
     "gridra-portal-root",
     portalTheme.className,

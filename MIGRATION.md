@@ -58,6 +58,8 @@ Plain buttons can replace `GridraNode` without changing the hook.
 The node's required `id`, `placement`, `selected`, and domain `onSelect` props are
 removed; use ordinary DOM props, `aria-pressed`, and the existing visual slots.
 `GridraNodePlacement` remains the shared grid-coordinate type.
+Use `GridraCanvasSnapGuide` for overlay guide data; the redundant `NodeSnapGuide`
+type alias has been removed.
 
 The hook sets a relative, equal-cell CSS grid on your container. Give it a definite
 size and put nodes directly inside it. Padding, gaps and scroll are supported;

@@ -337,7 +337,7 @@ export function GridraDropdownMenu({
     ),
   };
 
-  const portalTheme = useGridraPortalTheme(triggerRef);
+  const portalTheme = useGridraPortalTheme(triggerRef, undefined, currentOpen && !disabled && portalMounted);
   const menuClassName = cx(
     "gridra-portal-root",
     portalTheme.className,

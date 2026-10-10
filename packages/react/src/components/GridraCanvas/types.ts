@@ -54,7 +54,6 @@ export interface GridraCanvasSnapGuide {
   position: number;
   start?: number;
 }
-export type NodeSnapGuide = GridraCanvasSnapGuide;
 
 /** paddingとgapを含むコンテナ内のピクセル座標で描画する。 */
 export interface GridraCanvasOverlayProps extends HTMLAttributes<HTMLDivElement> {

@@ -120,7 +120,7 @@ export function GridraTooltip({
     }),
   };
 
-  const portalTheme = useGridraPortalTheme(anchorRef);
+  const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
   const tooltipClassName = cx(
     "gridra-portal-root",
     portalTheme.className,

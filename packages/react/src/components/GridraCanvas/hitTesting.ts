@@ -1,55 +1,22 @@
 import type { GridraId, GridraRect } from "@gridra-ui/core";
-import {
-  getConnectionRect,
-  getNodeRect,
-  rectsIntersect,
-} from "./geometry";
+import { getConnectionRect, getNodeRect, rectsIntersect, type GridMetrics } from "./geometry";
 import type { GridraCanvasNode, GridraNodeConnection } from "./types";
 
 export function hitTestNodes<TNode extends GridraCanvasNode>(
-  nodes: TNode[],
-  selectionRect: GridraRect,
-  canvas: HTMLElement,
-  gridColumns: number,
-  gridRows: number,
+  nodes: TNode[], selectionRect: GridraRect, metrics: GridMetrics,
 ): GridraId[] {
-  if (selectionRect.width === 0 && selectionRect.height === 0) {
-    return [];
-  }
-
-  return nodes
-    .filter((node) =>
-      rectsIntersect(
-        selectionRect,
-        getNodeRect(node.placement, canvas, gridColumns, gridRows),
-      ),
-    )
-    .map((node) => node.id);
+  if (selectionRect.width === 0 && selectionRect.height === 0) return [];
+  return nodes.filter((node) => rectsIntersect(selectionRect, getNodeRect(node.placement, metrics))).map((node) => node.id);
 }
 
 export function hitTestConnections<TNode extends GridraCanvasNode>(
-  connections: GridraNodeConnection[],
-  nodes: TNode[],
-  selectionRect: GridraRect,
-  canvas: HTMLElement,
-  gridColumns: number,
-  gridRows: number,
+  connections: GridraNodeConnection[], nodes: TNode[], selectionRect: GridraRect, metrics: GridMetrics,
 ): GridraNodeConnection[] {
-  if (selectionRect.width === 0 && selectionRect.height === 0) {
-    return [];
-  }
-
+  if (selectionRect.width === 0 && selectionRect.height === 0) return [];
+  const rects = new Map(nodes.map((node) => [node.id, getNodeRect(node.placement, metrics)]));
   return connections.filter((connection) => {
-    const source = nodes.find((node) => node.id === connection.sourceId);
-    const target = nodes.find((node) => node.id === connection.targetId);
-
-    if (!source || !target) {
-      return false;
-    }
-
-    return rectsIntersect(
-      selectionRect,
-      getConnectionRect(source.placement, target.placement, canvas, gridColumns, gridRows),
-    );
+    const source = rects.get(connection.sourceId);
+    const target = rects.get(connection.targetId);
+    return source && target && rectsIntersect(selectionRect, getConnectionRect(source, target));
   });
 }

@@ -215,7 +215,7 @@ export function GridraDialog({
         }
       : undefined;
 
-  const portalTheme = useGridraPortalTheme(triggerRef);
+  const portalTheme = useGridraPortalTheme(triggerRef, undefined, currentOpen && portalMounted);
   const dialogClassName = cx(
     "gridra-dialog",
     `gridra-dialog--${size}`,

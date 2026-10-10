@@ -66,7 +66,7 @@ export function GridraToastProvider({
   // show内から最新の表示有無を同期的に判定するため、stateと同じ値をrefにも持つ。
   const currentRef = useRef<QueuedToast | null>(null);
 
-  const portalTheme = useGridraPortalTheme(undefined, theme);
+  const portalTheme = useGridraPortalTheme(undefined, theme, currentToast !== null);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {

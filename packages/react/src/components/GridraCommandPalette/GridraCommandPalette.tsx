@@ -138,7 +138,7 @@ export function GridraCommandPalette({
   const [activeIndex, setActiveIndex] = useState(0);
   const [portalMounted, setPortalMounted] = useState(false);
   // PortalはテーマDOMの外へ出るため、現在のテーマclassをbackdropへコピーする。
-  const portalTheme = useGridraPortalTheme(undefined, theme);
+  const portalTheme = useGridraPortalTheme(undefined, theme, currentOpen && portalMounted);
   const titleId = useId();
   const inputId = useId();
 

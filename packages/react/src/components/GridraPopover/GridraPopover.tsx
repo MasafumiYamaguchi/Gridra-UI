@@ -136,7 +136,7 @@ export function GridraPopover({
     ),
   };
 
-  const portalTheme = useGridraPortalTheme(anchorRef);
+  const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
   const popoverClassName = cx(
     "gridra-portal-root",
     portalTheme.className,

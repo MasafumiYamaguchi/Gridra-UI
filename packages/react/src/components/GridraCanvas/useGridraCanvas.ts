@@ -1,21 +1,24 @@
 import {
-  useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState,
+  useCallback, useEffect, useId, useMemo, useRef, useState,
   type ButtonHTMLAttributes, type HTMLAttributes, type PointerEvent, type Ref,
 } from "react";
 import type { GridraId, GridraPoint } from "@gridra-ui/core";
-import type { GridraNodePlacement } from "../GridraNode";
 import type { GridraConnectionHandleKind } from "../GridraConnectionHandle";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import {
-  createRect, getCanvasPoint, getGridMetrics, getNodeRect,
+  createRect, getCanvasPoint,
   normalizeGridCount, normalizeGridPlacement, placementsEqual,
 } from "./geometry";
 import { computeDragPlacement, computeResizePlacement } from "./interactionUtils";
 import { hitTestConnections, hitTestNodes } from "./hitTesting";
 import { createNodeConnection, getConnectionKey, hasConnection } from "./connectionUtils";
 import { getSelectionMode, mergeSelectedIds } from "./selectionUtils";
-import { createNodeDragSnapGuides, createNodeResizeSnapGuides } from "./snapGuideUtils";
+import { useClientLayoutEffect } from "../../internal/useClientLayoutEffect";
+import { useGridGeometry } from "./useGridGeometry";
+import { computeOverlay } from "./overlayUtils";
+import { canvasStatesEqual } from "./stateUtils";
+import type { Operation, OperationRequest } from "./operation";
 import type {
   GridraCanvasNode, GridraCanvasState, GridraCanvasOverlayProps,
   GridraConnectionHandleAttributes, UseGridraCanvasOptions,
@@ -23,17 +26,6 @@ import type {
 
 type DOMProps<T extends HTMLElement> = HTMLAttributes<T> & { ref?: Ref<T> };
 type NodeProps = ButtonHTMLAttributes<HTMLButtonElement> & { ref?: Ref<HTMLButtonElement> };
-type Operation = {
-  type: "drag" | "resize" | "connect" | "range";
-  pointerId: number;
-  origin: GridraPoint;
-  id?: GridraId;
-  placement?: GridraNodePlacement;
-  kind?: GridraConnectionHandleKind;
-  point: GridraPoint;
-};
-const useClientLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
-
 /** 利用側が用意した均等なCSS Gridへ操作を取り付ける。確定状態は利用側が管理する。 */
 export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNode>(
   options: UseGridraCanvasOptions<TNode>,
@@ -48,7 +40,7 @@ export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNod
   const [container, setContainer] = useState<HTMLElement | null>(null);
   const operationRef = useRef<Operation | null>(null);
   const [operation, setOperation] = useState<Operation | null>(null);
-  const [geometry, setGeometry] = useState({ width: 0, height: 0, signature: "" });
+  const metrics = useGridGeometry(container, columns, rows);
   const nodes = useMemo(() => state.nodes.map((node) => ({
     ...node, placement: normalizeGridPlacement(node.placement, columns, rows),
   })), [state.nodes, columns, rows]);
@@ -56,18 +48,7 @@ export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNod
   const emit = (patch: Partial<GridraCanvasState<TNode>>) => {
     const previous = latest.current.state;
     const next = { ...previous, ...patch };
-    const unchanged = Object.entries(patch).every(([key, value]) => {
-      if (key === "nodes") return value === previous.nodes;
-      if (key === "selectedIds") {
-        const ids = value as GridraId[];
-        return ids.length === previous.selectedIds.length && ids.every((id, index) => id === previous.selectedIds[index]);
-      }
-      const connections = value as GridraCanvasState<TNode>["connections"];
-      const old = previous[key as "connections" | "selectedConnections"];
-      return connections.length === old.length && connections.every((connection, index) =>
-        connection.sourceId === old[index].sourceId && connection.targetId === old[index].targetId);
-    });
-    if (unchanged) return;
+    if (canvasStatesEqual(previous, next)) return;
     latest.current.onStateChange(next, previous);
   };
   const updateOperation = (next: Operation | null) => {
@@ -90,64 +71,55 @@ export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNod
     containerRef.current = element;
     setContainer(element);
   }, []);
-  const refreshGeometry = useCallback(() => {
-    const element = containerRef.current;
-    if (!element) return;
-    const metrics = getGridMetrics(element, columns, rows);
-    const bounds = element.getBoundingClientRect();
-    const width = element.clientWidth || bounds.width;
-    const height = element.clientHeight || bounds.height;
-    const signature = JSON.stringify([width, height, metrics]);
-    setGeometry((previous) => previous.signature === signature ? previous : { width, height, signature });
-  }, [columns, rows]);
-  useClientLayoutEffect(refreshGeometry);
   useClientLayoutEffect(() => {
     setOperation(null);
-    if (!container) return;
-    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(refreshGeometry);
-    observer?.observe(container);
-    window.addEventListener("resize", refreshGeometry);
     return () => {
-      observer?.disconnect();
-      window.removeEventListener("resize", refreshGeometry);
       const op = operationRef.current;
       operationRef.current = null;
       releaseCapture(op, container);
     };
-  }, [container, refreshGeometry, releaseCapture]);
+  }, [container, columns, rows, releaseCapture]);
   useEffect(() => {
     const op = operationRef.current;
-    if (op && (!container || (op.id !== undefined && !state.nodes.some((node) => node.id === op.id)))) {
+    if (op && (!container || (op.type !== "range" && !state.nodes.some((node) => node.id === op.id)))) {
       clearOperation();
     }
   }, [container, state.nodes]);
 
   const findNode = (id: GridraId) => nodes.find((node) => node.id === id);
-  const start = (event: PointerEvent<HTMLElement>, type: Operation["type"], id?: GridraId,
-    kind?: GridraConnectionHandleKind) => {
+  const enabled: Record<Operation["type"], boolean> = {
+    range: interactions.rangeSelection !== false,
+    drag: interactions.dragging === true,
+    resize: interactions.resizing === true,
+    connect: interactions.connecting === true,
+  };
+  const start = (event: PointerEvent<HTMLElement>, request: OperationRequest) => {
     const element = containerRef.current;
-    if (!element || operationRef.current || event.currentTarget.closest("button:disabled") || !element.contains(event.currentTarget) ||
+    if (!element || !metrics || operationRef.current || !enabled[request.type] ||
+      event.currentTarget.closest("button:disabled") || !element.contains(event.currentTarget) ||
       (event.button !== undefined && event.button !== 0)) return;
-    const node = id !== undefined ? findNode(id) : undefined;
-    if (id !== undefined && !node) return;
-    const enabled = type === "range" ? interactions.rangeSelection !== false :
-      type === "drag" ? interactions.dragging : type === "resize" ? interactions.resizing : interactions.connecting;
-    if (!enabled) return;
     const origin = getCanvasPoint(event, element);
-    updateOperation({ type, id, kind, origin, point: origin, pointerId: event.pointerId, placement: node?.placement });
-    if (id !== undefined) emit({ selectedIds: state.selectedIds.includes(id) && type !== "connect" ? state.selectedIds : [id], selectedConnections: [] });
-    else emit({ selectedConnections: [] });
+    const pointer = { origin, point: origin, pointerId: event.pointerId };
+    let next: Operation;
+    if (request.type === "range") next = { ...pointer, ...request };
+    else {
+      const node = findNode(request.id);
+      if (!node) return;
+      next = request.type === "connect" ? { ...pointer, ...request } : { ...pointer, ...request, placement: node.placement };
+    }
+    updateOperation(next);
+    emit({ selectedConnections: [], ...(next.type !== "range" ? {
+      selectedIds: state.selectedIds.includes(next.id) && next.type !== "connect" ? state.selectedIds : [next.id],
+    } : {}) });
     element.setPointerCapture?.(event.pointerId);
     event.preventDefault();
     event.stopPropagation();
   };
-  const updatePlacement = (event: PointerEvent<HTMLElement>, op: Operation) => {
-    const element = containerRef.current;
-    if (!element || op.id === undefined || !op.placement) return;
+  const updatePlacement = (op: Extract<Operation, { type: "drag" | "resize" }>, currentPoint: GridraPoint) => {
+    if (!metrics) return;
     const source = latest.current.state.nodes.find((node) => node.id === op.id);
     if (!source) { clearOperation(); return; }
-    const input = { canvas: element, event, gridColumns: columns, gridRows: rows,
-      origin: op.origin, startPlacement: op.placement };
+    const input = { metrics, currentPoint, origin: op.origin, startPlacement: op.placement };
     const placement = op.type === "drag" ? computeDragPlacement(input) : computeResizePlacement(input);
     if (!placementsEqual(source.placement, placement)) emit({
       nodes: latest.current.state.nodes.map((node) => node.id === op.id ? { ...node, placement } : node),
@@ -157,23 +129,25 @@ export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNod
     const op = operationRef.current;
     const element = containerRef.current;
     if (!op || !element || op.pointerId !== event.pointerId) return;
-    if (op.type === "drag" || op.type === "resize") updatePlacement(event, op);
+    const point = getCanvasPoint(event, element);
+    if (op.type === "drag" || op.type === "resize") updatePlacement(op, point);
     if (operationRef.current !== op) return;
-    updateOperation({ ...op, point: getCanvasPoint(event, element) });
+    updateOperation({ ...op, point });
     event.preventDefault();
   };
   const finish = (event: PointerEvent<HTMLElement>) => {
     const op = operationRef.current;
     const element = containerRef.current;
     if (!op || !element || op.pointerId !== event.pointerId) return;
-    if (op.type === "drag" || op.type === "resize") updatePlacement(event, op);
-    if (op.type === "range") {
-      const rect = createRect(op.origin, getCanvasPoint(event, element));
+    const point = getCanvasPoint(event, element);
+    if (op.type === "drag" || op.type === "resize") updatePlacement(op, point);
+    if (op.type === "range" && metrics) {
+      const rect = createRect(op.origin, point);
       emit({
         selectedIds: mergeSelectedIds(getSelectionMode(event, interactions.selectionMode ?? "replace",
           interactions.selectionModifierKeys), latest.current.state.selectedIds,
-          hitTestNodes(nodes, rect, element, columns, rows)),
-        selectedConnections: hitTestConnections(latest.current.state.connections, nodes, rect, element, columns, rows),
+          hitTestNodes(nodes, rect, metrics)),
+        selectedConnections: hitTestConnections(latest.current.state.connections, nodes, rect, metrics),
       });
       element.focus();
     }
@@ -185,7 +159,7 @@ export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNod
       const targetId = handle?.dataset.gridraConnectionNodeId;
       const kind = handle?.dataset.gridraConnectionKind;
       const connection = handle && element.contains(handle) && handle.dataset.gridraCanvasOwner === owner &&
-        targetId !== undefined && findNode(targetId) && (kind === "input" || kind === "output") && op.id !== undefined && op.kind ?
+        targetId !== undefined && findNode(targetId) && (kind === "input" || kind === "output") ?
         createNodeConnection(op.id, op.kind, targetId, kind) : null;
       if (connection && !hasConnection(latest.current.state.connections, connection)) {
         emit({ connections: [...latest.current.state.connections, connection] });
@@ -208,7 +182,7 @@ export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNod
       gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
     },
     onPointerDown: composeHandlers(props.onPointerDown, (event: PointerEvent<HTMLElement>) => {
-      if (event.target === event.currentTarget) start(event, "range");
+      if (event.target === event.currentTarget) start(event, { type: "range" });
     }),
     onPointerMove: composeHandlers(props.onPointerMove, move),
     onPointerUp: composeHandlers(props.onPointerUp, finish),
@@ -245,50 +219,21 @@ export function useGridraCanvas<TNode extends GridraCanvasNode = GridraCanvasNod
       }),
     };
   };
-  const getDragHandleProps = (id: GridraId, props: DOMProps<HTMLElement> = {}) => ({
+  const getHandleProps = (request: Exclude<OperationRequest, { type: "range" }>, props: DOMProps<HTMLElement>) => ({
     ...props, style: { ...props.style, touchAction: "none" as const },
-    onPointerDown: composeHandlers(props.onPointerDown, (event: PointerEvent<HTMLElement>) => start(event, "drag", id)),
+    onPointerDown: composeHandlers(props.onPointerDown, (event: PointerEvent<HTMLElement>) => start(event, request)),
     onClick: composeHandlers(props.onClick, (event) => event.stopPropagation()),
   });
-  const getResizeHandleProps = (id: GridraId, props: DOMProps<HTMLElement> = {}) => ({
-    ...props, style: { ...props.style, touchAction: "none" as const },
-    onPointerDown: composeHandlers(props.onPointerDown, (event: PointerEvent<HTMLElement>) => start(event, "resize", id)),
-    onClick: composeHandlers(props.onClick, (event) => event.stopPropagation()),
-  });
-  const getConnectionHandleProps = (id: GridraId, kind: GridraConnectionHandleKind,
-    props: DOMProps<HTMLElement> = {}) => ({
-    ...props, "data-gridra-connection-node-id": id, "data-gridra-connection-kind": kind,
-    "data-gridra-canvas-owner": owner,
-    style: { ...props.style, touchAction: "none" as const },
-    onPointerDown: composeHandlers(props.onPointerDown, (event: PointerEvent<HTMLElement>) => start(event, "connect", id, kind)),
-    onClick: composeHandlers(props.onClick, (event) => event.stopPropagation()),
+  const getDragHandleProps = (id: GridraId, props: DOMProps<HTMLElement> = {}) => getHandleProps({ type: "drag", id }, props);
+  const getResizeHandleProps = (id: GridraId, props: DOMProps<HTMLElement> = {}) => getHandleProps({ type: "resize", id }, props);
+  const getConnectionHandleProps = (id: GridraId, kind: GridraConnectionHandleKind, props: DOMProps<HTMLElement> = {}) => ({
+    ...getHandleProps({ type: "connect", id, kind }, props),
+    "data-gridra-connection-node-id": id, "data-gridra-connection-kind": kind, "data-gridra-canvas-owner": owner,
   } satisfies GridraConnectionHandleAttributes & { ref?: Ref<HTMLElement>; "data-gridra-canvas-owner": string });
 
-  const connectionPoint = (id: GridraId, kind: GridraConnectionHandleKind): GridraPoint | null => {
-    const node = findNode(id);
-    if (!node || !container) return null;
-    const rect = getNodeRect(node.placement, container, columns, rows);
-    return { x: kind === "output" ? rect.x + rect.width : rect.x, y: rect.y + rect.height / 2 };
-  };
-  const path = (source: GridraPoint, target: GridraPoint) => {
-    const bend = Math.max(16, Math.abs(target.x - source.x) / 2);
-    return `M ${source.x} ${source.y} C ${source.x + bend} ${source.y} ${target.x - bend} ${target.y} ${target.x} ${target.y}`;
-  };
-  const selectedKeys = new Set(state.selectedConnections.map(getConnectionKey));
-  const segments = state.connections.flatMap((connection) => {
-    const source = connectionPoint(connection.sourceId, "output");
-    const target = connectionPoint(connection.targetId, "input");
-    return source && target ? [{ connection, path: path(source, target), selected: selectedKeys.has(getConnectionKey(connection)) }] : [];
-  });
-  const origin = operation?.type === "connect" && operation.id !== undefined && operation.kind ? connectionPoint(operation.id, operation.kind) : null;
-  const previewPath = origin && operation ? (operation.kind === "output" ? path(origin, operation.point) : path(operation.point, origin)) : undefined;
-  const movingNode = operation?.id !== undefined ? findNode(operation.id) : undefined;
-  const snapGuides = container && movingNode && operation && (operation.type === "drag" || operation.type === "resize") ?
-    (operation.type === "drag" ? createNodeDragSnapGuides : createNodeResizeSnapGuides)(movingNode.placement, container, columns, rows) : [];
+  const overlayData = useMemo(() => computeOverlay({ ...state, nodes }, operation, metrics), [state, nodes, operation, metrics]);
   const overlayProps: GridraCanvasOverlayProps = {
-    width: geometry.width, height: geometry.height, segments, previewPath,
-    selectionRect: operation?.type === "range" ? createRect(operation.origin, operation.point) : undefined,
-    snapGuides,
+    ...overlayData,
     onConnectionSelect: (connection) => {
       emit({ selectedConnections: [connection] });
       containerRef.current?.focus();

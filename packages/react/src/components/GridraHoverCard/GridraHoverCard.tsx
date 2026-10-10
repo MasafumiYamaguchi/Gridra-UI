@@ -255,7 +255,7 @@ export function GridraHoverCard({
     ),
   };
 
-  const portalTheme = useGridraPortalTheme(anchorRef);
+  const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
   const cardClassName = cx(
     "gridra-portal-root",
     portalTheme.className,

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   createRect,
-  formatCssLength,
   getConnectionPath,
   getConnectionPoint,
   getConnectionRect,
   getNodeRect,
+  getGridMetrics,
   normalizeGridCount,
   normalizeGridLine,
   normalizeGridPlacement,
@@ -40,20 +40,17 @@ describe("canvas geometry helpers", () => {
   });
 
   it("computes node and connection rectangles from canvas metrics", () => {
-    const canvas = createCanvas();
+    const metrics = getGridMetrics(createCanvas(), 4, 2);
 
-    expect(getNodeRect({ column: 2, row: 2, columnSpan: 2, rowSpan: 1 }, canvas, 4, 2)).toEqual({
+    expect(getNodeRect({ column: 2, row: 2, columnSpan: 2, rowSpan: 1 }, metrics)).toEqual({
       x: 112.5,
       y: 110,
       width: 175,
       height: 80,
     });
     expect(getConnectionRect(
-      { column: 1, row: 1, columnSpan: 1, rowSpan: 1 },
-      { column: 3, row: 2, columnSpan: 1, rowSpan: 1 },
-      canvas,
-      4,
-      2,
+      getNodeRect({ column: 1, row: 1 }, metrics),
+      getNodeRect({ column: 3, row: 2 }, metrics),
     )).toEqual({
       x: 102.5,
       y: 50,
@@ -62,17 +59,12 @@ describe("canvas geometry helpers", () => {
     });
   });
 
-  it("computes normalized connection points and paths", () => {
-    expect(getConnectionPoint({ column: 4, row: 1, columnSpan: 3, rowSpan: 2 }, "output", 5, 4)).toEqual({
-      x: 5,
-      y: 1,
-    });
-    expect(getConnectionPoint({ column: Number.NaN, row: 10 }, "input", 5, 4)).toEqual({
-      x: 0,
-      y: 3.5,
-    });
-    expect(getConnectionPath({ column: 1, row: 1 }, { column: 3, row: 2 }, 4, 4)).toBe(
-      "M 1 0.5 C 1.5 0.5 1.5 1.5 2 1.5"
+  it("computes pixel endpoints and connection paths from the same rectangles", () => {
+    const rect = { x: 10, y: 20, width: 30, height: 40 };
+    expect(getConnectionPoint(rect, "output")).toEqual({ x: 40, y: 40 });
+    expect(getConnectionPoint(rect, "input")).toEqual({ x: 10, y: 40 });
+    expect(getConnectionPath({ x: 102.5, y: 50 }, { x: 205, y: 150 })).toBe(
+      "M 102.5 50 C 153.75 50 153.75 150 205 150"
     );
   });
 
@@ -83,12 +75,7 @@ describe("canvas geometry helpers", () => {
     expect(placementsEqual({ column: 1, row: 1, columnSpan: 2 }, { column: 1, row: 1, columnSpan: 1 })).toBe(false);
   });
 
-  it("formats numeric css lengths defensively", () => {
-    expect(formatCssLength(12)).toBe("12px");
-    expect(formatCssLength(-3)).toBe("0px");
-    expect(formatCssLength(Number.NaN)).toBe("0px");
-    expect(formatCssLength("2rem")).toBe("2rem");
-  });
+
 });
 
 function createCanvas() {

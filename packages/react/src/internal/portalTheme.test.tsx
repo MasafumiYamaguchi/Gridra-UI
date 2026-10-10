@@ -1,9 +1,9 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import type { CSSProperties, ReactElement } from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { GridraPopover, GridraTooltip, GridraHoverCard, GridraDropdownMenu, GridraContextMenu, GridraDialog } from "../index";
 
-afterEach(cleanup);
+afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 const anchor = <button data-testid="anchor" style={{ "--gridra-color-accent": "red" } as CSSProperties}>Anchor</button>;
 const cases: [string, ReactElement, string][] = [
   ["popover", <GridraPopover defaultOpen content="Content">{anchor}</GridraPopover>, ".gridra-popover"],
@@ -28,4 +28,17 @@ describe("portal components preserve inherited token updates", () => {
     expect(portal.style.top).not.toBe("-9999px");
     expect(portal.style.left).not.toBe("-9999px");
   });
+  it("does not collect CSS or recreate observers for closed tooltips", () => {
+    function Closed({ tick }: { tick: number }) {
+      return <div><span>{tick}</span>{Array.from({ length: 20 }, (_, index) => (
+        <GridraTooltip key={index} open={false} content="Closed"><button>{index}</button></GridraTooltip>
+      ))}</div>;
+    }
+    const styles = vi.spyOn(window, "getComputedStyle");
+    const observe = vi.spyOn(MutationObserver.prototype, "observe");
+    const { rerender } = render(<Closed tick={0} />);
+    rerender(<Closed tick={1} />);
+    expect(styles).not.toHaveBeenCalled(); expect(observe).not.toHaveBeenCalled();
+  });
+
 });
