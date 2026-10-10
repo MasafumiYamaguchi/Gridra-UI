@@ -54,7 +54,6 @@ import {
   GridraStackItem,
   GridraStat,
   GridraStatusIndicator,
-  GridraStepper,
   GridraSwitch,
   GridraTabs,
   GridraTextarea,
@@ -108,12 +107,6 @@ const treeItems = [
     ]
 },
   { id: "public", label: "public", children: [{ id: "favicon", label: "favicon.ico" }] },
-];
-const stepItems = [
-  { id: "cart", label: "Cart", description: "Review your items" },
-  { id: "shipping", label: "Shipping", description: "Enter your address" },
-  { id: "payment", label: "Payment", description: "Choose payment method" },
-  { id: "confirm", label: "Confirm", description: "Place your order" },
 ];
 function ExampleToastAction({ variant }: { variant: "basic" | "duration" | "queue" | "top" }) {
   const { show } = useToast();
@@ -1295,69 +1288,6 @@ function ExampleGridraStat1() {
   </div>;
 }
 
-function ExampleGridraStepper1() {
-
-  return <div className="docs-example-content docs-example-content--gridra-stepper">
-    <GridraStepper
-      items={[
-        { id: "cart", label: "Cart", description: "Review your items" },
-        { id: "shipping", label: "Shipping", description: "Enter your address" },
-        { id: "payment", label: "Payment", description: "Choose payment method" },
-        { id: "confirm", label: "Confirm", description: "Place your order" },
-      ]}
-      defaultCurrentId="shipping"
-      onStepChange={(next, prev) => console.log(next, prev)}
-    />
-  </div>;
-}
-
-function ExampleGridraStepper2() {
-  const items = stepItems;
-  const [currentId, setCurrentId] = useState("cart");
-  const CartForm = ({ onComplete }: { onComplete: () => void }) => <GridraStack gap="sm">
-    <GridraLabel>Review cart</GridraLabel><GridraInput label="Quantity" type="number" defaultValue="1" min={1} />
-    <GridraButton onClick={onComplete}>Continue to shipping</GridraButton>
-  </GridraStack>;
-  const ShippingForm = ({ onComplete }: { onComplete: () => void }) => <GridraStack gap="sm">
-    <GridraInput label="Shipping address" placeholder="Enter an address" />
-    <GridraButton onClick={onComplete}>Continue to payment</GridraButton>
-  </GridraStack>;
-  const PaymentForm = ({ onComplete }: { onComplete: () => void }) => <GridraStack gap="sm">
-    <GridraSelect aria-label="Payment method" defaultValue="card"><option value="card">Card</option><option value="invoice">Invoice</option></GridraSelect>
-    <GridraButton onClick={onComplete}>Review order</GridraButton>
-  </GridraStack>;
-  const Confirmation = () => <GridraBadge tone="success">Ready to confirm</GridraBadge>;
-  return <div className="docs-example-content docs-example-content--gridra-stepper">
-    <GridraStepper
-      items={items}
-      currentId={currentId}
-      onStepChange={(next) => setCurrentId(next)}
-    />
-
-    {currentId === "cart" && <CartForm onComplete={() => setCurrentId("shipping")} />}
-    {currentId === "shipping" && <ShippingForm onComplete={() => setCurrentId("payment")} />}
-    {currentId === "payment" && <PaymentForm onComplete={() => setCurrentId("confirm")} />}
-    {currentId === "confirm" && <Confirmation />}
-  </div>;
-}
-
-function ExampleGridraStepper3() {
-
-  return <div className="docs-example-content docs-example-content--gridra-stepper">
-    <GridraStepper
-      items={[
-        { id: "a", label: "Account setup" },
-        { id: "b", label: "Profile details" },
-        { id: "c", label: "Preferences", disabled: true, description: "Coming soon" },
-        { id: "d", label: "Review" },
-      ]}
-      defaultCurrentId="a"
-      orientation="vertical"
-      size="lg"
-    />
-  </div>;
-}
-
 function ExampleGridraSwitch1() {
   const [checked, setChecked] = useState(true);
   return <div className="docs-example-content docs-example-content--gridra-switch">
@@ -1766,11 +1696,6 @@ export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   },
   "GridraStat": {
     "Metric row": <ExampleGridraStat1 />
-  },
-  "GridraStepper": {
-    "Basic uncontrolled stepper": <ExampleGridraStepper1 />,
-    "Controlled stepper with content switching": <ExampleGridraStepper2 />,
-    "Vertical stepper with disabled steps": <ExampleGridraStepper3 />
   },
   "GridraSwitch": {
     "Switch with label": <ExampleGridraSwitch1 />

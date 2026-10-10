@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GridraStepper } from "./GridraStepper";
+import type { GridraStepperVariant } from "./GridraStepper";
 
 afterEach(() => cleanup());
 
@@ -332,4 +333,76 @@ describe("GridraStepper", () => {
     expect(connectors[1].className).toContain("gridra-stepper__connector--pending");
   });
 
+});
+
+describe("GridraStepper variants", () => {
+  const variants: GridraStepperVariant[] = ["cards", "ruler", "line", "boxes"];
+  const items = [
+    { id: "cart", label: "Cart", description: "2 items" },
+    { id: "shipping", label: "Shipping", description: "Tokyo, Japan" },
+    { id: "payment", label: "Payment", description: "Card ending 4242" },
+    { id: "confirm", label: "Confirm" },
+  ];
+
+  it.each(variants)("preserves progress and backtracking with %s in either direction", (variant) => {
+    const onStepChange = vi.fn();
+    const { rerender } = render(<GridraStepper variant={variant} items={items}
+      currentId="payment" onStepChange={onStepChange} />);
+    expect(screen.getByRole("button", { name: /Payment/ }).getAttribute("aria-current")).toBe("step");
+    expect(screen.getByRole("button", { name: /Cart/ }).textContent).toContain("Completed:");
+    expect((screen.getByRole("button", { name: /Confirm/ }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: /Cart/ }));
+    expect(onStepChange).toHaveBeenCalledWith("cart", "payment");
+    onStepChange.mockClear();
+    rerender(<GridraStepper variant={variant} orientation="vertical" items={items}
+      currentId="shipping" onStepChange={onStepChange} />);
+    expect(screen.getByRole("button", { name: /Shipping/ }).getAttribute("aria-current")).toBe("step");
+    fireEvent.click(screen.getByRole("button", { name: /Payment/ }));
+    expect(onStepChange).not.toHaveBeenCalled();
+  });
+
+  it.each(variants)("keeps explicitly locked steps distinct from completed steps in %s", (variant) => {
+    const onStepChange = vi.fn();
+    render(<GridraStepper variant={variant} items={[{ ...items[0], disabled: true }, ...items.slice(1)]}
+      currentId="payment" onStepChange={onStepChange} />);
+    const locked = screen.getByRole("button", { name: /Cart/ }) as HTMLButtonElement;
+    expect(locked.disabled).toBe(true);
+    expect(locked.textContent).not.toContain("Completed:");
+    expect(locked.classList.contains("gridra-stepper__button--locked")).toBe(true);
+    fireEvent.click(locked);
+    expect(onStepChange).not.toHaveBeenCalled();
+  });
+
+  it("uses square boxes by default instead of the old rounded markers", () => {
+    render(<GridraStepper items={items} currentId="payment" />);
+    expect(screen.getByRole("navigation").classList.contains("gridra-stepper--boxes")).toBe(true);
+    expect(screen.queryByRole("progressbar")).toBeNull();
+  });
+
+  it("announces ruler progress and updates it when the controlled step advances", () => {
+    const { rerender } = render(<GridraStepper variant="ruler" items={items} currentId="payment" />);
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("67");
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuetext")).toBe("Step 3 of 4");
+    expect(screen.getByText("67% · STEP 3 OF 4")).toBeTruthy();
+    rerender(<GridraStepper variant="ruler" orientation="vertical" items={items} currentId="confirm" />);
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("100");
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuetext")).toBe("Step 4 of 4");
+    expect(screen.queryByText("START")).toBeNull();
+  });
+
+  it("does not invent a current ruler position for an all-locked list", () => {
+    const { container } = render(<GridraStepper variant="ruler" items={items.map((item) => ({ ...item, disabled: true }))} />);
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("0");
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuetext")).toBe("No current step");
+    expect(container.querySelector(".gridra-stepper__ruler-thumb")).toBeNull();
+  });
+
+  it("handles a single ruler step and an empty ruler without invalid geometry", () => {
+    const { rerender } = render(<GridraStepper variant="ruler" items={[items[0]]} />);
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("100");
+    expect(screen.getByRole("navigation").style.getPropertyValue("--gridra-stepper-progress")).toBe("100%");
+    rerender(<GridraStepper variant="ruler" items={[]} />);
+    expect(screen.queryByRole("progressbar")).toBeNull();
+    expect(screen.getByRole("navigation").style.getPropertyValue("--gridra-stepper-progress")).toBe("0%");
+  });
 });

@@ -29,6 +29,21 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it.each(["Cards", "Ruler", "Line", "Boxes"])("lets both %s stepper examples go back and reset independently", (title) => {
+    const preview = renderExample("GridraStepper", title);
+    const variant = title.toLowerCase();
+    const checkout = within(preview.getByRole("navigation", { name: `${variant} checkout steps` }));
+    const setup = within(preview.getByRole("navigation", { name: `${variant} setup steps` }));
+    fireEvent.click(checkout.getByRole("button", { name: /Cart/ }));
+    expect(checkout.getByRole("button", { name: /Cart/ }).getAttribute("aria-current")).toBe("step");
+    expect(setup.getByRole("button", { name: /Profile/ }).getAttribute("aria-current")).toBe("step");
+    fireEvent.click(setup.getByRole("button", { name: /Account/ }));
+    fireEvent.click(preview.getByRole("button", { name: "Reset steps" }));
+    expect(checkout.getByRole("button", { name: /Payment/ }).getAttribute("aria-current")).toBe("step");
+    expect(setup.getByRole("button", { name: /Profile/ }).getAttribute("aria-current")).toBe("step");
+    expect((setup.getByRole("button", { name: /Review/ }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
   it("keeps each Button example separate from the other variants", () => {
     const preview = renderExample("GridraButton", "Sizes");
     expect(preview.getByRole("button", { name: "Small" }).classList.contains("gridra-button--sm")).toBe(true);
