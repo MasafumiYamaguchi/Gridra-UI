@@ -1,6 +1,5 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { GridraRoot } from "../GridraRoot";
 import { GridraToastProvider, useToast } from "./GridraToast";
 
 function ToastTrigger({
@@ -197,11 +196,11 @@ describe("GridraToast", () => {
 
   it("renders a non-root viewport with theme class in portal", () => {
     const root = document.createElement("div");
-    root.className = "gridra-theme-dark";
+    root.className = "gridra-theme-ember";
     document.body.appendChild(root);
 
     render(
-      <GridraToastProvider>
+      <GridraToastProvider theme="dark">
         <ToastTrigger />
       </GridraToastProvider>,
     );
@@ -220,11 +219,11 @@ describe("GridraToast", () => {
 
   it("inherits a custom theme without an anchor element", () => {
     const { rerender } = render(
-      <GridraRoot theme="studio-blue">
-        <GridraToastProvider>
+      <div>
+        <GridraToastProvider theme="studio-blue">
           <ToastTrigger />
         </GridraToastProvider>
-      </GridraRoot>,
+      </div>,
     );
 
     click(screen.getByRole("button", { name: "Show toast" }));
@@ -233,11 +232,11 @@ describe("GridraToast", () => {
     expect(viewport?.className).toContain("gridra-theme-studio-blue");
 
     rerender(
-      <GridraRoot theme="ember">
-        <GridraToastProvider>
+      <div>
+        <GridraToastProvider theme="ember">
           <ToastTrigger />
         </GridraToastProvider>
-      </GridraRoot>,
+      </div>,
     );
 
     expect(viewport?.className).toContain("gridra-theme-ember");

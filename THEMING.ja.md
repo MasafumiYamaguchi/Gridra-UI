@@ -1,8 +1,7 @@
 # GRIDRA UIのテーマ設定
 
-GRIDRA UIのテーマは、`GridraRoot`で選択するCSSカスタムプロパティの
-パレットです。公開ThemeProviderやJavaScriptのトークンオブジェクトは
-必要ありません。
+GRIDRA UIのテーマは、任意のDOMのclassで選択するCSSカスタムプロパティのパレットです。
+テーマ用のProviderや画面レイアウト用の親コンポーネントは必要ありません。
 
 ## 組み込みテーマ
 
@@ -17,12 +16,13 @@ import "@gridra-ui/theme/themes.css";
 `dark`、`light`、`midnight`、`forest`、`ember`から選択します。
 
 ```tsx
-<GridraRoot theme="forest">...</GridraRoot>
+<section className="gridra-theme-forest">...</section>
 ```
 
-1種類だけ使う場合は個別のCSSファイルをimportできます。`theme`を省略した
-場合は後方互換のDark fallbackが使われます。`theme` propがない場合は、従来の
-`gridra-theme-*` classも引き続き認識されます。
+1種類だけ使う場合は個別のCSSファイルをimportできます。
+テーマclassを省略すると、`base.css`に含まれるDarkの既定トークンを使います。
+既定値は低詳細度の`:root`に置かれ、ページの寸法や余白は変更しません。
+テーマclassを入れ子にすると、その領域だけ継承トークンを上書きできます。
 
 組み込みパレットは、次のエディターテーマを配色の参考にしています。
 
@@ -50,11 +50,17 @@ classをアプリ側のCSSに定義し、`base.css`より後に読み込んで�
 ```
 
 ```tsx
-<GridraRoot theme="studio-blue">...</GridraRoot>
+<section className="gridra-theme-studio-blue">...</section>
 ```
 
-テーマclassはDialog、Menu、Popover、Tooltip、ToastなどのPortalにも引き継がれ、
-コンポーネントを再マウントせずに切り替えられます。
+アンカーを持つPortalは、そのアンカーに継承されたGridraトークンと最寄りのテーマclassを引き継ぎます。
+祖先のclassやinline styleを変更すると、開いているPortalも更新されます。
+無関係な領域のテーマは引き継ぎません。
+
+アンカーのない`GridraToastProvider`と`GridraCommandPalette`には、任意の`theme`名を指定できます。
+省略時はdocumentのbodyとhtmlのテーマを使います。
+明示したテーマ名が配色を決め、間隔やフォントなどの非カラートークンは継承します。
+
 
 ## 必須トークン契約
 

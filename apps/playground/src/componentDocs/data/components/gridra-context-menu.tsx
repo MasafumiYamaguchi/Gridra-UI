@@ -41,7 +41,7 @@ export const contextMenuDoc: ComponentDoc = {
     usage: "Use GridraContextMenu for right-click menus on canvas elements, list items, nodes, or any surface that needs command access via context menu. Prefer it over GridraDropdownMenu when the trigger is a right-click or keyboard context event.",
     avoid: "Avoid using GridraContextMenu as a replacement for GridraDropdownMenu when the trigger is a normal click on a button. Checkbox/radio/submenu items are not supported in v1.",
     compositions: [
-      "GridraContextMenu + GridraCanvasArea/GridraNode: spatial editing context menus.",
+      "GridraContextMenu + useGridraCanvas/GridraNode: spatial editing context menus.",
       "GridraContextMenu + GridraSelectableGrid: collection item right-click actions.",
     ],
     examples: [

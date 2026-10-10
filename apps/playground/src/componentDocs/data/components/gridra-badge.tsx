@@ -1,4 +1,4 @@
-import { GridraBadge, GridraInline, GridraStack } from "@gridra-ui/react";
+import { GridraBadge, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const badgeDoc: ComponentDoc = {
@@ -50,20 +50,20 @@ export const badgeDoc: ComponentDoc = {
     ],
     preview: (
       <GridraStack gap="sm">
-        <GridraInline gap="sm">
+        <GridraStack direction="horizontal" inline align="center" gap="sm">
           <GridraBadge variant="outline">Production</GridraBadge>
           <GridraBadge variant="outline" tone="success" size="sm">Healthy</GridraBadge>
-        </GridraInline>
-        <GridraInline align="center" gap="sm">
+        </GridraStack>
+        <GridraStack direction="horizontal" inline align="center" gap="sm">
           <GridraBadge tone="default">Default</GridraBadge>
           <GridraBadge tone="accent">Accent</GridraBadge>
           <GridraBadge tone="muted">Muted</GridraBadge>
-        </GridraInline>
-        <GridraInline align="center" gap="sm">
+        </GridraStack>
+        <GridraStack direction="horizontal" inline align="center" gap="sm">
           <GridraBadge size="sm">Small</GridraBadge>
           <GridraBadge shape="pill">Pill</GridraBadge>
           <GridraBadge shape="pill" size="sm">Pill Small</GridraBadge>
-        </GridraInline>
+        </GridraStack>
       </GridraStack>
     )
   };

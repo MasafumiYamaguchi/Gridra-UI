@@ -1,12 +1,4 @@
-import {
-  GridraBox,
-  GridraButton,
-  GridraCluster,
-  GridraEmptyState,
-  GridraLabel,
-  GridraSkeleton,
-  GridraStack,
-} from "@gridra-ui/react";
+import { GridraBox, GridraButton, GridraStack, GridraEmptyState, GridraLabel, GridraSkeleton } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const skeletonDoc: ComponentDoc = {
@@ -95,13 +87,13 @@ export const skeletonDoc: ComponentDoc = {
     <GridraStack gap="sm" style={{ maxWidth: 320 }}>
       <GridraSkeleton height={80} width="100%" />
       <GridraSkeleton rows={3} variant="text" />
-      <GridraCluster gap="sm">
+      <GridraStack direction="horizontal" wrap align="center" gap="sm">
         <GridraSkeleton height={40} variant="circle" width={40} />
         <GridraStack gap="xs" style={{ flex: 1 }}>
           <GridraSkeleton variant="text" />
           <GridraSkeleton variant="text" />
         </GridraStack>
-      </GridraCluster>
+      </GridraStack>
     </GridraStack>
   ),
   accessibility:

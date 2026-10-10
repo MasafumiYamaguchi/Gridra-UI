@@ -36,7 +36,7 @@ export function getGridraThemeClassName(anchor?: HTMLElement | null): string | u
     return undefined;
   }
 
-  let themeHost: Element | null = anchor ?? null;
+  let themeHost: Element | null = anchor ?? document.body ?? document.documentElement;
   while (themeHost) {
     const themeClassName = Array.from(themeHost.classList).find((className) =>
       className.startsWith(GRIDRA_THEME_CLASS_PREFIX),
@@ -47,14 +47,6 @@ export function getGridraThemeClassName(anchor?: HTMLElement | null): string | u
     themeHost = themeHost.parentElement;
   }
 
-  for (const element of document.querySelectorAll("[class*='gridra-theme-']")) {
-    const themeClassName = Array.from(element.classList).find((className) =>
-      className.startsWith(GRIDRA_THEME_CLASS_PREFIX),
-    );
-    if (themeClassName) {
-      return themeClassName;
-    }
-  }
 
   return undefined;
 }

@@ -1,4 +1,4 @@
-import { GridraButton, GridraCluster, GridraIconButton, GridraTooltip } from "@gridra-ui/react";
+import { GridraButton, GridraStack, GridraIconButton, GridraTooltip } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const tooltipDoc: ComponentDoc = {
@@ -54,7 +54,7 @@ export const tooltipDoc: ComponentDoc = {
       }
     ],
     preview: (
-      <GridraCluster align="center" gap="sm">
+      <GridraStack direction="horizontal" wrap align="center" gap="sm">
         <GridraTooltip content="Top tooltip" placement="top">
           <GridraButton size="sm">Top</GridraButton>
         </GridraTooltip>
@@ -64,6 +64,6 @@ export const tooltipDoc: ComponentDoc = {
         <GridraTooltip content="Bottom tooltip" placement="bottom">
           <GridraButton size="sm">Bottom</GridraButton>
         </GridraTooltip>
-      </GridraCluster>
+      </GridraStack>
     )
   };

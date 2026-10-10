@@ -8,7 +8,7 @@ export type GridraResizeHandlePosition =
 
 export interface GridraResizeHandleProps extends HTMLAttributes<HTMLSpanElement> {
   children?: ReactNode;
-  // positionは見た目とカーソル方向を決め、実際のリサイズ処理は親に委ねる。
+  // positionは見た目とカーソル方向を決め、実際のリサイズ処理は利用側の操作Hookなどに委ねる。
   position?: GridraResizeHandlePosition;
 }
 

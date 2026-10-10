@@ -21,7 +21,7 @@ import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { clampIndex, clampNumber } from "../../internal/numeric";
 import { getPortalTarget } from "../../internal/theme";
-import { useGridraThemeClassName } from "../../internal/themeContext";
+import { useGridraPortalTheme } from "../../internal/portalTheme";
 import type {
   GridraDropdownMenuItem,
   GridraDropdownMenuSize,
@@ -343,10 +343,10 @@ export function GridraContextMenu({
     ),
   };
 
-  const portalThemeClassName = useGridraThemeClassName(targetRef);
+  const portalTheme = useGridraPortalTheme(targetRef, undefined, currentOpen && !disabled && portalMounted);
   const menuClassName = cx(
     "gridra-portal-root",
-    portalThemeClassName,
+    portalTheme.className,
     "gridra-context-menu",
     "gridra-dropdown-menu",
     `gridra-dropdown-menu--${size}`,
@@ -356,6 +356,7 @@ export function GridraContextMenu({
   const menuStyle = useMemo(
     () =>
       ({
+        ...portalTheme.style,
         ...style,
         top: `${coords.top}px`,
         left: `${coords.left}px`,
@@ -373,7 +374,7 @@ export function GridraContextMenu({
               ? `${maxWidth}px`
               : maxWidth,
       }) as CSSProperties,
-    [coords.top, coords.left, minWidth, maxWidth, style],
+    [portalTheme.style, coords.top, coords.left, minWidth, maxWidth, style],
   );
   const portalTarget = getPortalTarget();
 

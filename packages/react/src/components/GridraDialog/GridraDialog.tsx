@@ -18,7 +18,7 @@ import { composeHandlers } from "../../internal/composeHandlers";
 import { FOCUSABLE_SELECTOR, getFocusableElements } from "../../internal/focus";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { getPortalTarget } from "../../internal/theme";
-import { useGridraThemeClassName } from "../../internal/themeContext";
+import { useGridraPortalTheme } from "../../internal/portalTheme";
 
 export type GridraDialogSize = "sm" | "md" | "lg" | "fullscreen";
 
@@ -215,16 +215,15 @@ export function GridraDialog({
         }
       : undefined;
 
-  const portalThemeClassName = useGridraThemeClassName(triggerRef);
+  const portalTheme = useGridraPortalTheme(triggerRef, undefined, currentOpen && portalMounted);
   const dialogClassName = cx(
     "gridra-dialog",
     `gridra-dialog--${size}`,
     className,
   );
   const backdropClassName = cx(
-    "gridra-root",
     "gridra-portal-root",
-    portalThemeClassName,
+    portalTheme.className,
     "gridra-dialog__backdrop",
   );
   const portalTarget = getPortalTarget();
@@ -238,6 +237,7 @@ export function GridraDialog({
         ? createPortal(
             <div
               className={backdropClassName}
+              style={portalTheme.style}
               onPointerDown={handleBackdropPointerDown}
             >
               <div

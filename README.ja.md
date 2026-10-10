@@ -32,13 +32,27 @@ import "@gridra-ui/theme/base.css";
 import "@gridra-ui/theme/themes.css";
 ```
 
-実行時は、組み込みまたはカスタムテーマを選択します。
+任意のDOMにclassを付けて、組み込みまたはカスタムテーマを選択します。
 
 ```tsx
-<GridraRoot theme="midnight">...</GridraRoot>
+<div className="gridra-theme-midnight">...</div>
 ```
 
 `dark.css`や`light.css`など、個別プリセットのimportも引き続き利用できます。
+
+## 親なしでの部品利用とノード操作
+
+`base.css`の読み込みだけで、各部品に既定のトークンを適用します。
+テーマclassは任意のDOMに付けられ、ページの寸法とレイアウトは利用側が指定します。
+
+空間編集には`useGridraCanvas({ state, onStateChange, grid, interactions })`を使います。
+利用側が持つ状態は、配置を含む`nodes`、`connections`、`selectedIds`、`selectedConnections`です。
+Hookのgettersを自前のコンテナ、button、ハンドルに取り付け、同じコンテナ内に`overlayProps`を渡した`GridraCanvasOverlay`を配置します。
+コンテナに寸法を指定し、ノードを均等なCSS Gridの直接の子要素に置きます。
+Hookは要素を描画せず、入力状態も直接変更しません。
+
+旧RootとCanvasAreaのAPIは削除しました。
+状態管理の例と置き換え一覧は[移行ガイド](./MIGRATION.md)を参照してください。
 
 ## 開発
 
@@ -111,7 +125,7 @@ theme パッケージは、JavaScript ランタイムではなく CSS ファイ�
 - `@gridra-ui/theme/themes.css`: 実行時切り替え用の全組み込みテーマ。
 - `@gridra-ui/theme/{dark,light,midnight,forest,ember}.css`: 個別プリセット。
 
-利用側では`GridraRoot`の`theme` propでプリセットを選択するか、同じ必須トークンを持つ
+利用側では任意のDOMの`gridra-theme-*` classでプリセットを選択するか、同じ必須トークンを持つ
 `.gridra-theme-<name>`クラスを定義できます。完全な契約とカスタム例は
 [THEMING.ja.md](./THEMING.ja.md)を参照してください。
 
@@ -140,3 +154,16 @@ playground には、ローカルのコンポーネントドキュメントと表
 `.gridra-tag*` のCSSセレクターはBadgeのセレクターへ、
 `--gridra-tag-*` の上書き設定は `--gridra-badge-outline-*` へ変更してください。
 項目の選択には `GridraSelectableGrid`、レイアウトには `GridraGridLayout` を使用してください。
+
+`GridraInline`、`GridraInlineItem`、`GridraCluster` および関連する型も削除しました。
+`.gridra-inline*` / `.gridra-cluster*` のCSSセレクターはStackのセレクターへ変更してください。
+その他の既存のpropsは維持し、以下のように移行できます。
+
+```tsx
+// 横並び（旧GridraInline）
+<GridraStack direction="horizontal" inline align="center" gap="sm" />
+// 折り返し（旧GridraCluster）
+<GridraStack direction="horizontal" wrap align="center" gap="sm" rowGap="md" />
+// 残りの幅を埋める子要素（旧GridraInlineItem）
+<GridraStackItem grow />
+```

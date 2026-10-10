@@ -57,8 +57,7 @@ describe("GridraConnectionHandle", () => {
       <GridraNode
         connectionHandles={<GridraConnectionHandle />}
         id="demo"
-        placement={{ column: 1, row: 1 }}
-      />
+      >demo</GridraNode>
     );
     const node = container.querySelector(".gridra-node");
 

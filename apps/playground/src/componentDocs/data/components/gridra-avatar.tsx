@@ -1,4 +1,4 @@
-import { GridraAvatar, GridraInline, GridraStack } from "@gridra-ui/react";
+import { GridraAvatar, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 const avatarImageUrl = "https://i.pravatar.cc/96?img=12";
@@ -50,15 +50,15 @@ export const avatarDoc: ComponentDoc = {
     ],
     preview: (
       <GridraStack gap="sm">
-        <GridraInline align="center" gap="sm">
+        <GridraStack direction="horizontal" inline align="center" gap="sm">
           <GridraAvatar alt="Demo" shape="square" size="sm" src={avatarImageUrl} />
           <GridraAvatar alt="Demo" shape="rounded" size="md" src={avatarImageUrl} />
           <GridraAvatar alt="Demo" shape="circle" size="lg" src={avatarImageUrl} />
-        </GridraInline>
-        <GridraInline align="center" gap="sm">
+        </GridraStack>
+        <GridraStack direction="horizontal" inline align="center" gap="sm">
           <GridraAvatar alt="Demo" monochrome shape="circle" size="md" src={avatarImageUrl} />
           <GridraAvatar fallback="FB" shape="square" size="md" />
-        </GridraInline>
+        </GridraStack>
       </GridraStack>
     )
   };

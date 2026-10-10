@@ -1,6 +1,6 @@
 # Theming GRIDRA UI
 
-GRIDRA UI themes are CSS custom-property palettes selected by `GridraRoot`.
+GRIDRA UI themes are CSS custom-property palettes selected by classes on ordinary DOM elements.
 The React package does not require a public theme provider or a JavaScript token
 object.
 
@@ -14,15 +14,17 @@ import "@gridra-ui/theme/base.css";
 import "@gridra-ui/theme/themes.css";
 ```
 
-Choose `dark`, `light`, `midnight`, `forest`, or `ember` with the root prop:
+Apply a `gridra-theme-dark`, `gridra-theme-light`, `gridra-theme-midnight`,
+`gridra-theme-forest`, or `gridra-theme-ember` class to a DOM element:
 
 ```tsx
-<GridraRoot theme="forest">...</GridraRoot>
+<section className="gridra-theme-forest">...</section>
 ```
 
 Applications that use only one palette may import its individual CSS file.
-Omitting `theme` keeps the backward-compatible Dark fallback. Legacy
-`gridra-theme-*` classes are also supported when the `theme` prop is absent.
+Without a theme class, components use the Dark token defaults from `base.css`.
+Defaults live on a low-specificity `:root`; no full-page layout or document typography is imposed.
+Nested theme classes override inherited tokens in their own subtree.
 
 The built-in palettes use editor themes as visual references:
 
@@ -38,8 +40,7 @@ the referenced editor themes.
 ## Custom themes
 
 Custom theme names must use lowercase kebab-case. Define a class using the
-`gridra-theme-` prefix, import it after `base.css`, and pass the suffix to
-`GridraRoot`:
+`gridra-theme-` prefix, import it after `base.css`, and apply the class to any DOM element:
 
 ```css
 .gridra-theme-studio-blue {
@@ -51,11 +52,16 @@ Custom theme names must use lowercase kebab-case. Define a class using the
 ```
 
 ```tsx
-<GridraRoot theme="studio-blue">...</GridraRoot>
+<section className="gridra-theme-studio-blue">...</section>
 ```
 
-The theme class is carried into dialogs, menus, popovers, tooltips, toasts, and
-other portals. Theme switching does not require remounting those components.
+Anchored portals copy inherited Gridra tokens and the nearest theme class from their anchor.
+Changes to ancestor classes or inline styles update already-open portals.
+Themes in unrelated subtrees do not affect the portal.
+Anchorless `GridraToastProvider` and `GridraCommandPalette` accept an optional `theme` name;
+when omitted, they use the document (body/html) theme.
+Explicit names choose the palette; inherited non-color tokens still apply.
+
 
 ## Required token contract
 

@@ -1,4 +1,4 @@
-import { GridraBadge, GridraBox, GridraInline, GridraSidebar } from "@gridra-ui/react";
+import { GridraBadge, GridraBox, GridraStack, GridraSidebar } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const sidebarDoc: ComponentDoc = {
@@ -65,7 +65,7 @@ export const sidebarDoc: ComponentDoc = {
     ],
     preview: (
       <div className="docs-inline-preview" style={{ height: 170 }}>
-        <GridraInline fullWidth style={{ height: "100%" }}>
+        <GridraStack direction="horizontal" inline align="center" gap="sm" fullWidth style={{ height: "100%" }}>
           <GridraSidebar defaultOpen resizable side="left" width={180}>
             <GridraBox fullHeight padding="sm" surface="input">
               <GridraBadge size="sm">Sidebar</GridraBadge>
@@ -74,7 +74,7 @@ export const sidebarDoc: ComponentDoc = {
           <GridraBox fullWidth padding="sm" surface="raised">
             <GridraBadge size="sm" tone="muted">Main Content</GridraBadge>
           </GridraBox>
-        </GridraInline>
+        </GridraStack>
       </div>
     )
   };

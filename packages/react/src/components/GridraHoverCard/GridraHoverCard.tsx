@@ -20,7 +20,7 @@ import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { getPortalTarget } from "../../internal/theme";
-import { useGridraThemeClassName } from "../../internal/themeContext";
+import { useGridraPortalTheme } from "../../internal/portalTheme";
 import { useDocumentEvent } from "../../internal/useDocumentEvent";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
@@ -118,7 +118,6 @@ export function GridraHoverCard({
   }, [clearTimers]);
 
   // anchor と card の位置・サイズから表示座標を計算する。
-  // content やサイズ指定が変わると card の寸法が変わるため、updateDeps に含めて再計算させる。
   const { coords, resolvedPlacement } = useFloatingPosition({
     anchorRef,
     disabled,
@@ -126,16 +125,6 @@ export function GridraHoverCard({
     offset: HOVER_CARD_OFFSET,
     open: currentOpen,
     placement,
-    updateDeps: [
-      content,
-      size,
-      width,
-      minWidth,
-      maxWidth,
-      height,
-      minHeight,
-      maxHeight,
-    ],
   });
 
   // 表示開始はhover/focus共通の入口にし、delay中に状態がぶつからないようtimerを一本化する。
@@ -266,10 +255,10 @@ export function GridraHoverCard({
     ),
   };
 
-  const portalThemeClassName = useGridraThemeClassName(anchorRef);
+  const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
   const cardClassName = cx(
     "gridra-portal-root",
-    portalThemeClassName,
+    portalTheme.className,
     "gridra-hover-card",
     `gridra-hover-card--${resolvedPlacement}`,
     `gridra-hover-card--${size}`,
@@ -281,6 +270,7 @@ export function GridraHoverCard({
   const cardStyle = useMemo(
     () =>
       ({
+        ...portalTheme.style,
         ...style,
         top: `${coords.top}px`,
         left: `${coords.left}px`,
@@ -292,6 +282,7 @@ export function GridraHoverCard({
         "--gridra-hover-card-max-height": maxHeight,
       }) as CSSProperties,
     [
+      portalTheme.style,
       coords.left,
       coords.top,
       height,

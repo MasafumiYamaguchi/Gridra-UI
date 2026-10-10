@@ -6,7 +6,7 @@ export const selectionBoxDoc: ComponentDoc = {
     name: "GridraSelectionBox",
     summary: "Visual selection rectangle for drag selection or explicit placement.",
     description:
-      "GridraSelectionBox renders a visual selection frame. It can be positioned using pixel coordinates (rect) or grid placement coordinates. It is used internally by GridraCanvasArea during range selection, but can also be used directly for custom overlays.",
+      "GridraSelectionBox renders a visual selection frame. It can be positioned using pixel coordinates (rect) or grid placement coordinates. It is used internally by useGridraCanvas during range selection, but can also be used directly for custom overlays.",
     importExample: 'import { GridraSelectionBox } from "@gridra-ui/react";',
     props: [
       { name: "rect", type: "GridraRect", description: "Pixel-based position { x, y, width, height }." },

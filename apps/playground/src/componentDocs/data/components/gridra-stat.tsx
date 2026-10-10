@@ -1,4 +1,4 @@
-import { GridraInline, GridraStat } from "@gridra-ui/react";
+import { GridraStack, GridraStat } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const statDoc: ComponentDoc = {
@@ -41,10 +41,10 @@ export const statDoc: ComponentDoc = {
     },
   ],
   preview: (
-    <GridraInline gap="lg">
+    <GridraStack direction="horizontal" inline align="center" gap="lg">
       <GridraStat label="Nodes" value="128" description="+12" tone="accent" />
       <GridraStat label="Edges" value="342" description="Stable" />
       <GridraStat label="Errors" value="0" description="No failures" tone="muted" />
-    </GridraInline>
+    </GridraStack>
   ),
 };

@@ -18,7 +18,7 @@ import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { getPortalTarget } from "../../internal/theme";
-import { useGridraThemeClassName } from "../../internal/themeContext";
+import { useGridraPortalTheme } from "../../internal/portalTheme";
 import { useDocumentEvent } from "../../internal/useDocumentEvent";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
@@ -79,7 +79,6 @@ export function GridraPopover({
     offset: POPOVER_OFFSET,
     open: currentOpen,
     placement,
-    updateDeps: [content, size, maxWidth],
   });
 
   const handleEscape = useCallback(
@@ -137,10 +136,10 @@ export function GridraPopover({
     ),
   };
 
-  const portalThemeClassName = useGridraThemeClassName(anchorRef);
+  const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
   const popoverClassName = cx(
     "gridra-portal-root",
-    portalThemeClassName,
+    portalTheme.className,
     "gridra-popover",
     `gridra-popover--${resolvedPlacement}`,
     `gridra-popover--${size}`,
@@ -150,6 +149,7 @@ export function GridraPopover({
   const popoverStyle = useMemo(
     () =>
       ({
+        ...portalTheme.style,
         ...style,
         top: `${coords.top}px`,
         left: `${coords.left}px`,
@@ -160,7 +160,7 @@ export function GridraPopover({
               ? `${maxWidth}px`
               : maxWidth,
       }) as CSSProperties,
-    [coords.left, coords.top, maxWidth, style],
+    [portalTheme.style, coords.left, coords.top, maxWidth, style],
   );
   const portalTarget = getPortalTarget();
 

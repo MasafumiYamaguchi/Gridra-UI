@@ -35,7 +35,7 @@ Migration order for guide fields:
    - `GridraTabs`, `GridraBreadcrumb`, `GridraAccordion`, `GridraTreeView`, `GridraMenu`, `GridraPagination`, `GridraStepper`.
    - Prioritize controlled/uncontrolled `usage` and keyboard `states`.
 4. Core and spatial components
-   - `GridraCanvasArea`, `GridraSelectableGrid`, `GridraNode`, handles, panels, minimap, and inspector/property surfaces.
+   - `useGridraCanvas`, `GridraSelectableGrid`, `GridraNode`, handles, panels, minimap, and inspector/property surfaces.
    - Prioritize `compositions`, spatial interaction `states`, and callback contract notes.
 5. Basic controls and layout primitives
    - Move remaining guidance out of generic `features` / `options` when it helps readers choose between similar primitives.
@@ -52,7 +52,7 @@ Per-component migration checklist:
 ### P2: Preview Quality
 
 - [x] Treat Preview as a comparison surface, not only a render smoke check.
-- [x] Prioritize richer state previews for `GridraButton`, `GridraBadge`, `GridraAvatar`, `GridraField`, `GridraSlider`, `GridraSelectableGrid`, and `GridraCanvasArea`.
+- [x] Prioritize richer state previews for `GridraButton`, `GridraBadge`, `GridraAvatar`, `GridraField`, `GridraSlider`, `GridraSelectableGrid`, and `useGridraCanvas`.
 - [x] Increase preview space where needed so variant, state, and density differences are visible.
 - [x] Keep decision-oriented Preview/States content before Props and Examples.
 

@@ -1,6 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { GridraRoot } from "../GridraRoot";
 import { GridraPopover } from "./GridraPopover";
 
 afterEach(() => {
@@ -317,13 +316,13 @@ describe("GridraPopover", () => {
     expect(screen.queryByText("Blocked content")).toBeNull();
   });
 
-  it("inherits a custom GridraRoot theme and updates while open", () => {
+  it("inherits a custom theme host theme and updates while open", () => {
     const { rerender } = render(
-      <GridraRoot theme="studio-blue">
+      <div className="gridra-theme-studio-blue">
         <GridraPopover content="Themed popover" open>
           <button type="button">Trigger</button>
         </GridraPopover>
-      </GridraRoot>,
+      </div>,
     );
 
     expect(screen.getByText("Themed popover").className).toContain(
@@ -331,11 +330,11 @@ describe("GridraPopover", () => {
     );
 
     rerender(
-      <GridraRoot theme="ember">
+      <div className="gridra-theme-ember">
         <GridraPopover content="Themed popover" open>
           <button type="button">Trigger</button>
         </GridraPopover>
-      </GridraRoot>,
+      </div>,
     );
 
     const popover = screen.getByText("Themed popover");
@@ -343,19 +342,19 @@ describe("GridraPopover", () => {
     expect(popover.className).not.toContain("gridra-theme-studio-blue");
   });
 
-  it("keeps portal themes isolated across multiple GridraRoot instances", () => {
+  it("keeps portal themes isolated across multiple theme host instances", () => {
     render(
       <>
-        <GridraRoot theme="midnight">
+        <div className="gridra-theme-midnight">
           <GridraPopover content="Midnight popover" open>
             <button type="button">Midnight trigger</button>
           </GridraPopover>
-        </GridraRoot>
-        <GridraRoot theme="forest">
+        </div>
+        <div className="gridra-theme-forest">
           <GridraPopover content="Forest popover" open>
             <button type="button">Forest trigger</button>
           </GridraPopover>
-        </GridraRoot>
+        </div>
       </>,
     );
 
@@ -370,16 +369,16 @@ describe("GridraPopover", () => {
   it("keeps the default fallback isolated from another themed root", () => {
     render(
       <>
-        <GridraRoot>
+        <div>
           <GridraPopover content="Default popover" open>
             <button type="button">Default trigger</button>
           </GridraPopover>
-        </GridraRoot>
-        <GridraRoot theme="forest">
+        </div>
+        <div className="gridra-theme-forest">
           <GridraPopover content="Themed popover" open>
             <button type="button">Themed trigger</button>
           </GridraPopover>
-        </GridraRoot>
+        </div>
       </>,
     );
 

@@ -1,4 +1,4 @@
-import { GridraButton, GridraCluster } from "@gridra-ui/react";
+import { GridraButton, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const buttonDoc: ComponentDoc = {
@@ -48,7 +48,7 @@ export const buttonDoc: ComponentDoc = {
       }
     ],
     preview: (
-      <GridraCluster align="center" gap="sm" rowGap="sm">
+      <GridraStack direction="horizontal" wrap align="center" gap="sm" rowGap="sm">
         <GridraButton variant="primary">Primary</GridraButton>
         <GridraButton variant="default">Default</GridraButton>
         <GridraButton variant="ghost">Ghost</GridraButton>
@@ -56,6 +56,6 @@ export const buttonDoc: ComponentDoc = {
         <GridraButton size="sm">Small</GridraButton>
         <GridraButton size="lg">Large</GridraButton>
         <GridraButton loading>Loading</GridraButton>
-      </GridraCluster>
+      </GridraStack>
     )
   };

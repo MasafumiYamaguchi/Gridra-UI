@@ -53,9 +53,8 @@ describe("GridraResizeHandle", () => {
     const { container } = render(
       <GridraNode
         id="demo"
-        placement={{ column: 1, row: 1 }}
         resizeHandle={<GridraResizeHandle />}
-      />
+      >demo</GridraNode>
     );
     const node = container.querySelector(".gridra-node");
 
