@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -b && vite build",
     "dev": "vite --host 127.0.0.1",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --pool=threads --environment jsdom"
   },
   "dependencies": {
     "@gridra-ui/react": "0.1.0",
