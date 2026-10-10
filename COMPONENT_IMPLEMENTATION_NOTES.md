@@ -673,12 +673,17 @@ Implemented:
 - Linear step indicator component exported from `@gridra-ui/react`.
 - Items-based API: `{ id, label, description?, disabled? }`.
 - Controlled/uncontrolled currentId via `currentId` / `defaultCurrentId` / `onStepChange`.
-- Step states: completed (before current), current, pending (after current), disabled (explicit or global).
+- Variants: cards, ruler, line, and boxes (default). The previous rounded design is removed; see MIGRATION.md.
+- Step states: completed (enabled and before current), current, pending (enabled and after current), locked (explicit disabled).
 - Completed steps are clickable buttons for backtracking; current step is a button with `aria-current="step"`; pending steps are disabled.
 - Per-step `disabled` and global `disabled` prop.
 - Rendered as `nav` with `aria-label="Progress"` and `ol > li` structure.
-- Each step has a numbered marker, label, optional description, and a connector between steps.
-- Connectors reflect state visually (completed/current/pending/disabled classes).
+- Each step has a marker/state header, label, and optional nonempty description.
+- Cards and boxes show connectors; line and ruler draw their own axes. Connector completed/current/pending/disabled classes remain.
+- A connector before the current position is filled even if its starting step is locked; locked items and ruler ticks are never completed.
+- Ruler provides a progressbar named from the nav's aria-label. Its visual and announced percentages measure the same first-to-last position (0% for a single item).
+- Vertical ruler endpoints and major ticks align with step centers; minor ticks subdivide each interval.
+- Global disabled opacity applies once; pending and locked opacity do not compound it.
 - Horizontal and vertical orientations, three sizes (sm/md/lg).
 - Unknown, empty, or disabled currentId falls back to the first enabled step.
 - If no enabled step exists, no step receives `aria-current` and all step buttons are disabled.
@@ -697,12 +702,14 @@ items + currentId
   -> currentId falls back to the first enabled step
   -> currentIndex = findIndex(items, currentId), or -1 when no enabled step exists
   -> for each item at index i:
-       i < currentIndex  -> completed (clickable, fires onStepChange)
+       item.disabled    -> locked (disabled, never completed)
+       i < currentIndex -> completed (clickable unless globally disabled)
        i == currentIndex -> current (aria-current="step", no callback)
        i > currentIndex  -> pending (disabled, no callback)
        no current         -> disabled, no callback
 
 user click completed step
+  -> canGoBack computed with render state; handler attached only when true
   -> handleStepClick(id)
   -> if controlled: onStepChange(id, currentId)
   -> if uncontrolled: setInternalCurrentId(id) + onStepChange(id, currentId)

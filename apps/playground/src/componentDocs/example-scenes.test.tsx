@@ -38,6 +38,17 @@ describe("interactive example scenes", () => {
     expect(checkout.getByRole("button", { name: /Cart/ }).getAttribute("aria-current")).toBe("step");
     expect(setup.getByRole("button", { name: /Profile/ }).getAttribute("aria-current")).toBe("step");
     fireEvent.click(setup.getByRole("button", { name: /Account/ }));
+    fireEvent.click(preview.getByRole("button", { name: "Next checkout step" }));
+    expect(checkout.getByRole("button", { name: /Shipping/ }).getAttribute("aria-current")).toBe("step");
+    fireEvent.click(preview.getByRole("button", { name: "Next checkout step" }));
+    fireEvent.click(preview.getByRole("button", { name: "Next checkout step" }));
+    expect(checkout.getByRole("button", { name: /Confirm/ }).getAttribute("aria-current")).toBe("step");
+    expect((preview.getByRole("button", { name: "Next checkout step" }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(preview.getByRole("button", { name: "Next setup step" }));
+    fireEvent.click(preview.getByRole("button", { name: "Next setup step" }));
+    expect(setup.getByRole("button", { name: /Preferences/ }).getAttribute("aria-current")).toBe("step");
+    expect((preview.getByRole("button", { name: "Next setup step" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(setup.getByRole("button", { name: /Review/ }).getAttribute("aria-current")).toBeNull();
     fireEvent.click(preview.getByRole("button", { name: "Reset steps" }));
     expect(checkout.getByRole("button", { name: /Payment/ }).getAttribute("aria-current")).toBe("step");
     expect(setup.getByRole("button", { name: /Profile/ }).getAttribute("aria-current")).toBe("step");

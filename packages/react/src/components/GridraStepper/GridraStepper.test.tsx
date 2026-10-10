@@ -399,10 +399,60 @@ describe("GridraStepper variants", () => {
 
   it("handles a single ruler step and an empty ruler without invalid geometry", () => {
     const { rerender } = render(<GridraStepper variant="ruler" items={[items[0]]} />);
-    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("100");
-    expect(screen.getByRole("navigation").style.getPropertyValue("--gridra-stepper-progress")).toBe("100%");
+    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("0");
+    expect(screen.getByRole("navigation").style.getPropertyValue("--gridra-stepper-progress")).toBe("0%");
+    expect(document.querySelector<HTMLElement>(".gridra-stepper__ruler-tick")?.style.left).toBe("0%");
     rerender(<GridraStepper variant="ruler" items={[]} />);
     expect(screen.queryByRole("progressbar")).toBeNull();
     expect(screen.getByRole("navigation").style.getPropertyValue("--gridra-stepper-progress")).toBe("0%");
+  });
+
+  it("distinguishes simultaneous ruler progressbars by the stepper's label", () => {
+    render(<>
+      <GridraStepper variant="ruler" items={items} aria-label="Checkout" />
+      <GridraStepper variant="ruler" items={items} aria-label="Setup" orientation="vertical" />
+    </>);
+    expect(screen.getByRole("progressbar", { name: "Checkout step progress" })).toBeTruthy();
+    expect(screen.getByRole("progressbar", { name: "Setup step progress" })).toBeTruthy();
+  });
+
+  it.each(["horizontal", "vertical"] as const)("keeps locked ruler ticks unfilled in %s", (orientation) => {
+    const { container } = render(<GridraStepper variant="ruler" orientation={orientation}
+      items={[items[0], { ...items[1], disabled: true }, ...items.slice(2)]} currentId="payment" />);
+    const ticks = container.querySelectorAll(".gridra-stepper__ruler-tick");
+    expect(ticks[0].classList.contains("gridra-stepper__ruler-tick--completed")).toBe(true);
+    expect(ticks[1].classList.contains("gridra-stepper__ruler-tick--completed")).toBe(false);
+    expect(ticks[2].classList.contains("gridra-stepper__ruler-tick--completed")).toBe(true);
+    expect(ticks[3].classList.contains("gridra-stepper__ruler-tick--completed")).toBe(false);
+  });
+
+  it.each(["horizontal", "vertical"] as const)("uses the same visual and announced ruler position in %s", (orientation) => {
+    const { rerender } = render(<GridraStepper variant="ruler" items={items} orientation={orientation} />);
+    items.forEach((item, index) => {
+      rerender(<GridraStepper variant="ruler" items={items} currentId={item.id} orientation={orientation} />);
+      const position = parseFloat(screen.getByRole("navigation").style.getPropertyValue("--gridra-stepper-progress"));
+      expect(position).toBeCloseTo(index / 3 * 100);
+      expect(Number(screen.getByRole("progressbar").getAttribute("aria-valuenow"))).toBe(Math.round(position));
+    });
+  });
+
+  it.each(["cards", "boxes"] as const)("fills traversed %s connectors across a locked step", (variant) => {
+    const { container } = render(<GridraStepper variant={variant} currentId="payment"
+      items={[items[0], { ...items[1], disabled: true }, ...items.slice(2)]} />);
+    const connectors = container.querySelectorAll(".gridra-stepper__connector");
+    expect(connectors[0].classList.contains("gridra-stepper__connector--completed")).toBe(true);
+    expect(connectors[1].classList.contains("gridra-stepper__connector--completed")).toBe(true);
+    expect(connectors[2].classList.contains("gridra-stepper__connector--completed")).toBe(false);
+    expect(screen.getByRole("button", { name: /Shipping/ }).textContent).not.toContain("Completed:");
+  });
+
+  it("omits empty descriptions without dropping a numeric description", () => {
+    const { container } = render(<GridraStepper items={[
+      { id: "empty", label: "Empty", description: "" },
+      { id: "false", label: "False", description: false },
+      { id: "zero", label: "Zero", description: 0 },
+    ]} />);
+    expect(container.querySelectorAll(".gridra-stepper__description")).toHaveLength(1);
+    expect(screen.getByRole("button", { name: /Zero/ }).textContent).toContain("0");
   });
 });

@@ -207,7 +207,7 @@
 .docs-example-content--use-gridra-canvas > section { width: 100%; }
 .docs-stepper-demo { display: grid; gap: 44px; width: 100%; min-width: 0; padding: 8px; }
 .docs-stepper-demo__vertical { width: min(100%, 400px); }
-.docs-stepper-demo__reset { justify-self: end; }
+.docs-stepper-demo__controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .docs-preview [role="tabpanel"] > .docs-code-block { border: 0; }
 
 .docs-section { display: grid; gap: 22px; min-width: 0; padding-top: 26px; border-top: 1px solid var(--docs-border); }

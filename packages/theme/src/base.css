@@ -3523,6 +3523,9 @@
 .gridra-stepper__button--locked {
   opacity: 0.4;
 }
+.gridra-stepper--disabled .gridra-stepper__button {
+  opacity: 1;
+}
 .gridra-stepper__content {
   display: flex;
   flex-direction: column;
@@ -3656,6 +3659,7 @@
 }
 .gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__list {
   align-items: stretch;
+  padding-inline: 5px;
 }
 .gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__item:first-child,
 .gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__item:last-child {
@@ -3679,6 +3683,7 @@
   position: relative;
   height: 42px;
   margin-top: 8px;
+  margin-inline: 5px;
   border-bottom: 1px solid var(--gridra-color-border-strong);
 }
 .gridra-stepper__ruler::before {
@@ -3699,6 +3704,7 @@
 }
 .gridra-stepper__ruler-tick {
   position: absolute;
+  z-index: 1;
   bottom: 0;
   width: 1px;
   height: 14px;
@@ -3709,6 +3715,7 @@
 }
 .gridra-stepper__ruler-thumb {
   position: absolute;
+  z-index: 2;
   left: var(--gridra-stepper-progress);
   bottom: 0;
   width: 1px;
@@ -3739,6 +3746,9 @@
 .gridra-stepper__summary > :last-child {
   opacity: 0.6;
 }
+.gridra-stepper--disabled .gridra-stepper__summary > span {
+  opacity: 1;
+}
 .gridra-stepper--ruler.gridra-stepper--vertical .gridra-stepper__list {
   display: grid;
   grid-auto-rows: minmax(var(--gridra-stepper-ruler-row), 1fr);
@@ -3762,7 +3772,24 @@
   color: var(--gridra-color-background);
   background: var(--gridra-color-text);
 }
-.gridra-stepper--ruler.gridra-stepper--vertical .gridra-stepper__ruler { position: absolute; top: 0; bottom: 0; left: 22px; width: 12px; height: auto; min-height: 0; margin: 0; border-bottom: 0; border-left: 1px solid var(--gridra-color-border-strong); }
+.gridra-stepper--ruler.gridra-stepper--vertical .gridra-stepper__ruler {
+  position: absolute;
+  top: calc(50% / var(--gridra-stepper-count));
+  bottom: calc(50% / var(--gridra-stepper-count));
+  left: 22px;
+  width: 12px;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  border-bottom: 0;
+  border-left: 1px solid var(--gridra-color-border-strong);
+}
+.gridra-stepper--ruler.gridra-stepper--vertical .gridra-stepper__ruler-tick {
+  bottom: auto;
+  left: -12px;
+  width: 12px;
+  height: 1px;
+}
 .gridra-stepper--ruler.gridra-stepper--vertical .gridra-stepper__ruler::before { inset: 0 auto 0 -5px; width: 5px; height: 100%; background: repeating-linear-gradient(to bottom, var(--gridra-color-border-strong) 0 1px, transparent 1px var(--gridra-stepper-tick-gap)); }
 .gridra-stepper--ruler.gridra-stepper--vertical .gridra-stepper__ruler::after { inset: 0 auto 0 -5px; width: 5px; height: 100%; background: repeating-linear-gradient(to bottom, var(--gridra-color-text) 0 1px, transparent 1px var(--gridra-stepper-tick-gap)); clip-path: inset(0 0 calc(100% - var(--gridra-stepper-progress)) 0); }
 .gridra-stepper--ruler.gridra-stepper--vertical .gridra-stepper__ruler-track {

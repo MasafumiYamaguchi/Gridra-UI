@@ -15,6 +15,39 @@ and track ancestor class/style changes. Anchorless `GridraToastProvider` and
 `GridraCommandPalette` accept `theme="forest"`; omission inherits body/html.
 Themes elsewhere in the document are never used as fallback.
 
+## Stepper designs
+
+`GridraStepper` has a breaking visual change: the former rounded marker design
+has been removed. Omitting `variant` now renders square `boxes`. Choose
+`variant="cards"`, `"ruler"`, `"line"`, or `"boxes"` explicitly; each supports
+both orientations and the existing sizes. No variant restores the former design.
+
+```tsx
+<GridraStepper variant="boxes" items={steps} currentId={currentId}
+  onStepChange={setCurrentId} />
+```
+
+The items, controlled/uncontrolled state, and backtracking APIs remain unchanged.
+Advance by updating `currentId` in the parent after validation. Explicitly disabled
+items are locked, even before the current position, and cannot be current or
+completed. Connectors describe the interval traversed, so an interval before the
+current position remains filled even when its starting item is locked.
+
+Update custom CSS for the new variant layouts and square markers. Root modifiers
+`.gridra-stepper--horizontal`, `--vertical`, `--sm`, `--md`, and `--lg` remain.
+New root variant modifiers are `--cards`, `--ruler`, `--line`, and `--boxes`;
+global disabling adds `.gridra-stepper--disabled`. Item and button state modifiers
+include `--completed`, `--current`, `--pending`, `--locked`, and `--disabled`.
+The `.gridra-stepper__connector--completed`, `--current`, `--pending`, and
+`--disabled` classes remain, but line and ruler hide connector elements and
+draw their own axes. Marker geometry, text sizes, and spacing have changed, so
+existing marker and connector overrides need review.
+
+Ruler percentage measures position along the axis, not completed work: first is
+0%, last is 100%, and a single item is 0%. Horizontal and vertical rulers use
+the same value. The progressbar name derives from the stepper's `aria-label`;
+give simultaneous steppers distinct labels.
+
 ## Flex layouts
 
 Use `GridraStack` for both inline rows and wrapping groups. `GridraInline`,
