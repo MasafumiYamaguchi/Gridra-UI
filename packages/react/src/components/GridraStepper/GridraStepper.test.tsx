@@ -416,6 +416,35 @@ describe("GridraStepper variants", () => {
     expect(screen.getByRole("progressbar", { name: "Setup step progress" })).toBeTruthy();
   });
 
+  it.each(variants)("announces each number and locked/completed status exactly once in %s", (variant) => {
+    const states = [items[0], { ...items[1], disabled: true }, ...items.slice(2)];
+    const { rerender } = render(<GridraStepper variant={variant} items={states} currentId="payment" />);
+    for (const orientation of ["horizontal", "vertical"] as const) {
+      rerender(<GridraStepper variant={variant} items={states} currentId="payment" orientation={orientation} />);
+      expect(screen.getByRole("button", { name: "Completed: 1 Cart 2 items" })).toBeTruthy();
+      expect(screen.getByRole("button", { name: "Locked: 2 Shipping Tokyo, Japan" })).toBeTruthy();
+      expect(screen.getByRole("button", { name: "3 Payment Card ending 4242" }).getAttribute("aria-current")).toBe("step");
+      expect((screen.getByRole("button", { name: "4 Confirm" }) as HTMLButtonElement).disabled).toBe(true);
+    }
+  });
+
+  it("inherits external labelledby names and their updates for ruler progressbars", () => {
+    const examples = (checkoutLabel: string) => <>
+      <h2 id="checkout-heading">{checkoutLabel}</h2><span id="workflow-label">workflow</span>
+      <h2 id="setup-heading">Setup</h2>
+      <GridraStepper variant="ruler" items={items} aria-label="Ignored"
+        aria-labelledby="checkout-heading workflow-label" />
+      <GridraStepper variant="ruler" items={items} aria-labelledby="setup-heading" />
+    </>;
+    const { rerender } = render(examples("Checkout"));
+    expect(screen.getByRole("navigation", { name: "Checkout workflow" })).toBeTruthy();
+    expect(screen.getByRole("progressbar", { name: "Checkout workflow" })).toBeTruthy();
+    expect(screen.getByRole("progressbar", { name: "Setup" })).toBeTruthy();
+    expect(screen.queryByRole("progressbar", { name: "Progress step progress" })).toBeNull();
+    rerender(examples("Order"));
+    expect(screen.getByRole("progressbar", { name: "Order workflow" })).toBeTruthy();
+  });
+
   it.each(["horizontal", "vertical"] as const)("keeps locked ruler ticks unfilled in %s", (orientation) => {
     const { container } = render(<GridraStepper variant="ruler" orientation={orientation}
       items={[items[0], { ...items[1], disabled: true }, ...items.slice(2)]} currentId="payment" />);
@@ -444,6 +473,16 @@ describe("GridraStepper variants", () => {
     expect(connectors[1].classList.contains("gridra-stepper__connector--completed")).toBe(true);
     expect(connectors[2].classList.contains("gridra-stepper__connector--completed")).toBe(false);
     expect(screen.getByRole("button", { name: /Shipping/ }).textContent).not.toContain("Completed:");
+  });
+
+  it.each(["horizontal", "vertical"] as const)("marks traversed line intervals through locked steps in %s", (orientation) => {
+    render(<GridraStepper variant="line" orientation={orientation} currentId="payment"
+      items={[items[0], { ...items[1], disabled: true }, ...items.slice(2)]} />);
+    const locked = screen.getByRole("button", { name: "Locked: 2 Shipping Tokyo, Japan" }).closest("li")!;
+    expect(locked.classList.contains("gridra-stepper__item--traversed")).toBe(true);
+    expect(locked.classList.contains("gridra-stepper__item--completed")).toBe(false);
+    expect(screen.getByRole("button", { name: "4 Confirm" }).closest("li")!
+      .classList.contains("gridra-stepper__item--traversed")).toBe(false);
   });
 
   it("omits empty descriptions without dropping a numeric description", () => {

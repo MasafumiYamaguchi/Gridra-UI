@@ -3460,9 +3460,6 @@
   --gridra-stepper-gap: 30px;
   --gridra-stepper-ruler-row: 94px;
 }
-.gridra-stepper--disabled {
-  opacity: 0.6;
-}
 .gridra-stepper__list,
 .gridra-stepper__item,
 .gridra-stepper__button,
@@ -3524,7 +3521,19 @@
   opacity: 0.4;
 }
 .gridra-stepper--disabled .gridra-stepper__button {
-  opacity: 1;
+  opacity: 0.6;
+}
+.gridra-stepper--disabled .gridra-stepper__button--pending {
+  opacity: 0.5;
+}
+.gridra-stepper--disabled .gridra-stepper__button--locked {
+  opacity: 0.4;
+}
+.gridra-stepper--disabled .gridra-stepper__connector,
+.gridra-stepper--disabled .gridra-stepper__ruler,
+.gridra-stepper--disabled .gridra-stepper__summary,
+.gridra-stepper--disabled.gridra-stepper--line .gridra-stepper__item::before {
+  opacity: 0.6;
 }
 .gridra-stepper__content {
   display: flex;
@@ -3661,8 +3670,8 @@
   align-items: stretch;
   padding-inline: 5px;
 }
-.gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__item:first-child,
-.gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__item:last-child {
+.gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__item:first-child:not(:only-child),
+.gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__item:last-child:not(:only-child) {
   flex: 0.5;
 }
 .gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__item:not(:first-child):not(:last-child) .gridra-stepper__button {
@@ -3830,7 +3839,7 @@
   background: var(--gridra-color-border-strong);
   content: "";
 }
-.gridra-stepper--line .gridra-stepper__item--completed::before {
+.gridra-stepper--line .gridra-stepper__item--traversed::before {
   background: var(--gridra-color-text);
 }
 .gridra-stepper--line .gridra-stepper__item--current::before {

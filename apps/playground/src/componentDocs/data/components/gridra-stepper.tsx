@@ -1,96 +1,17 @@
-import { useState } from "react";
-import { GridraButton, GridraStepper } from "@gridra-ui/react";
-import type { GridraStepperItem, GridraStepperVariant } from "@gridra-ui/react";
+import type { GridraStepperVariant } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
+import { StepperExample } from "./stepper-example";
+import stepperExampleSource from "./stepper-example.tsx?raw";
 
-const checkoutSteps: GridraStepperItem[] = [
-  { id: "cart", label: "Cart", description: "2 items" },
-  { id: "shipping", label: "Shipping", description: "Tokyo, Japan" },
-  { id: "payment", label: "Payment", description: "Card ending 4242" },
-  { id: "confirm", label: "Confirm" },
-];
-const setupSteps: GridraStepperItem[] = [
-  { id: "account", label: "Account", description: "Create workspace" },
-  { id: "profile", label: "Profile", description: "Team details" },
-  { id: "preferences", label: "Preferences", description: "Optional" },
-  { id: "review", label: "Review", disabled: true },
-];
 const variants: GridraStepperVariant[] = ["cards", "ruler", "line", "boxes"];
 
-function nextEnabledStep(items: GridraStepperItem[], currentId: string) {
-  return items.slice(items.findIndex((item) => item.id === currentId) + 1)
-    .find((item) => !item.disabled)?.id;
-}
-
-export function StepperVariantPreview({ variant }: { variant: GridraStepperVariant }) {
-  const [checkoutId, setCheckoutId] = useState("payment");
-  const [setupId, setSetupId] = useState("profile");
-  const nextCheckoutId = nextEnabledStep(checkoutSteps, checkoutId);
-  const nextSetupId = nextEnabledStep(setupSteps, setupId);
-  return <div className="docs-stepper-demo">
-    <GridraStepper aria-label={`${variant} checkout steps`} variant={variant} items={checkoutSteps}
-      currentId={checkoutId} onStepChange={setCheckoutId} />
-    <GridraStepper aria-label={`${variant} setup steps`} variant={variant} items={setupSteps}
-      orientation="vertical" currentId={setupId} onStepChange={setSetupId}
-      className="docs-stepper-demo__vertical" />
-    <div className="docs-stepper-demo__controls">
-      <GridraButton size="sm" disabled={!nextCheckoutId}
-        onClick={() => nextCheckoutId && setCheckoutId(nextCheckoutId)}>Next checkout step</GridraButton>
-      <GridraButton size="sm" disabled={!nextSetupId}
-        onClick={() => nextSetupId && setSetupId(nextSetupId)}>Next setup step</GridraButton>
-      <GridraButton size="sm" variant="ghost" onClick={() => {
-        setCheckoutId("payment");
-        setSetupId("profile");
-      }}>Reset steps</GridraButton>
-    </div>
-  </div>;
-}
-
 function exampleCode(variant: GridraStepperVariant) {
-  return `import { useState } from "react";
-import { GridraButton, GridraStepper, type GridraStepperItem } from "@gridra-ui/react";
+  return `${stepperExampleSource.trimEnd()}
 
-const checkoutSteps: GridraStepperItem[] = [
-  { id: "cart", label: "Cart", description: "2 items" },
-  { id: "shipping", label: "Shipping", description: "Tokyo, Japan" },
-  { id: "payment", label: "Payment", description: "Card ending 4242" },
-  { id: "confirm", label: "Confirm" },
-];
-const setupSteps: GridraStepperItem[] = [
-  { id: "account", label: "Account", description: "Create workspace" },
-  { id: "profile", label: "Profile", description: "Team details" },
-  { id: "preferences", label: "Preferences", description: "Optional" },
-  { id: "review", label: "Review", disabled: true },
-];
-function nextEnabledStep(items: GridraStepperItem[], currentId: string) {
-  return items.slice(items.findIndex((item) => item.id === currentId) + 1)
-    .find((item) => !item.disabled)?.id;
+export default function Example() {
+  return <StepperExample variant="${variant}" />;
 }
-
-export default function StepperExample() {
-  const [checkoutId, setCheckoutId] = useState("payment");
-  const [setupId, setSetupId] = useState("profile");
-  const nextCheckoutId = nextEnabledStep(checkoutSteps, checkoutId);
-  const nextSetupId = nextEnabledStep(setupSteps, setupId);
-
-  return <div style={{ display: "grid", gap: 32 }}>
-    <GridraStepper aria-label="Checkout steps" variant="${variant}"
-      items={checkoutSteps} currentId={checkoutId} onStepChange={setCheckoutId} />
-    <GridraStepper aria-label="Setup steps" variant="${variant}"
-      orientation="vertical" style={{ width: "min(100%, 400px)" }}
-      items={setupSteps} currentId={setupId} onStepChange={setSetupId} />
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-      <GridraButton disabled={!nextCheckoutId}
-        onClick={() => nextCheckoutId && setCheckoutId(nextCheckoutId)}>Next checkout step</GridraButton>
-      <GridraButton disabled={!nextSetupId}
-        onClick={() => nextSetupId && setSetupId(nextSetupId)}>Next setup step</GridraButton>
-      <GridraButton variant="ghost" onClick={() => {
-        setCheckoutId("payment");
-        setSetupId("profile");
-      }}>Reset steps</GridraButton>
-    </div>
-  </div>;
-}`;
+`;
 }
 
 export const stepperDoc: ComponentDoc = {
@@ -108,7 +29,8 @@ export const stepperDoc: ComponentDoc = {
     { name: "defaultCurrentId", type: "string", description: "Initial step when uncontrolled." },
     { name: "onStepChange", type: "(nextId, previousId) => void", description: "Called when returning to a completed step." },
     { name: "disabled", type: "boolean", default: "false", description: "Disables every step interaction." },
-    { name: "aria-label", type: "string", default: '"Progress"', description: "Accessible name for the navigation landmark." },
+    { name: "aria-label", type: "string", default: '"Progress"', description: "Accessible name for navigation and the ruler progressbar." },
+    { name: "aria-labelledby", type: "string", description: "IDs of external naming elements. Takes precedence over aria-label and also names the ruler progressbar." },
   ],
   options: ["variants: cards | ruler | line | boxes", "horizontal and vertical", "sizes: sm | md | lg", "controlled or uncontrolled currentId", "per-step locked state", "global disabled"],
   features: ["Completed checks, a highlighted current step, pending steps, and locked steps.", "Four theme-aware designs with horizontal and vertical orientations.", "Ruler announces its percentage and current position through a progressbar named after the stepper.", "Completed steps support keyboard and pointer backtracking.", "Invalid or disabled current ids fall back to the first enabled step."],
@@ -119,9 +41,9 @@ export const stepperDoc: ComponentDoc = {
     title: variant[0].toUpperCase() + variant.slice(1),
     description: "Horizontal checkout and vertical setup. Click a completed step to go back, use Next to advance to the next enabled step, or Reset steps to restore the illustrated state.",
     code: exampleCode(variant),
-    preview: <StepperVariantPreview variant={variant} />,
+    preview: <StepperExample variant={variant} />,
   })),
-  preview: <StepperVariantPreview variant="boxes" />,
+  preview: <StepperExample variant="boxes" />,
   previewCode: exampleCode("boxes"),
-  accessibility: "The step list uses nav, ol, and li. Each step is a native button, the current step has aria-current=step, and unavailable steps use disabled and aria-disabled. Completion is announced separately from decorative checks. Ruler provides a progressbar with a percentage and a textual step position. Decorative strokes, ticks, and markers are hidden from assistive technology.",
+  accessibility: "The step list uses nav, ol, and li. Each step is a native button whose accessible name includes its number, label, description, and completed or locked state. The current step has aria-current=step, and unavailable steps use disabled and aria-disabled. Ruler provides a progressbar with a percentage and textual step position. aria-labelledby names both the navigation and progressbar; otherwise aria-label names them. Decorative strokes, ticks, and markers are hidden to avoid duplicate announcements.",
 };

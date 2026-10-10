@@ -681,9 +681,12 @@ Implemented:
 - Each step has a marker/state header, label, and optional nonempty description.
 - Cards and boxes show connectors; line and ruler draw their own axes. Connector completed/current/pending/disabled classes remain.
 - A connector before the current position is filled even if its starting step is locked; locked items and ruler ticks are never completed.
-- Ruler provides a progressbar named from the nav's aria-label. Its visual and announced percentages measure the same first-to-last position (0% for a single item).
+- Every button announces its step number and completed/locked status independently of decorative markers.
+- Ruler inherits the nav's aria-labelledby when present, otherwise its name derives from aria-label. Its visual and announced percentages share positionOf(index), measuring first-to-last position (0% for a single item).
 - Vertical ruler endpoints and major ticks align with step centers; minor ticks subdivide each interval.
-- Global disabled opacity applies once; pending and locked opacity do not compound it.
+- Global disabled styling uses direct button opacity (completed/current 0.6, pending 0.5, locked 0.4) without a dimmed ancestor.
+- Traversed item classes color line intervals across locked steps without marking those items completed.
+- Docs renders StepperExample directly and generates its code examples from that same source module.
 - Horizontal and vertical orientations, three sizes (sm/md/lg).
 - Unknown, empty, or disabled currentId falls back to the first enabled step.
 - If no enabled step exists, no step receives `aria-current` and all step buttons are disabled.

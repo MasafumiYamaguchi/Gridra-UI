@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
+import { useMemo, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
 
 export type GridraStepperOrientation = "horizontal" | "vertical";
 export type GridraStepperSize = "sm" | "md" | "lg";
@@ -29,6 +29,7 @@ function CheckMark() {
 
 export function GridraStepper({
   "aria-label": ariaLabel = "Progress",
+  "aria-labelledby": ariaLabelledBy,
   className,
   currentId: currentIdProp,
   defaultCurrentId,
@@ -46,22 +47,23 @@ export function GridraStepper({
   const rawCurrentId = currentIdProp ?? internalCurrentId;
   const currentId = enabledIds.includes(rawCurrentId) ? rawCurrentId : enabledIds[0] ?? null;
   const currentIndex = currentId == null ? -1 : items.findIndex((item) => item.id === currentId);
-  const progress = currentIndex < 0 || items.length < 2 ? 0 : currentIndex / (items.length - 1) * 100;
+  const positionOf = (index: number) => index < 0 || items.length < 2 ? 0 : index / (items.length - 1) * 100;
+  const progress = positionOf(currentIndex);
   const steps = items.map((item, index) => {
     const locked = Boolean(item.disabled);
     const completed = currentIndex >= 0 && index < currentIndex && !locked;
     const current = index === currentIndex;
     const pending = !locked && (currentIndex < 0 || index > currentIndex);
     const buttonDisabled = disabled || locked || pending || currentIndex < 0;
-    return { item, index, locked, completed, current, pending, buttonDisabled,
+    return { item, index, locked, completed, current, pending, buttonDisabled, traversed: index < currentIndex,
       canGoBack: completed && !buttonDisabled };
   });
 
-  const handleStepClick = useCallback((id: string) => {
+  const handleStepClick = (id: string) => {
     if (currentId == null) return;
     if (currentIdProp === undefined) setInternalCurrentId(id);
     onStepChange?.(id, currentId);
-  }, [currentId, currentIdProp, onStepChange]);
+  };
 
   const rootClassName = ["gridra-stepper", `gridra-stepper--${orientation}`, `gridra-stepper--${size}`,
     `gridra-stepper--${variant}`, disabled && "gridra-stepper--disabled", className].filter(Boolean).join(" ");
@@ -72,12 +74,14 @@ export function GridraStepper({
     "--gridra-stepper-tick-gap": `${100 / Math.max(1, (items.length - 1) * 14)}%`,
   } as CSSProperties;
 
-  return <nav {...props} aria-label={ariaLabel} className={rootClassName} style={rootStyle}>
+  return <nav {...props} aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}
+    className={rootClassName} style={rootStyle}>
     <ol className="gridra-stepper__list">
-      {steps.map(({ item, index, locked, completed, current, pending, buttonDisabled, canGoBack }) => {
+      {steps.map(({ item, index, locked, completed, current, pending, buttonDisabled, canGoBack, traversed }) => {
         const stateClasses = [completed && "completed", current && "current", pending && "pending",
           locked && "locked", buttonDisabled && "disabled"].filter(Boolean);
-        const itemClassName = ["gridra-stepper__item", ...stateClasses.map((state) => `gridra-stepper__item--${state}`)].join(" ");
+        const itemClassName = ["gridra-stepper__item", ...stateClasses.map((state) => `gridra-stepper__item--${state}`),
+          traversed && "gridra-stepper__item--traversed"].filter(Boolean).join(" ");
         const buttonClassName = ["gridra-stepper__button", ...stateClasses.map((state) => `gridra-stepper__button--${state}`)].join(" ");
         const number = String(index + 1).padStart(2, "0");
 
@@ -86,6 +90,8 @@ export function GridraStepper({
             aria-disabled={buttonDisabled || undefined} disabled={buttonDisabled}
             className={buttonClassName} onClick={canGoBack ? () => handleStepClick(item.id) : undefined}>
             {completed && <span className="gridra-stepper__sr-only">Completed: </span>}
+            {locked && <span className="gridra-stepper__sr-only">Locked: </span>}
+            <span className="gridra-stepper__sr-only">{index + 1} </span>
             {variant === "boxes" ? <span className="gridra-stepper__marker" aria-hidden="true">
               {completed ? <CheckMark /> : index + 1}
             </span> : <span className="gridra-stepper__meta" aria-hidden="true">
@@ -101,7 +107,7 @@ export function GridraStepper({
             </span>
           </button>
           {index < items.length - 1 && <span aria-hidden="true" className={["gridra-stepper__connector",
-            index < currentIndex && "gridra-stepper__connector--completed",
+            traversed && "gridra-stepper__connector--completed",
             current && "gridra-stepper__connector--current",
             (currentIndex < 0 || index > currentIndex) && "gridra-stepper__connector--pending",
             buttonDisabled && "gridra-stepper__connector--disabled"].filter(Boolean).join(" ")} />}
@@ -109,14 +115,15 @@ export function GridraStepper({
       })}
     </ol>
     {variant === "ruler" && items.length > 0 && <>
-      <div className="gridra-stepper__ruler" role="progressbar" aria-label={`${ariaLabel} step progress`}
+      <div className="gridra-stepper__ruler" role="progressbar"
+        aria-labelledby={ariaLabelledBy} aria-label={`${ariaLabel} step progress`}
         aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}
         aria-valuetext={currentIndex < 0 ? "No current step" : `Step ${currentIndex + 1} of ${items.length}`}>
         <span className="gridra-stepper__ruler-track" aria-hidden="true" />
         {steps.map(({ item, index, completed, current }) => <span key={item.id}
           className={`gridra-stepper__ruler-tick${completed || current ? " gridra-stepper__ruler-tick--completed" : ""}`} aria-hidden="true"
           style={{ [orientation === "horizontal" ? "left" : "top"]:
-            `${items.length < 2 ? 0 : index / (items.length - 1) * 100}%` }} />)}
+            `${positionOf(index)}%` }} />)}
         {currentIndex >= 0 && <span className="gridra-stepper__ruler-thumb" aria-hidden="true" />}
       </div>
       {orientation === "horizontal" && <div className="gridra-stepper__summary" aria-hidden="true">

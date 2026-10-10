@@ -31,13 +31,16 @@ The items, controlled/uncontrolled state, and backtracking APIs remain unchanged
 Advance by updating `currentId` in the parent after validation. Explicitly disabled
 items are locked, even before the current position, and cannot be current or
 completed. Connectors describe the interval traversed, so an interval before the
-current position remains filled even when its starting item is locked.
+current position remains filled even when its starting item is locked. Line uses
+the same traversed-interval rule for its strokes; the item itself remains locked.
 
 Update custom CSS for the new variant layouts and square markers. Root modifiers
 `.gridra-stepper--horizontal`, `--vertical`, `--sm`, `--md`, and `--lg` remain.
 New root variant modifiers are `--cards`, `--ruler`, `--line`, and `--boxes`;
 global disabling adds `.gridra-stepper--disabled`. Item and button state modifiers
 include `--completed`, `--current`, `--pending`, `--locked`, and `--disabled`.
+Items also have `--traversed` to color intervals before the current position
+without announcing locked items as completed.
 The `.gridra-stepper__connector--completed`, `--current`, `--pending`, and
 `--disabled` classes remain, but line and ruler hide connector elements and
 draw their own axes. Marker geometry, text sizes, and spacing have changed, so
@@ -45,8 +48,12 @@ existing marker and connector overrides need review.
 
 Ruler percentage measures position along the axis, not completed work: first is
 0%, last is 100%, and a single item is 0%. Horizontal and vertical rulers use
-the same value. The progressbar name derives from the stepper's `aria-label`;
-give simultaneous steppers distinct labels.
+the same value. `aria-labelledby`, when provided, names both the nav and ruler
+progressbar. Otherwise the progressbar name derives from `aria-label`.
+Give simultaneous steppers distinct labels. Step buttons announce their number,
+label, description, and completed or locked state once, independently of the
+variant's decorative markers. Global disabling preserves pending/locked visual
+differences without multiplying parent and child opacity.
 
 ## Flex layouts
 

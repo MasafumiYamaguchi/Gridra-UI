@@ -179,7 +179,6 @@
 .docs-example-content > * { max-width: 100%; }
 .docs-example-content--gridra-accordion > .gridra-accordion,
 .docs-example-content--gridra-tabs > .gridra-tabs,
-.docs-example-content--gridra-stepper > .gridra-stepper,
 .docs-example-content--gridra-grid-layout > .gridra-grid-layout,
 .docs-example-content--gridra-selectable-grid > .gridra-grid,
 .docs-example-content--gridra-stack > .gridra-stack { width: 100%; }
@@ -205,9 +204,6 @@
 .docs-example-content--gridra-sidebar { justify-content: flex-start; padding-inline: 32px; }
 .docs-example-content--gridra-node > section,
 .docs-example-content--use-gridra-canvas > section { width: 100%; }
-.docs-stepper-demo { display: grid; gap: 44px; width: 100%; min-width: 0; padding: 8px; }
-.docs-stepper-demo__vertical { width: min(100%, 400px); }
-.docs-stepper-demo__controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .docs-preview [role="tabpanel"] > .docs-code-block { border: 0; }
 
 .docs-section { display: grid; gap: 22px; min-width: 0; padding-top: 26px; border-top: 1px solid var(--docs-border); }
