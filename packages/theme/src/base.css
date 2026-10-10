@@ -3613,9 +3613,11 @@
   background: var(--gridra-color-text);
   border-color: var(--gridra-color-text);
 }
-.gridra-stepper--cards .gridra-stepper__button--locked,
-.gridra-stepper--cards .gridra-stepper__button--locked .gridra-stepper__meta {
+.gridra-stepper--cards .gridra-stepper__button--locked {
   border-style: dashed;
+}
+.gridra-stepper--cards .gridra-stepper__button--locked .gridra-stepper__meta {
+  border-bottom-style: dashed;
 }
 .gridra-stepper--cards .gridra-stepper__connector {
   position: absolute;
