@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { CodeBlock } from "./code-block";
 import { CopyButton } from "./copy-button";
 import type { CodeExample } from "./types";
+import { ExampleThemeContext } from "./example-scenes";
 
 export function DocsPreview({ preview, code, theme }: {
   preview: ReactNode;
@@ -51,14 +52,15 @@ export function ExampleCard({ example, number, theme }: {
   number: string;
   theme: GridraBuiltInThemeName;
 }) {
-  return <div className="docs-example">
+  return <div className="docs-example" data-example-title={example.title}>
     <div className="docs-example__header">
       <h4><span>{number}</span>{example.title}</h4>
       <CopyButton text={example.code} />
     </div>
     {example.description && <p className="docs-example__description">{example.description}</p>}
-    {example.preview && <div className={`docs-preview__stage docs-preview__stage--example gridra-theme-${theme}`}>
-      {example.preview}
+    {example.preview && <div role="region" aria-label={`Live preview: ${example.title}`}
+      className={`docs-preview__stage docs-preview__stage--example gridra-theme-${theme}`}>
+      <ExampleThemeContext.Provider value={theme}>{example.preview}</ExampleThemeContext.Provider>
     </div>}
     <CodeBlock code={example.code} language={example.language} header={false} />
   </div>;

@@ -175,6 +175,36 @@
 .docs-preview__stage > * { max-width: 100%; min-width: 0; }
 .docs-preview__stage .docs-inline-preview { width: 100%; justify-content: center; gap: 30px; }
 .docs-preview__stage--example { min-height: 150px; padding: 28px; border-bottom: 1px solid var(--docs-border); }
+.docs-example-content { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; width: 100%; min-width: 0; position: relative; }
+.docs-example-content > * { max-width: 100%; }
+.docs-example-content--gridra-accordion > .gridra-accordion,
+.docs-example-content--gridra-tabs > .gridra-tabs,
+.docs-example-content--gridra-stepper > .gridra-stepper,
+.docs-example-content--gridra-grid-layout > .gridra-grid-layout,
+.docs-example-content--gridra-selectable-grid > .gridra-grid,
+.docs-example-content--gridra-stack > .gridra-stack { width: 100%; }
+.docs-example-content--gridra-inspector-panel > .gridra-panel,
+.docs-example-content--gridra-properties-panel > .gridra-panel,
+.docs-example-content--gridra-panel > .gridra-panel { width: min(100%, 400px); }
+.docs-example-content--gridra-progress > .gridra-progress { width: min(100%, 440px); }
+.docs-example-content--gridra-field > .gridra-field,
+.docs-example-content--gridra-input > *,
+.docs-example-content--gridra-textarea > * { width: min(100%, 320px); }
+.docs-example-content--gridra-tree-view > .gridra-tree-view,
+.docs-example-content--gridra-menu > .gridra-menu { width: min(100%, 420px); }
+.docs-example-content--gridra-alert { flex-direction: column; align-items: stretch; }
+.docs-example-content--gridra-alert .toast-viewport:empty { display: none; }
+.docs-example-content--gridra-alert .toast-viewport > .gridra-alert { margin-top: 12px; }
+.docs-example-content--gridra-divider { min-height: 80px; }
+.docs-example-content--gridra-divider:has(.gridra-divider--horizontal) { flex-direction: column; align-items: stretch; }
+.docs-example-content--gridra-divider .gridra-divider--vertical { height: 80px; }
+.docs-example-content--gridra-selection-box { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); width: min(100%, 320px); height: 120px; gap: 8px; }
+.docs-example-content--gridra-snap-guide { width: min(100%, 180px); height: 110px; }
+.docs-example-content--gridra-split-pane,
+.docs-example-content--gridra-sidebar { height: 180px; max-width: 640px; }
+.docs-example-content--gridra-sidebar { justify-content: flex-start; padding-inline: 32px; }
+.docs-example-content--gridra-node > section,
+.docs-example-content--use-gridra-canvas > section { width: 100%; }
 .docs-preview [role="tabpanel"] > .docs-code-block { border: 0; }
 
 .docs-section { display: grid; gap: 22px; min-width: 0; padding-top: 26px; border-top: 1px solid var(--docs-border); }
