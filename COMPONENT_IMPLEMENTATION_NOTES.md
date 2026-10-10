@@ -675,18 +675,20 @@ Implemented:
 - Controlled/uncontrolled currentId via `currentId` / `defaultCurrentId` / `onStepChange`.
 - Variants: cards, ruler, line, and boxes (default). The previous rounded design is removed; see MIGRATION.md.
 - Step states: completed (enabled and before current), current, pending (enabled and after current), locked (explicit disabled).
-- Completed steps are clickable buttons for backtracking; current step is a button with `aria-current="step"`; pending steps are disabled.
+- Completed steps are clickable buttons for backtracking; current step has `aria-current="step"`. Unavailable steps use aria-disabled without native disabled, stay focusable, and have no activation handler.
 - Per-step `disabled` and global `disabled` prop.
 - Rendered as `nav` with `aria-label="Progress"` and `ol > li` structure.
 - Each step has a marker/state header, label, and optional nonempty description.
 - Cards and boxes show connectors; line and ruler draw their own axes. Connector completed/current/pending/disabled classes remain.
-- A connector before the current position is filled even if its starting step is locked; locked items and ruler ticks are never completed.
+- A connector before the current position is filled even if its starting step is locked. Ruler ticks indicate reached positions; locked items remain locked and are never announced as completed.
 - Every button announces its step number and completed/locked status independently of decorative markers.
-- Ruler inherits the nav's aria-labelledby when present, otherwise its name derives from aria-label. Its visual and announced percentages share positionOf(index), measuring first-to-last position (0% for a single item).
+- Ruler appends a localized progress suffix to the nav's aria-labelledby references, otherwise its name derives from aria-label and that suffix. Visual/announced percentages and tick positions share positionOf(index); a single current item is 100%.
 - Vertical ruler endpoints and major ticks align with step centers; minor ticks subdivide each interval.
 - Global disabled styling uses direct button opacity (completed/current 0.6, pending 0.5, locked 0.4) without a dimmed ancestor.
 - Traversed item classes color line intervals across locked steps without marking those items completed.
-- Docs renders StepperExample directly and generates its code examples from that same source module.
+- All generated labels and ruler formatters are customizable through Partial<GridraStepperLabels>.
+- Cards and line preserve minimum horizontal column widths in a local scroll area.
+- Docs renders StepperExample directly, switches checkout panels via currentId, and generates code examples from that same source module.
 - Horizontal and vertical orientations, three sizes (sm/md/lg).
 - Unknown, empty, or disabled currentId falls back to the first enabled step.
 - If no enabled step exists, no step receives `aria-current` and all step buttons are disabled.

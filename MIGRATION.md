@@ -33,6 +33,13 @@ items are locked, even before the current position, and cannot be current or
 completed. Connectors describe the interval traversed, so an interval before the
 current position remains filled even when its starting item is locked. Line uses
 the same traversed-interval rule for its strokes; the item itself remains locked.
+Ruler ticks also indicate reached positions along the axis, including locked
+items before the current position; they do not announce item completion.
+
+Unavailable steps now remain keyboard-focusable. They use `aria-disabled="true"`
+without the native `disabled` attribute, and have no activation handler. This
+lets Tab users read their number, label, and locked status. Update any custom
+`:disabled` step-button styles to `[aria-disabled="true"]`.
 
 Update custom CSS for the new variant layouts and square markers. Root modifiers
 `.gridra-stepper--horizontal`, `--vertical`, `--sm`, `--md`, and `--lg` remain.
@@ -42,18 +49,27 @@ include `--completed`, `--current`, `--pending`, `--locked`, and `--disabled`.
 Items also have `--traversed` to color intervals before the current position
 without announcing locked items as completed.
 The `.gridra-stepper__connector--completed`, `--current`, `--pending`, and
-`--disabled` classes remain, but line and ruler hide connector elements and
+`--disabled` classes remain, and future locked intervals use `--locked`.
+Line and ruler hide connector elements and
 draw their own axes. Marker geometry, text sizes, and spacing have changed, so
 existing marker and connector overrides need review.
 
-Ruler percentage measures position along the axis, not completed work: first is
-0%, last is 100%, and a single item is 0%. Horizontal and vertical rulers use
-the same value. `aria-labelledby`, when provided, names both the nav and ruler
-progressbar. Otherwise the progressbar name derives from `aria-label`.
+With multiple items, ruler percentage measures first-to-last position (0% to
+100%), rather than completed work. A single current item is the terminal
+position, so it reports 100%; no enabled current item reports 0%.
+Horizontal and vertical rulers use the same value. `aria-labelledby`, when
+provided, names the nav; the ruler appends `labels.progress` through a separate
+label reference. Otherwise its name derives from `aria-label` and that suffix.
 Give simultaneous steppers distinct labels. Step buttons announce their number,
 label, description, and completed or locked state once, independently of the
 variant's decorative markers. Global disabling preserves pending/locked visual
 differences without multiplying parent and child opacity.
+
+Use `labels: Partial<GridraStepperLabels>` to translate generated navigation and
+status text, including `position(step, total)` and `summary(percentage, position)`
+callbacks for ruler text. English remains the default. Cards and line preserve
+minimum column widths and scroll inside the component for long horizontal
+sequences. Set `--gridra-stepper-column-width` to adjust those minimum widths.
 
 ## Flex layouts
 

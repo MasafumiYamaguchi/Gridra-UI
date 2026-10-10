@@ -1,8 +1,31 @@
-import { useMemo, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
+import { useId, useMemo, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
 
 export type GridraStepperOrientation = "horizontal" | "vertical";
 export type GridraStepperSize = "sm" | "md" | "lg";
 export type GridraStepperVariant = "cards" | "ruler" | "line" | "boxes";
+
+export interface GridraStepperLabels {
+  navigation: string;
+  progress: string;
+  completed: string;
+  locked: string;
+  lockedStatus: string;
+  step: string;
+  active: string;
+  now: string;
+  start: string;
+  end: string;
+  noCurrentStep: string;
+  position: (step: number, total: number) => string;
+  summary: (percentage: number, position: string) => string;
+}
+
+const defaultLabels: GridraStepperLabels = {
+  navigation: "Progress", progress: "step progress", completed: "Completed:", locked: "Locked:", lockedStatus: "LOCKED",
+  step: "STEP", active: "ACTIVE", now: "NOW", start: "START", end: "END", noCurrentStep: "No current step",
+  position: (step, total) => `Step ${step} of ${total}`,
+  summary: (percentage, position) => `${percentage}% · ${position.toUpperCase()}`,
+};
 
 export interface GridraStepperItem {
   id: string;
@@ -20,6 +43,7 @@ export interface GridraStepperProps extends HTMLAttributes<HTMLElement> {
   size?: GridraStepperSize;
   variant?: GridraStepperVariant;
   disabled?: boolean;
+  labels?: Partial<GridraStepperLabels>;
 }
 
 function CheckMark() {
@@ -28,13 +52,14 @@ function CheckMark() {
 }
 
 export function GridraStepper({
-  "aria-label": ariaLabel = "Progress",
+  "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
   className,
   currentId: currentIdProp,
   defaultCurrentId,
   disabled = false,
   items,
+  labels,
   onStepChange,
   orientation = "horizontal",
   size = "md",
@@ -42,20 +67,26 @@ export function GridraStepper({
   variant = "boxes",
   ...props
 }: GridraStepperProps) {
+  const text = { ...defaultLabels, ...labels };
+  const navLabel = ariaLabel ?? text.navigation;
+  const progressLabelId = useId();
   const enabledIds = useMemo(() => items.filter((item) => !item.disabled).map((item) => item.id), [items]);
   const [internalCurrentId, setInternalCurrentId] = useState(() => defaultCurrentId ?? "");
   const rawCurrentId = currentIdProp ?? internalCurrentId;
   const currentId = enabledIds.includes(rawCurrentId) ? rawCurrentId : enabledIds[0] ?? null;
   const currentIndex = currentId == null ? -1 : items.findIndex((item) => item.id === currentId);
-  const positionOf = (index: number) => index < 0 || items.length < 2 ? 0 : index / (items.length - 1) * 100;
+  const positionOf = (index: number) => index < 0 ? 0 : items.length === 1 ? 100 : index / (items.length - 1) * 100;
   const progress = positionOf(currentIndex);
+  const positionText = currentIndex < 0 ? text.noCurrentStep : text.position(currentIndex + 1, items.length);
   const steps = items.map((item, index) => {
     const locked = Boolean(item.disabled);
     const completed = currentIndex >= 0 && index < currentIndex && !locked;
     const current = index === currentIndex;
     const pending = !locked && (currentIndex < 0 || index > currentIndex);
     const buttonDisabled = disabled || locked || pending || currentIndex < 0;
-    return { item, index, locked, completed, current, pending, buttonDisabled, traversed: index < currentIndex,
+    const traversed = index < currentIndex;
+    const connectorState = traversed ? "completed" : current ? "current" : pending ? "pending" : "locked";
+    return { item, index, locked, completed, current, pending, buttonDisabled, traversed, connectorState,
       canGoBack: completed && !buttonDisabled };
   });
 
@@ -74,10 +105,10 @@ export function GridraStepper({
     "--gridra-stepper-tick-gap": `${100 / Math.max(1, (items.length - 1) * 14)}%`,
   } as CSSProperties;
 
-  return <nav {...props} aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}
+  return <nav {...props} aria-label={navLabel} aria-labelledby={ariaLabelledBy}
     className={rootClassName} style={rootStyle}>
     <ol className="gridra-stepper__list">
-      {steps.map(({ item, index, locked, completed, current, pending, buttonDisabled, canGoBack, traversed }) => {
+      {steps.map(({ item, index, locked, completed, current, pending, buttonDisabled, canGoBack, traversed, connectorState }) => {
         const stateClasses = [completed && "completed", current && "current", pending && "pending",
           locked && "locked", buttonDisabled && "disabled"].filter(Boolean);
         const itemClassName = ["gridra-stepper__item", ...stateClasses.map((state) => `gridra-stepper__item--${state}`),
@@ -87,17 +118,17 @@ export function GridraStepper({
 
         return <li key={item.id} className={itemClassName}>
           <button type="button" aria-current={current ? "step" : undefined}
-            aria-disabled={buttonDisabled || undefined} disabled={buttonDisabled}
+            aria-disabled={buttonDisabled || undefined}
             className={buttonClassName} onClick={canGoBack ? () => handleStepClick(item.id) : undefined}>
-            {completed && <span className="gridra-stepper__sr-only">Completed: </span>}
-            {locked && <span className="gridra-stepper__sr-only">Locked: </span>}
+            {completed && <span className="gridra-stepper__sr-only">{text.completed} </span>}
+            {locked && <span className="gridra-stepper__sr-only">{text.locked} </span>}
             <span className="gridra-stepper__sr-only">{index + 1} </span>
             {variant === "boxes" ? <span className="gridra-stepper__marker" aria-hidden="true">
               {completed ? <CheckMark /> : index + 1}
             </span> : <span className="gridra-stepper__meta" aria-hidden="true">
-              <span className="gridra-stepper__marker">{variant === "cards" ? `STEP ${number}` : number}</span>
+              <span className="gridra-stepper__marker">{variant === "cards" ? `${text.step} ${number}` : number}</span>
               <span className="gridra-stepper__status">
-                {locked ? "LOCKED" : completed ? <CheckMark /> : current ? (variant === "cards" ? "ACTIVE" : "NOW") : null}
+                {locked ? text.lockedStatus : completed ? <CheckMark /> : current ? (variant === "cards" ? text.active : text.now) : null}
               </span>
             </span>}
             <span className="gridra-stepper__content">
@@ -107,27 +138,27 @@ export function GridraStepper({
             </span>
           </button>
           {index < items.length - 1 && <span aria-hidden="true" className={["gridra-stepper__connector",
-            traversed && "gridra-stepper__connector--completed",
-            current && "gridra-stepper__connector--current",
-            (currentIndex < 0 || index > currentIndex) && "gridra-stepper__connector--pending",
+            `gridra-stepper__connector--${connectorState}`,
             buttonDisabled && "gridra-stepper__connector--disabled"].filter(Boolean).join(" ")} />}
         </li>;
       })}
     </ol>
     {variant === "ruler" && items.length > 0 && <>
+      <span id={progressLabelId} hidden>{text.progress}</span>
       <div className="gridra-stepper__ruler" role="progressbar"
-        aria-labelledby={ariaLabelledBy} aria-label={`${ariaLabel} step progress`}
+        aria-labelledby={ariaLabelledBy ? `${ariaLabelledBy} ${progressLabelId}` : undefined}
+        aria-label={`${navLabel} ${text.progress}`}
         aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}
-        aria-valuetext={currentIndex < 0 ? "No current step" : `Step ${currentIndex + 1} of ${items.length}`}>
+        aria-valuetext={positionText}>
         <span className="gridra-stepper__ruler-track" aria-hidden="true" />
-        {steps.map(({ item, index, completed, current }) => <span key={item.id}
-          className={`gridra-stepper__ruler-tick${completed || current ? " gridra-stepper__ruler-tick--completed" : ""}`} aria-hidden="true"
+        {steps.map(({ item, index, traversed, current }) => <span key={item.id}
+          className={`gridra-stepper__ruler-tick${traversed || current ? " gridra-stepper__ruler-tick--reached" : ""}`} aria-hidden="true"
           style={{ [orientation === "horizontal" ? "left" : "top"]:
             `${positionOf(index)}%` }} />)}
         {currentIndex >= 0 && <span className="gridra-stepper__ruler-thumb" aria-hidden="true" />}
       </div>
       {orientation === "horizontal" && <div className="gridra-stepper__summary" aria-hidden="true">
-        <span>START</span><span>{currentIndex < 0 ? "0% · NO CURRENT STEP" : `${Math.round(progress)}% · STEP ${currentIndex + 1} OF ${items.length}`}</span><span>END</span>
+        <span>{text.start}</span><span>{text.summary(Math.round(progress), positionText)}</span><span>{text.end}</span>
       </div>}
     </>}
   </nav>;

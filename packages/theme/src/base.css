@@ -3437,6 +3437,7 @@
   --gridra-stepper-padding: 10px;
   --gridra-stepper-gap: 24px;
   --gridra-stepper-ruler-row: 80px;
+  --gridra-stepper-column-width: 140px;
   position: relative;
   display: block;
   width: 100%;
@@ -3450,6 +3451,7 @@
   --gridra-stepper-padding: 8px;
   --gridra-stepper-gap: 18px;
   --gridra-stepper-ruler-row: 68px;
+  --gridra-stepper-column-width: 120px;
 }
 .gridra-stepper--lg {
   --gridra-stepper-marker-size: 28px;
@@ -3459,6 +3461,7 @@
   --gridra-stepper-padding: 12px;
   --gridra-stepper-gap: 30px;
   --gridra-stepper-ruler-row: 94px;
+  --gridra-stepper-column-width: 160px;
 }
 .gridra-stepper__list,
 .gridra-stepper__item,
@@ -3504,10 +3507,10 @@
   font-family: var(--gridra-font-mono);
   text-align: start;
 }
-.gridra-stepper__button--completed:not(:disabled) {
+.gridra-stepper__button--completed:not([aria-disabled="true"]) {
   cursor: pointer;
 }
-.gridra-stepper__button--completed:hover:not(:disabled) {
+.gridra-stepper__button--completed:hover:not([aria-disabled="true"]) {
   background: var(--gridra-color-selected);
 }
 .gridra-stepper .gridra-stepper__button:focus-visible {
@@ -3595,9 +3598,14 @@
 }
 
 /* Cards: full-width state header, framed body, and connectors between cards. */
+.gridra-stepper--cards.gridra-stepper--horizontal,
+.gridra-stepper--line.gridra-stepper--horizontal {
+  overflow-x: auto;
+  padding: 6px;
+}
 .gridra-stepper--cards .gridra-stepper__list {
   display: grid;
-  grid-template-columns: repeat(var(--gridra-stepper-count), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--gridra-stepper-count), minmax(var(--gridra-stepper-column-width), 1fr));
   gap: var(--gridra-stepper-gap);
 }
 .gridra-stepper--cards .gridra-stepper__item {
@@ -3678,7 +3686,7 @@
   align-items: center;
   text-align: center;
 }
-.gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__item:last-child:not(:first-child) .gridra-stepper__button {
+.gridra-stepper--ruler.gridra-stepper--horizontal .gridra-stepper__item:last-child .gridra-stepper__button {
   align-items: flex-end;
   text-align: end;
 }
@@ -3719,7 +3727,7 @@
   height: 14px;
   background: var(--gridra-color-border-strong);
 }
-.gridra-stepper__ruler-tick--completed {
+.gridra-stepper__ruler-tick--reached {
   background: var(--gridra-color-text);
 }
 .gridra-stepper__ruler-thumb {
@@ -3823,7 +3831,7 @@
 /* Line: separated progress strokes with numbered state labels. */
 .gridra-stepper--line .gridra-stepper__list {
   display: grid;
-  grid-template-columns: repeat(var(--gridra-stepper-count), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--gridra-stepper-count), minmax(var(--gridra-stepper-column-width), 1fr));
   gap: 8px;
 }
 .gridra-stepper--line .gridra-stepper__item {

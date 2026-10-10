@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GridraButton, GridraStepper } from "@gridra-ui/react";
+import { GridraButton, GridraInput, GridraStepper } from "@gridra-ui/react";
 import type { GridraStepperItem, GridraStepperVariant } from "@gridra-ui/react";
 
 const checkoutSteps: GridraStepperItem[] = [
@@ -28,6 +28,13 @@ export function StepperExample({ variant }: { variant: GridraStepperVariant }) {
   return <div style={{ display: "grid", gap: 44, width: "100%", minWidth: 0, padding: 8 }}>
     <GridraStepper aria-label={`${variant} checkout steps`} variant={variant} items={checkoutSteps}
       currentId={checkoutId} onStepChange={setCheckoutId} />
+    <section aria-label="Checkout panel" style={{ border: "1px solid var(--gridra-color-border)", padding: 12 }}>
+      <h4 style={{ margin: "0 0 12px" }}>{checkoutSteps.find((step) => step.id === checkoutId)?.label}</h4>
+      {checkoutId === "cart" && <GridraInput label="Quantity" type="number" min={1} defaultValue={2} />}
+      {checkoutId === "shipping" && <GridraInput label="Shipping address" defaultValue="Tokyo, Japan" />}
+      {checkoutId === "payment" && <GridraInput label="Payment card" defaultValue="Card ending 4242" />}
+      {checkoutId === "confirm" && <p>Order ready for confirmation.</p>}
+    </section>
     <GridraStepper aria-label={`${variant} setup steps`} variant={variant} items={setupSteps}
       orientation="vertical" currentId={setupId} onStepChange={setSetupId}
       style={{ width: "min(100%, 400px)" }} />

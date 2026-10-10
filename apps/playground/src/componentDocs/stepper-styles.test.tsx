@@ -3,14 +3,16 @@ import { afterEach, beforeEach, expect, it } from "vitest";
 import { GridraStepper } from "@gridra-ui/react";
 import * as ts from "typescript";
 
-const baseCss = ts.sys.readFile(ts.sys.resolvePath("../../packages/theme/src/base.css")) ?? "";
+const cssRelativePath = "../../../../packages/theme/src/base.css";
+const cssUrl = new URL(/* @vite-ignore */ cssRelativePath, import.meta.url);
+const cssPath = decodeURIComponent(cssUrl.pathname).replace(/^\/([A-Za-z]:\/)/, "$1");
+const baseCss = ts.sys.readFile(cssPath);
+if (baseCss === undefined) throw new Error(`Could not read ${cssUrl.href}`);
 
 let stylesheet: HTMLStyleElement;
 beforeEach(() => {
   stylesheet = document.createElement("style");
-  const start = baseCss.indexOf(".gridra-stepper {");
-  expect(start).toBeGreaterThanOrEqual(0);
-  stylesheet.textContent = baseCss.slice(start, baseCss.indexOf(".gridra-breadcrumb {", start));
+  stylesheet.textContent = baseCss;
   document.head.append(stylesheet);
 });
 afterEach(() => {
@@ -33,6 +35,18 @@ it.each(["cards", "ruler", "line", "boxes"] as const)("keeps disabled %s states 
 it("gives a single ruler label the full flex width", () => {
   const { rerender } = render(<GridraStepper variant="ruler" items={[{ id: "only", label: "Only" }]} />);
   expect(getComputedStyle(screen.getByRole("listitem")).flexGrow).toBe("1");
+  expect(getComputedStyle(screen.getByRole("button")).alignItems).toBe("flex-end");
   rerender(<GridraStepper variant="ruler" items={[{ id: "first", label: "First" }, { id: "last", label: "Last" }]} />);
   expect(getComputedStyle(screen.getAllByRole("listitem")[0]).flexGrow).toBe("0.5");
+});
+
+it.each(["cards", "line"] as const)("contains a long %s sequence in a local scroll area", (variant) => {
+  render(<GridraStepper variant={variant} style={{ width: 600 }} items={Array.from({ length: 8 }, (_, index) => ({
+    id: String(index), label: `Workflow step ${index + 1}`,
+  }))} />);
+  const navStyle = getComputedStyle(screen.getByRole("navigation"));
+  expect(navStyle.overflowX).toBe("auto");
+  expect(navStyle.width).toBe("600px");
+  expect(navStyle.getPropertyValue("--gridra-stepper-column-width")).toBe("140px");
+  expect(getComputedStyle(screen.getByRole("list")).gridTemplateColumns).toContain("minmax(var(--gridra-stepper-column-width), 1fr)");
 });
