@@ -10,7 +10,7 @@ const highlighterPromise = createHighlighterCore({
     import("@shikijs/langs/css"),
     import("@shikijs/langs/bash")
   ],
-  themes: [import("@shikijs/themes/github-dark-default"), import("@shikijs/themes/github-light-default")]
+  themes: [import("@shikijs/themes/github-dark-default"), import("@shikijs/themes/github-light-high-contrast")]
 });
 
 export async function highlightDocsCode(code: string, language: DocsCodeLanguage) {
@@ -18,7 +18,7 @@ export async function highlightDocsCode(code: string, language: DocsCodeLanguage
 
   return highlighter.codeToHtml(code, {
     lang: language,
-    themes: { dark: "github-dark-default", light: "github-light-default" },
-    defaultColor: "dark"
+    themes: { dark: "github-dark-default", light: "github-light-high-contrast" },
+    defaultColor: false
   });
 }

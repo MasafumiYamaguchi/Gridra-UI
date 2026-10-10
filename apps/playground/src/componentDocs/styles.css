@@ -236,9 +236,12 @@
 .docs-code-block__lang { color: var(--gridra-color-muted-text); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
 .docs-code-block__pre,
 .docs-code-block__highlight .shiki { margin: 0; padding: 16px; overflow: auto; color: var(--gridra-color-text); font: 13px/1.8 var(--gridra-font-mono); white-space: pre; }
-.docs-code-block__highlight .shiki { background: var(--gridra-color-surface) !important; }
+.docs-code-block__highlight .shiki { background: var(--gridra-color-surface); }
+.docs-code-block__highlight .shiki,
+.docs-code-block__highlight .shiki span { color: var(--shiki-dark, var(--gridra-color-text)); }
+.gridra-theme-light .docs-code-block__highlight .shiki { background: var(--shiki-light-bg, #ffffff); }
 .gridra-theme-light .docs-code-block__highlight .shiki,
-.gridra-theme-light .docs-code-block__highlight .shiki span { color: var(--shiki-light) !important; }
+.gridra-theme-light .docs-code-block__highlight .shiki span { color: var(--shiki-light, var(--gridra-color-text)); }
 
 .docs-props-table-wrapper { min-width: 0; overflow: auto; }
 .docs-props-table { width: 100%; border-collapse: collapse; color: var(--gridra-color-muted-text); font-size: 14px; line-height: 1.7; }
