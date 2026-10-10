@@ -45,7 +45,7 @@ import "@gridra-ui/theme/themes.css";
 import { ComponentDocsPage } from "./componentDocs";
 import "./styles.css";
 
-const isDocsRoute = window.location.pathname === "/docs";
+const isDocsRoute = window.location.pathname.replace(/\/$/, "") === "/docs";
 
 type PlaygroundNodeType = "input" | "transform" | "output";
 
