@@ -29,6 +29,14 @@ Testing preferences:
 - Prefer adding narrow regression tests for interaction logic such as selection, dragging, resizing, and connections.
 - If a test would require brittle browser geometry, explain the tradeoff and cover the stable part instead.
 
+## Canvas API
+
+`useGridraCanvas` is controlled-only: `state` and `onStateChange(next, previous)`.
+The caller owns nodes with placement, connections and both selection arrays.
+The hook owns only transient pointer operations and preview geometry.
+Do not introduce a required canvas/root component or parallel placement/selection sources.
+Visual nodes take ordinary button props and `aria-pressed`; getters supply the interaction bindings.
+
 ## Controlled State Contracts
 
 Use controlled and uncontrolled APIs consistently when a component owns user-editable state.

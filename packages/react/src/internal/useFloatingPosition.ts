@@ -15,7 +15,6 @@ export interface UseFloatingPositionOptions<TPlacement extends Placement> {
   alignment?: "center" | "start";
   anchorRef: RefObject<HTMLElement | null>;
   floatingRef: RefObject<HTMLElement | null>;
-  updateDeps?: readonly unknown[];
 }
 
 export interface UseFloatingPositionResult<TPlacement extends Placement> {
@@ -33,7 +32,6 @@ export function useFloatingPosition<TPlacement extends Placement>({
   offset,
   open,
   placement,
-  updateDeps = [],
 }: UseFloatingPositionOptions<TPlacement>): UseFloatingPositionResult<TPlacement> {
   const [resolvedPlacement, setResolvedPlacement] = useState<TPlacement>(placement);
   const [coords, setCoords] = useState(HIDDEN_COORDS);
@@ -42,6 +40,7 @@ export function useFloatingPosition<TPlacement extends Placement>({
     setResolvedPlacement(placement);
   }, [placement]);
 
+  // Portalの初回mountと継承トークン変更でも、描画後の実寸を再計測する。
   useLayoutEffect(() => {
     if (!open || disabled) {
       return;
@@ -78,7 +77,8 @@ export function useFloatingPosition<TPlacement extends Placement>({
       }
 
       setResolvedPlacement(nextPlacement);
-      setCoords(nextCoords);
+      setCoords((previous) => previous.top === nextCoords.top && previous.left === nextCoords.left
+        ? previous : nextCoords);
     };
 
     updatePosition();
@@ -88,7 +88,7 @@ export function useFloatingPosition<TPlacement extends Placement>({
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition, true);
     };
-  }, [alignment, anchorRef, disabled, floatingRef, offset, open, placement, ...updateDeps]);
+  });
 
   return { resolvedPlacement, coords };
 }

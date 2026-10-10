@@ -13,8 +13,8 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 
 ## Current Implemented Surface
 
-- [x] `GridraRoot`
-- [x] `GridraCanvasArea`
+- [x] Parent-free CSS tokens and scoped theme classes
+- [x] `useGridraCanvas` and `GridraCanvasOverlay`
 - [x] `GridraSelectableGrid` (`GridraGrid` has been removed)
 - [x] `GridraPanel`
 - [x] `GridraNode`

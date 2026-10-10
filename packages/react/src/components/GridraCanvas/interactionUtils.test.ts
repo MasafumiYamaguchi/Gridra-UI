@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { computeDragPlacement, computeResizePlacement } from "./interactionUtils";
 import type { PointerEvent } from "react";
 
-function makeCanvas(): HTMLDivElement {
+function makeCanvas(): HTMLElement {
   const el = document.createElement("div");
   Object.defineProperty(el, "getBoundingClientRect", {
     value: () => ({ top: 0, left: 0, width: 600, height: 400 }),
@@ -11,12 +11,12 @@ function makeCanvas(): HTMLDivElement {
   return el;
 }
 
-function makePointerEvent(overrides: Partial<PointerEvent<HTMLDivElement>>): PointerEvent<HTMLDivElement> {
+function makePointerEvent(overrides: Partial<PointerEvent<HTMLElement>>): PointerEvent<HTMLElement> {
   return {
     clientX: 300,
     clientY: 200,
     ...overrides,
-  } as PointerEvent<HTMLDivElement>;
+  } as PointerEvent<HTMLElement>;
 }
 
 const gridCols = 12;

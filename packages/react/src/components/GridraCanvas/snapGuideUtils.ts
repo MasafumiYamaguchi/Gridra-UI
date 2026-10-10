@@ -3,7 +3,7 @@ import type { NodeSnapGuide } from "./types";
 
 export function createNodeDragSnapGuides(
   placement: { column: number; row: number; columnSpan?: number; rowSpan?: number },
-  canvas: HTMLDivElement,
+  canvas: HTMLElement,
   gridColumns: number,
   gridRows: number,
 ): NodeSnapGuide[] {
@@ -30,7 +30,7 @@ export function createNodeDragSnapGuides(
 
 export function createNodeResizeSnapGuides(
   placement: { column: number; row: number; columnSpan?: number; rowSpan?: number },
-  canvas: HTMLDivElement,
+  canvas: HTMLElement,
   gridColumns: number,
   gridRows: number,
 ): NodeSnapGuide[] {

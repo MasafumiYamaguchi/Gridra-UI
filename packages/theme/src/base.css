@@ -1,6 +1,6 @@
 @import "./colors/default.css";
 
-.gridra-root {
+:where(:root) {
   --gridra-font-mono: "JetBrains Mono", "Fira Code", "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
   --gridra-font-brand: ui-monospace, "SFMono-Light", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --gridra-radius-sm: 0;
@@ -11,62 +11,100 @@
   --gridra-space-lg: 12px;
   --gridra-panel-width: 280px;
   --gridra-node-pattern-size: 12px;
-
-  width: 100vw;
-  height: 100vh;
-  min-width: 100vw;
-  min-height: 100vh;
-  box-sizing: border-box;
-  padding: var(--gridra-space-lg);
-  color: var(--gridra-color-text);
-  background: var(--gridra-color-background);
-  font-family: var(--gridra-font-mono);
-  font-size: 12px;
-  letter-spacing: 0;
 }
 
-.gridra-portal-root {
-  --gridra-font-mono: "JetBrains Mono", "Fira Code", "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
-  --gridra-font-brand: ui-monospace, "SFMono-Light", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --gridra-radius-sm: 0;
-  --gridra-radius-md: 0;
-  --gridra-space-xs: 4px;
-  --gridra-space-sm: 6px;
-  --gridra-space-md: 10px;
-  --gridra-space-lg: 12px;
-  --gridra-panel-width: 280px;
-  --gridra-node-pattern-size: 12px;
+/* テーマclassを付けた任意のDOMには、部品のフォントや寸法設定を適用しない。 */
+:where(
+  .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
+  .gridra-button, .gridra-canvas-overlay, .gridra-card, .gridra-checkbox, .gridra-cluster,
+  .gridra-command-palette, .gridra-connection-handle, .gridra-container, .gridra-context-menu,
+  .gridra-description-list, .gridra-dialog, .gridra-divider, .gridra-drag-handle, .gridra-dropdown-menu,
+  .gridra-empty-state, .gridra-error-message, .gridra-field, .gridra-grid-layout, .gridra-hover-card,
+  .gridra-icon-button, .gridra-inline, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
+  .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
+  .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
+  .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
+  .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+) {
   box-sizing: border-box;
   color: var(--gridra-color-text);
   font-family: var(--gridra-font-mono);
   font-size: 12px;
   letter-spacing: 0;
 }
-
-.gridra-root *,
-.gridra-root *::before,
-.gridra-root *::after,
-.gridra-portal-root *,
-.gridra-portal-root *::before,
-.gridra-portal-root *::after {
+:where(
+  .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
+  .gridra-button, .gridra-canvas-overlay, .gridra-card, .gridra-checkbox, .gridra-cluster,
+  .gridra-command-palette, .gridra-connection-handle, .gridra-container, .gridra-context-menu,
+  .gridra-description-list, .gridra-dialog, .gridra-divider, .gridra-drag-handle, .gridra-dropdown-menu,
+  .gridra-empty-state, .gridra-error-message, .gridra-field, .gridra-grid-layout, .gridra-hover-card,
+  .gridra-icon-button, .gridra-inline, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
+  .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
+  .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
+  .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
+  .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+) :where(*),
+:where(
+  .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
+  .gridra-button, .gridra-canvas-overlay, .gridra-card, .gridra-checkbox, .gridra-cluster,
+  .gridra-command-palette, .gridra-connection-handle, .gridra-container, .gridra-context-menu,
+  .gridra-description-list, .gridra-dialog, .gridra-divider, .gridra-drag-handle, .gridra-dropdown-menu,
+  .gridra-empty-state, .gridra-error-message, .gridra-field, .gridra-grid-layout, .gridra-hover-card,
+  .gridra-icon-button, .gridra-inline, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
+  .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
+  .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
+  .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
+  .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+) :where(*)::before,
+:where(
+  .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
+  .gridra-button, .gridra-canvas-overlay, .gridra-card, .gridra-checkbox, .gridra-cluster,
+  .gridra-command-palette, .gridra-connection-handle, .gridra-container, .gridra-context-menu,
+  .gridra-description-list, .gridra-dialog, .gridra-divider, .gridra-drag-handle, .gridra-dropdown-menu,
+  .gridra-empty-state, .gridra-error-message, .gridra-field, .gridra-grid-layout, .gridra-hover-card,
+  .gridra-icon-button, .gridra-inline, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
+  .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
+  .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
+  .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
+  .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+) :where(*)::after,
+:where(
+  .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
+  .gridra-button, .gridra-canvas-overlay, .gridra-card, .gridra-checkbox, .gridra-cluster,
+  .gridra-command-palette, .gridra-connection-handle, .gridra-container, .gridra-context-menu,
+  .gridra-description-list, .gridra-dialog, .gridra-divider, .gridra-drag-handle, .gridra-dropdown-menu,
+  .gridra-empty-state, .gridra-error-message, .gridra-field, .gridra-grid-layout, .gridra-hover-card,
+  .gridra-icon-button, .gridra-inline, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
+  .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
+  .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
+  .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
+  .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+)::before,
+:where(
+  .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
+  .gridra-button, .gridra-canvas-overlay, .gridra-card, .gridra-checkbox, .gridra-cluster,
+  .gridra-command-palette, .gridra-connection-handle, .gridra-container, .gridra-context-menu,
+  .gridra-description-list, .gridra-dialog, .gridra-divider, .gridra-drag-handle, .gridra-dropdown-menu,
+  .gridra-empty-state, .gridra-error-message, .gridra-field, .gridra-grid-layout, .gridra-hover-card,
+  .gridra-icon-button, .gridra-inline, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
+  .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
+  .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
+  .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
+  .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+)::after {
   box-sizing: border-box;
-}
-
-.gridra-root__shell {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--gridra-space-md);
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-}
-
-.gridra-root__shell--left {
-  grid-template-columns: var(--gridra-panel-width) minmax(0, 1fr);
-}
-
-.gridra-root__shell--right {
-  grid-template-columns: minmax(0, 1fr) var(--gridra-panel-width);
 }
 
 .gridra-panel {
@@ -113,14 +151,6 @@
   overflow: auto;
 }
 
-.gridra-main {
-  display: flex;
-  min-width: 0;
-  min-height: 0;
-  flex-direction: column;
-  overflow: hidden;
-}
-
 .gridra-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -141,7 +171,7 @@
   border-radius: var(--gridra-radius-sm);
   background: var(--gridra-color-surface-input);
   color: var(--gridra-color-text);
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   font-size: 12px;
 }
 
@@ -367,7 +397,7 @@
   align-items: center;
   gap: var(--gridra-space-sm);
   color: var(--gridra-color-text);
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1546,77 +1576,12 @@
   outline-offset: 2px;
 }
 
-.gridra-canvas-area {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(var(--gridra-grid-columns, 12), minmax(0, 1fr));
-  grid-template-rows: repeat(var(--gridra-grid-rows, 6), minmax(0, 1fr));
-  gap: var(--gridra-space-md);
-  width: 100%;
-  min-width: 0;
-  min-height: 0;
-  flex: 1;
-  overflow: auto;
-  align-items: stretch;
-  background: var(--gridra-color-background);
-  padding: var(--gridra-space-md);
-}
-
-.gridra-canvas-area--snap-guides-visible {
-  --gridra-snap-grid-line: var(--gridra-color-snap-line);
-  --gridra-snap-grid-column-size: calc((100% - var(--gridra-space-md) * 2) / var(--gridra-grid-columns, 12));
-  --gridra-snap-grid-row-size: calc((100% - var(--gridra-space-md) * 2) / var(--gridra-grid-rows, 6));
-}
-
-.gridra-canvas-area--snap-guides-visible::before,
-.gridra-canvas-area--snap-guides-visible::after {
+.gridra-canvas-overlay {
   position: absolute;
-  z-index: 0;
-  inset: var(--gridra-space-md);
-  content: "";
+  z-index: 1;
+  top: 0;
+  left: 0;
   pointer-events: none;
-}
-
-.gridra-canvas-area--snap-guides-visible::before {
-  background-image:
-    repeating-linear-gradient(
-      to right,
-      var(--gridra-snap-grid-line) 0 1px,
-      transparent 1px var(--gridra-snap-grid-column-size)
-    );
-  mask-image:
-    repeating-linear-gradient(
-      to bottom,
-      var(--gridra-color-background) 0 2px,
-      transparent 2px 6px
-    );
-  -webkit-mask-image:
-    repeating-linear-gradient(
-      to bottom,
-      var(--gridra-color-background) 0 2px,
-      transparent 2px 6px
-    );
-}
-
-.gridra-canvas-area--snap-guides-visible::after {
-  background-image:
-    repeating-linear-gradient(
-      to bottom,
-      var(--gridra-snap-grid-line) 0 1px,
-      transparent 1px var(--gridra-snap-grid-row-size)
-    );
-  mask-image:
-    repeating-linear-gradient(
-      to right,
-      var(--gridra-color-background) 0 2px,
-      transparent 2px 6px
-    );
-  -webkit-mask-image:
-    repeating-linear-gradient(
-      to right,
-      var(--gridra-color-background) 0 2px,
-      transparent 2px 6px
-    );
 }
 
 .gridra-selection-box {
@@ -1677,10 +1642,7 @@
 
 .gridra-connection-layer {
   position: absolute;
-  z-index: 1;
-  inset: var(--gridra-space-md);
-  width: calc(100% - var(--gridra-space-md) * 2);
-  height: calc(100% - var(--gridra-space-md) * 2);
+  inset: 0;
   overflow: visible;
   pointer-events: none;
 }
@@ -1694,6 +1656,10 @@
   stroke-width: var(--gridra-connection-line-width, 2px);
   vector-effect: non-scaling-stroke;
   opacity: 0.78;
+}
+
+.gridra-connection-line--preview {
+  pointer-events: none;
 }
 
 .gridra-connection-line--selected {
@@ -1819,7 +1785,7 @@
   background: var(--gridra-color-surface-raised);
   color: var(--gridra-color-text);
   cursor: pointer;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   font-size: 11px;
   letter-spacing: 0.06em;
   padding: var(--gridra-space-md);
@@ -1850,12 +1816,13 @@
   border-radius: var(--gridra-radius-md);
   background:
     radial-gradient(circle, var(--gridra-color-node-pattern) 1px, transparent 1px),
-    var(--gridra-color-canvas-subtle);
+    linear-gradient(var(--gridra-color-canvas-subtle), var(--gridra-color-canvas-subtle)),
+    var(--gridra-color-background);
   background-position: 0 0;
   background-size: var(--gridra-node-pattern-size) var(--gridra-node-pattern-size);
   color: var(--gridra-color-text);
   cursor: pointer;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   padding: var(--gridra-space-sm) var(--gridra-space-md);
   text-align: left;
   text-transform: uppercase;
@@ -2055,11 +2022,12 @@
   text-transform: uppercase;
 }
 
-.gridra-node[aria-selected="true"] {
+.gridra-node[aria-pressed="true"] {
   border-color: var(--gridra-color-accent);
   background:
     radial-gradient(circle, var(--gridra-color-node-pattern) 1px, transparent 1px),
-    var(--gridra-color-selected);
+    linear-gradient(var(--gridra-color-selected), var(--gridra-color-selected)),
+    var(--gridra-color-background);
   background-position: 0 0;
   background-size: var(--gridra-node-pattern-size) var(--gridra-node-pattern-size);
   box-shadow: var(--gridra-shadow-selected);
@@ -2732,7 +2700,7 @@
   color: var(--gridra-color-muted-text);
   cursor: pointer;
   padding: 0;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   font-size: 16px;
   line-height: 1;
   transition: border-color 120ms ease, color 120ms ease;
@@ -2813,7 +2781,7 @@
   background: transparent;
   color: var(--gridra-color-text);
   cursor: pointer;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   text-align: left;
   outline: none;
 }
@@ -2892,7 +2860,7 @@
   background: transparent;
   color: var(--gridra-color-muted-text);
   cursor: pointer;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   text-align: left;
   text-decoration: none;
   outline: none;
@@ -3036,7 +3004,7 @@
   color: var(--gridra-color-muted-text);
   cursor: pointer;
   padding: 0;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   font-size: 16px;
   line-height: 1;
   transition: border-color 120ms ease, color 120ms ease;
@@ -3057,7 +3025,7 @@
   border: 1px solid var(--gridra-color-border);
   background: var(--gridra-color-surface-input);
   color: var(--gridra-color-text);
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   font-size: 13px;
   line-height: 1.4;
   padding: 6px 8px;
@@ -3117,7 +3085,7 @@
   background: transparent;
   color: var(--gridra-color-text);
   cursor: pointer;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   font-size: 12px;
   line-height: 1.4;
   padding: 6px 10px;
@@ -3360,7 +3328,7 @@
   background: var(--gridra-color-surface);
   color: var(--gridra-color-text);
   cursor: pointer;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   outline: none;
   padding: 0;
   text-align: left;
@@ -3484,7 +3452,7 @@
   background: var(--gridra-color-surface-input);
   color: var(--gridra-color-text);
   cursor: pointer;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   font-size: 11px;
   line-height: 1;
   padding: 0 8px;
@@ -3631,7 +3599,7 @@
   background: transparent;
   color: var(--gridra-color-text);
   cursor: pointer;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   text-align: start;
   border-radius: var(--gridra-radius-sm);
   padding: var(--gridra-space-xs) var(--gridra-space-sm);
@@ -3947,7 +3915,7 @@
   background: transparent;
   color: var(--gridra-color-muted-text);
   cursor: pointer;
-  font: inherit;
+  font: 12px var(--gridra-font-mono);
   white-space: nowrap;
   outline: none;
   transition: color 120ms ease, background 120ms ease, border-color 120ms ease;

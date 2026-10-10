@@ -31,5 +31,5 @@ export function hasConnection(
 }
 
 export function getConnectionKey(connection: GridraNodeConnection): string {
-  return `${connection.sourceId}->${connection.targetId}`;
+  return JSON.stringify([connection.sourceId, connection.targetId]);
 }

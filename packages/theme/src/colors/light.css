@@ -1,6 +1,4 @@
-.gridra-theme-light,
-.gridra-root.gridra-theme-light,
-.gridra-portal-root.gridra-theme-light {
+.gridra-theme-light {
   color-scheme: light;
   --gridra-color-background: #ffffff;
   --gridra-color-surface: #f8f8f8;

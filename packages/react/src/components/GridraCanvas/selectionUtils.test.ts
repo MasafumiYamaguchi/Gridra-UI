@@ -2,13 +2,13 @@ import { describe, expect, it } from "vitest";
 import { getSelectionMode, mergeSelectedIds } from "./selectionUtils";
 import type { PointerEvent } from "react";
 
-function makePointerEvent(overrides: Partial<PointerEvent<HTMLDivElement>>): PointerEvent<HTMLDivElement> {
+function makePointerEvent(overrides: Partial<PointerEvent<HTMLElement>>): PointerEvent<HTMLElement> {
   return {
     shiftKey: false,
     metaKey: false,
     ctrlKey: false,
     ...overrides,
-  } as PointerEvent<HTMLDivElement>;
+  } as PointerEvent<HTMLElement>;
 }
 
 describe("getSelectionMode", () => {

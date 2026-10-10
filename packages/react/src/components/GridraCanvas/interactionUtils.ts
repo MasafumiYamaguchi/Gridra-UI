@@ -10,8 +10,8 @@ import {
 import type { PointerEvent } from "react";
 
 export interface DragPlacementInput {
-  canvas: HTMLDivElement;
-  event: PointerEvent<HTMLDivElement>;
+  canvas: HTMLElement;
+  event: PointerEvent<HTMLElement>;
   gridColumns: number;
   gridRows: number;
   origin: GridraPoint;
@@ -39,8 +39,8 @@ export function computeDragPlacement(input: DragPlacementInput): GridraNodePlace
 }
 
 export interface ResizePlacementInput {
-  canvas: HTMLDivElement;
-  event: PointerEvent<HTMLDivElement>;
+  canvas: HTMLElement;
+  event: PointerEvent<HTMLElement>;
   gridColumns: number;
   gridRows: number;
   origin: GridraPoint;

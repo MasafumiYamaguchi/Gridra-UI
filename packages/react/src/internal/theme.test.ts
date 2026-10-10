@@ -8,6 +8,8 @@ import {
 
 afterEach(() => {
   document.body.innerHTML = "";
+  document.body.className = "";
+  document.documentElement.className = "";
 });
 
 describe("theme helpers", () => {
@@ -52,9 +54,11 @@ describe("theme helpers", () => {
     expect(getGridraThemeClassName(anchor)).toBe("gridra-theme-studio-blue");
   });
 
-  it("falls back to the first document theme when no anchor is available", () => {
+  it("does not adopt a theme from an unrelated subtree", () => {
     document.body.innerHTML = '<div class="gridra-theme-ember" />';
 
-    expect(getGridraThemeClassName()).toBe("gridra-theme-ember");
+    expect(getGridraThemeClassName()).toBeUndefined();
+    document.documentElement.className = "gridra-theme-light";
+    expect(getGridraThemeClassName()).toBe("gridra-theme-light");
   });
 });

@@ -9,7 +9,7 @@ import type { GridraCanvasNode, GridraNodeConnection } from "./types";
 export function hitTestNodes<TNode extends GridraCanvasNode>(
   nodes: TNode[],
   selectionRect: GridraRect,
-  canvas: HTMLDivElement,
+  canvas: HTMLElement,
   gridColumns: number,
   gridRows: number,
 ): GridraId[] {
@@ -31,7 +31,7 @@ export function hitTestConnections<TNode extends GridraCanvasNode>(
   connections: GridraNodeConnection[],
   nodes: TNode[],
   selectionRect: GridraRect,
-  canvas: HTMLDivElement,
+  canvas: HTMLElement,
   gridColumns: number,
   gridRows: number,
 ): GridraNodeConnection[] {

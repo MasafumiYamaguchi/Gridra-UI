@@ -17,7 +17,7 @@ import { cx } from "../../internal/classNames";
 import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { getPortalTarget } from "../../internal/theme";
-import { useGridraThemeClassName } from "../../internal/themeContext";
+import { useGridraPortalTheme } from "../../internal/portalTheme";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraTooltipPlacement = "top" | "right" | "bottom" | "left";
@@ -83,7 +83,6 @@ export function GridraTooltip({
     offset: TOOLTIP_OFFSET,
     open: currentOpen,
     placement,
-    updateDeps: [content, size, maxWidth],
   });
 
   const openWithDelay = () => {
@@ -121,10 +120,10 @@ export function GridraTooltip({
     }),
   };
 
-  const portalThemeClassName = useGridraThemeClassName(anchorRef);
+  const portalTheme = useGridraPortalTheme(anchorRef);
   const tooltipClassName = cx(
     "gridra-portal-root",
-    portalThemeClassName,
+    portalTheme.className,
     "gridra-tooltip",
     `gridra-tooltip--${resolvedPlacement}`,
     `gridra-tooltip--${size}`,
@@ -134,6 +133,7 @@ export function GridraTooltip({
   const tooltipStyle = useMemo(
     () =>
       ({
+        ...portalTheme.style,
         ...style,
         top: `${coords.top}px`,
         left: `${coords.left}px`,
@@ -144,7 +144,7 @@ export function GridraTooltip({
               ? `${maxWidth}px`
               : maxWidth,
       }) as CSSProperties,
-    [coords.left, coords.top, maxWidth, style],
+    [portalTheme.style, coords.left, coords.top, maxWidth, style],
   );
   const portalTarget = getPortalTarget();
 

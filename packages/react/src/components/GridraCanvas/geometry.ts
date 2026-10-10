@@ -56,13 +56,13 @@ export function normalizeGridPlacementForDrag(
 
 export function getCanvasPoint(
   event: PointerEvent<Element>,
-  canvas: HTMLDivElement,
+  canvas: HTMLElement,
 ): GridraPoint {
   const bounds = canvas.getBoundingClientRect();
 
   return {
-    x: event.clientX - bounds.left + canvas.scrollLeft,
-    y: event.clientY - bounds.top + canvas.scrollTop,
+    x: event.clientX - bounds.left - canvas.clientLeft + canvas.scrollLeft,
+    y: event.clientY - bounds.top - canvas.clientTop + canvas.scrollTop,
   };
 }
 
@@ -128,7 +128,7 @@ export function getConnectionPoint(
 export function getConnectionRect(
   sourcePlacement: GridraNodePlacement,
   targetPlacement: GridraNodePlacement,
-  canvas: HTMLDivElement,
+  canvas: HTMLElement,
   gridColumns: number,
   gridRows: number,
 ): GridraRect {
@@ -155,7 +155,7 @@ export function getConnectionRect(
 
 export function getNodeRect(
   placement: GridraNodePlacement,
-  canvas: HTMLDivElement,
+  canvas: HTMLElement,
   gridColumns: number,
   gridRows: number,
 ): GridraRect {
@@ -174,7 +174,7 @@ export function getNodeRect(
 }
 
 export function getGridMetrics(
-  canvas: HTMLDivElement,
+  canvas: HTMLElement,
   gridColumns: number,
   gridRows: number,
 ) {
@@ -209,7 +209,7 @@ export function getGridMetrics(
 
 export function getGridPoint(
   point: GridraPoint,
-  canvas: HTMLDivElement,
+  canvas: HTMLElement,
   gridColumns: number,
   gridRows: number,
 ): GridraPoint {

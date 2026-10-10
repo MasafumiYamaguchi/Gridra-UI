@@ -4,7 +4,11 @@ export function mergeRefs<TValue>(
 ) {
   return (value: TValue | null) => {
     if (typeof originalRef === "function") {
-      originalRef(value);
+      const cleanup = originalRef(value);
+      if (typeof cleanup === "function") {
+        nextRef(value);
+        return () => { cleanup(); nextRef(null); };
+      }
     } else if (originalRef && typeof originalRef === "object" && "current" in (originalRef as object)) {
       (originalRef as { current: TValue | null }).current = value;
     }

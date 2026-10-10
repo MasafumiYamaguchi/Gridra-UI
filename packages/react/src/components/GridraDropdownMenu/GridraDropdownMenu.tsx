@@ -19,7 +19,7 @@ import { composeHandlers } from "../../internal/composeHandlers";
 import { mergeRefs } from "../../internal/mergeRefs";
 import { clampIndex } from "../../internal/numeric";
 import { getPortalTarget } from "../../internal/theme";
-import { useGridraThemeClassName } from "../../internal/themeContext";
+import { useGridraPortalTheme } from "../../internal/portalTheme";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";
 
 export type GridraDropdownMenuPlacement = "top" | "right" | "bottom" | "left";
@@ -165,7 +165,6 @@ export function GridraDropdownMenu({
     offset: MENU_OFFSET,
     open: currentOpen,
     placement,
-    updateDeps: [items, size, minWidth, maxWidth],
   });
 
   useEffect(() => {
@@ -338,10 +337,10 @@ export function GridraDropdownMenu({
     ),
   };
 
-  const portalThemeClassName = useGridraThemeClassName(triggerRef);
+  const portalTheme = useGridraPortalTheme(triggerRef);
   const menuClassName = cx(
     "gridra-portal-root",
-    portalThemeClassName,
+    portalTheme.className,
     "gridra-dropdown-menu",
     `gridra-dropdown-menu--${resolvedPlacement}`,
     `gridra-dropdown-menu--${size}`,
@@ -351,6 +350,7 @@ export function GridraDropdownMenu({
   const menuStyle = useMemo(
     () =>
       ({
+        ...portalTheme.style,
         ...style,
         top: `${coords.top}px`,
         left: `${coords.left}px`,
@@ -368,7 +368,7 @@ export function GridraDropdownMenu({
               ? `${maxWidth}px`
               : maxWidth,
       }) as CSSProperties,
-    [coords.top, coords.left, minWidth, maxWidth, style],
+    [portalTheme.style, coords.top, coords.left, minWidth, maxWidth, style],
   );
   const portalTarget = getPortalTarget();
 

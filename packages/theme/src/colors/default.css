@@ -1,6 +1,4 @@
-.gridra-root,
-.gridra-portal-root {
-  color-scheme: dark;
+:where(:root) {
   --gridra-color-background: #000000;
   --gridra-color-surface: #050505;
   --gridra-color-surface-raised: #080808;

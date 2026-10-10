@@ -1,6 +1,4 @@
-.gridra-theme-midnight,
-.gridra-root.gridra-theme-midnight,
-.gridra-portal-root.gridra-theme-midnight {
+.gridra-theme-midnight {
   color-scheme: dark;
   --gridra-color-background: #1a1b26;
   --gridra-color-surface: #16161e;

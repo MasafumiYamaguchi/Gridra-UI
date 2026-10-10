@@ -1,6 +1,4 @@
-.gridra-theme-ember,
-.gridra-root.gridra-theme-ember,
-.gridra-portal-root.gridra-theme-ember {
+.gridra-theme-ember {
   color-scheme: dark;
   --gridra-color-background: #282828;
   --gridra-color-surface: #32302f;

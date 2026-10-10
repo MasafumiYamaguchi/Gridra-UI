@@ -11,7 +11,7 @@ describe("connection utilities", () => {
   });
 
   it("formats stable connection keys", () => {
-    expect(getConnectionKey({ sourceId: "source", targetId: "target" })).toBe("source->target");
+    expect(getConnectionKey({ sourceId: "source", targetId: "target" })).toBe('["source","target"]');
   });
 });
 

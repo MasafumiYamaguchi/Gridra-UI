@@ -36,15 +36,16 @@ describe("GridraCommandPalette", () => {
     ).not.toThrow();
   });
 
-  it("carries Gridra root and theme classes into the portal backdrop", () => {
+  it("carries standalone portal and theme classes into the portal backdrop", () => {
     render(
       <div className="gridra-theme-light">
-        <GridraCommandPalette items={basicItems} defaultOpen />
+        <GridraCommandPalette items={basicItems} defaultOpen theme="light" />
       </div>,
     );
     const backdrop = document.querySelector(".gridra-command-palette__backdrop") as HTMLElement;
 
-    expect(backdrop.className).toContain("gridra-root");
+    expect(backdrop.className).toContain("gridra-portal-root");
+    expect(backdrop.classList.contains("gridra-root")).toBe(false);
     expect(backdrop.className).toContain("gridra-theme-light");
   });
 

@@ -3,7 +3,7 @@ import type { GridraId } from "@gridra-ui/core";
 import type { PointerEvent } from "react";
 
 export function getSelectionMode(
-  event: PointerEvent<HTMLDivElement>,
+  event: PointerEvent<HTMLElement>,
   fallbackMode: GridraSelectionMode,
   modifierKeys?: { additive?: "Shift"; toggle?: "Meta" | "Control" },
 ): GridraSelectionMode {

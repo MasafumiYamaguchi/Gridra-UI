@@ -1,3 +1,4 @@
+import type { GridraThemeName } from "../../theme";
 import {
   createContext,
   useCallback,
@@ -8,7 +9,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
-import { useGridraThemeClassName } from "../../internal/themeContext";
+import { useGridraPortalTheme } from "../../internal/portalTheme";
 
 export type GridraToastPosition = "top" | "bottom";
 
@@ -50,9 +51,11 @@ export function useToast(): GridraToastContextValue {
 export function GridraToastProvider({
   children,
   position = "bottom",
+  theme,
 }: {
   children: ReactNode;
   position?: GridraToastPosition;
+  theme?: GridraThemeName;
 }) {
   const [currentToast, setCurrentToast] = useState<QueuedToast | null>(null);
   const [exiting, setExiting] = useState(false);
@@ -63,7 +66,7 @@ export function GridraToastProvider({
   // show内から最新の表示有無を同期的に判定するため、stateと同じ値をrefにも持つ。
   const currentRef = useRef<QueuedToast | null>(null);
 
-  const portalThemeClassName = useGridraThemeClassName();
+  const portalTheme = useGridraPortalTheme(undefined, theme);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {
@@ -147,7 +150,7 @@ export function GridraToastProvider({
   const viewportClassName = [
     "gridra-portal-root",
     "gridra-toast__portal",
-    portalThemeClassName,
+    portalTheme.className,
     "gridra-toast__viewport",
     position === "top" && "gridra-toast__viewport--top",
   ]
@@ -160,7 +163,7 @@ export function GridraToastProvider({
       {/* アプリのレイアウトに影響させないため、表示中のToastだけをbody直下へPortalする。 */}
       {currentToast &&
         createPortal(
-          <div className={viewportClassName}>
+          <div className={viewportClassName} style={portalTheme.style}>
             <div
               className={[
                 "gridra-toast",

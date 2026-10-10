@@ -35,10 +35,25 @@ import "@gridra-ui/theme/themes.css";
 Then select a built-in or custom theme at runtime:
 
 ```tsx
-<GridraRoot theme="midnight">...</GridraRoot>
+<div className="gridra-theme-midnight">...</div>
 ```
 
 Individual preset imports such as `dark.css` and `light.css` remain available.
+
+## Parent-free components and canvas interactions
+
+Importing `base.css` gives components default tokens without wrapping the app.
+Theme classes work on any DOM element. Layout and page sizing belong to your app.
+
+Use `useGridraCanvas({ state, onStateChange, grid, interactions })` for spatial editing.
+The controlled state contains `nodes` (including placement), `connections`, `selectedIds`,
+and `selectedConnections`. Spread its getters onto your own container, buttons and handles;
+render `GridraCanvasOverlay` with `overlayProps` inside the same container.
+Give the container a definite size and place nodes directly in its equal-cell grid.
+The hook never renders elements or mutates input state.
+
+The former Root and CanvasArea APIs have been removed. See [migration](./MIGRATION.md)
+for a complete controlled example and replacement mapping.
 
 ## Development
 
@@ -127,7 +142,7 @@ The theme package exposes CSS files instead of requiring a JavaScript runtime:
 - `@gridra-ui/theme/themes.css`: all built-in themes for runtime switching.
 - `@gridra-ui/theme/{dark,light,midnight,forest,ember}.css`: individual presets.
 
-Consumers can select a preset with the `GridraRoot` `theme` prop or define a
+Consumers can apply a `gridra-theme-*` class to any DOM element or define a
 `.gridra-theme-<name>` class with the same required tokens. See
 [THEMING.md](./THEMING.md) for the complete contract and a custom theme example.
 

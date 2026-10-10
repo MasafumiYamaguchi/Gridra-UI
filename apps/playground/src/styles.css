@@ -60,14 +60,39 @@ body {
   }
 }
 
-.docs-root {
-  padding: 0;
+.playground-shell {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--gridra-space-md);
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--gridra-space-lg);
+  color: var(--gridra-color-text);
+  background: var(--gridra-color-background);
+  font: 12px var(--gridra-font-mono);
 }
-
-.docs-root > .gridra-root__shell,
-.docs-root .gridra-main {
+.playground-main {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   min-height: 0;
+  overflow: hidden;
+}
+.playground-canvas {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  gap: var(--gridra-space-md);
+  padding: var(--gridra-space-md);
+  overflow: auto;
+  background: var(--gridra-color-background);
+}
+.docs-root {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  color: var(--gridra-color-text);
+  font: 12px var(--gridra-font-mono);
 }
 
 .docs-page {

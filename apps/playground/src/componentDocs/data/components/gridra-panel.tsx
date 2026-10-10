@@ -6,7 +6,7 @@ export const panelDoc: ComponentDoc = {
     name: "GridraPanel",
     summary: "Dense side panel container with optional heading and header action.",
     description:
-      "GridraPanel is a dense sidebar container with a header (title + actions) and a scrollable body. It uses the panel width token from the theme and is designed to be placed inside GridraRoot.",
+      "GridraPanel is a dense sidebar container with a header (title + actions) and a scrollable body. It uses theme tokens and can be placed in any application layout.",
     importExample: 'import { GridraPanel } from "@gridra-ui/react";',
     props: [
       { name: "heading", type: "ReactNode", description: "Panel title rendered as an h2." },

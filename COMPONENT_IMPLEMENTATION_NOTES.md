@@ -14,21 +14,22 @@ Implemented:
 - Supports pixel-based `rect` placement.
 - Supports grid-based `placement`.
 - Supports `visible` for display toggling.
-- `GridraCanvasArea` renders it during pointer drag.
-- `GridraCanvasArea` calculates the drag rectangle from pointer start/current positions.
-- `GridraCanvasArea` hit tests nodes inside the selection rectangle.
-- `GridraCanvasArea` supports multi-selection state with `selectedIds`, `defaultSelectedIds`, and `onSelectionIdsChange`.
+- `GridraCanvasOverlay` renders the rectangle supplied by the hook during pointer drag.
+- `useGridraCanvas` calculates the drag rectangle from pointer start/current positions.
+- `useGridraCanvas` hit tests nodes inside the selection rectangle.
+- `useGridraCanvas` uses controlled `state.selectedIds` and `onStateChange(next, previous)`.
 - The playground demonstrates range selection by dragging on the canvas background.
 
 Not implemented yet:
 
-- Keyboard modifiers such as shift-add or command-toggle.
-- Additive range selection. Current drag selection replaces `selectedIds`.
+- Keyboard-only range selection.
+
+Additive/toggle modes and configurable Shift, Meta, or Control modifiers are implemented.
 
 Current data flow:
 
 ```text
-external rect or grid placement, or CanvasArea drag state
+external rect or grid placement, or canvas hook operation state
   -> GridraSelectionBox
   -> visual selection frame
 ```
@@ -55,16 +56,15 @@ Implemented:
 - Supports corner and inline position classes.
 - Forwards span attributes and pointer handlers so consumers can attach drag behavior.
 - `GridraNode` exposes a `dragHandle` slot.
-- `GridraCanvasArea` can optionally move nodes with `enableNodeDragging`.
-- `GridraCanvasArea` supports controlled or uncontrolled `nodePlacements`.
-- `GridraCanvasArea` emits `onNodeMove` and `onNodePlacementsChange`.
+- `useGridraCanvas` enables moving through `interactions.dragging` and `getDragHandleProps`.
+- Placement belongs to each node in controlled `state.nodes`.
+- `useGridraCanvas` emits updated nodes through `onStateChange(next, previous)`.
 - The playground can toggle node dragging from the toolbar.
 
 Not implemented yet:
 
 - Keyboard repositioning semantics.
 - Multi-node dragging.
-- Snap guide visualization while dragging.
 
 Current data flow:
 
@@ -74,7 +74,7 @@ handle pointer down
   -> pointer move
   -> convert pointer delta to grid-cell delta
   -> normalize placement inside grid bounds
-  -> update nodePlacements
+  -> notify next nodes with placement
   -> render moved node
 ```
 
@@ -87,9 +87,9 @@ Implemented:
 - Resize handle component exported from `@gridra-ui/react`.
 - Supports right, bottom, bottom-right, and inline position classes.
 - `GridraNode` exposes a `resizeHandle` slot.
-- `GridraCanvasArea` can optionally resize selected nodes with `enableNodeResizing`.
-- Resizing updates `columnSpan` and `rowSpan` through the existing `nodePlacements` state.
-- `GridraCanvasArea` emits `onNodeResize`.
+- `useGridraCanvas` enables resizing through `interactions.resizing` and `getResizeHandleProps`.
+- Resizing updates `columnSpan` and `rowSpan` in each node placement.
+- Resizing emits `onStateChange(next, previous)`.
 - The playground can toggle node resizing from the toolbar.
 
 Not implemented yet:
@@ -107,7 +107,7 @@ resize handle pointer down
   -> pointer move
   -> convert pointer delta to grid-span delta
   -> normalize span inside grid bounds
-  -> update nodePlacements
+  -> notify next nodes with placement
   -> render resized node
 ```
 
@@ -122,11 +122,11 @@ Implemented:
 - Supports input and output handle variants.
 - Supports active visual state.
 - `GridraNode` exposes a `connectionHandles` slot.
-- `GridraCanvasArea` can optionally render node connection handles with `enableNodeConnecting`.
-- `GridraCanvasArea` supports controlled or uncontrolled `nodeConnections`.
-- `GridraCanvasArea` emits `onNodeConnectionStart`, `onNodeConnect`, and `onNodeConnectionCancel`.
-- `GridraCanvasArea` renders persisted connections as SVG paths.
-- `GridraCanvasArea` supports `connectionLineWidth` for configurable connection stroke width.
+- The caller attaches `getConnectionHandleProps` to handles and enables `interactions.connecting`.
+- Connections belong to controlled `state.connections`.
+- Accepted connection changes emit `onStateChange(next, previous)`; previews remain transient.
+- `GridraCanvasOverlay` renders hook-provided connection paths.
+- `--gridra-connection-line-width` configures connection stroke width.
 - Connection lines can be clicked to highlight them.
 - Range selection can highlight multiple connection lines.
 - Highlighted connection lines can be deleted with Delete or Backspace.
@@ -135,8 +135,6 @@ Implemented:
 
 Not implemented yet:
 
-- Connection preview line while dragging.
-- Hit testing beyond direct handle pointer targets.
 - Validation rules for allowed source/target pairs.
 - Keyboard connection semantics.
 
@@ -147,9 +145,9 @@ output handle pointer down
   -> capture source node id
   -> input handle pointer up
   -> derive target node id
-  -> update nodeConnections
+  -> notify next connections
   -> render connection path
-  -> emit connection callback
+  -> emit next controlled state
 ```
 
 ### GridraSnapGuide
@@ -163,8 +161,8 @@ Implemented:
 - Supports pixel-based `position`, `start`, and `end` placement for absolute overlays.
 - Supports grid-based `placement` for guide rendering inside grid containers.
 - Supports `active` and `visible` for display toggling.
-- `GridraCanvasArea` renders drag guides while moving selected nodes.
-- `GridraCanvasArea` renders resize guides while resizing selected nodes.
+- `GridraCanvasOverlay` renders hook-provided drag guides.
+- `GridraCanvasOverlay` renders hook-provided resize guides.
 
 Not implemented yet:
 
@@ -208,7 +206,7 @@ canvas selection change
   -> user edits fields
   -> onChange emits patch
   -> parent normalizes and updates node label/placement state
-  -> GridraCanvasArea re-renders updated node
+  -> caller re-renders updated node
 ```
 
 ### GridraPropertiesPanel
@@ -240,7 +238,7 @@ canvas selection change
   -> user edits a property field
   -> onChange emits partial property patch
   -> parent merges patch into nodePropertiesById[selectedNodeId]
-  -> GridraCanvasArea re-renders node with updated visible property detail
+  -> caller re-renders node with updated visible property detail
 ```
 
 ### GridraSplitPane
@@ -847,8 +845,8 @@ Existing state:
 
 - `@gridra-ui/theme` exports structural `base.css`, a five-theme aggregate, and individual named theme files.
 - Dark, Light, Midnight, Forest, and Ember implement the same 35-token color contract.
-- `GridraRoot theme` selects built-in or custom kebab-case themes without remounting components.
-- An internal React context carries the active theme class into Portal-based components.
+- Theme classes on ordinary DOM elements select built-in or custom palettes without remounting.
+- Portals copy inherited Gridra tokens from the anchor and observe ancestor class/style changes.
 - The playground and component docs expose the five built-in themes through selectors.
 
 Goal:
@@ -867,8 +865,8 @@ Implemented file structure:
 
 Theme selection patterns:
 
-- Preferred React API: pass `dark`, `light`, `midnight`, `forest`, `ember`, or a custom name to `GridraRoot theme`.
-- Legacy CSS class selection remains supported when the `theme` prop is absent.
+- Apply `gridra-theme-dark`, `gridra-theme-light`, `gridra-theme-midnight`, `gridra-theme-forest`, `gridra-theme-ember`, or a custom class to ordinary DOM.
+- Anchorless Toast and CommandPalette accept an optional `theme` name and otherwise inherit document tokens.
 - App-level state controls selection in the playground; persistence remains application-owned.
 
 Intentionally not implemented:

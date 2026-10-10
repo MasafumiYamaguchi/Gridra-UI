@@ -1,6 +1,4 @@
-.gridra-theme-dark,
-.gridra-root.gridra-theme-dark,
-.gridra-portal-root.gridra-theme-dark {
+.gridra-theme-dark {
   color-scheme: dark;
   --gridra-color-background: #000000;
   --gridra-color-surface: #050505;

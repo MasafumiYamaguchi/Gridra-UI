@@ -6,7 +6,12 @@ import {
   GridraBadge,
   GridraBox,
   GridraButton,
-  GridraCanvasArea,
+  GridraCanvasOverlay,
+  GridraConnectionHandle,
+  GridraDragHandle,
+  GridraResizeHandle,
+  useGridraCanvas,
+  type GridraCanvasState,
   GridraCheckbox,
   GridraCluster,
   GridraDivider,
@@ -21,13 +26,10 @@ import {
   GridraLabel,
   GridraMinimap,
   GridraNode,
-  type GridraNodeConnection,
   type GridraNodePropertiesSchema,
   type GridraNodePropertiesValue,
-  type GridraNodePlacements,
   GridraPropertiesPanel,
   GridraRadio,
-  GridraRoot,
   GridraSelect,
   GridraSlider,
   GridraSidebar,
@@ -102,8 +104,22 @@ function Playground({
 }) {
   const avatarImageUrl = "https://i.pravatar.cc/96?img=12";
   const [viewMode, setViewMode] = useState<"canvas" | "components">("canvas");
-  const [selectedId, setSelectedId] = useState<string | null>("node-input");
-  const [selectedIds, setSelectedIds] = useState<string[]>(["node-input"]);
+  const [canvasState, setCanvasState] = useState<GridraCanvasState<{
+    id: string; type: PlaygroundNodeType; label: string;
+    placement: { column: number; row: number; columnSpan?: number; rowSpan?: number };
+  }>>({
+    nodes: baseNodes.map((node) => ({ ...node, placement: { ...node.placement } })),
+    connections: [
+      { sourceId: "node-input", targetId: "node-transform" },
+      { sourceId: "node-transform", targetId: "node-output" },
+    ],
+    selectedIds: ["node-input"], selectedConnections: [],
+  });
+  const selectedIds = canvasState.selectedIds;
+  const selectedId = selectedIds[0] ?? null;
+  const setSelectedId = (id: string | null) => setCanvasState((current) => ({
+    ...current, selectedIds: id ? [id] : [], selectedConnections: [],
+  }));
   const [selectionPreviewVisible, setSelectionPreviewVisible] = useState(true);
   const [nodeConnectingEnabled, setNodeConnectingEnabled] = useState(true);
   const [nodeDraggingEnabled, setNodeDraggingEnabled] = useState(true);
@@ -119,14 +135,6 @@ function Playground({
   const [controlPreviewEnabled, setControlPreviewEnabled] = useState(true);
   const [controlSnapEnabled, setControlSnapEnabled] = useState(true);
   const [iconPreviewPressed, setIconPreviewPressed] = useState(false);
-  const [nodeConnections, setNodeConnections] = useState<GridraNodeConnection[]>([
-    { sourceId: "node-input", targetId: "node-transform" },
-    { sourceId: "node-transform", targetId: "node-output" }
-  ]);
-  const [nodePlacements, setNodePlacements] = useState<GridraNodePlacements>({});
-  const [nodeLabels, setNodeLabels] = useState<Record<string, string>>(() =>
-    Object.fromEntries(baseNodes.map((node) => [node.id, node.label]))
-  );
   const [nodePropertiesById, setNodePropertiesById] = useState<Record<string, GridraNodePropertiesValue>>({
     "node-input": { sourceName: "Source A", enabled: true },
     "node-transform": { mode: "merge", intensity: 50 },
@@ -134,15 +142,13 @@ function Playground({
   });
   const [gridColumns, setGridColumns] = useState(12);
   const [gridRows, setGridRows] = useState(6);
-  const nodes = useMemo(
-    () =>
-      baseNodes.map((node) => ({
-        ...node,
-        label: nodeLabels[node.id] ?? node.label,
-        placement: nodePlacements[node.id] ?? node.placement
-      })),
-    [nodeLabels, nodePlacements]
-  );
+  const canvas = useGridraCanvas({
+    state: canvasState, onStateChange: setCanvasState,
+    grid: { columns: gridColumns, rows: gridRows },
+    interactions: { connecting: nodeConnectingEnabled, dragging: nodeDraggingEnabled,
+      resizing: nodeResizingEnabled, rangeSelection: selectionPreviewVisible },
+  });
+  const nodes = canvas.nodes;
   const items = nodes.map((node) => ({ id: node.id, label: node.label }));
   const selectedNode = useMemo(() => {
     if (!selectedId) {
@@ -187,10 +193,7 @@ function Playground({
   };
 
   return (
-    <GridraRoot
-      theme={theme}
-      style={{ "--gridra-panel-width": "auto" } as React.CSSProperties}
-      panel={
+    <div className={`playground-shell gridra-theme-${theme}`}>
         <GridraSidebar defaultOpen side="left" toggleSize={28}>
           <GridraBox fullHeight minHeightZero minWidthZero padding="md">
             <GridraStack gap="sm">
@@ -220,7 +223,6 @@ function Playground({
                     id="playground-selected-node"
                     onChange={(event) => {
                       setSelectedId(event.target.value);
-                      setSelectedIds([event.target.value]);
                     }}
                     value={selectedId ?? ""}
                   >
@@ -270,7 +272,6 @@ function Playground({
                 items={items}
                 onSelectionChange={(nextSelectedId) => {
                   setSelectedId(nextSelectedId);
-                  setSelectedIds(nextSelectedId ? [nextSelectedId] : []);
                 }}
                 selectedId={selectedId}
               />
@@ -282,12 +283,11 @@ function Playground({
                   }
                   const nextLabel = patch.label;
                   if (typeof nextLabel === "string") {
-                    setNodeLabels((current) => ({ ...current, [selectedId]: nextLabel }));
+                    setCanvasState((current) => ({ ...current, nodes: current.nodes.map((node) => node.id === selectedId ? { ...node, label: nextLabel } : node) }));
                   }
                   if (patch.placement) {
                     const currentPlacement =
-                      nodePlacements[selectedId] ??
-                      baseNodes.find((node) => node.id === selectedId)?.placement;
+                      canvasState.nodes.find((node) => node.id === selectedId)?.placement;
                     if (!currentPlacement) {
                       return;
                     }
@@ -297,7 +297,7 @@ function Playground({
                       columnSpan: patch.placement.w ?? currentPlacement.columnSpan ?? 1,
                       rowSpan: patch.placement.h ?? currentPlacement.rowSpan ?? 1
                     });
-                    setNodePlacements((current) => ({ ...current, [selectedId]: nextPlacement }));
+                    setCanvasState((current) => ({ ...current, nodes: current.nodes.map((node) => node.id === selectedId ? { ...node, placement: nextPlacement } : node) }));
                   }
                 }}
                 selectedNode={selectedNode}
@@ -327,8 +327,7 @@ function Playground({
             </GridraStack>
           </GridraBox>
         </GridraSidebar>
-      }
-    >
+      <main className="playground-main">
       <GridraToolbar
         actions={[
           { id: "select", label: "Select", pressed: true },
@@ -738,56 +737,28 @@ function Playground({
           </GridraGridLayout>
         </GridraBox>
       ) : (
-        <GridraCanvasArea
-          enableNodeConnecting={nodeConnectingEnabled}
-          enableNodeDragging={nodeDraggingEnabled}
-          enableNodeResizing={nodeResizingEnabled}
-          enableRangeSelection={selectionPreviewVisible}
-          gridColumns={gridColumns}
-          gridRows={gridRows}
-          nodeConnections={nodeConnections}
-          nodePlacements={nodePlacements}
-          nodes={nodes}
-          onNodeConnectionsChange={setNodeConnections}
-          onNodePlacementsChange={setNodePlacements}
-          onSelectionChange={setSelectedId}
-          onSelectionIdsChange={(nextSelectedIds) => {
-            setSelectedIds(nextSelectedIds);
-            setSelectedId(nextSelectedIds[0] ?? null);
-          }}
-          renderNode={(node, state) => (
-            (() => {
-              const nodeProps = nodePropertiesById[node.id];
-              const detail =
-                node.type === "transform"
-                  ? String(nodeProps?.mode ?? "")
-                  : node.type === "input"
-                    ? String(nodeProps?.sourceName ?? "")
-                    : String(nodeProps?.targetName ?? "");
-              return (
-            <GridraNode
-              connectionHandles={state.connectionHandles}
-              dragHandle={state.selected ? state.dragHandle : undefined}
-              id={node.id}
-              key={node.id}
-              onSelect={(nextId) => {
-                setSelectedId(nextId);
-                setSelectedIds([nextId]);
-              }}
-              placement={node.placement}
-              resizeHandle={state.selected ? state.resizeHandle : undefined}
-              selected={state.selected}
-            >
-              {detail ? `${node.label ?? node.id} · ${detail}` : node.label ?? node.id}
-            </GridraNode>
-              );
-            })()
-          )}
-          selectedId={selectedId}
-          selectedIds={selectedIds}
-        />
+        <section {...canvas.getContainerProps({ className: "playground-canvas" })}>
+          {nodes.map((node) => {
+            const values = nodePropertiesById[node.id];
+            const detail = String(values?.[node.type === "transform" ? "mode" : node.type === "input" ? "sourceName" : "targetName"] ?? "");
+            const selected = selectedIds.includes(node.id);
+            return (
+              <GridraNode key={node.id} {...canvas.getNodeProps(node.id)}
+                dragHandle={nodeDraggingEnabled && selected ? <GridraDragHandle position="top-right" {...canvas.getDragHandleProps(node.id)} /> : null}
+                resizeHandle={nodeResizingEnabled && selected ? <GridraResizeHandle position="bottom-right" {...canvas.getResizeHandleProps(node.id)} /> : null}
+                connectionHandles={nodeConnectingEnabled ? <>
+                  <GridraConnectionHandle kind="input" position="left" {...canvas.getConnectionHandleProps(node.id, "input")} />
+                  <GridraConnectionHandle kind="output" position="right" {...canvas.getConnectionHandleProps(node.id, "output")} />
+                </> : null}>
+                {detail ? `${node.label} · ${detail}` : node.label}
+              </GridraNode>
+            );
+          })}
+          <GridraCanvasOverlay {...canvas.overlayProps} />
+        </section>
       )}
-    </GridraRoot>
+      </main>
+    </div>
   );
 }
 

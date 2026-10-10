@@ -7,7 +7,6 @@ import {
   GridraInline,
   GridraInput,
   GridraLabel,
-  GridraRoot,
   GridraSelect,
   GridraSidebar,
   GridraStack,
@@ -103,7 +102,7 @@ export function ComponentDocsPage({
   }, [activeDocName]);
 
   return (
-    <GridraRoot className="docs-root" theme={theme}>
+    <div className={`docs-root gridra-theme-${theme}`}>
       <section className="docs-page">
       <GridraStack
         align="center"
@@ -363,6 +362,6 @@ export function ComponentDocsPage({
         </article>
       </div>
       </section>
-    </GridraRoot>
+    </div>
   );
 }
