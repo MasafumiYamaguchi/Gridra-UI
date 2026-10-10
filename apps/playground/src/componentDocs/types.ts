@@ -6,6 +6,8 @@ export interface PropDoc {
   default?: string;
   required?: boolean;
   description: string;
+  group?: string;
+  values?: string[];
 }
 
 export interface CodeExample {
@@ -13,6 +15,7 @@ export interface CodeExample {
   description?: string;
   language?: DocsCodeLanguage;
   code: string;
+  preview?: ReactNode;
 }
 
 export type DocsCodeLanguage = "tsx" | "ts" | "css" | "bash";
@@ -30,7 +33,9 @@ export interface ComponentDoc {
   notes?: string;
   options: string[];
   preview: ReactNode;
+  previewCode?: string;
   props: PropDoc[];
+  propsDescription?: string;
   states?: CodeExample[];
   summary: string;
   usage?: string;
