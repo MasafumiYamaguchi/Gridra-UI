@@ -86,3 +86,15 @@ describe("interactive example scenes", () => {
     expect(screen.getByRole("status").textContent).toBe("File saved successfully");
   });
 });
+
+describe("SplitPane documentation examples", () => {
+  it("feeds updated three-pane sizes back into the controlled preview", () => {
+    const preview = renderExample("GridraSplitPane", "Three-pane controlled split");
+    const [first, second] = preview.getAllByRole("separator");
+    fireEvent.keyDown(first, { key: "ArrowRight" });
+    expect(first.getAttribute("aria-valuenow")).toBe("32");
+    expect(second.getAttribute("aria-valuenow")).toBe("70");
+    fireEvent.keyDown(second, { key: "ArrowLeft" });
+    expect(second.getAttribute("aria-valuenow")).toBe("68");
+  });
+});

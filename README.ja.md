@@ -40,6 +40,44 @@ import "@gridra-ui/theme/themes.css";
 
 `dark.css`や`light.css`など、個別プリセットのimportも引き続き利用できます。
 
+## クイックスタート
+
+React >=18.2 の既存アプリで、コンポーネントは公開パッケージのルートから import します。`@gridra-ui/core` はフレームワーク非依存のヘルパー用です。CSS の import には Vite などのバンドラーを使います。専用の Provider や Root は不要です。
+
+```tsx
+import { useState } from "react";
+import { GridraSlider, GridraSplitPane } from "@gridra-ui/react";
+import "@gridra-ui/theme/base.css";
+import "@gridra-ui/theme/themes.css";
+
+export default function App() {
+  const [opacity, setOpacity] = useState(72);
+  const [sizes, setSizes] = useState([30, 40, 30]);
+
+  return (
+    <div className="gridra-theme-midnight" style={{ height: 320 }}>
+      <GridraSplitPane sizes={sizes} onSizesChange={setSizes}>
+        <div>Tools</div>
+        <div>
+          <GridraSlider
+            aria-label="Opacity"
+            min={0}
+            max={100}
+            value={opacity}
+            onChange={(event) => setOpacity(event.currentTarget.valueAsNumber)}
+            showValue
+            valueFormatter={(value) => `${value}%`}
+          />
+        </div>
+        <div>Inspector</div>
+      </GridraSplitPane>
+    </div>
+  );
+}
+```
+
+この例は [QuickStart.tsx](apps/playground/src/QuickStart.tsx) としても型検査・ビルドされます。`base.css` は部品のスタイルと既定トークン、`themes.css` は5つのテーマ class を提供します。class の指定だけでは CSS は読み込まれません。非制御にする場合は `sizes` と `onSizesChange` を `defaultSizes={[30, 40, 30]}` に置き換えます。2ペインでは `size` / `defaultSize` / `onSizeChange` を使います。default 系 props は初期値のみで、制御時は利用側で状態を更新して返してください。
+
 ## 親なしでの部品利用とノード操作
 
 `base.css`の読み込みだけで、各部品に既定のトークンを適用します。
@@ -59,7 +97,7 @@ Hookは要素を描画せず、入力状態も直接変更しません。
 依存関係をインストールします。
 
 ```bash
-npm install
+npm ci
 ```
 
 playground を起動します。

@@ -6,15 +6,16 @@ export const sliderDoc: ComponentDoc = {
     name: "GridraSlider",
     summary: "Range input for numeric values.",
     description:
-      "GridraSlider wraps the native range input with Gridra styling. It supports size variants, optional value display, and a custom value formatter.",
+      "GridraSlider wraps the native range input with Gridra styling. It supports size variants, optional value display, and a custom value formatter. Use defaultValue for an uncontrolled input, or value with onChange for controlled state. Read event.currentTarget.valueAsNumber in onChange; this component uses the native input event, not an onValueChange callback. Supply a label or aria-label.",
     importExample: 'import { GridraSlider } from "@gridra-ui/react";',
     props: [
       { name: "size", type: "\"sm\" | \"md\" | \"lg\"", default: "\"md\"", description: "Track and thumb size." },
       { name: "showValue", type: "boolean", default: "false", description: "Render a value readout next to the slider." },
       { name: "valueFormatter", type: "(value: number) => ReactNode", description: "Format function for the displayed value." },
-      { name: "min", type: "number", description: "Native range minimum." },
-      { name: "max", type: "number", description: "Native range maximum." },
-      { name: "step", type: "number", description: "Native range step." },
+      { name: "onChange", type: "ChangeEventHandler<HTMLInputElement>", description: "Native input change event; use event.currentTarget.valueAsNumber for numeric state." },
+      { name: "min", type: "number | string", description: "Native range minimum." },
+      { name: "max", type: "number | string", description: "Native range maximum." },
+      { name: "step", type: "number | string", description: "Native range step." },
       { name: "value", type: "string | number", description: "Controlled value." },
       { name: "defaultValue", type: "string | number", description: "Uncontrolled default value." },
       { name: "className", type: "string", description: "Additional CSS classes." }
