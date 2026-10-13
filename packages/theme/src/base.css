@@ -26,7 +26,7 @@
   .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 ) {
   box-sizing: border-box;
   color: var(--gridra-color-text);
@@ -46,7 +46,7 @@
   .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 ) :where(*),
 :where(
   .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
@@ -60,7 +60,7 @@
   .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 ) :where(*)::before,
 :where(
   .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
@@ -74,7 +74,7 @@
   .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 ) :where(*)::after,
 :where(
   .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
@@ -88,7 +88,7 @@
   .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 )::before,
 :where(
   .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
@@ -102,7 +102,7 @@
   .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 )::after {
   box-sizing: border-box;
 }
@@ -3923,6 +3923,126 @@
   margin: calc(var(--gridra-stepper-marker-size) / 2) 10px 0;
 }
 .gridra-stepper--boxes.gridra-stepper--vertical .gridra-stepper__connector { width: 1px; height: 20px; min-width: 0; margin: 6px 0 6px calc(var(--gridra-stepper-marker-size) / 2); flex: 0 0 auto; }
+
+/* Timeline: 日時と内容を順序どおりに並べる、閲覧用の履歴表示。 */
+.gridra-timeline {
+  --gridra-timeline-title-size: 14px;
+  --gridra-timeline-description-size: 12px;
+  --gridra-timeline-date-size: 11px;
+  --gridra-timeline-marker-size: 8px;
+  --gridra-timeline-gap: 28px;
+  --gridra-timeline-column-width: 240px;
+  --gridra-timeline-marker-center: calc(var(--gridra-timeline-title-size) * 0.7);
+
+  display: grid;
+  gap: var(--gridra-timeline-gap);
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.gridra-timeline--sm {
+  --gridra-timeline-title-size: 12px;
+  --gridra-timeline-description-size: 11px;
+  --gridra-timeline-date-size: 10px;
+  --gridra-timeline-marker-size: 6px;
+  --gridra-timeline-gap: 20px;
+  --gridra-timeline-column-width: 200px;
+}
+.gridra-timeline--lg {
+  --gridra-timeline-title-size: 16px;
+  --gridra-timeline-description-size: 14px;
+  --gridra-timeline-date-size: 12px;
+  --gridra-timeline-marker-size: 10px;
+  --gridra-timeline-gap: 36px;
+  --gridra-timeline-column-width: 280px;
+}
+.gridra-timeline__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--gridra-timeline-marker-size) minmax(0, 1fr);
+  column-gap: var(--gridra-space-lg);
+  min-width: 0;
+}
+.gridra-timeline__marker {
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--gridra-timeline-marker-center) - var(--gridra-timeline-marker-size) / 2);
+  left: 0;
+  width: var(--gridra-timeline-marker-size);
+  height: var(--gridra-timeline-marker-size);
+  background: var(--gridra-color-text);
+}
+.gridra-timeline__connector {
+  position: absolute;
+  top: var(--gridra-timeline-marker-center);
+  left: calc((var(--gridra-timeline-marker-size) - 1px) / 2);
+  width: 1px;
+  height: calc(100% + var(--gridra-timeline-gap));
+  background: var(--gridra-color-border-strong);
+}
+.gridra-timeline__content {
+  display: grid;
+  grid-column: 2;
+  align-content: start;
+  gap: var(--gridra-space-sm);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.gridra-timeline__date {
+  color: var(--gridra-color-muted-text);
+  font-size: var(--gridra-timeline-date-size);
+  line-height: 1.5;
+}
+.gridra-timeline__title {
+  color: var(--gridra-color-text);
+  font-size: var(--gridra-timeline-title-size);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.gridra-timeline__description {
+  color: var(--gridra-color-muted-text);
+  font-size: var(--gridra-timeline-description-size);
+  line-height: 1.6;
+}
+.gridra-timeline__description > :first-child,
+.gridra-timeline__title > :first-child {
+  margin-top: 0;
+}
+.gridra-timeline__description > :last-child,
+.gridra-timeline__title > :last-child {
+  margin-bottom: 0;
+}
+.gridra-timeline .gridra-timeline__content a {
+  color: var(--gridra-color-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.gridra-timeline .gridra-timeline__content a:focus-visible {
+  outline: 2px solid var(--gridra-color-focus);
+  outline-offset: 2px;
+}
+.gridra-timeline--horizontal {
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(var(--gridra-timeline-column-width), 1fr);
+  align-items: start;
+  overflow-x: auto;
+  padding: 4px 4px var(--gridra-space-lg);
+}
+.gridra-timeline--horizontal .gridra-timeline__item {
+  display: block;
+  padding-top: calc(var(--gridra-timeline-marker-size) + var(--gridra-space-lg));
+}
+.gridra-timeline--horizontal .gridra-timeline__marker {
+  top: 0;
+}
+.gridra-timeline--horizontal .gridra-timeline__connector {
+  top: calc((var(--gridra-timeline-marker-size) - 1px) / 2);
+  left: 0;
+  width: calc(100% + var(--gridra-timeline-gap));
+  height: 1px;
+}
 
 .gridra-breadcrumb {
   min-width: 0;

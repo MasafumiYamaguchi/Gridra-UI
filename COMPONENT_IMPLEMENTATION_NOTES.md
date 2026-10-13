@@ -777,6 +777,21 @@ Current status: the single flex layout primitive.
   have been removed before 1.0. See the Stack examples for migration recipes.
 - Legacy inline/cluster CSS selectors have been removed; use stack selectors.
 
+### GridraTimeline
+
+Current status: implemented.
+
+- Read-only chronological display, separate from Stepper workflow state.
+- Items require stable unique `id` and `title`; `description` accepts rich React content.
+- `date` is caller-formatted display text; `dateTime` is a machine-readable HTML time value.
+- Date ranges and undated entries work without inventing a timestamp.
+- Supplied order is preserved; sorting and date formatting belong to the caller.
+- Vertical by default, with horizontal local scrolling and sm/md/lg sizes.
+- Native ordered-list semantics with decorative square markers and connectors.
+- Entries add no buttons, progress state, selection, or disabled behavior.
+- Long descriptions wrap, links retain native behavior, and the final entry has no trailing connector.
+- Docs includes portfolio history, horizontal milestones, and an undated sequence.
+
 ## Animation Integration Notes
 
 ### GSAP Integration

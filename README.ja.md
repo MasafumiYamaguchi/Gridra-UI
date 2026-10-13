@@ -152,6 +152,7 @@ GRIDRA UI は、高密度なアプリケーション画面向けのプリミテ�
 - コントロール: button、icon button、input、select、checkbox、radio、switch、slider、field、label。
 - オーバーレイと操作: tooltip、popover、dialog、dropdown menu、context menu、command palette、hover card。
 - ナビゲーションとフィードバック: tabs、breadcrumb、accordion、tree view、pagination、stepper、alert、toast、progress、skeleton、empty state。
+- 時系列表示: ポートフォリオの経歴、実績、活動履歴を並べるtimeline。
 
 現在の実装状況と今後の追加予定は [COMPONENT_ROADMAP.md](./COMPONENT_ROADMAP.md) を参照してください。
 

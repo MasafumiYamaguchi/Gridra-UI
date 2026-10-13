@@ -7,12 +7,14 @@ import { kbdDoc } from "./components/gridra-kbd";
 import { listDoc } from "./components/gridra-list";
 import { spinnerDoc } from "./components/gridra-spinner";
 import { statDoc } from "./components/gridra-stat";
+import { timelineDoc } from "./components/gridra-timeline";
 
 export const displayDocs: ComponentDoc[] = [
   cardDoc,
   listDoc,
   descriptionListDoc,
   statDoc,
+  timelineDoc,
   kbdDoc,
   avatarDoc,
   spinnerDoc,
