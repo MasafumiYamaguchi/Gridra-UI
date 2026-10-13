@@ -6,7 +6,7 @@ import {
   useRef,
 } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
-import { clampNumber } from "../../internal/numeric";
+import { clampSize, clampSizeInPair, normalizePaneSizes, sumBeforeIndex } from "./splitPaneSizing";
 
 export type GridraSplitPaneOrientation = "horizontal" | "vertical";
 
@@ -101,6 +101,25 @@ export function GridraSplitPane({
     [currentSize, currentSizes, isThreePane, maxSize, minSize, style],
   );
 
+  // 入力経路を問わず、隣接paneの更新と同値判定を一か所で行う。
+  const resizeAdjacentPanes = (separatorIndex: number, nextLeft: number) => {
+    if (!isThreePane) {
+      if (nextLeft !== clampSize(currentSize, minSize, maxSize)) {
+        setCurrentSize(nextLeft);
+      }
+      return;
+    }
+
+    const nextSizes = [...currentSizes];
+    const pairTotal = currentSizes[separatorIndex] + currentSizes[separatorIndex + 1];
+    nextSizes[separatorIndex] = nextLeft;
+    nextSizes[separatorIndex + 1] = pairTotal - nextLeft;
+    const normalized = normalizePaneSizes(nextSizes, paneCount, minSize, maxSize);
+    if (normalized.some((value, index) => value !== currentSizes[index])) {
+      setCurrentSizes(normalized);
+    }
+  };
+
   const updateSizeFromPointer = (
     separatorIndex: number,
     event: { clientX: number; clientY: number },
@@ -123,19 +142,17 @@ export function GridraSplitPane({
 
     if (!isThreePane) {
       // 2paneではseparatorの絶対位置が先頭paneの割合になる。
-      setCurrentSize(clampSize(rawPercent, minSize, maxSize));
+      resizeAdjacentPanes(separatorIndex, clampSize(rawPercent, minSize, maxSize));
       return;
     }
 
     // 3paneでは隣接する2paneの合計を保ったまま、境界の左右だけを更新する。
-    const nextSizes = [...currentSizes];
-    const previousSum = sumBeforeIndex(nextSizes, separatorIndex);
-    const pairTotal = nextSizes[separatorIndex] + nextSizes[separatorIndex + 1];
-    const rawLocalLeft = rawPercent - previousSum;
-    const localLeft = clampSizeInPair(rawLocalLeft, pairTotal, minSize, maxSize);
-    nextSizes[separatorIndex] = localLeft;
-    nextSizes[separatorIndex + 1] = pairTotal - localLeft;
-    setCurrentSizes(normalizePaneSizes(nextSizes, paneCount, minSize, maxSize));
+    const previousSum = sumBeforeIndex(currentSizes, separatorIndex);
+    const pairTotal = currentSizes[separatorIndex] + currentSizes[separatorIndex + 1];
+    resizeAdjacentPanes(
+      separatorIndex,
+      clampSizeInPair(rawPercent - previousSum, pairTotal, minSize, maxSize),
+    );
   };
 
   const splitPaneClassName = [
@@ -200,59 +217,19 @@ export function GridraSplitPane({
               ? currentSizes[separatorIndex] + currentSizes[separatorIndex + 1]
               : 100;
 
-            if (event.key === "Home") {
-              const next = clampSizeInPair(minSize, pairTotal, minSize, maxSize);
-              applyAdjacentResize(
-                separatorIndex,
-                next,
-                pairTotal,
-                isThreePane,
-                currentSizes,
-                paneCount,
-                minSize,
-                maxSize,
-                setCurrentSize,
-                setCurrentSizes,
-              );
-              event.preventDefault();
-              return;
-            }
-
-            if (event.key === "End") {
-              const next = clampSizeInPair(maxSize, pairTotal, minSize, maxSize);
-              applyAdjacentResize(
-                separatorIndex,
-                next,
-                pairTotal,
-                isThreePane,
-                currentSizes,
-                paneCount,
-                minSize,
-                maxSize,
-                setCurrentSize,
-                setCurrentSizes,
-              );
-              event.preventDefault();
-              return;
-            }
-
             const delta = deltaByKey[event.key];
-            if (delta === undefined) {
+            const requested = event.key === "Home"
+              ? minSize
+              : event.key === "End"
+                ? maxSize
+                : delta === undefined ? undefined : current + delta;
+            if (requested === undefined) {
               return;
             }
 
-            const next = clampSizeInPair(current + delta, pairTotal, minSize, maxSize);
-            applyAdjacentResize(
+            resizeAdjacentPanes(
               separatorIndex,
-              next,
-              pairTotal,
-              isThreePane,
-              currentSizes,
-              paneCount,
-              minSize,
-              maxSize,
-              setCurrentSize,
-              setCurrentSizes,
+              clampSizeInPair(requested, pairTotal, minSize, maxSize),
             );
             event.preventDefault();
           }}
@@ -273,6 +250,9 @@ export function GridraSplitPane({
             updateSizeFromPointer(separatorIndex, event);
           }}
           onPointerUp={() => {
+            draggingSeparatorIndexRef.current = null;
+          }}
+          onLostPointerCapture={() => {
             draggingSeparatorIndexRef.current = null;
           }}
           onPointerCancel={() => {
@@ -298,93 +278,4 @@ export function GridraSplitPane({
       ))}
     </div>
   );
-}
-
-function clampSize(value: number, minSize: number, maxSize: number): number {
-  // 値と制約を有限な0〜100の範囲へ揃えてからclampする。
-  const { min, max } = normalizeSizeConstraints(minSize, maxSize);
-  const safeValue = Number.isFinite(value) ? value : min;
-  return clampNumber(safeValue, min, max);
-}
-
-function normalizeSizeConstraints(
-  minSize: number,
-  maxSize: number,
-): { min: number; max: number } {
-  // minとmaxが逆でも呼び出し側が同じ範囲として扱えるよう並べ直す。
-  const rawMin = Number.isFinite(minSize) ? clampNumber(minSize, 0, 100) : 0;
-  const rawMax = Number.isFinite(maxSize) ? clampNumber(maxSize, 0, 100) : 100;
-
-  return rawMin <= rawMax
-    ? { min: rawMin, max: rawMax }
-    : { min: rawMax, max: rawMin };
-}
-
-function sumBeforeIndex(values: number[], indexExclusive: number): number {
-  return values.slice(0, indexExclusive).reduce((sum, value) => sum + value, 0);
-}
-
-function normalizePaneSizes(
-  values: number[],
-  paneCount: number,
-  minSize: number,
-  maxSize: number,
-): number[] {
-  // 不足分を均等値で補い、入力値の比率を保ちながら合計100%へ変換する。
-  const base = values.slice(0, paneCount);
-  while (base.length < paneCount) {
-    base.push(100 / paneCount);
-  }
-  const total = base.reduce((sum, value) => sum + (Number.isFinite(value) ? value : 0), 0) || 1;
-  let normalized = base.map((value) => ((Number.isFinite(value) ? value : 0) / total) * 100);
-  normalized = normalized.map((value) => clampSize(value, minSize, maxSize));
-  const normalizedTotal = normalized.reduce((sum, value) => sum + value, 0) || 1;
-  normalized = normalized.map((value) => (value / normalizedTotal) * 100);
-  // 丸め誤差は最後のpaneへ戻し、CSS上の合計を常に100%にする。
-  const rounded = normalized.map((value) => Number(value.toFixed(4)));
-  const diff = Number((100 - rounded.reduce((sum, value) => sum + value, 0)).toFixed(4));
-  rounded[rounded.length - 1] = Number((rounded[rounded.length - 1] + diff).toFixed(4));
-  return rounded;
-}
-
-function clampSizeInPair(
-  value: number,
-  pairTotal: number,
-  minSize: number,
-  maxSize: number,
-): number {
-  // 相手側paneもmin/maxを満たせるよう、隣接2paneの合計から許容範囲を求める。
-  const { min, max } = normalizeSizeConstraints(minSize, maxSize);
-  const total = Number.isFinite(pairTotal) && pairTotal > 0 ? pairTotal : 100;
-  const minBound = Math.max(min, total - max);
-  const maxBound = Math.min(max, total - min);
-  const lower = Math.min(minBound, maxBound);
-  const upper = Math.max(minBound, maxBound);
-  const safeValue = Number.isFinite(value) ? value : lower;
-
-  return clampNumber(safeValue, lower, upper);
-}
-
-function applyAdjacentResize(
-  separatorIndex: number,
-  nextLeft: number,
-  pairTotal: number,
-  isThreePane: boolean,
-  currentSizes: number[],
-  paneCount: number,
-  minSize: number,
-  maxSize: number,
-  setCurrentSize: (next: number) => void,
-  setCurrentSizes: (next: number[]) => void,
-) {
-  // 2paneと3paneで状態の持ち方が異なるため、更新先をここで切り替える。
-  if (!isThreePane) {
-    setCurrentSize(nextLeft);
-    return;
-  }
-
-  const nextSizes = [...currentSizes];
-  nextSizes[separatorIndex] = nextLeft;
-  nextSizes[separatorIndex + 1] = pairTotal - nextLeft;
-  setCurrentSizes(normalizePaneSizes(nextSizes, paneCount, minSize, maxSize));
 }

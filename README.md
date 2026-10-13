@@ -40,6 +40,44 @@ Then select a built-in or custom theme at runtime:
 
 Individual preset imports such as `dark.css` and `light.css` remain available.
 
+## Quick start
+
+In an existing React application (React >=18.2), use the public package root for components. `@gridra-ui/core` contains framework-independent helpers, not React components. CSS imports require a bundler such as Vite. No provider or root wrapper is required.
+
+```tsx
+import { useState } from "react";
+import { GridraSlider, GridraSplitPane } from "@gridra-ui/react";
+import "@gridra-ui/theme/base.css";
+import "@gridra-ui/theme/themes.css";
+
+export default function App() {
+  const [opacity, setOpacity] = useState(72);
+  const [sizes, setSizes] = useState([30, 40, 30]);
+
+  return (
+    <div className="gridra-theme-midnight" style={{ height: 320 }}>
+      <GridraSplitPane sizes={sizes} onSizesChange={setSizes}>
+        <div>Tools</div>
+        <div>
+          <GridraSlider
+            aria-label="Opacity"
+            min={0}
+            max={100}
+            value={opacity}
+            onChange={(event) => setOpacity(event.currentTarget.valueAsNumber)}
+            showValue
+            valueFormatter={(value) => `${value}%`}
+          />
+        </div>
+        <div>Inspector</div>
+      </GridraSplitPane>
+    </div>
+  );
+}
+```
+
+This example is also compiled as [QuickStart.tsx](apps/playground/src/QuickStart.tsx). `base.css` is required for component styles and default tokens; `themes.css` adds the five theme classes. A theme class alone does not load CSS. For uncontrolled sizing, replace `sizes` and `onSizesChange` with `defaultSizes={[30, 40, 30]}`. Two-pane layouts use `size` / `defaultSize` / `onSizeChange` instead. Defaults initialize state once; controlled values must be updated by the owner.
+
 ## Parent-free components and canvas interactions
 
 Importing `base.css` gives components default tokens without wrapping the app.
@@ -60,7 +98,7 @@ for a complete controlled example and replacement mapping.
 Install dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
 Start the playground:

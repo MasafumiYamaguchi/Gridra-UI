@@ -91,3 +91,30 @@ Use this checklist when adding a component or refactoring shared component behav
 - Composition: custom render props, custom children, existing event handlers, and refs compose without stealing consumer behavior.
 - Portal/floating behavior: open/close state, outside pointerdown, Escape, scroll/resize repositioning, and theme inheritance are covered when relevant.
 - Spatial interaction: pointer capture, drag/resize cancellation, snap guides, selection modifiers, duplicate connection rejection, and callback emission are covered for canvas-like components.
+
+## Local verification and documentation
+
+依存関係はルートで `npm ci` を実行し、lockfile のバージョンを使います。
+`npm run test` は core / React / theme の検証と playground のテストを実行します。
+`npm run typecheck` は TypeScript project references 全体、`npm run build` は
+core / React の配布ファイルと Vite playground（コンポーネントドキュメント）をビルドします。
+現在 lint スクリプト、Storybook、GitHub Actions workflow はありません。
+変更時は `git diff --check` も実行してください（静的 lint の代わりではありません）。
+
+対象を絞る例:
+
+```bash
+npm --workspace @gridra-ui/react test -- GridraSplitPane
+npm --workspace @gridra-ui/playground test -- example-scenes
+npm --workspace @gridra-ui/playground run build
+```
+
+SplitPane は `splitPaneSizing.ts` に純粋な割合計算を置き、コンポーネント側で
+状態・DOM・入力イベントを扱います。ポインターとキーボードの更新は同じ関数を通し、
+同じ割合への操作では通知しません。pointer cancel / capture 喪失でドラッグを終了します。
+公開 exports、CSS class / custom property 名は変更しないでください。
+
+ドキュメントの props / コード例は `apps/playground/src/componentDocs/data/components/`、
+操作可能な例は `example-scenes.tsx` にあります。両方を同時に更新し、
+`example-scenes.test.tsx` で操作を検証してください。README のクイックスタートは
+`apps/playground/src/QuickStart.tsx` と揃え、通常の型検査とビルドで確認します。

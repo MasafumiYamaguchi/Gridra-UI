@@ -296,3 +296,55 @@ describe("GridraSplitPane", () => {
     }
   });
 });
+
+describe("GridraSplitPane resize contracts", () => {
+  it("keeps the third pane stable and suppresses repeated boundary callbacks", () => {
+    const onSizesChange = vi.fn();
+    render(<GridraSplitPane defaultSizes={[30, 40, 30]} onSizesChange={onSizesChange}>
+      <div>A</div><div>B</div><div>C</div>
+    </GridraSplitPane>);
+    const [first, second] = screen.getAllByRole("separator");
+    first.focus();
+    fireEvent.keyDown(first, { key: "End" });
+    expect(onSizesChange).toHaveBeenLastCalledWith([60, 10, 30], [30, 40, 30]);
+    fireEvent.keyDown(first, { key: "End" });
+    fireEvent.keyDown(first, { key: "ArrowRight" });
+    expect(onSizesChange).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(first);
+    fireEvent.keyDown(second, { key: "ArrowRight" });
+    expect(onSizesChange).toHaveBeenLastCalledWith([60, 12, 28], [60, 10, 30]);
+  });
+
+  it("keeps controlled sizes unchanged until the owner accepts the update", () => {
+    const onSizesChange = vi.fn();
+    const panes = [<div key="a">A</div>, <div key="b">B</div>, <div key="c">C</div>];
+    const { rerender } = render(<GridraSplitPane sizes={[30, 40, 30]} onSizesChange={onSizesChange}>{panes}</GridraSplitPane>);
+    fireEvent.keyDown(screen.getAllByRole("separator")[0], { key: "ArrowRight" });
+    expect(onSizesChange).toHaveBeenLastCalledWith([32, 38, 30], [30, 40, 30]);
+    expect(screen.getAllByRole("separator")[0].getAttribute("aria-valuenow")).toBe("30");
+    rerender(<GridraSplitPane sizes={[32, 38, 30]} onSizesChange={onSizesChange}>{panes}</GridraSplitPane>);
+    expect(screen.getAllByRole("separator")[0].getAttribute("aria-valuenow")).toBe("32");
+  });
+
+  it.each(["pointerCancel", "lostPointerCapture", "pointerUp"] as const)("stops resizing after %s and allows a new drag", (endEvent) => {
+    const onSizeChange = vi.fn();
+    const { container } = render(<GridraSplitPane onSizeChange={onSizeChange}><div>A</div><div>B</div></GridraSplitPane>);
+    const split = container.firstElementChild as HTMLElement;
+    vi.spyOn(split, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 200, height: 100 } as DOMRect);
+    const separator = screen.getByRole("separator");
+    fireEvent.mouseDown(separator, { clientX: 120 });
+    fireEvent[endEvent](separator);
+    fireEvent.mouseMove(separator, { clientX: 160 });
+    expect(onSizeChange).toHaveBeenCalledTimes(1);
+    expect(separator.getAttribute("aria-valuenow")).toBe("60");
+    fireEvent.mouseDown(separator, { clientX: 140 });
+    expect(onSizeChange).toHaveBeenLastCalledWith(70, 60);
+  });
+
+  it("respects consumer keyboard cancellation", () => {
+    const onSizeChange = vi.fn();
+    render(<GridraSplitPane onKeyDown={(event) => event.preventDefault()} onSizeChange={onSizeChange}><div>A</div><div>B</div></GridraSplitPane>);
+    fireEvent.keyDown(screen.getByRole("separator"), { key: "ArrowRight" });
+    expect(onSizeChange).not.toHaveBeenCalled();
+  });
+});
