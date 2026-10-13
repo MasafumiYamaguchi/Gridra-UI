@@ -1,6 +1,6 @@
 {
   "name": "@gridra-ui/playground",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,8 +10,8 @@
     "test": "vitest run --pool=threads --environment jsdom"
   },
   "dependencies": {
-    "@gridra-ui/react": "0.1.0",
-    "@gridra-ui/theme": "0.1.0",
+    "@gridra-ui/react": "0.2.0",
+    "@gridra-ui/theme": "0.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "shiki": "^4.0.2"
