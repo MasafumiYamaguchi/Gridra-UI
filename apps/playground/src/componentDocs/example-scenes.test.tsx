@@ -29,6 +29,38 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it.each(["Cards", "Ruler", "Line", "Boxes"])("lets both %s stepper examples go back and reset independently", (title) => {
+    const preview = renderExample("GridraStepper", title);
+    const variant = title.toLowerCase();
+    const checkout = within(preview.getByRole("navigation", { name: `${variant} checkout steps` }));
+    const setup = within(preview.getByRole("navigation", { name: `${variant} setup steps` }));
+    const panel = within(preview.getByRole("region", { name: "Checkout panel" }));
+    expect(panel.getByRole("textbox", { name: "Payment card" })).toBeTruthy();
+    fireEvent.click(checkout.getByRole("button", { name: /Cart/ }));
+    expect(checkout.getByRole("button", { name: /Cart/ }).getAttribute("aria-current")).toBe("step");
+    expect(panel.getByRole("spinbutton", { name: "Quantity" })).toBeTruthy();
+    expect(setup.getByRole("button", { name: /Profile/ }).getAttribute("aria-current")).toBe("step");
+    fireEvent.click(setup.getByRole("button", { name: /Account/ }));
+    fireEvent.click(preview.getByRole("button", { name: "Next checkout step" }));
+    expect(checkout.getByRole("button", { name: /Shipping/ }).getAttribute("aria-current")).toBe("step");
+    expect(panel.getByRole("textbox", { name: "Shipping address" })).toBeTruthy();
+    expect(panel.queryByRole("spinbutton", { name: "Quantity" })).toBeNull();
+    fireEvent.click(preview.getByRole("button", { name: "Next checkout step" }));
+    fireEvent.click(preview.getByRole("button", { name: "Next checkout step" }));
+    expect(checkout.getByRole("button", { name: /Confirm/ }).getAttribute("aria-current")).toBe("step");
+    expect(panel.getByText("Order ready for confirmation.")).toBeTruthy();
+    expect((preview.getByRole("button", { name: "Next checkout step" }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(preview.getByRole("button", { name: "Next setup step" }));
+    fireEvent.click(preview.getByRole("button", { name: "Next setup step" }));
+    expect(setup.getByRole("button", { name: /Preferences/ }).getAttribute("aria-current")).toBe("step");
+    expect((preview.getByRole("button", { name: "Next setup step" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(setup.getByRole("button", { name: /Review/ }).getAttribute("aria-current")).toBeNull();
+    fireEvent.click(preview.getByRole("button", { name: "Reset steps" }));
+    expect(checkout.getByRole("button", { name: /Payment/ }).getAttribute("aria-current")).toBe("step");
+    expect(setup.getByRole("button", { name: /Profile/ }).getAttribute("aria-current")).toBe("step");
+    expect(setup.getByRole("button", { name: /Review/ }).getAttribute("aria-disabled")).toBe("true");
+  });
+
   it("keeps each Button example separate from the other variants", () => {
     const preview = renderExample("GridraButton", "Sizes");
     expect(preview.getByRole("button", { name: "Small" }).classList.contains("gridra-button--sm")).toBe(true);

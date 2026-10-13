@@ -84,7 +84,7 @@ export const skeletonDoc: ComponentDoc = {
     },
   ],
   preview: (
-    <GridraStack gap="sm" style={{ maxWidth: 320 }}>
+    <GridraStack fullWidth gap="sm" minWidthZero>
       <GridraSkeleton height={80} width="100%" />
       <GridraSkeleton rows={3} variant="text" />
       <GridraStack direction="horizontal" wrap align="center" gap="sm">

@@ -179,7 +179,6 @@
 .docs-example-content > * { max-width: 100%; }
 .docs-example-content--gridra-accordion > .gridra-accordion,
 .docs-example-content--gridra-tabs > .gridra-tabs,
-.docs-example-content--gridra-stepper > .gridra-stepper,
 .docs-example-content--gridra-grid-layout > .gridra-grid-layout,
 .docs-example-content--gridra-selectable-grid > .gridra-grid,
 .docs-example-content--gridra-stack > .gridra-stack { width: 100%; }

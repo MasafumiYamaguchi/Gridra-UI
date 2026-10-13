@@ -6,7 +6,7 @@ function ProgressPreview() {
   const [value, setValue] = useState(0);
 
   return (
-    <GridraStack gap="sm">
+    <GridraStack fullWidth gap="sm" minWidthZero>
       <GridraStack gap="xs">
         <GridraProgress value={value} label={`${value}%`} />
         <GridraButton
