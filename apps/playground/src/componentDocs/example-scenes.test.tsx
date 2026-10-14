@@ -29,6 +29,17 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it.each(["Portfolio history", "Horizontal milestones"])("renders %s as a readable history with usable project links", (title) => {
+    const preview = renderExample("GridraTimeline", title);
+    const history = within(preview.getByRole("list", { name: "ポートフォリオの活動履歴" }));
+    expect(history.getAllByRole("listitem")).toHaveLength(3);
+    expect(history.getByText("2022年4月").getAttribute("datetime")).toBe("2022-04");
+    expect(history.getByText("2024年から現在").tagName).toBe("SPAN");
+    expect(history.getByRole("link", { name: "プロジェクトを見る" }).getAttribute("href")).toBe("https://example.com/projects");
+    expect(history.queryByRole("button")).toBeNull();
+    expect(history.queryByRole("progressbar")).toBeNull();
+  });
+
   it.each(["Cards", "Ruler", "Line", "Boxes"])("lets both %s stepper examples go back and reset independently", (title) => {
     const preview = renderExample("GridraStepper", title);
     const variant = title.toLowerCase();

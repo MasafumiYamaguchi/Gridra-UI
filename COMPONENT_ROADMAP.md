@@ -59,6 +59,7 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - [x] `GridraBreadcrumb`
 - [x] `GridraTabs`
 - [x] `GridraTreeView`
+- [x] `GridraTimeline`
 
 ## Priority 1: Gridra Core
 
@@ -165,7 +166,7 @@ Remaining unchecked items are deferred for now while Priority 8 and Priority 9 s
 - [x] Tag
 - [ ] Code Block
 - [x] Kbd
-- [ ] Timeline
+- [x] Timeline (read-only portfolio history; separate from Stepper workflow state)
 
 ## Priority 8: Animation Integrations
 
