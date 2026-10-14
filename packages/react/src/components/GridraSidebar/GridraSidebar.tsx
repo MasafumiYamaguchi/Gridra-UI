@@ -1,5 +1,5 @@
 import type { CSSProperties, HTMLAttributes } from "react";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useControllableValue } from "../../hooks/useControllableValue";
 import {
   clampNumber,
@@ -7,8 +7,6 @@ import {
   formatCssLengthWithMin,
   resolveCssLengthToPx,
 } from "../../internal/numeric";
-
-import { GridraSidebarToggle } from "./GridraSidebarToggle";
 
 export type GridraSidebarSide = "left" | "right";
 
@@ -49,7 +47,6 @@ export function GridraSidebar({
   width = DEFAULT_OPEN_WIDTH,
   ...props
 }: GridraSidebarProps) {
-  const contentId = useId();
   // open propの有無に応じて、開閉状態をcontrolled/uncontrolledで切り替える。
   const [currentOpen, setCurrentOpen] = useControllableValue(
     open,
@@ -127,13 +124,18 @@ export function GridraSidebar({
       style={sidebarStyle}
       {...props}
     >
-      <GridraSidebarToggle
-        aria-controls={contentId}
+      <button
+        aria-expanded={currentOpen}
+        aria-label={currentOpen ? "Close sidebar" : "Open sidebar"}
         className="gridra-sidebar__toggle"
-        open={currentOpen}
-        onOpenChange={setCurrentOpen}
-      />
-      <div id={contentId} className="gridra-sidebar__content">{children}</div>
+        onClick={() => toggleOpen()}
+        type="button"
+      >
+        <span className="gridra-sidebar__toggle-line" />
+        <span className="gridra-sidebar__toggle-line" />
+        <span className="gridra-sidebar__toggle-line" />
+      </button>
+      <div className="gridra-sidebar__content">{children}</div>
       {resizable ? (
         <div
           aria-orientation="vertical"
