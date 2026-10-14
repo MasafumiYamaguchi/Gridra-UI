@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { GRIDRA_BUILT_IN_THEME_NAMES, GridraSidebarToggle, GridraTreeView } from "@gridra-ui/react";
+import { GRIDRA_BUILT_IN_THEME_NAMES, GridraTreeView } from "@gridra-ui/react";
 import type { GridraBuiltInThemeName, GridraTreeItem } from "@gridra-ui/react";
 import { CodeBlock } from "./code-block";
 import { CopyButton } from "./copy-button";
 import { componentDocs } from "./data";
 import { DocsPreview, ExampleCard } from "./preview";
 import { PropsTable } from "./props-table";
-import { MobileNavigation, useMobileDocs } from "./mobile-navigation";
 
 const repoUrl = "https://github.com/MasafumiYamaguchi/Gridra-UI";
 const categories = Array.from(new Set(componentDocs.map((doc) => doc.category)));
@@ -15,14 +14,9 @@ export function ComponentDocsPage({ onThemeChange, theme }: {
   onThemeChange: (theme: GridraBuiltInThemeName) => void;
   theme: GridraBuiltInThemeName;
 }) {
-  const isMobile = useMobileDocs();
-  const menuRef = useRef<HTMLButtonElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const returnFocusRef = useRef<HTMLElement | null>(null);
   const readerRef = useRef<HTMLElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [focusSearchOnOpen, setFocusSearchOnOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("preview");
   const [activeDocName, setActiveDocName] = useState(() => {
@@ -79,7 +73,6 @@ export function ComponentDocsPage({ onThemeChange, theme }: {
     if (!doc) return;
     setActiveDocName(name);
     setExpandedCategories((current) => current.includes(doc.category) ? current : [...current, doc.category]);
-    if (mobileNavOpen) returnFocusRef.current = titleRef.current;
     setMobileNavOpen(false);
     window.history.replaceState(null, "", `#docs-${name}`);
     if (readerRef.current) readerRef.current.scrollTop = 0;
@@ -107,111 +100,18 @@ export function ComponentDocsPage({ onThemeChange, theme }: {
     function handleKey(event: KeyboardEvent) {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        if (isMobile && !mobileNavOpen) {
-          returnFocusRef.current = menuRef.current;
-          setFocusSearchOnOpen(true);
-          setMobileNavOpen(true);
-        } else searchRef.current?.focus();
+        searchRef.current?.focus();
       }
+      if (event.key === "Escape") setMobileNavOpen(false);
     }
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [isMobile, mobileNavOpen]);
-
-  useEffect(() => {
-    if (!isMobile) {
-      returnFocusRef.current = titleRef.current;
-      setMobileNavOpen(false);
-    }
-  }, [isMobile]);
-
-  useEffect(() => {
-    function syncHash() {
-      const [name, section] = window.location.hash.replace("#docs-", "").split("/");
-      const doc = componentDocs.find((item) => item.name === name);
-      if (mobileNavOpen) returnFocusRef.current = titleRef.current;
-      setMobileNavOpen(false);
-      if (!doc) return;
-      setActiveDocName(name);
-      setExpandedCategories((current) => current.includes(doc.category) ? current : [...current, doc.category]);
-      if (name === activeDocName) {
-        if (section) goToSection(section, false);
-        else {
-          if (readerRef.current) readerRef.current.scrollTop = 0;
-          setActiveSection("preview");
-        }
-      }
-    }
-    window.addEventListener("hashchange", syncHash);
-    window.addEventListener("popstate", syncHash);
-    return () => {
-      window.removeEventListener("hashchange", syncHash);
-      window.removeEventListener("popstate", syncHash);
-    };
-  }, [activeDocName, mobileNavOpen]);
-
-  const search = <div className="docs-search">
-    <span className="docs-search__icon" aria-hidden="true" />
-    <input ref={searchRef} aria-label="Search components" type="search" placeholder="Search docs..."
-      value={searchQuery} onChange={(event) => {
-        const query = event.target.value.trim().toLowerCase();
-        setSearchQuery(event.target.value);
-        setSearchExpandedCategories(categories.filter((category) => componentDocs.some((doc) =>
-          doc.category === category && `${doc.name} ${doc.category}`.toLowerCase().includes(query)
-        )));
-      }} />
-    <kbd>Ctrl K</kbd>
-  </div>;
-
-  const navigation = <nav id="docs-component-nav" aria-label="Component documentation" onClick={(event) => {
-      if ((event.target as HTMLElement).closest("a[href]")) setMobileNavOpen(false);
-    }}
-    className="docs-sidebar__nav">
-    <div className="docs-sidebar__intro">
-      <h2 className="docs-eyebrow">Getting started</h2>
-      <a href={`${repoUrl}/blob/main/README.md#installation`}>Installation</a>
-      <a href={`${repoUrl}/blob/main/THEMING.md`}>Theming</a>
-      <button type="button" onClick={() => selectDoc("useGridraCanvas")}>Canvas interactions</button>
-    </div>
-    <div className="docs-sidebar__tree-heading">
-      <span className="docs-eyebrow">Components</span>
-      <button type="button" aria-label={allExpanded ? "Collapse all" : "Expand all"}
-        title={allExpanded ? "Collapse all" : "Expand all"} onClick={() => {
-          const next = allExpanded ? [] : treeItems.map((item) => item.id);
-          if (normalizedQuery) setSearchExpandedCategories(next);
-          else setExpandedCategories(next);
-        }}>{allExpanded ? "−" : "+"}</button>
-    </div>
-    {filteredDocs.length === 0 ? <p className="docs-sidebar__empty">No matches</p> :
-      <GridraTreeView items={treeItems} expandedIds={expandedIds}
-        onExpandedIdsChange={(next) => {
-          if (normalizedQuery) setSearchExpandedCategories(next);
-          else setExpandedCategories(next);
-        }} onItemClick={selectDoc} onKeyDown={(event) => {
-          if (event.key !== "Enter" && event.key !== " ") return;
-          const row = (event.target as HTMLElement).closest<HTMLElement>(".gridra-tree-view__row");
-          if (row) { event.preventDefault(); row.click(); }
-        }} renderItem={(item, state) => (
-          <span aria-current={!state.hasChildren && item.id === activeDoc.name ? "page" : undefined}
-            className={state.hasChildren ? "docs-tree-category" : "docs-tree-component"}>
-            {!state.hasChildren && <span className="docs-tree-marker" aria-hidden="true" />}
-            <span>{item.label}</span>
-          </span>
-        )} />
-    }
-  </nav>;
+  }, []);
 
   return (
     <div className={`docs-root gridra-theme-${theme}`}>
       <div className="docs-page">
         <header className="docs-header">
-          {isMobile && <GridraSidebarToggle ref={menuRef}
-            aria-label="Open navigation" open={mobileNavOpen} aria-controls="docs-mobile-navigation"
-            onOpenChange={(next) => {
-              returnFocusRef.current = menuRef.current;
-              setFocusSearchOnOpen(false);
-              setMobileNavOpen(next);
-            }} />}
           <a className="docs-brand" href="/" aria-label="Gridra UI playground">
             <span className="docs-brand__mark" aria-hidden="true" />
             <span>GRIDRA UI</span><span className="docs-version">v0.1.0</span>
@@ -223,7 +123,18 @@ export function ComponentDocsPage({ onThemeChange, theme }: {
             <a href="/">Playground</a>
           </nav>
           <div className="docs-header__tools">
-            {!isMobile && search}
+            <div className="docs-search">
+              <span className="docs-search__icon" aria-hidden="true" />
+              <input ref={searchRef} aria-label="Search components" type="search" placeholder="Search docs..."
+                value={searchQuery} onChange={(event) => {
+                  const query = event.target.value.trim().toLowerCase();
+                  setSearchQuery(event.target.value);
+                  setSearchExpandedCategories(categories.filter((category) => componentDocs.some((doc) =>
+                    doc.category === category && `${doc.name} ${doc.category}`.toLowerCase().includes(query)
+                  )));
+                }} />
+              <kbd>Ctrl K</kbd>
+            </div>
             <label className="docs-theme-select">
               <span>Theme</span>
               <select aria-label="Documentation theme" value={theme}
@@ -242,11 +153,51 @@ export function ComponentDocsPage({ onThemeChange, theme }: {
         </header>
 
         <div className="docs-page__layout">
-          {isMobile ? <MobileNavigation open={mobileNavOpen} onDismiss={() => setMobileNavOpen(false)}
-            returnFocusRef={returnFocusRef} fallbackFocusRef={titleRef}
-            initialFocusRef={focusSearchOnOpen ? searchRef : undefined} search={search}>
-            {navigation}
-          </MobileNavigation> : <aside className="docs-sidebar">{navigation}</aside>}
+          <aside className="docs-sidebar">
+            <div className="docs-mobile-controls">
+              <span>{activeDoc.name}</span>
+              <button type="button" aria-controls="docs-component-nav"
+                aria-expanded={mobileNavOpen || Boolean(normalizedQuery)} onClick={() => {
+                  if (normalizedQuery) setSearchQuery("");
+                  setMobileNavOpen(!(mobileNavOpen || Boolean(normalizedQuery)));
+                }}>{mobileNavOpen || normalizedQuery ? "Hide navigation" : "Browse components"}</button>
+            </div>
+            <nav id="docs-component-nav" aria-label="Component documentation"
+              className={`docs-sidebar__nav${mobileNavOpen || normalizedQuery ? " docs-sidebar__nav--open" : ""}`}>
+              <div className="docs-sidebar__intro">
+                <h2 className="docs-eyebrow">Getting started</h2>
+                <a href={`${repoUrl}/blob/main/README.md#installation`}>Installation</a>
+                <a href={`${repoUrl}/blob/main/THEMING.md`}>Theming</a>
+                <button type="button" onClick={() => selectDoc("useGridraCanvas")}>Canvas interactions</button>
+              </div>
+              <div className="docs-sidebar__tree-heading">
+                <span className="docs-eyebrow">Components</span>
+                <button type="button" aria-label={allExpanded ? "Collapse all" : "Expand all"}
+                  title={allExpanded ? "Collapse all" : "Expand all"} onClick={() => {
+                    const next = allExpanded ? [] : treeItems.map((item) => item.id);
+                    if (normalizedQuery) setSearchExpandedCategories(next);
+                    else setExpandedCategories(next);
+                  }}>{allExpanded ? "−" : "+"}</button>
+              </div>
+              {filteredDocs.length === 0 ? <p className="docs-sidebar__empty">No matches</p> :
+                <GridraTreeView items={treeItems} expandedIds={expandedIds}
+                  onExpandedIdsChange={(next) => {
+                    if (normalizedQuery) setSearchExpandedCategories(next);
+                    else setExpandedCategories(next);
+                  }} onItemClick={selectDoc} onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    const row = (event.target as HTMLElement).closest<HTMLElement>(".gridra-tree-view__row");
+                    if (row) { event.preventDefault(); row.click(); }
+                  }} renderItem={(item, state) => (
+                    <span aria-current={!state.hasChildren && item.id === activeDoc.name ? "page" : undefined}
+                      className={state.hasChildren ? "docs-tree-category" : "docs-tree-component"}>
+                      {!state.hasChildren && <span className="docs-tree-marker" aria-hidden="true" />}
+                      <span>{item.label}</span>
+                    </span>
+                  )} />
+              }
+            </nav>
+          </aside>
 
           <main ref={readerRef} className="docs-reader" onScroll={() => {
             const reader = readerRef.current;
@@ -265,7 +216,7 @@ export function ComponentDocsPage({ onThemeChange, theme }: {
                     <span>Components</span><span aria-hidden="true">/</span><span>{activeDoc.category}</span>
                     <span aria-hidden="true">/</span><strong>{activeDoc.name}</strong>
                   </div>
-                  <h2 ref={titleRef} tabIndex={-1} className="docs-detail__title">{activeDoc.name}</h2>
+                  <h2 className="docs-detail__title">{activeDoc.name}</h2>
                   <p className="docs-detail__summary">{activeDoc.summary}</p>
                   <div className="docs-detail__meta">
                     <span className="docs-tag">{activeDoc.category}</span>

@@ -23,10 +23,10 @@
   .gridra-icon-button, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
   .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
   .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
-  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar, .gridra-sidebar-toggle,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 ) {
   box-sizing: border-box;
   color: var(--gridra-color-text);
@@ -43,10 +43,10 @@
   .gridra-icon-button, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
   .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
   .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
-  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar, .gridra-sidebar-toggle,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 ) :where(*),
 :where(
   .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
@@ -57,10 +57,10 @@
   .gridra-icon-button, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
   .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
   .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
-  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar, .gridra-sidebar-toggle,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 ) :where(*)::before,
 :where(
   .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
@@ -71,10 +71,10 @@
   .gridra-icon-button, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
   .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
   .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
-  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar, .gridra-sidebar-toggle,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 ) :where(*)::after,
 :where(
   .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
@@ -85,10 +85,10 @@
   .gridra-icon-button, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
   .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
   .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
-  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar, .gridra-sidebar-toggle,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 )::before,
 :where(
   .gridra-accordion, .gridra-alert, .gridra-avatar, .gridra-badge, .gridra-box, .gridra-breadcrumb,
@@ -99,10 +99,10 @@
   .gridra-icon-button, .gridra-input, .gridra-inspector-panel, .gridra-kbd, .gridra-label,
   .gridra-list, .gridra-menu, .gridra-minimap, .gridra-node, .gridra-pagination, .gridra-panel,
   .gridra-popover, .gridra-portal-root, .gridra-progress, .gridra-properties-panel, .gridra-radio,
-  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar, .gridra-sidebar-toggle,
+  .gridra-resize-handle, .gridra-select, .gridra-selectable-grid, .gridra-selection-box, .gridra-sidebar,
   .gridra-skeleton, .gridra-slider, .gridra-snap-guide, .gridra-spinner, .gridra-split-pane, .gridra-stack,
   .gridra-stat, .gridra-status-indicator, .gridra-stepper, .gridra-switch, .gridra-tabs, .gridra-textarea,
-  .gridra-timeline, .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
+  .gridra-toast, .gridra-toolbar, .gridra-tooltip, .gridra-tree-view
 )::after {
   box-sizing: border-box;
 }
@@ -2367,26 +2367,20 @@
   background: var(--gridra-color-accent);
 }
 
-.gridra-sidebar-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  flex-shrink: 0;
-  width: var(--gridra-sidebar-toggle-size, 44px);
-  height: var(--gridra-sidebar-toggle-size, 44px);
-  gap: 3.5px;
-  padding: 0 4px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--gridra-color-text);
-  cursor: pointer;
-}
-
 .gridra-sidebar__toggle {
   position: absolute;
   top: 8px;
   z-index: 1;
+  display: inline-flex;
+  width: var(--gridra-sidebar-toggle-size);
+  height: var(--gridra-sidebar-toggle-size);
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  border: 1px solid var(--gridra-color-border);
+  background: var(--gridra-color-surface-input);
+  cursor: pointer;
+  padding: 0 4px;
 }
 
 .gridra-sidebar--left .gridra-sidebar__toggle {
@@ -2398,32 +2392,19 @@
 }
 
 .gridra-sidebar__toggle-line {
-  width: min(18px, 100%);
-  height: 1.5px;
-  flex-shrink: 0;
-  background: currentColor;
-  transition: transform 140ms ease, opacity 140ms ease;
+  width: 100%;
+  height: 1px;
+  background: var(--gridra-color-muted-text);
 }
 
-.gridra-sidebar-toggle[aria-expanded="true"] .gridra-sidebar__toggle-line:nth-child(1) {
-  transform: translateY(5px) rotate(45deg);
+.gridra-sidebar__toggle:hover .gridra-sidebar__toggle-line,
+.gridra-sidebar__toggle:focus-visible .gridra-sidebar__toggle-line {
+  background: var(--gridra-color-accent);
 }
-.gridra-sidebar-toggle[aria-expanded="true"] .gridra-sidebar__toggle-line:nth-child(2) { opacity: 0; }
-.gridra-sidebar-toggle[aria-expanded="true"] .gridra-sidebar__toggle-line:nth-child(3) {
-  transform: translateY(-5px) rotate(-45deg);
-}
-.gridra-sidebar-toggle:hover:not(:disabled),
-.gridra-sidebar-toggle[aria-expanded="true"]:not(:disabled) {
-  background: var(--gridra-color-surface-raised);
-}
-.gridra-sidebar-toggle:focus-visible {
-  outline: 2px solid var(--gridra-color-focus);
-  outline-offset: 3px;
-}
-.gridra-sidebar-toggle:disabled { opacity: 0.45; cursor: not-allowed; }
 
-@media (prefers-reduced-motion: reduce) {
-  .gridra-sidebar, .gridra-sidebar__toggle-line { transition: none; }
+.gridra-sidebar__toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--gridra-shadow-selected);
 }
 
 .gridra-sidebar--closed .gridra-sidebar__content {
@@ -3942,126 +3923,6 @@
   margin: calc(var(--gridra-stepper-marker-size) / 2) 10px 0;
 }
 .gridra-stepper--boxes.gridra-stepper--vertical .gridra-stepper__connector { width: 1px; height: 20px; min-width: 0; margin: 6px 0 6px calc(var(--gridra-stepper-marker-size) / 2); flex: 0 0 auto; }
-
-/* Timeline: 日時と内容を順序どおりに並べる、閲覧用の履歴表示。 */
-.gridra-timeline {
-  --gridra-timeline-title-size: 14px;
-  --gridra-timeline-description-size: 12px;
-  --gridra-timeline-date-size: 11px;
-  --gridra-timeline-marker-size: 8px;
-  --gridra-timeline-gap: 28px;
-  --gridra-timeline-column-width: 240px;
-  --gridra-timeline-marker-center: calc(var(--gridra-timeline-title-size) * 0.7);
-
-  display: grid;
-  gap: var(--gridra-timeline-gap);
-  width: 100%;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.gridra-timeline--sm {
-  --gridra-timeline-title-size: 12px;
-  --gridra-timeline-description-size: 11px;
-  --gridra-timeline-date-size: 10px;
-  --gridra-timeline-marker-size: 6px;
-  --gridra-timeline-gap: 20px;
-  --gridra-timeline-column-width: 200px;
-}
-.gridra-timeline--lg {
-  --gridra-timeline-title-size: 16px;
-  --gridra-timeline-description-size: 14px;
-  --gridra-timeline-date-size: 12px;
-  --gridra-timeline-marker-size: 10px;
-  --gridra-timeline-gap: 36px;
-  --gridra-timeline-column-width: 280px;
-}
-.gridra-timeline__item {
-  position: relative;
-  display: grid;
-  grid-template-columns: var(--gridra-timeline-marker-size) minmax(0, 1fr);
-  column-gap: var(--gridra-space-lg);
-  min-width: 0;
-}
-.gridra-timeline__marker {
-  position: absolute;
-  z-index: 1;
-  top: calc(var(--gridra-timeline-marker-center) - var(--gridra-timeline-marker-size) / 2);
-  left: 0;
-  width: var(--gridra-timeline-marker-size);
-  height: var(--gridra-timeline-marker-size);
-  background: var(--gridra-color-text);
-}
-.gridra-timeline__connector {
-  position: absolute;
-  top: var(--gridra-timeline-marker-center);
-  left: calc((var(--gridra-timeline-marker-size) - 1px) / 2);
-  width: 1px;
-  height: calc(100% + var(--gridra-timeline-gap));
-  background: var(--gridra-color-border-strong);
-}
-.gridra-timeline__content {
-  display: grid;
-  grid-column: 2;
-  align-content: start;
-  gap: var(--gridra-space-sm);
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-.gridra-timeline__date {
-  color: var(--gridra-color-muted-text);
-  font-size: var(--gridra-timeline-date-size);
-  line-height: 1.5;
-}
-.gridra-timeline__title {
-  color: var(--gridra-color-text);
-  font-size: var(--gridra-timeline-title-size);
-  font-weight: 600;
-  line-height: 1.4;
-}
-.gridra-timeline__description {
-  color: var(--gridra-color-muted-text);
-  font-size: var(--gridra-timeline-description-size);
-  line-height: 1.6;
-}
-.gridra-timeline__description > :first-child,
-.gridra-timeline__title > :first-child {
-  margin-top: 0;
-}
-.gridra-timeline__description > :last-child,
-.gridra-timeline__title > :last-child {
-  margin-bottom: 0;
-}
-.gridra-timeline .gridra-timeline__content a {
-  color: var(--gridra-color-text);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.gridra-timeline .gridra-timeline__content a:focus-visible {
-  outline: 2px solid var(--gridra-color-focus);
-  outline-offset: 2px;
-}
-.gridra-timeline--horizontal {
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(var(--gridra-timeline-column-width), 1fr);
-  align-items: start;
-  overflow-x: auto;
-  padding: 4px 4px var(--gridra-space-lg);
-}
-.gridra-timeline--horizontal .gridra-timeline__item {
-  display: block;
-  padding-top: calc(var(--gridra-timeline-marker-size) + var(--gridra-space-lg));
-}
-.gridra-timeline--horizontal .gridra-timeline__marker {
-  top: 0;
-}
-.gridra-timeline--horizontal .gridra-timeline__connector {
-  top: calc((var(--gridra-timeline-marker-size) - 1px) / 2);
-  left: 0;
-  width: calc(100% + var(--gridra-timeline-gap));
-  height: 1px;
-}
 
 .gridra-breadcrumb {
   min-width: 0;

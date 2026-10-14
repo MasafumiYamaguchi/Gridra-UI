@@ -29,17 +29,6 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
-  it.each(["Portfolio history", "Horizontal milestones"])("renders %s as a readable history with usable project links", (title) => {
-    const preview = renderExample("GridraTimeline", title);
-    const history = within(preview.getByRole("list", { name: "ポートフォリオの活動履歴" }));
-    expect(history.getAllByRole("listitem")).toHaveLength(3);
-    expect(history.getByText("2022年4月").getAttribute("datetime")).toBe("2022-04");
-    expect(history.getByText("2024年から現在").tagName).toBe("SPAN");
-    expect(history.getByRole("link", { name: "プロジェクトを見る" }).getAttribute("href")).toBe("https://example.com/projects");
-    expect(history.queryByRole("button")).toBeNull();
-    expect(history.queryByRole("progressbar")).toBeNull();
-  });
-
   it.each(["Cards", "Ruler", "Line", "Boxes"])("lets both %s stepper examples go back and reset independently", (title) => {
     const preview = renderExample("GridraStepper", title);
     const variant = title.toLowerCase();
@@ -140,15 +129,4 @@ describe("SplitPane documentation examples", () => {
     fireEvent.keyDown(second, { key: "ArrowLeft" });
     expect(second.getAttribute("aria-valuenow")).toBe("68");
   });
-});
-
-it("demonstrates the reusable sidebar toggle without changing disabled state", () => {
-  const preview = renderExample("GridraSidebar", "Standalone navigation toggle");
-  const toggle = preview.getByRole("button", { name: "Open sidebar" });
-  fireEvent.click(toggle);
-  expect(toggle.getAttribute("aria-expanded")).toBe("true");
-  expect(preview.getByText("Navigation content").hidden).toBe(false);
-  const disabled = preview.getByRole("button", { name: "Unavailable navigation" });
-  fireEvent.click(disabled);
-  expect(disabled.getAttribute("aria-expanded")).toBe("false");
 });

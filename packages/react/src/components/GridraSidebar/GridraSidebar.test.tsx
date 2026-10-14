@@ -124,17 +124,3 @@ describe("GridraSidebar", () => {
     expect(onOpenChange).toHaveBeenCalled();
   });
 });
-
-it("uses the shared toggle and links it to sidebar content", () => {
-  const onOpenChange = vi.fn();
-  const { rerender } = render(<GridraSidebar open={false} onOpenChange={onOpenChange}>Content</GridraSidebar>);
-  const toggle = screen.getByRole("button", { name: "Open sidebar" });
-  expect(toggle.classList.contains("gridra-sidebar-toggle")).toBe(true);
-  expect(toggle.classList.contains("gridra-sidebar__toggle")).toBe(true);
-  expect(document.getElementById(toggle.getAttribute("aria-controls")!)?.textContent).toBe("Content");
-  fireEvent.click(toggle);
-  expect(onOpenChange).toHaveBeenCalledWith(true, false);
-  expect(toggle.getAttribute("aria-expanded")).toBe("false");
-  rerender(<GridraSidebar open onOpenChange={onOpenChange}>Content</GridraSidebar>);
-  expect(toggle.getAttribute("aria-expanded")).toBe("true");
-});
