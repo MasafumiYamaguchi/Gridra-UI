@@ -141,3 +141,14 @@ describe("SplitPane documentation examples", () => {
     expect(second.getAttribute("aria-valuenow")).toBe("68");
   });
 });
+
+it("demonstrates the reusable sidebar toggle without changing disabled state", () => {
+  const preview = renderExample("GridraSidebar", "Standalone navigation toggle");
+  const toggle = preview.getByRole("button", { name: "Open sidebar" });
+  fireEvent.click(toggle);
+  expect(toggle.getAttribute("aria-expanded")).toBe("true");
+  expect(preview.getByText("Navigation content").hidden).toBe(false);
+  const disabled = preview.getByRole("button", { name: "Unavailable navigation" });
+  fireEvent.click(disabled);
+  expect(disabled.getAttribute("aria-expanded")).toBe("false");
+});
