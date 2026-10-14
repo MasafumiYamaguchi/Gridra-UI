@@ -153,7 +153,6 @@ GRIDRA UI includes primitives for dense application surfaces:
 - Controls: buttons, icon buttons, inputs, selects, checkboxes, radios, switches, sliders, fields, labels.
 - Overlays and interaction: tooltips, popovers, dialogs, dropdown menus, context menus, command palettes, hover cards.
 - Navigation and feedback: tabs, breadcrumbs, accordions, tree views, pagination, steppers, alerts, toasts, progress, skeletons, empty states.
-- Chronological display: timeline for portfolio history, career milestones, and project activity.
 
 See [COMPONENT_ROADMAP.md](./COMPONENT_ROADMAP.md) for the current component status and planned additions.
 

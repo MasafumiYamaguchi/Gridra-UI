@@ -1,11 +1,10 @@
 import * as ts from "typescript";
 import { expect, it } from "vitest";
 import { stepperDoc } from "./data/components/gridra-stepper";
-import { timelineDoc } from "./data/components/gridra-timeline";
 
-it.each([stepperDoc, timelineDoc])("typechecks $name examples as standalone React modules", (doc) => {
-  const sources = new Map(doc.examples.map((example) => [
-    ts.sys.resolvePath(`src/${doc.name}-${example.title.toLowerCase().replaceAll(" ", "-")}.tsx`), example.code,
+it("typechecks all four Stepper examples as standalone React modules", () => {
+  const sources = new Map(stepperDoc.examples.map((example) => [
+    ts.sys.resolvePath(`src/stepper-example-${example.title.toLowerCase()}.tsx`), example.code,
   ]));
   const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ES2022,
