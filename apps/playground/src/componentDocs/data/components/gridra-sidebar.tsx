@@ -1,4 +1,5 @@
 import { GridraBadge, GridraBox, GridraStack, GridraSidebar } from "@gridra-ui/react";
+import { SidebarToggleExample } from "./sidebar-toggle-example";
 import type { ComponentDoc } from "../../types";
 
 export const sidebarDoc: ComponentDoc = {
@@ -43,7 +44,24 @@ export const sidebarDoc: ComponentDoc = {
       "GridraSidebar + GridraBox/GridraStack: sidebar content layout.",
       "GridraSidebar + main content container: classic left or right app shell."
     ],
+    notes:
+      "The built-in hamburger uses the exported GridraSidebarToggle. The unboxed icon becomes a close icon when expanded, with a visible keyboard focus ring and reduced-motion support. Sidebar keeps its existing 20px toggleSize default; use toggleSize={44} for touch interfaces. Standalone GridraSidebarToggle is 44px by default and accepts open/defaultOpen/onOpenChange(next, previous), native button attributes, disabled, and a button ref. Supply aria-controls for the region it controls and aria-label to customize the accessible name. It only toggles state; modal focus management and scroll locking belong to the application.",
     examples: [
+      {
+        title: "Standalone navigation toggle",
+        code: `import { useState } from "react";
+import { GridraSidebarToggle } from "@gridra-ui/react";
+
+function NavigationToggle() {
+  const [open, setOpen] = useState(false);
+  return <>
+    <GridraSidebarToggle open={open} onOpenChange={setOpen} aria-controls="navigation-content" />
+    <div id="navigation-content" hidden={!open}>Navigation content</div>
+    <GridraSidebarToggle disabled aria-label="Unavailable navigation" />
+  </>;
+}`,
+        preview: <SidebarToggleExample />
+      },
       {
         title: "Controlled left sidebar",
         code: `<GridraSidebar

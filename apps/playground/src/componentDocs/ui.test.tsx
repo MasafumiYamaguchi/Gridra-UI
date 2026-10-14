@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GRIDRA_BUILT_IN_THEME_NAMES } from "@gridra-ui/react";
 import { ComponentDocsPage } from "./ui";
@@ -9,13 +9,34 @@ vi.mock("./code-block", () => ({
 }));
 
 const scrollTo = vi.fn();
+let mobile = false;
+const mediaListeners = new Set<() => void>();
+function resizeMobile(matches: boolean) {
+  act(() => { mobile = matches; mediaListeners.forEach((listener) => listener()); });
+}
+
 beforeEach(() => {
+  mobile = false;
+  mediaListeners.clear();
+  vi.stubGlobal("matchMedia", (query: string) => ({
+    get matches() { return query === "(max-width: 760px)" && mobile; },
+    addEventListener: (_: string, listener: () => void) => mediaListeners.add(listener),
+    removeEventListener: (_: string, listener: () => void) => mediaListeners.delete(listener),
+  }));
+  // jsdomにはnative dialogの操作がないため、開閉属性と初期focusだけを補う。
+  Object.defineProperty(HTMLDialogElement.prototype, "showModal", { configurable: true, value: function (this: HTMLDialogElement) {
+    this.setAttribute("open", "");
+    this.querySelector<HTMLButtonElement>("button")?.focus();
+  } });
+  Object.defineProperty(HTMLDialogElement.prototype, "close", { configurable: true, value: function (this: HTMLDialogElement) { this.removeAttribute("open"); } });
   scrollTo.mockClear();
   Object.defineProperty(HTMLElement.prototype, "scrollTo", { configurable: true, value: scrollTo });
 });
 
 afterEach(() => {
   cleanup();
+  vi.unstubAllGlobals();
+  document.body.style.overflow = "";
   window.history.replaceState(null, "", "/");
 });
 
@@ -82,15 +103,6 @@ describe("documentation navigation", () => {
     expect(heading()).toBe("GridraButton");
   });
 
-  it("closes mobile navigation after choosing a component", () => {
-    const nav = renderDocs();
-    fireEvent.click(screen.getByRole("button", { name: "Browse components" }));
-    expect(screen.getByRole("button", { name: "Hide navigation" }).getAttribute("aria-expanded")).toBe("true");
-    fireEvent.click(nav.getByText("Controls"));
-    fireEvent.click(nav.getByText("GridraButton"));
-    expect(screen.getByRole("button", { name: "Browse components" }).getAttribute("aria-expanded")).toBe("false");
-  });
-
   it("switches between preview and code with the keyboard", () => {
     renderDocs();
     const preview = screen.getByRole("tab", { name: "preview" });
@@ -144,4 +156,121 @@ describe("documentation navigation", () => {
     expect(heading()).toBe("GridraStack");
     expect(window.location.hash).toBe("#docs-GridraStack");
   });
+});
+
+function renderMobileDocs() {
+  mobile = true;
+  window.history.replaceState(null, "", "/docs#docs-GridraButton");
+  return render(<ComponentDocsPage theme="dark" onThemeChange={vi.fn()} />);
+}
+
+function openNavigation() {
+  const trigger = screen.getByRole("button", { name: "Open navigation" });
+  trigger.focus();
+  fireEvent.click(trigger);
+  return screen.getByRole("dialog", { name: "Documentation navigation" });
+}
+
+describe("mobile documentation drawer", () => {
+  it("opens and closes repeatedly, restoring focus and the previous scroll style", () => {
+    document.body.style.overflow = "clip";
+    renderMobileDocs();
+    const trigger = screen.getByRole("button", { name: "Open navigation" });
+    expect(screen.queryByRole("navigation", { name: "Component documentation" })).toBeNull();
+    for (let count = 0; count < 3; count++) {
+      const dialog = openNavigation();
+      expect(trigger.getAttribute("aria-expanded")).toBe("true");
+      expect(trigger.getAttribute("aria-controls")).toBe(dialog.id);
+      expect(document.body.style.overflow).toBe("hidden");
+      expect(document.activeElement).toBe(screen.getByRole("button", { name: "Close navigation" }));
+      fireEvent.click(screen.getByRole("button", { name: "Close navigation" }));
+      expect(screen.queryByRole("dialog")).toBeNull();
+      expect(trigger.getAttribute("aria-expanded")).toBe("false");
+      expect(document.body.style.overflow).toBe("clip");
+      expect(document.activeElement).toBe(trigger);
+    }
+  });
+
+  it.each(["backdrop", "Escape"])("dismisses via %s", (method) => {
+    renderMobileDocs();
+    const dialog = openNavigation();
+    if (method === "backdrop") fireEvent.click(dialog);
+    else fireEvent(dialog, new Event("cancel", { bubbles: false, cancelable: true }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.body.style.overflow).toBe("");
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Open navigation" }));
+  });
+
+  it("closes searched navigation, focuses the destination, and retains the query when reopened", () => {
+    renderMobileDocs();
+    openNavigation();
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "splitpane" } });
+    fireEvent.click(within(screen.getByRole("navigation", { name: "Component documentation" })).getByText("GridraSplitPane"));
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.activeElement).toBe(within(screen.getByRole("article")).getByRole("heading", { level: 2 }));
+    expect(window.location.hash).toBe("#docs-GridraSplitPane");
+    expect(document.body.style.overflow).toBe("");
+    openNavigation();
+    expect((screen.getByRole("searchbox") as HTMLInputElement).value).toBe("splitpane");
+  });
+
+  it("unlocks scrolling on unmount", () => {
+    const { unmount } = renderMobileDocs();
+    openNavigation();
+    unmount();
+    expect(document.body.style.overflow).toBe("");
+  });
+
+  it("cleans up on desktop resize and stays closed when returning to mobile", () => {
+    renderMobileDocs();
+    openNavigation();
+    resizeMobile(false);
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByRole("navigation", { name: "Component documentation" })).toBeTruthy();
+    expect(document.body.style.overflow).toBe("");
+    expect(document.activeElement).toBe(within(screen.getByRole("article")).getByRole("heading", { level: 2 }));
+    resizeMobile(true);
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByRole("button", { name: "Open navigation" }).getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("follows hash navigation and closes any open drawer", () => {
+    renderMobileDocs();
+    openNavigation();
+    window.history.replaceState(null, "", "#docs-GridraSlider/props");
+    fireEvent(window, new Event("hashchange"));
+    expect(heading()).toBe("GridraSlider");
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(scrollTo).toHaveBeenLastCalledWith({ top: 0, behavior: "instant" });
+    expect(document.body.style.overflow).toBe("");
+  });
+
+  it("opens and focuses search with Ctrl K", () => {
+    renderMobileDocs();
+    fireEvent.keyDown(window, { key: "k", ctrlKey: true });
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(document.activeElement).toBe(screen.getByRole("searchbox"));
+  });
+});
+
+it("cycles Tab at the drawer boundaries without focusing the background", () => {
+  renderMobileDocs();
+  const dialog = openNavigation();
+  const controls = Array.from(dialog.querySelectorAll<HTMLElement>('button, input, select, textarea, a[href], [tabindex]'))
+    .filter((element) => element.tabIndex >= 0 && !element.matches(":disabled"));
+  for (const control of controls) vi.spyOn(control, "getClientRects").mockReturnValue([new DOMRect(0, 0, 44, 44)] as unknown as DOMRectList);
+  controls[0].focus();
+  fireEvent.keyDown(controls[0], { key: "Tab", shiftKey: true });
+  expect(document.activeElement).toBe(controls[controls.length - 1]);
+  fireEvent.keyDown(controls[controls.length - 1], { key: "Tab" });
+  expect(document.activeElement).toBe(controls[0]);
+});
+
+it("returns to the document heading when a hash drops its section", () => {
+  renderDocs("#docs-GridraButton/props");
+  const reader = screen.getByRole("main");
+  reader.scrollTop = 500;
+  window.history.replaceState(null, "", "#docs-GridraButton");
+  fireEvent(window, new Event("hashchange"));
+  expect(reader.scrollTop).toBe(0);
 });
