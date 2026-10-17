@@ -261,3 +261,9 @@ State, handlers and semantic bindings are available without theme CSS.
 Import `useGridraSidebar` from `@gridra-ui/headless` for custom markup. The existing
 `GridraSidebar` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraSplitPane
+
+Import `useGridraSplitPane` from `@gridra-ui/headless` for custom markup. The existing
+`GridraSplitPane` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

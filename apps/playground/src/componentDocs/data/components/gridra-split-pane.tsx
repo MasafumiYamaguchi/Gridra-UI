@@ -2,6 +2,7 @@ import { GridraBadge, GridraBox, GridraSplitPane } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const splitPaneDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraSplitPane from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Layout",
     name: "GridraSplitPane",
     summary: "Two- or three-pane layout primitive with draggable separator and controlled/uncontrolled sizing.",
@@ -34,7 +35,7 @@ export const splitPaneDoc: ComponentDoc = {
       "Controlled and uncontrolled sizing with percent constraints.",
       "Supports two-pane and three-pane layouts with backward compatibility."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraSplitPane } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const split=useGridraSplitPane({defaultSize:50});\n  return <section {...split.getContainerProps()}><output>First pane {split.effectiveSizes[0]}%</output><div {...split.getSeparatorProps(0)} aria-label=\"Custom separator\" /></section>;\n}" }, ...([
       {
         title: "Horizontal split",
         code: `<GridraSplitPane defaultSize={60} minSize={20} maxSize={80}>
@@ -61,7 +62,7 @@ export const splitPaneDoc: ComponentDoc = {
   <GridraBox padding="sm" surface="input">Pane C</GridraBox>
 </GridraSplitPane>`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <div className="docs-inline-preview" style={{ height: 170 }}>
         <GridraSplitPane defaultSizes={[28, 42, 30]} minSize={15} maxSize={85}>
