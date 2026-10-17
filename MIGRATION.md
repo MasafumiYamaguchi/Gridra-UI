@@ -249,3 +249,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraTreeView` from `@gridra-ui/headless` for custom markup. The existing
 `GridraTreeView` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraSidebarToggle
+
+Import `useGridraSidebarToggle` from `@gridra-ui/headless` for custom markup. The existing
+`GridraSidebarToggle` export keeps the Gridra design and delegates to the same behavior.
+State, handlers and semantic bindings are available without theme CSS.

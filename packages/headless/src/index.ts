@@ -20,3 +20,5 @@ export * from "./stepper/useGridraStepper";
 export * from "./menu/useGridraMenu";
 
 export * from "./tree/useGridraTreeView";
+
+export * from "./sidebar/useGridraSidebarToggle";
