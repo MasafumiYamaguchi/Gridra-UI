@@ -2,6 +2,7 @@ import { GridraPropertiesPanel, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const propertiesPanelDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraPropertiesPanel from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Core",
     name: "GridraPropertiesPanel",
     summary: "Schema-driven properties panel for node-type-specific custom attributes.",
@@ -31,7 +32,7 @@ export const propertiesPanelDoc: ComponentDoc = {
       "Emits partial patches so the parent normalizes and persists.",
       "Shows a built-in empty state when selection or schema is missing."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraPropertiesPanel } from \"@gridra-ui/headless\";\nimport { useState } from \"react\";\n\nexport default function Example() {\n  const [value,setValue]=useState({count:1});\n  const properties=useGridraPropertiesPanel({selectedNodeId:\"one\",selectedNodeType:\"custom\",value,schema:{custom:[{id:\"count\",label:\"Count\",kind:\"number\"}]},onChange:patch=>setValue(previous=>({...previous,count:typeof patch.count===\"number\"?patch.count:previous.count}))});\n  return <label>Custom count<input type=\"number\" value={value.count} onChange={event=>properties.changeNumber(\"count\",event.target.value)}/></label>;\n}" }, ...([
       {
         title: "Empty state",
         code: `<GridraPropertiesPanel />`
@@ -56,7 +57,7 @@ export const propertiesPanelDoc: ComponentDoc = {
   onChange={(patch) => setProperties((prev) => ({ ...prev, ...patch }))}
 />`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <GridraStack gap="sm">
         <GridraPropertiesPanel />
