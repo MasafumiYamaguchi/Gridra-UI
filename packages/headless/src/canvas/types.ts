@@ -1,7 +1,5 @@
 import type { HTMLAttributes } from "react";
 import type { GridraId, GridraRect } from "@gridra-ui/core";
-import type { GridraNodePlacement } from "../GridraNode";
-import type { GridraSnapGuideOrientation } from "../GridraSnapGuide";
 
 export interface GridraCanvasNode {
   id: GridraId;
@@ -64,3 +62,13 @@ export interface GridraCanvasOverlayProps extends HTMLAttributes<HTMLDivElement>
   gridLines?: GridraCanvasSnapGuide[];
   onConnectionSelect?: (connection: GridraNodeConnection) => void;
 }
+
+/** 空間操作で共有する型。描画コンポーネントへの依存を持たせない。 */
+export interface GridraNodePlacement {
+  column: number;
+  row: number;
+  columnSpan?: number;
+  rowSpan?: number;
+}
+export type GridraSnapGuideOrientation = "vertical" | "horizontal";
+export type GridraConnectionHandleKind = "input" | "output";

@@ -20,7 +20,7 @@ Migrate one component per PR after the shared package foundation; do not add
 Radix or another behavior library as part of this separation.
 
 - [x] Package foundation, shared controllable state, DOM subscriptions, event/ref composition, and pure numeric helpers.
-- [ ] Canvas: move the existing controlled hook and geometry out of the styled package.
+- [x] Canvas: move the existing controlled hook and geometry out of the styled package.
 - [ ] Tabs: expose state, keyboard/focus handling, and ARIA prop getters.
 - [ ] Accordion: expose state, keyboard/focus handling, and ARIA prop getters.
 - [ ] Collections: Tree View, persistent Menu, Selectable Grid, Pagination, and Stepper.

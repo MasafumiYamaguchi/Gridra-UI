@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { useClientLayoutEffect } from "@gridra-ui/headless";
-import { useAncestorAttributes } from "@gridra-ui/headless";
+import { useClientLayoutEffect } from "../internal/useClientLayoutEffect";
+import { useAncestorAttributes } from "../internal/useAncestorAttributes";
 import { getGridMetrics, type GridMetrics } from "./geometry";
 
 /** DOMの寸法取得をここに集約し、描画と操作には値のスナップショットを渡す。 */

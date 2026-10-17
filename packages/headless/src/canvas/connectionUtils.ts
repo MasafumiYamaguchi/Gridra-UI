@@ -1,4 +1,4 @@
-import type { GridraConnectionHandleKind } from "../GridraConnectionHandle";
+import type { GridraConnectionHandleKind } from "./types";
 import type { GridraId } from "@gridra-ui/core";
 import type { GridraNodeConnection } from "./types";
 

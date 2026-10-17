@@ -61,9 +61,9 @@ import {
   GridraToolbar,
   GridraTooltip,
   GridraTreeView,
-  useGridraCanvas,
   useToast,
 } from "@gridra-ui/react";
+import { useGridraCanvas } from "@gridra-ui/headless";
 import type {
   GridraBuiltInThemeName,
   GridraCanvasState,

@@ -1,6 +1,6 @@
 import type { GridraId, GridraPoint } from "@gridra-ui/core";
-import type { GridraNodePlacement } from "../GridraNode";
-import type { GridraConnectionHandleKind } from "../GridraConnectionHandle";
+import type { GridraNodePlacement } from "./types";
+import type { GridraConnectionHandleKind } from "./types";
 
 type PointerState = { pointerId: number; origin: GridraPoint; point: GridraPoint };
 export type Operation = PointerState & (

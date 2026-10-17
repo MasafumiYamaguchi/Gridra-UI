@@ -1,12 +1,7 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 
-export interface GridraNodePlacement {
-  column: number;
-  row: number;
-  columnSpan?: number;
-  rowSpan?: number;
-}
+export type { GridraNodePlacement } from "@gridra-ui/headless";
 
 /** 見た目を担当するbutton。配置と操作は通常のDOM propsとして受け取る。 */
 export interface GridraNodeProps extends ButtonHTMLAttributes<HTMLButtonElement> {

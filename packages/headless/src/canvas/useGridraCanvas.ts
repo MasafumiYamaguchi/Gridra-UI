@@ -3,9 +3,9 @@ import {
   type ButtonHTMLAttributes, type HTMLAttributes, type PointerEvent, type Ref,
 } from "react";
 import type { GridraId, GridraPoint } from "@gridra-ui/core";
-import type { GridraConnectionHandleKind } from "../GridraConnectionHandle";
-import { composeHandlers } from "@gridra-ui/headless";
-import { mergeRefs } from "@gridra-ui/headless";
+import type { GridraConnectionHandleKind } from "./types";
+import { composeHandlers } from "../internal/composeHandlers";
+import { mergeRefs } from "../internal/mergeRefs";
 import {
   createRect, getCanvasPoint,
   normalizeGridCount, normalizeGridPlacement, placementsEqual,
@@ -14,7 +14,7 @@ import { computeDragPlacement, computeResizePlacement } from "./interactionUtils
 import { hitTestConnections, hitTestNodes } from "./hitTesting";
 import { createNodeConnection, getConnectionKey, hasConnection } from "./connectionUtils";
 import { getSelectionMode, mergeSelectedIds } from "./selectionUtils";
-import { useClientLayoutEffect } from "@gridra-ui/headless";
+import { useClientLayoutEffect } from "../internal/useClientLayoutEffect";
 import { useGridGeometry } from "./useGridGeometry";
 import { computeOverlay } from "./overlayUtils";
 import { canvasStatesEqual } from "./stateUtils";

@@ -1,7 +1,8 @@
+import type { GridraSnapGuideOrientation } from "@gridra-ui/headless";
 import type { CSSProperties, HTMLAttributes } from "react";
 import { clampNumber, normalizeGridLine, normalizeGridSpan } from "@gridra-ui/core";
 
-export type GridraSnapGuideOrientation = "vertical" | "horizontal";
+export type { GridraSnapGuideOrientation } from "@gridra-ui/headless";
 
 export interface GridraSnapGuidePlacement {
   column?: number;

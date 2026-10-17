@@ -1,4 +1,4 @@
-import type { GridraNodePlacement } from "../GridraNode";
+import type { GridraNodePlacement } from "./types";
 import type { GridraPoint } from "@gridra-ui/core";
 import { normalizeGridPlacement, normalizeGridPlacementForDrag, normalizeGridSpan, type GridMetrics } from "./geometry";
 
