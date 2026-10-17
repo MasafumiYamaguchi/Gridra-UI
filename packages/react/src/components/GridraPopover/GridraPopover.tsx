@@ -1,3 +1,5 @@
+import {useGridraPopover} from "@gridra-ui/headless";
+import type {Ref} from "react";
 import {
   cloneElement,
   isValidElement,
@@ -19,8 +21,8 @@ import { composeHandlers } from "@gridra-ui/headless";
 import { mergeRefs } from "@gridra-ui/headless";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
-import { useDocumentEvent } from "../../internal/useDocumentEvent";
-import { useFloatingPosition } from "../../internal/useFloatingPosition";
+import { useDocumentEvent } from "@gridra-ui/headless";
+import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraPopoverPlacement = "top" | "right" | "bottom" | "left";
 export type GridraPopoverSize = "sm" | "md" | "lg";
@@ -58,84 +60,8 @@ export function GridraPopover({
   style,
   ...props
 }: GridraPopoverProps) {
-  // childrenは表示内容ではなく、クリックで開閉するアンカー要素として扱う。
-  const anchorElement = children as ReactElement<Record<string, unknown>>;
-  const anchorRef = useRef<HTMLElement | null>(null);
-  const popoverRef = useRef<HTMLDivElement | null>(null);
-  const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
-  const [portalMounted, setPortalMounted] = useState(false);
-  const popoverId = useId();
-
-  useEffect(() => {
-    // documentが存在するクライアント側でのみPortalを描画する。
-    setPortalMounted(true);
-  }, []);
-
-  // アンカーとPopoverの実寸から、はみ出しを考慮した座標・向きを求める。
-  const { coords, resolvedPlacement } = useFloatingPosition({
-    anchorRef,
-    disabled,
-    floatingRef: popoverRef,
-    offset: POPOVER_OFFSET,
-    open: currentOpen,
-    placement,
-  });
-
-  const handleEscape = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Escape" && closeOnEscape && currentOpen) {
-        event.preventDefault();
-        setCurrentOpen(false);
-      }
-    },
-    [closeOnEscape, currentOpen, setCurrentOpen],
-  );
-
-  useDocumentEvent("keydown", handleEscape, currentOpen);
-
-  const handleOutsidePointerDown = useCallback(
-    (event: PointerEvent) => {
-      if (!closeOnOutsidePointerDown || !currentOpen) {
-        return;
-      }
-      const target = event.target as Node | null;
-      // アンカーまたはPopover内部の操作では閉じない。
-      if (
-        target &&
-        !popoverRef.current?.contains(target) &&
-        !anchorRef.current?.contains(target)
-      ) {
-        setCurrentOpen(false);
-      }
-    },
-    [closeOnOutsidePointerDown, currentOpen, setCurrentOpen],
-  );
-
-  useDocumentEvent("pointerdown", handleOutsidePointerDown, currentOpen, true);
-
-  const toggleOpen = () => {
-    if (disabled) {
-      return;
-    }
-    setCurrentOpen(!currentOpen);
-  };
-
-  // 元のイベントやrefを壊さず、Popover用の処理をアンカーへ合成する。
-  const anchorProps = {
-    "aria-controls": !disabled && currentOpen ? popoverId : undefined,
-    "aria-expanded": !disabled ? currentOpen : undefined,
-    onClick: composeHandlers(
-      anchorElement.props.onClick as ((event: MouseEvent) => void) | undefined,
-      toggleOpen,
-    ),
-    ref: mergeRefs(
-      (anchorElement as ReactElement & { ref?: unknown }).ref,
-      (node: HTMLElement | null) => {
-        anchorRef.current = node;
-      },
-    ),
-  };
-
+  const {currentOpen,portalMounted,anchorRef,popoverRef,popoverId,coords,resolvedPlacement,getTriggerProps}=useGridraPopover({open,defaultOpen,onOpenChange,disabled,closeOnEscape,closeOnOutsidePointerDown,placement,offset:POPOVER_OFFSET});
+  const anchorProps=getTriggerProps<HTMLElement>(isValidElement(children)?{...children.props,ref:(children.props.ref as Ref<HTMLElement>|undefined)??(children as ReactElement&{ref?:Ref<HTMLElement>}).ref}:{});
   const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
   const popoverClassName = cx(
     "gridra-portal-root",

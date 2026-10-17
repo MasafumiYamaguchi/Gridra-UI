@@ -29,6 +29,13 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraPopover through caller-owned DOM", () => {
+    const preview = renderExample("GridraPopover", "Custom markup with headless hook");
+    fireEvent.click(preview.getByRole("button",{name:"Open custom popover"}));
+    expect(preview.getByText("Custom popover content")).toBeTruthy();
+    fireEvent.keyDown(document,{key:"Escape"});
+    expect(preview.queryByText("Custom popover content")).toBeNull();
+  });
   it("runs headless GridraSplitPane through caller-owned DOM", () => {
     const preview = renderExample("GridraSplitPane", "Custom markup with headless hook");
     fireEvent.keyDown(preview.getByRole("separator"),{key:"ArrowRight"});

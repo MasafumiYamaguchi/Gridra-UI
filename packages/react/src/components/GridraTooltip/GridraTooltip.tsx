@@ -18,7 +18,7 @@ import { composeHandlers } from "@gridra-ui/headless";
 import { mergeRefs } from "@gridra-ui/headless";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
-import { useFloatingPosition } from "../../internal/useFloatingPosition";
+import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraTooltipPlacement = "top" | "right" | "bottom" | "left";
 export type GridraTooltipSize = "sm" | "md" | "lg";

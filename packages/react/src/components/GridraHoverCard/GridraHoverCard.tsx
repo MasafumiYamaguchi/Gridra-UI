@@ -21,8 +21,8 @@ import { composeHandlers } from "@gridra-ui/headless";
 import { mergeRefs } from "@gridra-ui/headless";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
-import { useDocumentEvent } from "../../internal/useDocumentEvent";
-import { useFloatingPosition } from "../../internal/useFloatingPosition";
+import { useDocumentEvent } from "@gridra-ui/headless";
+import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraHoverCardPlacement = "top" | "right" | "bottom" | "left";
 export type GridraHoverCardSize = "sm" | "md" | "lg";

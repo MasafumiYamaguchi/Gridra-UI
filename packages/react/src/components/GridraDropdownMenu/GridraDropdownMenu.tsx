@@ -20,7 +20,7 @@ import { mergeRefs } from "@gridra-ui/headless";
 import { clampIndex } from "@gridra-ui/core";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
-import { useFloatingPosition } from "../../internal/useFloatingPosition";
+import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraDropdownMenuPlacement = "top" | "right" | "bottom" | "left";
 export type GridraDropdownMenuSize = "sm" | "md" | "lg";

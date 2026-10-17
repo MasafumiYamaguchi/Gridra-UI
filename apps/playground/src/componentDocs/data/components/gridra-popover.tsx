@@ -2,6 +2,7 @@ import { GridraButton, GridraCheckbox, GridraInput, GridraLabel, GridraPopover, 
 import type { ComponentDoc } from "../../types";
 
 export const popoverDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraPopover from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Overlays",
     name: "GridraPopover",
     summary: "Click-triggered non-modal overlay panel positioned relative to an anchor element.",
@@ -43,7 +44,7 @@ export const popoverDoc: ComponentDoc = {
       "GridraPopover + GridraButton: icon-triggered settings panel.",
       "GridraPopover + GridraCheckbox / GridraSelect: palette-style filters.",
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraPopover } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const popover=useGridraPopover();\n  return <section><button {...popover.getTriggerProps()}>Open custom popover</button>{popover.currentOpen?<div {...popover.getContentProps()}>Custom popover content</div>:null}</section>;\n}" }, ...([
       {
         title: "Basic popover",
         code: `<GridraPopover
@@ -78,7 +79,7 @@ export const popoverDoc: ComponentDoc = {
   <GridraButton>Disabled trigger</GridraButton>
 </GridraPopover>`,
       },
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <div className="docs-inline-preview">
         <GridraPopover
