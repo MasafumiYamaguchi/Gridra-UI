@@ -46,7 +46,7 @@ export function useGridraTabs<TItem extends GridraTabsItem>({
   const currentId = resolve(rawSelectedId);
   const [focusedId, setFocusedId] = useState(currentId);
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
-  useEffect(() => { setFocusedId(currentId); }, [currentId, enabledIds]);
+  useEffect(() => { setFocusedId(currentId); }, [currentId]);
   const currentFocusId = enabledIds.includes(focusedId) ? focusedId : currentId;
   const select = (id: string) => {
     if (!enabledIds.includes(id)) return;

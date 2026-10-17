@@ -52,6 +52,20 @@ describe("useGridraTabs without Gridra CSS or components", () => {
     expect(screen.getByRole("tabpanel").textContent).toBe("a content");
   });
 
+  it("preserves manual focus when inline item arrays are recreated on render", () => {
+    function Inline() {
+      const tabs = useGridraTabs({ items: [{ id: "first" }, { id: "last" }], activationMode: "manual" });
+      return <div {...tabs.getTabListProps()}>
+        {tabs.items.map(item => <button key={item.id} {...tabs.getTabProps(item.id)}>{item.id}</button>)}
+      </div>;
+    }
+    render(<Inline />);
+    fireEvent.keyDown(screen.getByRole("tablist"), { key: "End" });
+    expect(screen.getByRole("tab", { name: "first" }).getAttribute("aria-selected")).toBe("true");
+    fireEvent.keyDown(screen.getByRole("tablist"), { key: "Enter" });
+    expect(screen.getByRole("tab", { name: "last" }).getAttribute("aria-selected")).toBe("true");
+  });
+
   it("composes refs and click handlers, including preventDefault", () => {
     const ref = createRef<HTMLButtonElement>();
     const onClick = vi.fn(event => event.preventDefault());
