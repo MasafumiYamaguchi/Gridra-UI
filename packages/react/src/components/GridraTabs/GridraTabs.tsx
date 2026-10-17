@@ -9,8 +9,8 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { useControllableValue } from "../../hooks/useControllableValue";
-import { wrapIndex } from "../../internal/numeric";
+import { useControllableValue } from "@gridra-ui/headless";
+import { wrapIndex } from "@gridra-ui/core";
 
 export type GridraTabsOrientation = "horizontal" | "vertical";
 export type GridraTabsSize = "sm" | "md" | "lg";

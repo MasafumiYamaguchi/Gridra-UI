@@ -4,7 +4,7 @@ import {
   normalizeGridLine,
   normalizeGridSpan,
   parseCssPx,
-} from "../../internal/numeric";
+} from "@gridra-ui/core";
 import type { GridraNodePlacement } from "../GridraNode";
 
 export { normalizeGridLine, normalizeGridSpan };

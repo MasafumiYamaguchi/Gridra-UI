@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { formatCssLength } from "../../internal/numeric";
+import { formatCssLength } from "@gridra-ui/core";
 import { GridraBox, type GridraBoxProps } from "../GridraBox";
 import { cx } from "../../internal/classNames";
 

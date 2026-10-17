@@ -1,12 +1,12 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { useControllableValue } from "../../hooks/useControllableValue";
+import { useControllableValue } from "@gridra-ui/headless";
 import {
   clampNumber,
   formatCssLength,
   formatCssLengthWithMin,
   resolveCssLengthToPx,
-} from "../../internal/numeric";
+} from "@gridra-ui/core";
 
 import { GridraSidebarToggle } from "./GridraSidebarToggle";
 

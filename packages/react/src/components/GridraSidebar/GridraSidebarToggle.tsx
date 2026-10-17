@@ -1,5 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes } from "react";
-import { useControllableValue } from "../../hooks/useControllableValue";
+import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
 
 export interface GridraSidebarToggleProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "aria-expanded"> {

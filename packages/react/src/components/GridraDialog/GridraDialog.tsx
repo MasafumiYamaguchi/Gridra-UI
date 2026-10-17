@@ -12,11 +12,11 @@ import {
   type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
-import { useControllableValue } from "../../hooks/useControllableValue";
+import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
-import { composeHandlers } from "../../internal/composeHandlers";
+import { composeHandlers } from "@gridra-ui/headless";
 import { FOCUSABLE_SELECTOR, getFocusableElements } from "../../internal/focus";
-import { mergeRefs } from "../../internal/mergeRefs";
+import { mergeRefs } from "@gridra-ui/headless";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
 

@@ -13,10 +13,10 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { useControllableValue } from "../../hooks/useControllableValue";
+import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
 import { getFocusableElements } from "../../internal/focus";
-import { clampIndex } from "../../internal/numeric";
+import { clampIndex } from "@gridra-ui/core";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
 

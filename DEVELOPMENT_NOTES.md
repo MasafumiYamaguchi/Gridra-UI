@@ -36,7 +36,20 @@ Testing preferences:
 - Prefer adding narrow regression tests for interaction logic such as selection, dragging, resizing, and connections.
 - If a test would require brittle browser geometry, explain the tradeoff and cover the stable part instead.
 
-## Canvas API
+## Package boundaries
+
+- `@gridra-ui/core`: framework-independent types and pure calculations.
+- `@gridra-ui/headless`: React interaction/state hooks, ARIA bindings, and reusable DOM subscriptions. It must not import the styled React package or theme CSS, choose visual variants, or supply decorative markup.
+- `@gridra-ui/react`: Gridra DOM composition, decorative elements, sizes/variants, and theme integration. Reuse headless behavior rather than maintaining a second implementation.
+- `@gridra-ui/theme`: design tokens, component CSS, and named palettes.
+
+Dependency direction is `react → headless → core`; theme CSS is explicitly imported by the consumer.
+Headless getters compose consumer handlers and refs. A consumer's `preventDefault()` cancels the added behavior.
+CSS needed to express geometry or make a pointer operation work is structural; colors, typography, spacing presets, and decoration belong to the styled layer.
+Keep existing component APIs and CSS contracts while moving behavior. Track unmigrated components explicitly in `COMPONENT_ROADMAP.md`; adding the package alone does not make every existing component headless.
+Put headless tests beside their implementation in `packages/headless/src`. Verify caller-owned DOM without theme CSS as well as the existing styled integration tests.
+
+## Canvas state contract
 
 `useGridraCanvas` is controlled-only: `state` and `onStateChange(next, previous)`.
 The caller owns nodes with placement, connections and both selection arrays.

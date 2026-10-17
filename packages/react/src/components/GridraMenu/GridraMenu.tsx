@@ -5,9 +5,9 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { useControllableValue } from "../../hooks/useControllableValue";
+import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
-import { clampIndex } from "../../internal/numeric";
+import { clampIndex } from "@gridra-ui/core";
 
 export type GridraMenuOrientation = "vertical" | "horizontal";
 export type GridraMenuSize = "sm" | "md" | "lg";

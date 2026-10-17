@@ -1,6 +1,6 @@
 import { useCallback, useState, type CSSProperties, type RefObject } from "react";
 import { getGridraThemeClassName, getGridraThemeClassNameFromName } from "./theme";
-import { useAncestorAttributes } from "./useAncestorAttributes";
+import { useAncestorAttributes } from "@gridra-ui/headless";
 import type { GridraThemeName } from "../theme";
 
 /** bodyへPortalした後も、表示中のアンカーに継承されたトークンを維持する。 */

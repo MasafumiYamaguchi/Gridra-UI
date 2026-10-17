@@ -11,6 +11,9 @@
       ],
       "@gridra-ui/react": [
         "packages/react/src/index.ts"
+      ],
+      "@gridra-ui/headless": [
+        "packages/headless/src/index.ts"
       ]
     },
     "strict": true,

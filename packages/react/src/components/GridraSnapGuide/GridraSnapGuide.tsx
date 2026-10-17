@@ -1,5 +1,5 @@
 import type { CSSProperties, HTMLAttributes } from "react";
-import { clampNumber, normalizeGridLine, normalizeGridSpan } from "../../internal/numeric";
+import { clampNumber, normalizeGridLine, normalizeGridSpan } from "@gridra-ui/core";
 
 export type GridraSnapGuideOrientation = "vertical" | "horizontal";
 

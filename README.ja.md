@@ -14,10 +14,18 @@ GRIDRA UI は、高密度でパネル中心の GRIDRA らしいインターフ�
 
 - [`@gridra-ui/react`](https://www.npmjs.com/package/@gridra-ui/react): React コンポーネントとインタラクション層。
 - [`@gridra-ui/core`](https://www.npmjs.com/package/@gridra-ui/core): フレームワークに依存しない ID、ジオメトリ型、状態ヘルパー。
+- `@gridra-ui/headless`: Reactの状態・操作Hook、ARIA属性、イベントとrefの合成。新しいワークスペースパッケージで、npm公開はこれからです。
 - [`@gridra-ui/theme`](https://www.npmjs.com/package/@gridra-ui/theme): CSS 変数トークンと5つの組み込みテーマプリセット。
 - `@gridra-ui/playground`: ローカル確認とコンポーネントドキュメント用の Vite アプリ。
 
 ## 導入
+
+依存方向は`react → headless → core`です。`react`はGridraのデザインとDOMの組み立て、
+`headless`は状態・操作・アクセシビリティを担当します。`headless`だけなら
+`@gridra-ui/react`やテーマCSSを使わず、自前のマークアップとCSSに接続できます。
+ネイティブ要素の意味や、配置・ポインター操作に必要な構造上の寸法指定は維持します。
+`theme`はGridraのデザインCSSを提供します。既存の操作コンポーネントは個別に移行し、
+[ロードマップ](./COMPONENT_ROADMAP.md#headless-package-separation)で進捗を管理します。
 
 公開済みのランタイムパッケージを、次のように導入します。
 
