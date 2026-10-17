@@ -375,3 +375,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraPropertiesPanel` from `@gridra-ui/headless` for custom markup. The existing
 `GridraPropertiesPanel` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraProgress
+
+Import `getGridraProgress` from `@gridra-ui/headless` for custom markup. The existing
+`GridraProgress` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

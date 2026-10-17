@@ -84,6 +84,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraPropertiesPanel: useGridraPropertiesPanel and styled integration.
 
+- [x] GridraProgress: getGridraProgress and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

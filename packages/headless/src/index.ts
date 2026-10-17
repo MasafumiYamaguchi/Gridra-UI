@@ -70,3 +70,5 @@ export * from "./navigation/useGridraBreadcrumb";
 export * from "./editors/useGridraInspectorPanel";
 
 export * from "./editors/useGridraPropertiesPanel";
+
+export * from "./feedback/getGridraProgress";

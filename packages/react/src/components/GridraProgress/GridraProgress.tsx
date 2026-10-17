@@ -1,3 +1,4 @@
+import {getGridraProgress} from "@gridra-ui/headless";
 import type { HTMLAttributes } from "react";
 import { clampNumber } from "@gridra-ui/core";
 
@@ -19,14 +20,6 @@ export interface GridraProgressProps
   value?: number;
 }
 
-function normalizeMax(max: number): number {
-  return Number.isFinite(max) && max > 0 ? max : 100;
-}
-
-function normalizeValue(value: number): number {
-  return Number.isFinite(value) ? value : 0;
-}
-
 export function GridraProgress({
   className,
   label,
@@ -36,16 +29,7 @@ export function GridraProgress({
   value,
   ...props
 }: GridraProgressProps) {
-  // value未指定は、完了量を特定できないindeterminate表示として扱う。
-  const isIndeterminate = value === undefined;
-  const normalizedMax = normalizeMax(max);
-  const normalizedValue = isIndeterminate ? 0 : normalizeValue(value);
-  const clampedValue = isIndeterminate
-    ? 0
-    : clampNumber(normalizedValue, 0, normalizedMax);
-  const fraction = isIndeterminate ? 0 : clampedValue / normalizedMax;
-  // 確定値がある場合だけ、maxに対する割合を表示幅へ変換する。
-  const percent = fraction * 100;
+  const {isIndeterminate,percent,rootProps}=getGridraProgress({value,max,label});
 
   const rootClassName = [
     "gridra-progress",
@@ -61,11 +45,7 @@ export function GridraProgress({
   return (
     <div
       className={rootClassName}
-      role="progressbar"
-      aria-label={label || undefined}
-      aria-valuemax={isIndeterminate ? undefined : normalizedMax}
-      aria-valuemin={isIndeterminate ? undefined : 0}
-      aria-valuenow={isIndeterminate ? undefined : clampedValue}
+      {...rootProps}
       {...props}
     >
       <div

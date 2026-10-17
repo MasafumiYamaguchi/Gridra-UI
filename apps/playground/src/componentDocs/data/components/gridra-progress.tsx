@@ -26,6 +26,7 @@ function ProgressPreview() {
 }
 
 export const progressDoc: ComponentDoc = {
+  notes: "Behavior is provided by getGridraProgress from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
   category: "Feedback",
   name: "GridraProgress",
   summary:
@@ -87,7 +88,7 @@ export const progressDoc: ComponentDoc = {
     "GridraProgress + GridraStack: stacked multi-step progress indicators.",
     "GridraProgress + file upload hooks: real-time upload feedback.",
   ],
-  examples: [
+  examples: [{ title: "Custom markup with headless hook", code: "import { getGridraProgress } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const progress=getGridraProgress({value:40,max:80,label:\"Custom progress\"});\n  return <div {...progress.rootProps}>{progress.percent}% complete</div>;\n}" }, ...([
     {
       title: "Determinate",
       code: `<GridraProgress label="Upload progress" value={65} />`,
@@ -106,7 +107,7 @@ export const progressDoc: ComponentDoc = {
   value={873}
 />`,
     },
-  ],
+  ] satisfies ComponentDoc["examples"])],
   preview: <ProgressPreview />,
   accessibility:
     "Determinate: role=progressbar with aria-valuenow, aria-valuemin=0, aria-valuemax. Indeterminate: role=progressbar without aria-valuenow. Both modes accept aria-label via the label prop. The fill element is purely decorative (no aria role).",
