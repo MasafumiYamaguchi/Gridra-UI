@@ -1,3 +1,4 @@
+import {getGridraAvatar} from "@gridra-ui/headless";
 import type { CSSProperties, HTMLAttributes } from "react";
 import { cx } from "../../internal/classNames";
 
@@ -36,21 +37,20 @@ export function GridraAvatar({
     ...getCustomSizeStyle(size)
   } as CSSProperties;
   // 画像がない場合だけfallback側にアクセシブル名を付与し、imgのaltと名前が二重にならないようにする。
-  const fallbackAccessibleName = !src ? (alt || fallback || undefined) : undefined;
+  const avatar=getGridraAvatar({src,alt,fallback});
 
   return (
     <span
       className={avatarClassName}
       style={avatarStyle}
-      role={fallbackAccessibleName ? "img" : undefined}
-      aria-label={fallbackAccessibleName}
+      {...avatar.rootProps}
       {...props}
     >
-      {src ? (
-        <img alt={alt} className="gridra-avatar__image" src={src} />
+      {avatar.hasImage ? (
+        <img {...avatar.imageProps} className="gridra-avatar__image" />
       ) : (
-        <span className="gridra-avatar__fallback" aria-hidden="true">
-          {fallback ?? alt.slice(0, 2)}
+        <span className="gridra-avatar__fallback" {...avatar.fallbackProps}>
+          {avatar.fallbackText}
         </span>
       )}
     </span>

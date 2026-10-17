@@ -4,6 +4,7 @@ import type { ComponentDoc } from "../../types";
 const avatarImageUrl = "https://i.pravatar.cc/96?img=12";
 
 export const avatarDoc: ComponentDoc = {
+  notes: "Behavior is provided by getGridraAvatar from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Display",
     name: "GridraAvatar",
     summary: "Image or fallback avatar for people, agents, or entities.",
@@ -35,7 +36,7 @@ export const avatarDoc: ComponentDoc = {
       "Can render square, softly rounded, or circular shapes.",
       "Can apply monochrome image treatment."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { getGridraAvatar } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const avatar=getGridraAvatar({alt:\"Ada Lovelace\",fallback:\"AL\"});\n  return <span {...avatar.rootProps}><span {...avatar.fallbackProps}>{avatar.fallbackText}</span></span>;\n}" }, ...([
       {
         title: "Image avatars",
         code: `<GridraAvatar alt="User" shape="square" size="sm" src={avatarImageUrl} />
@@ -47,7 +48,7 @@ export const avatarDoc: ComponentDoc = {
         code: `<GridraAvatar fallback="UI" shape="circle" size={34} />
 <GridraAvatar alt="User" monochrome shape="circle" size="lg" src={avatarImageUrl} />`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <GridraStack gap="sm">
         <GridraStack direction="horizontal" inline align="center" gap="sm">

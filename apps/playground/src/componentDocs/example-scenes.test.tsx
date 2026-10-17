@@ -29,6 +29,10 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraAvatar through caller-owned DOM", () => {
+    const preview = renderExample("GridraAvatar", "Custom markup with headless hook");
+    expect(preview.getByRole("img",{name:"Ada Lovelace"}).textContent).toBe("AL");
+  });
   it("runs headless GridraProgress through caller-owned DOM", () => {
     const preview = renderExample("GridraProgress", "Custom markup with headless hook");
     expect(preview.getByRole("progressbar").getAttribute("aria-valuenow")).toBe("40");
