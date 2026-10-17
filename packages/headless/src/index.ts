@@ -18,3 +18,5 @@ export * from "./pagination/useGridraPagination";
 export * from "./stepper/useGridraStepper";
 
 export * from "./menu/useGridraMenu";
+
+export * from "./tree/useGridraTreeView";
