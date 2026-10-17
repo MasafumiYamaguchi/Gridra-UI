@@ -2,6 +2,7 @@ import { GridraIconButton } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const iconButtonDoc: ComponentDoc = {
+  notes: "Behavior is provided by getGridraIconButtonProps from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Controls",
     name: "GridraIconButton",
     summary: "Square button for compact icon-only commands.",
@@ -31,14 +32,14 @@ export const iconButtonDoc: ComponentDoc = {
       "Uses label as fallback title and fallback glyph.",
       "Loading state swaps the icon for a spinner and disables the button."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { getGridraIconButtonProps } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  return <button {...getGridraIconButtonProps({label:\"Custom save\"})}><span aria-hidden=\"true\">✓</span></button>;\n}" }, ...([
       {
         title: "Icon buttons",
         code: `<GridraIconButton label="Preview" pressed size="sm">P</GridraIconButton>
 <GridraIconButton label="Add" variant="ghost">+</GridraIconButton>
 <GridraIconButton label="Refresh" loading size="lg" />`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <div className="docs-inline-preview">
         <GridraIconButton label="Preview" pressed size="sm">

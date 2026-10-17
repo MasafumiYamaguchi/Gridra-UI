@@ -1,3 +1,4 @@
+import {getGridraIconButtonProps} from "@gridra-ui/headless";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { GridraSpinner } from "../GridraSpinner";
@@ -42,18 +43,12 @@ export function GridraIconButton({
     children ?? label.slice(0, 1)
   );
   // loading中とdisabled中を同時に管理して、ボタンのdisabled属性を制御する
-  const isDisabled = disabled || loading;
+
 
   return (
     <button
-      aria-busy={loading || undefined}
-      aria-label={label}
-      aria-pressed={pressed}
+      {...getGridraIconButtonProps({label,title,loading,pressed,disabled,type,...props})}
       className={iconButtonClassName}
-      disabled={isDisabled}
-      title={title ?? label}
-      type={type}
-      {...props}
     >
       {icon}
     </button>

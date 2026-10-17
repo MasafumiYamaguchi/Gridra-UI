@@ -29,6 +29,10 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraIconButton through caller-owned DOM", () => {
+    const preview = renderExample("GridraIconButton", "Custom markup with headless hook");
+    expect(preview.getByRole("button",{name:"Custom save"}).getAttribute("title")).toBe("Custom save");
+  });
   it("runs headless GridraButton through caller-owned DOM", () => {
     const preview = renderExample("GridraButton", "Custom markup with headless hook");
     const button=preview.getByRole("button",{name:"Custom busy button"});
