@@ -1,3 +1,4 @@
+import { getGridraToolbar } from "@gridra-ui/headless";
 import { useControlDescriptionIds } from "@gridra-ui/headless";
 import { getGridraMinimap } from "@gridra-ui/headless";
 import { getGridraAvatar } from "@gridra-ui/headless";
@@ -1695,6 +1696,12 @@ function ExampleHeadlessGridraInput() {
   return <section><label htmlFor={controlId}>Custom input</label><input id={controlId}/></section>;
 }
 
+function ExampleHeadlessGridraToolbar() {
+  const [last,setLast]=useState("None");
+  const toolbar=getGridraToolbar({actions:[{id:"save",label:"Save"}],onAction:setLast});
+  return <section><div {...toolbar.rootProps}><button {...toolbar.getActionProps("save")}>Custom save</button></div><output>{last}</output></section>;
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -1988,3 +1995,5 @@ examplePreviews["GridraAvatar"] = {...examplePreviews["GridraAvatar"], "Custom m
 examplePreviews["GridraMinimap"] = {...examplePreviews["GridraMinimap"], "Custom markup with headless hook": <ExampleHeadlessGridraMinimap />};
 
 examplePreviews["GridraInput"] = {...examplePreviews["GridraInput"], "Custom markup with headless hook": <ExampleHeadlessGridraInput />};
+
+examplePreviews["GridraToolbar"] = {...examplePreviews["GridraToolbar"], "Custom markup with headless hook": <ExampleHeadlessGridraToolbar />};

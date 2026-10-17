@@ -1,3 +1,4 @@
+import {getGridraToolbar} from "@gridra-ui/headless";
 import { Fragment, type HTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { GridraButton, type GridraButtonProps } from "../GridraButton";
@@ -23,8 +24,9 @@ export function GridraToolbar({
   renderAction,
   ...props
 }: GridraToolbarProps) {
+  const toolbar=getGridraToolbar({actions,onAction});
   return (
-    <div className={cx("gridra-toolbar", className)} role="toolbar" {...props}>
+    <div className={cx("gridra-toolbar", className)} {...toolbar.rootProps} {...props}>
       {/* actionsを既定ButtonまたはrenderActionへ変換し、追加のchildrenも同じ列へ合成する。 */}
       {actions.map((action) => (
         <Fragment key={action.id}>
@@ -32,9 +34,7 @@ export function GridraToolbar({
             renderAction(action, { key: action.id })
           ) : (
             <GridraToolbarButton
-              aria-pressed={action.pressed}
-              disabled={action.disabled}
-              onClick={() => onAction?.(action.id)}
+              {...toolbar.getActionProps(action.id)}
             >
               {action.label}
             </GridraToolbarButton>
