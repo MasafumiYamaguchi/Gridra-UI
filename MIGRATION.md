@@ -297,3 +297,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraDropdownMenu` from `@gridra-ui/headless` for custom markup. The existing
 `GridraDropdownMenu` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraContextMenu
+
+Import `useGridraContextMenu` from `@gridra-ui/headless` for custom markup. The existing
+`GridraContextMenu` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

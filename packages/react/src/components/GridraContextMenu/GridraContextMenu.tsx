@@ -1,3 +1,5 @@
+import {useGridraContextMenu} from "@gridra-ui/headless";
+import type {Ref} from "react";
 import {
   cloneElement,
   isValidElement,
@@ -51,12 +53,6 @@ export interface GridraContextMenuProps extends Omit<
   closeOnAction?: boolean;
 }
 
-function isCommand(
-  item: GridraDropdownMenuItem,
-): item is Extract<GridraDropdownMenuItem, { id: string; label: ReactNode }> {
-  return !("type" in item) || item.type !== "separator";
-}
-
 export function GridraContextMenu({
   children,
   className,
@@ -75,274 +71,9 @@ export function GridraContextMenu({
   style,
   ...props
 }: GridraContextMenuProps) {
-  const triggerElement = children;
-  const targetRef = useRef<HTMLElement | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
-  const pointerCoordsRef = useRef({ top: 0, left: 0 });
-  const [currentOpen, setCurrentOpen] = useControllableValue(
-    open,
-    defaultOpen,
-    onOpenChange,
-  );
-  const [coords, setCoords] = useState({ top: -9999, left: -9999 });
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [portalMounted, setPortalMounted] = useState(false);
-  const menuId = useId();
-
-  // document.bodyへPortalするため、クライアントでmountされた後だけmenuを出す。
-  useEffect(() => {
-    setPortalMounted(true);
-  }, []);
-
-  // separatorを描画対象に残しつつ、実行・focus対象はcommand itemだけに限定する。
-  const commandItems = useMemo(() => items.filter(isCommand), [items]);
-  const enabledItems = useMemo(
-    () => commandItems.filter((item) => !item.disabled),
-    [commandItems],
-  );
-  const enabledIds = useMemo(
-    () => enabledItems.map((item) => item.id),
-    [enabledItems],
-  );
-
-  const safeActiveIndex = clampIndex(activeIndex, enabledIds.length);
-
-  // Context menuを閉じた後はtriggerへfocusを戻し、キーボード操作の復帰先を失わないようにする。
-  const close = () => {
-    setCurrentOpen(false);
-    targetRef.current?.focus();
-  };
-
-  const activateItem = (id: string) => {
-    if (disabled) {
-      return;
-    }
-    const item = commandItems.find((c) => c.id === id);
-    if (!item || item.disabled) {
-      return;
-    }
-    onAction?.(id);
-    if (closeOnAction) {
-      close();
-    }
-  };
-
-  const focusItemByIndex = (index: number) => {
-    if (enabledIds.length === 0) {
-      return;
-    }
-    const clamped = clampIndex(index, enabledIds.length);
-    setActiveIndex(clamped);
-    const id = enabledIds[clamped];
-    const el = itemRefs.current.get(id);
-    el?.focus();
-  };
-
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-
-    if (enabledIds.length === 0) {
-      return;
-    }
-    const firstId = enabledIds[0];
-    const el = itemRefs.current.get(firstId);
-    el?.focus();
-
-    return () => {
-      itemRefs.current.clear();
-    };
-  }, [currentOpen, enabledIds]);
-
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-
-    const handleEscape = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape" && closeOnEscape) {
-        event.preventDefault();
-        close();
-      }
-    };
-
-    const handleOutsidePointerDown = (event: PointerEvent) => {
-      if (!closeOnOutsidePointerDown) {
-        return;
-      }
-      const target = event.target as Node | null;
-      if (
-        target &&
-        !menuRef.current?.contains(target) &&
-        !targetRef.current?.contains(target)
-      ) {
-        close();
-      }
-    };
-
-    document.addEventListener("keydown", handleEscape);
-    document.addEventListener("pointerdown", handleOutsidePointerDown, true);
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.removeEventListener(
-        "pointerdown",
-        handleOutsidePointerDown,
-        true,
-      );
-    };
-  }, [closeOnEscape, closeOnOutsidePointerDown, currentOpen, setCurrentOpen]);
-
-  useLayoutEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-
-    const updatePosition = () => {
-      const menu = menuRef.current;
-      if (!menu) {
-        return;
-      }
-
-      const menuRect = menu.getBoundingClientRect();
-      const rawTop = pointerCoordsRef.current.top;
-      const rawLeft = pointerCoordsRef.current.left;
-
-      // 右クリック位置を起点にしつつ、menu全体がviewport内に残るように座標を丸める。
-      const nextLeft = clampNumber(
-        rawLeft,
-        0,
-        Math.max(0, window.innerWidth - menuRect.width),
-      );
-      const nextTop = clampNumber(
-        rawTop,
-        0,
-        Math.max(0, window.innerHeight - menuRect.height),
-      );
-
-      setCoords({ top: nextTop, left: nextLeft });
-    };
-
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [currentOpen, items, size, minWidth, maxWidth]);
-
-  const openAt = (clientX: number, clientY: number) => {
-    if (disabled) {
-      return;
-    }
-    pointerCoordsRef.current = { top: clientY, left: clientX };
-    setActiveIndex(0);
-    setCurrentOpen(true);
-  };
-
-  const handleContextMenu = (event: ReactMouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    openAt(event.clientX, event.clientY);
-  };
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (disabled) {
-      return;
-    }
-
-    const isContextMenuKey = event.key === "ContextMenu";
-    const isShiftF10 = event.key === "F10" && event.shiftKey;
-
-    if (isContextMenuKey || isShiftF10) {
-      event.preventDefault();
-      const target = targetRef.current;
-      if (target) {
-        const rect = target.getBoundingClientRect();
-        // キーボード起動ではポインタ座標がないため、triggerの左下をmenu起点にする。
-        openAt(rect.left, rect.bottom);
-      }
-    }
-  };
-
-  const handleMenuKeyDown = (event: KeyboardEvent) => {
-    if (enabledIds.length === 0) {
-      return;
-    }
-
-    let handled = true;
-
-    switch (event.key) {
-      case "ArrowDown": {
-        event.preventDefault();
-        const nextIndex = (safeActiveIndex + 1) % enabledIds.length;
-        focusItemByIndex(nextIndex);
-        break;
-      }
-      case "ArrowUp": {
-        event.preventDefault();
-        const prevIndex =
-          (safeActiveIndex - 1 + enabledIds.length) % enabledIds.length;
-        focusItemByIndex(prevIndex);
-        break;
-      }
-      case "Home": {
-        event.preventDefault();
-        focusItemByIndex(0);
-        break;
-      }
-      case "End": {
-        event.preventDefault();
-        focusItemByIndex(enabledIds.length - 1);
-        break;
-      }
-      case "Enter":
-      case " ": {
-        event.preventDefault();
-        const activeId = enabledIds[safeActiveIndex];
-        if (activeId) {
-          activateItem(activeId);
-        }
-        break;
-      }
-      case "Tab": {
-        close();
-        break;
-      }
-      default:
-        handled = false;
-    }
-    if (handled) {
-      event.stopPropagation();
-    }
-  };
-
-  // triggerの既存handler/refを壊さず、右クリックmenuとして必要なARIAとイベントだけを足す。
-  const targetProps = {
-    "aria-expanded": !disabled ? currentOpen : undefined,
-    "aria-haspopup": "menu" as const,
-    onContextMenu: composeHandlers(
-      triggerElement.props.onContextMenu as
-        | ((event: ReactMouseEvent) => void)
-        | undefined,
-      handleContextMenu,
-    ),
-    onKeyDown: composeHandlers(
-      triggerElement.props.onKeyDown as
-        | ((event: KeyboardEvent) => void)
-        | undefined,
-      handleKeyDown,
-    ),
-    ref: mergeRefs(
-      (triggerElement as ReactElement & { ref?: unknown }).ref,
-      (node: HTMLElement | null) => {
-        targetRef.current = node;
-      },
-    ),
-  };
-
+  const {currentOpen,portalMounted,targetRef,menuRef,menuId,coords,enabledIds,safeActiveIndex,handleMenuKeyDown,isCommand,getTargetProps,getItemProps}=useGridraContextMenu({items,onAction,open,defaultOpen,onOpenChange,disabled,closeOnEscape,closeOnOutsidePointerDown,closeOnAction});
+  const triggerElement=children;
+  const targetProps=getTargetProps<HTMLElement>(isValidElement(children)?{...children.props,ref:(children.props.ref as Ref<HTMLElement>|undefined)??(children as ReactElement&{ref?:Ref<HTMLElement>}).ref}:{});
   const portalTheme = useGridraPortalTheme(targetRef, undefined, currentOpen && !disabled && portalMounted);
   const menuClassName = cx(
     "gridra-portal-root",
@@ -411,34 +142,21 @@ export function GridraContextMenu({
 
                 return (
                   <button
-                    className={cx(
+                    {...getItemProps(item.id)} className={cx(
                       "gridra-dropdown-menu__item",
                       item.disabled && "gridra-dropdown-menu__item--disabled",
                       item.destructive &&
                         "gridra-dropdown-menu__item--destructive",
                       isActive && "gridra-dropdown-menu__item--active",
                     )}
-                    disabled={item.disabled}
+
                     key={item.id}
-                    onClick={() => activateItem(item.id)}
-                    onMouseEnter={() => {
-                      if (!item.disabled) {
-                        const idx = enabledIds.indexOf(item.id);
-                        if (idx !== -1) {
-                          setActiveIndex(idx);
-                        }
-                      }
-                    }}
-                    ref={(el) => {
-                      if (el) {
-                        itemRefs.current.set(item.id, el);
-                      } else {
-                        itemRefs.current.delete(item.id);
-                      }
-                    }}
-                    role="menuitem"
-                    tabIndex={isActive ? 0 : -1}
-                    type="button"
+
+
+
+
+
+
                   >
                     <span className="gridra-dropdown-menu__item-label">
                       {item.label}
