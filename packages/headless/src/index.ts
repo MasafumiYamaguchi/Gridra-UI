@@ -40,3 +40,5 @@ export * from "./overlays/useGridraHoverCard";
 export * from "./internal/focus";
 
 export * from "./overlays/useGridraDialog";
+
+export * from "./overlays/useGridraDropdownMenu";

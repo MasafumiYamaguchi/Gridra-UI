@@ -2,6 +2,7 @@ import { GridraButton, GridraDropdownMenu } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const dropdownMenuDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraDropdownMenu from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Overlays",
     name: "GridraDropdownMenu",
     summary: "Command dropdown menu with items-based API, full keyboard navigation, and WAI-ARIA menu semantics.",
@@ -47,7 +48,7 @@ export const dropdownMenuDoc: ComponentDoc = {
       "GridraDropdownMenu + GridraButton: toolbar-style command menu.",
       "GridraDropdownMenu + GridraIconButton: icon-triggered actions menu.",
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraDropdownMenu } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const menu=useGridraDropdownMenu({items:[{id:\"a\",label:\"Action\"}]});\n  return <section><button {...menu.getTriggerProps()}>Open custom menu</button>{menu.currentOpen?<div {...menu.getMenuProps()}><button {...menu.getItemProps(\"a\")}>Action</button></div>:null}</section>;\n}" }, ...([
       {
         title: "Basic command menu",
         code: `<GridraDropdownMenu
@@ -75,7 +76,7 @@ export const dropdownMenuDoc: ComponentDoc = {
   <GridraButton>File</GridraButton>
 </GridraDropdownMenu>`,
       },
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <div className="docs-inline-preview">
         <GridraDropdownMenu

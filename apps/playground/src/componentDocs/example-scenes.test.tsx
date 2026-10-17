@@ -29,6 +29,13 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraDropdownMenu through caller-owned DOM", () => {
+    const preview = renderExample("GridraDropdownMenu", "Custom markup with headless hook");
+    fireEvent.click(preview.getByRole("button",{name:"Open custom menu"}));
+    expect(preview.getByRole("menuitem",{name:"Action"})).toBeTruthy();
+    fireEvent.click(preview.getByRole("menuitem",{name:"Action"}));
+    expect(preview.queryByRole("menu")).toBeNull();
+  });
   it("runs headless GridraDialog through caller-owned DOM", () => {
     const preview = renderExample("GridraDialog", "Custom markup with headless hook");
     fireEvent.click(preview.getByRole("button",{name:"Open custom dialog"}));

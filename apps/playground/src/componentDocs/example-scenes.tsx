@@ -1,3 +1,4 @@
+import { useGridraDropdownMenu } from "@gridra-ui/headless";
 import { useGridraDialog } from "@gridra-ui/headless";
 import { useGridraHoverCard } from "@gridra-ui/headless";
 import { useGridraTooltip } from "@gridra-ui/headless";
@@ -1587,6 +1588,11 @@ function ExampleHeadlessGridraDialog() {
   return <section><button {...dialog.getTriggerProps()}>Open custom dialog</button>{dialog.currentOpen?<div {...dialog.getBackdropProps()}><div {...dialog.getDialogProps()}><h2 id={dialog.titleId}>Custom dialog</h2><button {...dialog.getCloseProps()}>Close custom dialog</button></div></div>:null}</section>;
 }
 
+function ExampleHeadlessGridraDropdownMenu() {
+  const menu=useGridraDropdownMenu({items:[{id:"a",label:"Action"}]});
+  return <section><button {...menu.getTriggerProps()}>Open custom menu</button>{menu.currentOpen?<div {...menu.getMenuProps()}><button {...menu.getItemProps("a")}>Action</button></div>:null}</section>;
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -1844,3 +1850,5 @@ examplePreviews["GridraTooltip"] = {...examplePreviews["GridraTooltip"], "Custom
 examplePreviews["GridraHoverCard"] = {...examplePreviews["GridraHoverCard"], "Custom markup with headless hook": <ExampleHeadlessGridraHoverCard />};
 
 examplePreviews["GridraDialog"] = {...examplePreviews["GridraDialog"], "Custom markup with headless hook": <ExampleHeadlessGridraDialog />};
+
+examplePreviews["GridraDropdownMenu"] = {...examplePreviews["GridraDropdownMenu"], "Custom markup with headless hook": <ExampleHeadlessGridraDropdownMenu />};
