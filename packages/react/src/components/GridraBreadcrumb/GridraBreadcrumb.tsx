@@ -1,3 +1,4 @@
+import {useGridraBreadcrumb} from "@gridra-ui/headless";
 import { useEffect, useMemo, type HTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 
@@ -26,28 +27,6 @@ export interface GridraBreadcrumbProps extends HTMLAttributes<HTMLElement> {
   onHierarchyInvalid?: (issues: GridraBreadcrumbHierarchyIssue[]) => void;
 }
 
-// Breadcrumbは表示順そのものが階層を表すため、parentIdがある場合だけ軽く整合性を検証する。
-function validateHierarchy(items: GridraBreadcrumbItem[]): GridraBreadcrumbHierarchyIssue[] {
-  const anyParentId = items.some((item) => item.parentId != null);
-  if (!anyParentId) return [];
-
-  const issues: GridraBreadcrumbHierarchyIssue[] = [];
-  const idSet = new Set(items.map((item) => item.id));
-
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item.parentId == null) continue;
-
-    if (!idSet.has(item.parentId)) {
-      issues.push({ itemId: item.id, index: i, reason: "missing-parent" });
-    } else if (i === 0 || item.parentId !== items[i - 1].id) {
-      issues.push({ itemId: item.id, index: i, reason: "broken-chain" });
-    }
-  }
-
-  return issues;
-}
-
 export function GridraBreadcrumb({
   "aria-label": ariaLabel = "Breadcrumb",
   className,
@@ -58,39 +37,7 @@ export function GridraBreadcrumb({
   size = "md",
   ...props
 }: GridraBreadcrumbProps) {
-  const issues = useMemo(() => validateHierarchy(items), [items]);
-
-  // 表示は継続しつつ、呼び出し側がデータ不整合を検知できるように通知する。
-  useEffect(() => {
-    if (issues.length > 0 && onHierarchyInvalid) {
-      onHierarchyInvalid(issues);
-    }
-  }, [issues, onHierarchyInvalid]);
-
-  const effectiveMaxItems = maxItems != null ? Math.max(3, maxItems) : undefined;
-
-  // 省略表示でも現在地の文脈を失わないよう、先頭と末尾側のitemは必ず残す。
-  const visibleItems = useMemo(() => {
-    if (effectiveMaxItems == null || items.length <= effectiveMaxItems) {
-      return items.map((item, i) => ({ type: "item" as const, item, index: i }));
-    }
-
-    const result: { type: "item" | "ellipsis"; item?: GridraBreadcrumbItem; index: number }[] = [];
-
-    result.push({ type: "item", item: items[0], index: 0 });
-
-    result.push({ type: "ellipsis", index: -1 }); // 省略を表すエントリを追加
-
-    const tailCount = effectiveMaxItems - 2;
-    const tailStart = items.length - tailCount;
-    for (let i = tailStart; i < items.length; i++) {
-      result.push({ type: "item", item: items[i], index: i });
-    }
-
-    return result;
-  }, [items, effectiveMaxItems]);
-
-  const hasInvalidHierarchy = issues.length > 0;
+  const {visibleItems,hasInvalidHierarchy,getItemState}=useGridraBreadcrumb({items,maxItems,onHierarchyInvalid});
 
   const rootClassName = cx(
     "gridra-breadcrumb",
@@ -125,6 +72,7 @@ export function GridraBreadcrumb({
           const item = entry.item!;
           const isLast = visibleIndex === visibleItems.length - 1;
           const isCurrent = item.current;
+          const itemState=getItemState(item);
           const isDisabled = item.disabled;
 
           const itemClassName = cx(
@@ -133,15 +81,15 @@ export function GridraBreadcrumb({
           );
 
           // current/disabled/hrefなしは遷移できない状態なので、リンクではなくテキストとして描画する。
-          const content = isCurrent || isDisabled || !item.href ? (
+          const content = !itemState.canNavigate ? (
             <span
-              {...(isCurrent ? { "aria-current": "page" as const } : {})}
+              {...itemState.currentProps}
               className={isCurrent ? "gridra-breadcrumb__current" : "gridra-breadcrumb__text"}
             >
               {item.label}
             </span>
           ) : (
-            <a className="gridra-breadcrumb__link" href={item.href}>
+            <a className="gridra-breadcrumb__link" {...itemState.linkProps}>
               {item.label}
             </a>
           );
