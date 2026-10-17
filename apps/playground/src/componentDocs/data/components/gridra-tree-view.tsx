@@ -2,6 +2,7 @@ import { GridraBadge, GridraBox, GridraStack, GridraTreeView } from "@gridra-ui/
 import type { ComponentDoc } from "../../types";
 
 export const treeViewDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraTreeView from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Navigation",
     name: "GridraTreeView",
     summary: "Hierarchical tree with nested items API, expand/collapse, keyboard navigation, and ARIA tree pattern.",
@@ -37,7 +38,7 @@ export const treeViewDoc: ComponentDoc = {
     compositions: [
       "GridraTreeView + GridraPanel: sidebar tree navigation.",
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraTreeView } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const tree=useGridraTreeView({items:[{id:\"parent\",label:\"Parent\",children:[{id:\"child\",label:\"Child\"}]}]});\n  return <div role=\"tree\">{tree.flatItems.map(row=><div key={row.key} role=\"treeitem\" aria-expanded={row.hasChildren?tree.expandedSet.has(row.item.id):undefined}><div {...tree.getRowProps(row.item,row.hasChildren)}>{row.item.label}</div></div>)}</div>;\n}" }, ...([
       {
         title: "Basic nested tree",
         code: `<GridraTreeView
@@ -89,7 +90,7 @@ export const treeViewDoc: ComponentDoc = {
   )}
 />`,
       },
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <GridraBox padding="md" style={{ width: 300 }}>
         <GridraTreeView
