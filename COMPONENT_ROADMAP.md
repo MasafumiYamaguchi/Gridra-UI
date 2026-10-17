@@ -11,6 +11,27 @@ Before changing implementation or tests, read [DEVELOPMENT_NOTES.md](./DEVELOPME
 - `[~]` Partially implemented or needs design/API hardening
 - `[ ]` Not started
 
+## Headless Package Separation
+
+Keep the public packages focused: `core` owns pure calculations, `headless` owns
+React behavior and accessibility, `react` composes the Gridra design, and `theme`
+owns CSS. Headless hooks are usable without Gridra components or theme CSS.
+Migrate one component per PR after the shared package foundation; do not add
+Radix or another behavior library as part of this separation.
+
+- [x] Package foundation, shared controllable state, DOM subscriptions, event/ref composition, and pure numeric helpers.
+- [ ] Canvas: move the existing controlled hook and geometry out of the styled package.
+- [ ] Tabs: expose state, keyboard/focus handling, and ARIA prop getters.
+- [ ] Accordion: expose state, keyboard/focus handling, and ARIA prop getters.
+- [ ] Collections: Tree View, persistent Menu, Selectable Grid, Pagination, and Stepper.
+- [ ] Overlays: Dialog, Popover, Tooltip, Hover Card, Dropdown Menu, Context Menu, and Command Palette.
+- [ ] Layout interactions: Split Pane, Sidebar, and Sidebar Toggle.
+- [ ] Feedback/forms: Toast lifecycle, Avatar image state, and control/field attribute associations where useful.
+
+Presentational/native components such as Box, Card, Badge, Input, and Textarea
+stay in the styled package. Extract reusable behavior only where it exists;
+do not create a matching headless component for every styled component.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

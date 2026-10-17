@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "react";
-import { clampNumber } from "../../internal/numeric";
+import { clampNumber } from "@gridra-ui/core";
 
 export type GridraProgressSize = "sm" | "md" | "lg";
 export type GridraProgressTone =

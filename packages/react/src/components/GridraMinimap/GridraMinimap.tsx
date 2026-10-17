@@ -1,7 +1,7 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 import type { GridraId } from "@gridra-ui/core";
 import type { GridraNodePlacement } from "../GridraNode";
-import { clampInt, clampNumber } from "../../internal/numeric";
+import { clampInt, clampNumber } from "@gridra-ui/core";
 
 export interface GridraMinimapNode {
   id: GridraId;

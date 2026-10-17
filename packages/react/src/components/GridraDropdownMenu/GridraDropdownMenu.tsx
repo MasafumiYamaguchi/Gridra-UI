@@ -13,11 +13,11 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { useControllableValue } from "../../hooks/useControllableValue";
+import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
-import { composeHandlers } from "../../internal/composeHandlers";
-import { mergeRefs } from "../../internal/mergeRefs";
-import { clampIndex } from "../../internal/numeric";
+import { composeHandlers } from "@gridra-ui/headless";
+import { mergeRefs } from "@gridra-ui/headless";
+import { clampIndex } from "@gridra-ui/core";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
 import { useFloatingPosition } from "../../internal/useFloatingPosition";

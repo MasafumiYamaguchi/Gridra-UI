@@ -1,4 +1,4 @@
-import { clampNumber } from "../../internal/numeric";
+import { clampNumber } from "@gridra-ui/core";
 
 export function clampSize(value: number, minSize: number, maxSize: number): number {
   // 値と制約を有限な0〜100の範囲へ揃えてからclampする。

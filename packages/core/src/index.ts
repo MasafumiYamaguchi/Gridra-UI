@@ -120,3 +120,5 @@ export function rectContainsPoint(rect: GridraRect, point: GridraPoint): boolean
     point.y <= rect.y + rect.height
   );
 }
+
+export * from "./numeric";

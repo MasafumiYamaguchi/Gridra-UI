@@ -1,6 +1,6 @@
 import type { CSSProperties, HTMLAttributes } from "react";
 import type { GridraRect } from "@gridra-ui/core";
-import { normalizeGridLine, normalizeGridSpan } from "../../internal/numeric";
+import { normalizeGridLine, normalizeGridSpan } from "@gridra-ui/core";
 
 export interface GridraSelectionBoxPlacement {
   column: number;

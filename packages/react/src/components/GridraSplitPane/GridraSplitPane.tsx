@@ -5,7 +5,7 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { useControllableValue } from "../../hooks/useControllableValue";
+import { useControllableValue } from "@gridra-ui/headless";
 import { clampSize, clampSizeInPair, normalizePaneSizes, sumBeforeIndex } from "./splitPaneSizing";
 
 export type GridraSplitPaneOrientation = "horizontal" | "vertical";
