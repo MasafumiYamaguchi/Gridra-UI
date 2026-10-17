@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { GRIDRA_BUILT_IN_THEME_NAMES, GridraSidebarToggle, GridraTreeView } from "@gridra-ui/react";
 import type { GridraBuiltInThemeName, GridraTreeItem } from "@gridra-ui/react";
+import { version } from "../../../../package.json";
 import { CodeBlock } from "./code-block";
 import { CopyButton } from "./copy-button";
 import { componentDocs } from "./data";
@@ -214,7 +215,7 @@ export function ComponentDocsPage({ onThemeChange, theme }: {
             }} />}
           <a className="docs-brand" href="/" aria-label="Gridra UI playground">
             <span className="docs-brand__mark" aria-hidden="true" />
-            <span>GRIDRA UI</span><span className="docs-version">v0.1.0</span>
+            <span>GRIDRA UI</span><span className="docs-version">v{version}</span>
           </a>
           <nav className="docs-header__links" aria-label="Main navigation">
             <a href="/docs" aria-current="page">Components</a>

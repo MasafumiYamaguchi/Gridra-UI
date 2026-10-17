@@ -6,7 +6,7 @@ GRIDRA UI is a React-first component library for building dense, panel-based GRI
 
 ## Status
 
-- Current version: `0.2.0`
+- Current version: see `version` in the root [package.json](./package.json).
 - Packages are published on npm.
 - The repository is currently organized as a local npm workspaces monorepo.
 
