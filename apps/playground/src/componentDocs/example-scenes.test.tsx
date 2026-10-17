@@ -29,6 +29,13 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraCheckbox through caller-owned DOM", () => {
+    const preview = renderExample("GridraCheckbox", "Custom markup with headless hook");
+    const input=preview.getByRole("checkbox",{name:"Custom checkbox"});
+    expect(input.getAttribute("aria-describedby")).toBe(preview.getByText("Custom description").id);
+    fireEvent.click(input);
+    expect((input as HTMLInputElement).checked).toBe(true);
+  });
   it("runs headless GridraField through caller-owned DOM", () => {
     const preview = renderExample("GridraField", "Custom markup with headless hook");
     const input=preview.getByRole("textbox",{name:"Custom field"});

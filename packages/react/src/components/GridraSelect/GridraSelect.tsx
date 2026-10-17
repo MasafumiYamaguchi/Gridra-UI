@@ -1,6 +1,6 @@
 import type { SelectHTMLAttributes } from "react";
 import { cx } from "../../internal/classNames";
-import { resolveAriaInvalid } from "../../internal/formControl";
+import { resolveAriaInvalid } from "@gridra-ui/headless";
 
 export type GridraSelectSize = "sm" | "md" | "lg";
 

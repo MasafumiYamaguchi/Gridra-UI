@@ -1,6 +1,6 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
-import { resolveAriaInvalid, useControlDescriptionIds } from "../../internal/formControl";
+import { resolveAriaInvalid, useControlDescriptionIds } from "@gridra-ui/headless";
 
 export type GridraRadioSize = "sm" | "md" | "lg";
 

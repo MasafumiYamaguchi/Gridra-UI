@@ -2,6 +2,7 @@ import { GridraCheckbox } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const checkboxDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraCheckbox from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Controls",
     name: "GridraCheckbox",
     summary: "Checkbox with optional inline label.",
@@ -32,7 +33,7 @@ export const checkboxDoc: ComponentDoc = {
       "Uses a custom square mark.",
       "Can show descriptive helper text."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraCheckbox } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const control=useGridraCheckbox({hasDescription:true});\n  return <section><label><input {...control.inputProps}/>Custom checkbox</label><p {...control.descriptionProps}>Custom description</p></section>;\n}" }, ...([
       {
         title: "With label and description",
         code: `<GridraCheckbox
@@ -42,6 +43,6 @@ export const checkboxDoc: ComponentDoc = {
   size="lg"
 />`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: <GridraCheckbox defaultChecked description="Aligns nodes to the grid" label="Snap" size="lg" />
   };

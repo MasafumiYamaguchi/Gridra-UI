@@ -120,7 +120,7 @@ export function GridraMenu({
           ) : (
             <span className="gridra-menu__item-label">{item.label}</span>
           );
-          
+
           if (item.href && !item.disabled) {
             return (
               <li className="gridra-menu__list-item" key={item.id}>

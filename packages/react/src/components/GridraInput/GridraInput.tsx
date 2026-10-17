@@ -1,6 +1,6 @@
 import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
-import { resolveAriaInvalid } from "../../internal/formControl";
+import { resolveAriaInvalid } from "@gridra-ui/headless";
 import { GridraField } from "../GridraField";
 
 export type GridraInputSize = "sm" | "md" | "lg";
