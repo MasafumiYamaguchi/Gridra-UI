@@ -2,6 +2,7 @@ import { GridraRadio } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const radioDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraRadio from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Controls",
     name: "GridraRadio",
     summary: "Radio control with optional inline label.",
@@ -35,13 +36,13 @@ export const radioDoc: ComponentDoc = {
       "Uses a custom circular mark.",
       "Can show descriptive helper text."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraRadio } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const control=useGridraRadio({hasDescription:true});\n  return <section><label><input {...control.inputProps}/>Custom radio</label><p {...control.descriptionProps}>Custom description</p></section>;\n}" }, ...([
       {
         title: "Radio group",
         code: `<GridraRadio defaultChecked description="Dense controls" label="Compact" name="density" size="sm" />
 <GridraRadio description="More breathing room" label="Comfort" name="density" size="lg" />`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <div className="docs-inline-preview">
         <GridraRadio defaultChecked description="Dense controls" label="Compact" name="docs-density" size="sm" />
