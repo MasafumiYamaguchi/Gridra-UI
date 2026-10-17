@@ -2,6 +2,7 @@ import { GridraBox, GridraButton, GridraCheckbox, GridraDialog, GridraLabel, Gri
 import type { ComponentDoc } from "../../types";
 
 export const dialogDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraDialog from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Overlays",
     name: "GridraDialog",
     summary: "Modal dialog with portal, backdrop, focus trap, and keyboard dismissal.",
@@ -48,7 +49,7 @@ export const dialogDoc: ComponentDoc = {
       "GridraDialog + GridraCheckbox / GridraSelect: parameter panels.",
       "GridraDialog + GridraInput / GridraTextarea: prompt-style input dialogs.",
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraDialog } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const dialog=useGridraDialog();\n  return <section><button {...dialog.getTriggerProps()}>Open custom dialog</button>{dialog.currentOpen?<div {...dialog.getBackdropProps()}><div {...dialog.getDialogProps()}><h2 id={dialog.titleId}>Custom dialog</h2><button {...dialog.getCloseProps()}>Close custom dialog</button></div></div>:null}</section>;\n}" }, ...([
       {
         title: "Basic trigger dialog",
         code: `<GridraDialog
@@ -87,7 +88,7 @@ export const dialogDoc: ComponentDoc = {
   <GridraButton>Expand</GridraButton>
 </GridraDialog>`,
       },
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <div className="docs-inline-preview">
         <GridraDialog

@@ -21,6 +21,8 @@ describe("GridraDialog", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeDefined();
     expect(dialog.getAttribute("aria-modal")).toBe("true");
+    expect(trigger.getAttribute("aria-controls")).toBe(dialog.id);
+    expect(dialog.id).not.toBe("");
     expect(screen.getByText("Test Dialog")).toBeDefined();
     expect(screen.getByText("Dialog body")).toBeDefined();
   });
