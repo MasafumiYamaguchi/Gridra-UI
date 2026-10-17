@@ -29,6 +29,15 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraHoverCard through caller-owned DOM", () => {
+    const preview = renderExample("GridraHoverCard", "Custom markup with headless hook");
+    vi.useFakeTimers();
+    fireEvent.focus(preview.getByRole("button",{name:"Custom hover card"}));
+    fireEvent.blur(preview.getByRole("button",{name:"Custom hover card"}));
+    vi.runAllTimers();
+    expect(preview.queryByRole("dialog")).toBeNull();
+    vi.useRealTimers();
+  });
   it("runs headless GridraTooltip through caller-owned DOM", () => {
     const preview = renderExample("GridraTooltip", "Custom markup with headless hook");
     vi.useFakeTimers();
