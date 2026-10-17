@@ -29,6 +29,17 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs custom Accordion headings and panels with headless open state", () => {
+    const preview = renderExample("GridraAccordion", "Custom markup with headless hook");
+    expect(preview.getByRole("region").textContent).toBe("Custom general content");
+    fireEvent.click(preview.getByRole("button", { name: "Account" }));
+    expect(preview.getByRole("region").textContent).toBe("Custom account content");
+    fireEvent.click(preview.getByRole("button", { name: "Account" }));
+    expect(preview.queryByRole("region")).toBeNull();
+    fireEvent.keyDown(preview.getByRole("button", { name: "Account" }), { key: "Home" });
+    expect(document.activeElement).toBe(preview.getByRole("button", { name: "General" }));
+    expect(preview.getByRole("article").querySelector(".gridra-accordion")).toBeNull();
+  });
   it("runs the custom Tabs markup with headless selection and keyboard focus", () => {
     const preview = renderExample("GridraTabs", "Custom markup with headless hook");
     expect(preview.getByRole("tabpanel").textContent).toBe("Custom overview");

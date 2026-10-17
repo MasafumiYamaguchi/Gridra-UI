@@ -7,7 +7,8 @@ export const accordionDoc: ComponentDoc = {
     summary: "Expandable sections with items-based API, single/multiple open modes, keyboard navigation, and defensive state normalization.",
     description:
       "GridraAccordion renders a list of expandable panels, each with a header button and collapsible content region. It supports single and multiple open modes, controlled and uncontrolled value APIs, collapsible behavior, and full keyboard navigation. Invalid inputs (non-existent ids, disabled items, type mismatches) are gracefully handled without crashes.",
-    importExample: 'import { GridraAccordion } from "@gridra-ui/react";',
+    importExample: 'import { GridraAccordion } from "@gridra-ui/react";\nimport { useGridraAccordion } from "@gridra-ui/headless";',
+    notes: "GridraAccordion applies the Gridra DOM composition and design to useGridraAccordion from @gridra-ui/headless. For a custom design, use the hook with your own headings, native trigger buttons and panels. Getters compose handlers and refs; preventDefault cancels the added behavior. Item ids are unique: the first occurrence is kept. Closed panels may be unmounted or kept with the hidden attribute supplied by getPanelProps.",
     props: [
       { name: "items", type: "GridraAccordionItem[]", required: true, description: "Array of { id, title, content, disabled? }." },
       { name: "type", type: '"single" | "multiple"', default: '"single"', description: "Whether only one or multiple panels can be open at a time." },
@@ -41,6 +42,22 @@ export const accordionDoc: ComponentDoc = {
       "GridraAccordion + GridraField: setting forms inside panels.",
     ],
     examples: [
+      {
+        title: "Custom markup with headless hook",
+        code: `const accordion = useGridraAccordion({ collapsible: true, items: [
+  { id: "general", title: "General", content: "Custom general content" },
+  { id: "account", title: "Account", content: "Custom account content" },
+] });
+
+<article>
+  {accordion.items.map(item => (
+    <section key={item.id}>
+      <h3><button {...accordion.getTriggerProps(item.id)}>{item.title}</button></h3>
+      <div {...accordion.getPanelProps(item.id)}>{item.content}</div>
+    </section>
+  ))}
+</article>`,
+      },
       {
         title: "Default single accordion",
         code: `<GridraAccordion

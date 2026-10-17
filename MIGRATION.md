@@ -5,6 +5,21 @@ The former `GridraRoot` and `GridraCanvasArea` exports have been removed.
 
 ## Styles and themes
 
+### Headless Accordion
+
+`GridraAccordion` keeps its existing import, props and CSS classes. Its behavior
+now comes from `useGridraAccordion` in `@gridra-ui/headless`. The hook accepts
+item metadata (`id`, optional `disabled`, plus your own fields), the single or
+multiple mode, controlled/default values and the collapsible setting. It returns
+`items`, `expandedIds`, `isExpanded`, `toggle`, `getTriggerProps` and `getPanelProps`.
+Render native buttons in your own heading elements. Getters supply ARIA
+relationships and keyboard focus handling, compose custom handlers and refs,
+and mark closed panels with `hidden` if you keep them mounted.
+
+The first occurrence of a duplicate id is retained and rendered once. Change
+callbacks use the currently valid open ids as `previous`, excluding removed,
+disabled or duplicate ids. A malformed default value resolves to no open panel.
+
 ### Headless Tabs
 
 `GridraTabs` keeps its existing import, props and CSS classes. Its behavior now
