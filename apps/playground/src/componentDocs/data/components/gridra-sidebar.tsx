@@ -44,9 +44,8 @@ export const sidebarDoc: ComponentDoc = {
       "GridraSidebar + GridraBox/GridraStack: sidebar content layout.",
       "GridraSidebar + main content container: classic left or right app shell."
     ],
-    notes:
-      "The built-in hamburger uses the exported GridraSidebarToggle. The unboxed icon becomes a close icon when expanded, with a visible keyboard focus ring and reduced-motion support. Sidebar keeps its existing 20px toggleSize default; use toggleSize={44} for touch interfaces. Standalone GridraSidebarToggle is 44px by default and accepts open/defaultOpen/onOpenChange(next, previous), native button attributes, disabled, and a button ref. Supply aria-controls for the region it controls and aria-label to customize the accessible name. It only toggles state; modal focus management and scroll locking belong to the application.",
-    examples: [
+    notes: "Behavior is provided by useGridraSidebar from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react. " + "The built-in hamburger uses the exported GridraSidebarToggle. The unboxed icon becomes a close icon when expanded, with a visible keyboard focus ring and reduced-motion support. Sidebar keeps its existing 20px toggleSize default; use toggleSize={44} for touch interfaces. Standalone GridraSidebarToggle is 44px by default and accepts open/defaultOpen/onOpenChange(next, previous), native button attributes, disabled, and a button ref. Supply aria-controls for the region it controls and aria-label to customize the accessible name. It only toggles state; modal focus management and scroll locking belong to the application.",
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraSidebar } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const sidebar=useGridraSidebar({defaultOpen:true,resizable:true});\n  return <aside><button aria-expanded={sidebar.currentOpen} onClick={sidebar.toggleOpen}>Toggle</button><div hidden={!sidebar.currentOpen}>Custom sidebar content</div><div {...sidebar.getSeparatorProps()} aria-label=\"Resize custom sidebar\" /></aside>;\n}" }, ...([
       {
         title: "Standalone navigation toggle",
         code: `import { useState } from "react";
@@ -80,7 +79,7 @@ function NavigationToggle() {
   <GridraBox padding="sm" surface="input">Inspector</GridraBox>
 </GridraSidebar>`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <div className="docs-inline-preview" style={{ height: 170 }}>
         <GridraStack direction="horizontal" inline align="center" gap="sm" fullWidth style={{ height: "100%" }}>
