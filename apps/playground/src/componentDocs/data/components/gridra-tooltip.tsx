@@ -2,6 +2,7 @@ import { GridraButton, GridraStack, GridraIconButton, GridraTooltip } from "@gri
 import type { ComponentDoc } from "../../types";
 
 export const tooltipDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraTooltip from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Overlays",
     name: "GridraTooltip",
     summary: "Lightweight tooltip with hover/focus trigger and top/right/bottom/left placement.",
@@ -34,7 +35,7 @@ export const tooltipDoc: ComponentDoc = {
       "Simple viewport collision fallback by opposite-side flip.",
       "Size token plus maxWidth override."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraTooltip } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const tooltip=useGridraTooltip({showDelay:0});\n  return <section><button {...tooltip.getTriggerProps()}>Custom help</button>{tooltip.currentOpen?<div {...tooltip.getContentProps()}>Custom tooltip content</div>:null}</section>;\n}" }, ...([
       {
         title: "Basic tooltip",
         code: `<GridraTooltip content="Helpful hint" placement="top">
@@ -52,7 +53,7 @@ export const tooltipDoc: ComponentDoc = {
   <GridraIconButton label="Info">i</GridraIconButton>
 </GridraTooltip>`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <GridraStack direction="horizontal" wrap align="center" gap="sm">
         <GridraTooltip content="Top tooltip" placement="top">

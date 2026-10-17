@@ -29,6 +29,15 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraTooltip through caller-owned DOM", () => {
+    const preview = renderExample("GridraTooltip", "Custom markup with headless hook");
+    vi.useFakeTimers();
+    fireEvent.focus(preview.getByRole("button",{name:"Custom help"}));
+    fireEvent.blur(preview.getByRole("button",{name:"Custom help"}));
+    vi.runAllTimers();
+    expect(preview.queryByRole("tooltip")).toBeNull();
+    vi.useRealTimers();
+  });
   it("runs headless GridraPopover through caller-owned DOM", () => {
     const preview = renderExample("GridraPopover", "Custom markup with headless hook");
     fireEvent.click(preview.getByRole("button",{name:"Open custom popover"}));

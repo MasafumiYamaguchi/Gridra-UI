@@ -1,3 +1,4 @@
+import { useGridraTooltip } from "@gridra-ui/headless";
 import { useGridraPopover } from "@gridra-ui/headless";
 import { useGridraSplitPane } from "@gridra-ui/headless";
 import { useGridraSidebar } from "@gridra-ui/headless";
@@ -1569,6 +1570,11 @@ function ExampleHeadlessGridraPopover() {
   return <section><button {...popover.getTriggerProps()}>Open custom popover</button>{popover.currentOpen?<div {...popover.getContentProps()}>Custom popover content</div>:null}</section>;
 }
 
+function ExampleHeadlessGridraTooltip() {
+  const tooltip=useGridraTooltip({showDelay:0});
+  return <section><button {...tooltip.getTriggerProps()}>Custom help</button>{tooltip.currentOpen?<div {...tooltip.getContentProps()}>Custom tooltip content</div>:null}</section>;
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -1820,3 +1826,5 @@ examplePreviews["GridraSidebar"] = {...examplePreviews["GridraSidebar"], "Custom
 examplePreviews["GridraSplitPane"] = {...examplePreviews["GridraSplitPane"], "Custom markup with headless hook": <ExampleHeadlessGridraSplitPane />};
 
 examplePreviews["GridraPopover"] = {...examplePreviews["GridraPopover"], "Custom markup with headless hook": <ExampleHeadlessGridraPopover />};
+
+examplePreviews["GridraTooltip"] = {...examplePreviews["GridraTooltip"], "Custom markup with headless hook": <ExampleHeadlessGridraTooltip />};

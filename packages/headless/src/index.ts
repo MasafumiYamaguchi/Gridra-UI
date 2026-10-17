@@ -32,3 +32,5 @@ export * from "./internal/useFloatingPosition";
 export * from "./internal/useDocumentEvent";
 
 export * from "./overlays/useGridraPopover";
+
+export * from "./overlays/useGridraTooltip";
