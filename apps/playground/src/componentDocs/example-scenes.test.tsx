@@ -29,6 +29,10 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraMinimap through caller-owned DOM", () => {
+    const preview = renderExample("GridraMinimap", "Custom markup with headless hook");
+    expect(preview.getByRole("img",{name:"Custom minimap"}).querySelector("rect")?.getAttribute("width")).toBe("50");
+  });
   it("runs headless GridraAvatar through caller-owned DOM", () => {
     const preview = renderExample("GridraAvatar", "Custom markup with headless hook");
     expect(preview.getByRole("img",{name:"Ada Lovelace"}).textContent).toBe("AL");

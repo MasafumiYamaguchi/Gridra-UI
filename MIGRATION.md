@@ -387,3 +387,9 @@ The component documentation includes a live custom-markup example.
 Import `getGridraAvatar` from `@gridra-ui/headless` for custom markup. The existing
 `GridraAvatar` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraMinimap
+
+Import `getGridraMinimap` from `@gridra-ui/headless` for custom markup. The existing
+`GridraMinimap` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

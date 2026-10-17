@@ -122,3 +122,5 @@ export function rectContainsPoint(rect: GridraRect, point: GridraPoint): boolean
 }
 
 export * from "./numeric";
+
+export * from "./minimap";
