@@ -29,6 +29,12 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraInput through caller-owned DOM", () => {
+    const preview = renderExample("GridraInput", "Custom markup with headless hook");
+    const input=preview.getByRole("textbox",{name:"Custom input"});
+    fireEvent.change(input,{target:{value:"Edited"}});
+    expect((input as HTMLInputElement).value).toBe("Edited");
+  });
   it("runs headless GridraMinimap through caller-owned DOM", () => {
     const preview = renderExample("GridraMinimap", "Custom markup with headless hook");
     expect(preview.getByRole("img",{name:"Custom minimap"}).querySelector("rect")?.getAttribute("width")).toBe("50");

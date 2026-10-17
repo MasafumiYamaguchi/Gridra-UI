@@ -1,3 +1,4 @@
+import {useControlDescriptionIds} from "@gridra-ui/headless";
 import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { resolveAriaInvalid } from "@gridra-ui/headless";
@@ -21,8 +22,7 @@ export function GridraInput({
   type = "text",
   ...props
 }: GridraInputProps) {
-  const generatedId = useId();
-  const controlId = props.id ?? generatedId;
+  const {controlId}=useControlDescriptionIds(props.id,false);
   const input = (
     <input
       aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}

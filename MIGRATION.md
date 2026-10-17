@@ -393,3 +393,9 @@ The component documentation includes a live custom-markup example.
 Import `getGridraMinimap` from `@gridra-ui/headless` for custom markup. The existing
 `GridraMinimap` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraInput
+
+Import `useControlDescriptionIds` from `@gridra-ui/headless` for custom markup. The existing
+`GridraInput` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

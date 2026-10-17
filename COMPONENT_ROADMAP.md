@@ -90,6 +90,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraMinimap: getGridraMinimap and styled integration.
 
+- [x] GridraInput: useControlDescriptionIds and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes
