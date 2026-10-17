@@ -2,6 +2,7 @@ import { GridraSelectableGrid, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const selectableGridDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraSelectableGrid from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Core",
     name: "GridraSelectableGrid",
     summary: "Compact selectable item grid for dense lists and panel navigation.",
@@ -20,7 +21,7 @@ export const selectableGridDoc: ComponentDoc = {
     ],
     options: ["items", "columns", "selectedId", "onSelectionChange", "emptyLabel", "HTML div attributes"],
     features: ["Renders items as selectable buttons.", "Marks the selected item with aria-selected.", "Selection and layout use separate components."],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraSelectableGrid } from \"@gridra-ui/headless\";\n\nfunction Example() {\n  const grid = useGridraSelectableGrid({ items: [{ id: \"A\" }, { id: \"B\" }] });\n  return <section>{grid.items.map(item => <button key={item.id} {...grid.getItemProps(item.id)}>{item.id}</button>)}</section>;\n}" },
       {
         title: "Selectable grid",
         code: `<GridraSelectableGrid

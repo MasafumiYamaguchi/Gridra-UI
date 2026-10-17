@@ -1,3 +1,4 @@
+import { useGridraSelectableGrid } from "@gridra-ui/headless";
 // Live examples use the same props as the snippets in data/components.
 import { createContext, useContext, useId, useState } from "react";
 import type { ReactNode } from "react";
@@ -1521,6 +1522,11 @@ function ExampleHeadlessAccordion() {
   </article>;
 }
 
+function ExampleHeadlessGridraSelectableGrid() {
+  const grid = useGridraSelectableGrid({ items: [{ id: "A" }, { id: "B" }] });
+  return <section>{grid.items.map(item => <button key={item.id} {...grid.getItemProps(item.id)}>{item.id}</button>)}</section>;
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -1680,6 +1686,7 @@ export const examplePreviews: Record<string, Record<string, ReactNode>> = {
     "Basic select": <ExampleGridraSelect1 />
   },
   "GridraSelectableGrid": {
+    "Custom markup with headless hook": <ExampleHeadlessGridraSelectableGrid />,
     "Selectable grid": <ExampleGridraSelectableGrid1 />
   },
   "GridraSelectionBox": {

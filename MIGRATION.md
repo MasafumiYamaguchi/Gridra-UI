@@ -219,3 +219,9 @@ selected connections when focus is outside text-editing controls.
 Pointer cancellation, lost capture, node removal and unmount end transient operations.
 Cancellation stops further edits; already accepted moves remain in caller state.
 Multiple hook instances have isolated containers, even with matching node IDs.
+
+## Headless GridraSelectableGrid
+
+Import `useGridraSelectableGrid` from `@gridra-ui/headless` for custom markup. The existing
+`GridraSelectableGrid` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

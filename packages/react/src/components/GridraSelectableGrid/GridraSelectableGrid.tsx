@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { GridraId, GridraSelectableItem } from "@gridra-ui/core";
-import { useControllableValue } from "@gridra-ui/headless";
+import { useGridraSelectableGrid } from "@gridra-ui/headless";
 
 export interface GridraSelectableGridItem extends GridraSelectableItem {
   label?: ReactNode;
@@ -27,12 +27,8 @@ export function GridraSelectableGrid<TItem extends GridraSelectableGridItem = Gr
   renderItem,
   selectedId
 }: GridraSelectableGridProps<TItem>) {
-  // selectedIdが渡された場合はcontrolled、未指定なら内部stateで選択を保持する。
-  const [currentSelectedId, setSelectedId] = useControllableValue(
-    selectedId,
-    defaultSelectedId,
-    onSelectionChange
-  );
+  const grid = useGridraSelectableGrid({ items, selectedId, defaultSelectedId, onSelectionChange });
+  const currentSelectedId = grid.selectedId;
   // 数値は等分列へ変換し、文字列なら利用側が指定したCSS Grid定義をそのまま使う。
   const gridTemplateColumns = typeof columns === "number" ? `repeat(${columns}, minmax(0, 1fr))` : columns;
   const gridClassName = ["gridra-grid", className].filter(Boolean).join(" ");
@@ -53,10 +49,9 @@ export function GridraSelectableGrid<TItem extends GridraSelectableGridItem = Gr
         // 選択済みの項目を再度押すと、未選択状態へ戻す。
         return (
           <button
-            aria-selected={selected}
+            {...grid.getItemProps(item.id)}
             className="gridra-grid__item"
             key={item.id}
-            onClick={() => setSelectedId(selected ? null : item.id)}
             type="button"
           >
             {renderItem ? renderItem(item, { selected }) : item.label ?? item.id}

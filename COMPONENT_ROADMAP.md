@@ -32,6 +32,8 @@ Presentational/native components such as Box, Card, Badge, Input, and Textarea
 stay in the styled package. Extract reusable behavior only where it exists;
 do not create a matching headless component for every styled component.
 
+- [x] GridraSelectableGrid: useGridraSelectableGrid and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes
