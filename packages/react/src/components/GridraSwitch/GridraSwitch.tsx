@@ -1,3 +1,4 @@
+import {getGridraSwitchProps} from "@gridra-ui/headless";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { resolveAriaInvalid } from "@gridra-ui/headless";
@@ -37,19 +38,8 @@ export function GridraSwitch({
 
   return (
     <button
-      aria-checked={checked}
-      aria-invalid={resolveAriaInvalid(undefined, invalid)}
+      {...getGridraSwitchProps({checked,invalid,onCheckedChange,onClick,type,...props})}
       className={switchClassName}
-      onClick={(event) => {
-        // 利用側のonClickがpreventDefaultした場合は、状態変更通知を行わない。
-        onClick?.(event);
-        if (!event.defaultPrevented) {
-          onCheckedChange?.(!checked);
-        }
-      }}
-      role="switch"
-      type={type}
-      {...props}
     >
       {/* trackとthumbは装飾として隠し、状態はroleとaria-checkedで伝える。 */}
       <span className="gridra-switch__track" aria-hidden="true">

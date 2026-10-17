@@ -333,3 +333,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraRadio` from `@gridra-ui/headless` for custom markup. The existing
 `GridraRadio` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraSwitch
+
+Import `getGridraSwitchProps` from `@gridra-ui/headless` for custom markup. The existing
+`GridraSwitch` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.
