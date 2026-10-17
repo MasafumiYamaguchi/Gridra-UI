@@ -24,3 +24,5 @@ export * from "./tree/useGridraTreeView";
 export * from "./sidebar/useGridraSidebarToggle";
 
 export * from "./sidebar/useGridraSidebar";
+
+export * from "./split-pane/useGridraSplitPane";
