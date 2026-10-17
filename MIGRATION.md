@@ -237,3 +237,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraStepper` from `@gridra-ui/headless` for custom markup. The existing
 `GridraStepper` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraMenu
+
+Import `useGridraMenu` from `@gridra-ui/headless` for custom markup. The existing
+`GridraMenu` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

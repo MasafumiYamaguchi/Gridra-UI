@@ -2,6 +2,7 @@ import { GridraBadge, GridraBox, GridraStack, GridraMenu } from "@gridra-ui/reac
 import type { ComponentDoc } from "../../types";
 
 export const menuDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraMenu from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
   category: "Navigation",
   name: "GridraMenu",
   summary: "Permanent navigation menu with item links, active state, and keyboard navigation.",
@@ -84,7 +85,7 @@ export const menuDoc: ComponentDoc = {
 />`,
     },
   ],
-  examples: [
+  examples: [{ title: "Custom markup with headless hook", code: "import { useGridraMenu } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const menu=useGridraMenu({items:[{id:\"a\",label:\"A\"},{id:\"b\",label:\"B\"}]});\n  return <nav {...menu.getRootProps()} aria-label=\"Custom navigation\">{menu.items.filter(menu.isCommand).map(item=><button key={item.id} {...menu.getItemProps(item.id)}>{item.label}</button>)}</nav>;\n}" }, ...(([
     {
       title: "Sidebar menu pattern",
       description: "A typical vertical sidebar menu inside a box panel.",
@@ -124,7 +125,7 @@ export const menuDoc: ComponentDoc = {
   onActiveIdChange={(next) => setActive(next)}
 />`,
     },
-  ],
+  ]) satisfies ComponentDoc["examples"])],
   preview: (
     <GridraBox border="default" padding="md" surface="input" style={{ width: 200 }}>
       <GridraMenu
