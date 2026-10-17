@@ -2,6 +2,7 @@ import { GridraSlider, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const sliderDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraSlider from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Controls",
     name: "GridraSlider",
     summary: "Range input for numeric values.",
@@ -35,7 +36,7 @@ export const sliderDoc: ComponentDoc = {
       "Theme renders a square track and thumb.",
       "Can show a formatted current value."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraSlider } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const slider=useGridraSlider({defaultValue:25,\"aria-label\":\"Custom slider\"});\n  return <section><input {...slider.inputProps}/><output>{slider.displayNumericValue}</output></section>;\n}" }, ...([
       {
         title: "Slider with value",
         code: `<GridraSlider
@@ -48,7 +49,7 @@ export const sliderDoc: ComponentDoc = {
   valueFormatter={(value) => \`\${value}%\`}
 />`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <GridraStack gap="sm">
         <GridraSlider aria-label="Default" defaultValue="50" max={100} min={0} />
