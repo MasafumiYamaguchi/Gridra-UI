@@ -2,6 +2,7 @@ import { GridraButton, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const buttonDoc: ComponentDoc = {
+  notes: "Behavior is provided by getGridraButtonProps from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Controls",
     name: "GridraButton",
     summary: "Standard text button for dense UI commands.",
@@ -32,7 +33,7 @@ export const buttonDoc: ComponentDoc = {
       "Loading state sets aria-busy and disables the button.",
       "Supports compact, default, and large command densities."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { getGridraButtonProps } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  return <button {...getGridraButtonProps({loading:true,pressed:true})}>Custom busy button</button>;\n}" }, ...([
       {
         title: "Sizes",
         code: `<GridraButton size="sm">Small</GridraButton>
@@ -46,7 +47,7 @@ export const buttonDoc: ComponentDoc = {
 <GridraButton loading>Loading</GridraButton>
 <GridraButton pressed>Pressed</GridraButton>`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <GridraStack direction="horizontal" wrap align="center" gap="sm" rowGap="sm">
         <GridraButton variant="primary">Primary</GridraButton>
