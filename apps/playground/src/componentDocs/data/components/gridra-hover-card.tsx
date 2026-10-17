@@ -2,6 +2,7 @@ import { GridraAvatar, GridraBadge, GridraButton, GridraHoverCard, GridraStack, 
 import type { ComponentDoc } from "../../types";
 
 export const hoverCardDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraHoverCard from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Overlays",
     name: "GridraHoverCard",
     summary: "Interactive hover card with show/hide delays, positioned between Tooltip and Popover.",
@@ -51,7 +52,7 @@ export const hoverCardDoc: ComponentDoc = {
       "GridraHoverCard + GridraAvatar / GridraBadge: user profile preview.",
       "GridraHoverCard + GridraStack / GridraLabel: item detail summary.",
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraHoverCard } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const card=useGridraHoverCard({showDelay:0,hideDelay:0});\n  return <section><button {...card.getTriggerProps()}>Custom hover card</button>{card.currentOpen?<div {...card.getContentProps()} aria-label=\"Custom card\">Custom card content</div>:null}</section>;\n}" }, ...([
       {
         title: "Basic hover card",
         code: `<GridraHoverCard
@@ -89,7 +90,7 @@ export const hoverCardDoc: ComponentDoc = {
   <GridraButton>Preview</GridraButton>
 </GridraHoverCard>`,
       },
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <div className="docs-inline-preview">
         <GridraHoverCard

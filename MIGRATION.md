@@ -279,3 +279,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraTooltip` from `@gridra-ui/headless` for custom markup. The existing
 `GridraTooltip` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraHoverCard
+
+Import `useGridraHoverCard` from `@gridra-ui/headless` for custom markup. The existing
+`GridraHoverCard` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.
