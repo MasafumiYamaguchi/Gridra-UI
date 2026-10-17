@@ -2,6 +2,7 @@ import { GridraButton, GridraCommandPalette } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const commandPaletteDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraCommandPalette from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Overlays",
     name: "GridraCommandPalette",
     summary: "Search-driven modal command palette with portal, filtering, groups, and full keyboard navigation.",
@@ -50,7 +51,7 @@ export const commandPaletteDoc: ComponentDoc = {
       "GridraCommandPalette + global keyboard event: Cmd/Ctrl+K to toggle open.",
       "GridraCommandPalette + GridraButton: toolbar shortcut to open the palette.",
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraCommandPalette } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const palette=useGridraCommandPalette({items:[{id:\"one\",label:\"First command\"},{id:\"two\",label:\"Second command\"}]});\n  return <section><button onClick={()=>palette.setOpen(true)}>Open custom palette</button>{palette.currentOpen?<div {...palette.getDialogProps()}><h2 id={palette.titleId}>Custom commands</h2><input {...palette.getInputProps({\"aria-label\":\"Search commands\"})}/>{palette.filteredCommands.map(item=><button key={item.id} {...palette.getItemProps(item.id)}>{item.label}</button>)}</div>:null}</section>;\n}" }, ...([
       {
         title: "Basic command palette",
         code: `<GridraCommandPalette
@@ -81,7 +82,7 @@ export const commandPaletteDoc: ComponentDoc = {
   />
 </>`,
       },
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <div className="docs-inline-preview">
         <GridraCommandPalette

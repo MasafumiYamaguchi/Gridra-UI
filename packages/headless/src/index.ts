@@ -44,3 +44,5 @@ export * from "./overlays/useGridraDialog";
 export * from "./overlays/useGridraDropdownMenu";
 
 export * from "./overlays/useGridraContextMenu";
+
+export * from "./overlays/useGridraCommandPalette";
