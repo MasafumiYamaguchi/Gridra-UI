@@ -15,6 +15,7 @@ export default function Example() {
 }
 
 export const stepperDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraStepper from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
   category: "Navigation",
   name: "GridraStepper",
   summary: "Four stepper designs for linear workflows: cards, ruler, line, and square boxes.",
@@ -38,12 +39,12 @@ export const stepperDoc: ComponentDoc = {
   usage: "Use cards for steps with summary details, ruler for position along a measured workflow, line for a compact progress overview, and boxes for a classic numbered sequence. Use currentId to advance after validation and onStepChange to allow reviewing completed steps. The examples switch a checkout panel using currentId. Use labels to translate status text and ruler formats.",
   avoid: "Pending and locked steps do not support direct navigation. Keep step content and validation outside the stepper. Ruler percentage describes position along the sequence rather than the amount of work completed.",
   compositions: ["GridraStepper + GridraStack: arrange step-specific content.", "GridraStepper + GridraButton: advance currentId after completing a step."],
-  examples: variants.map((variant) => ({
+  examples: [{ title: "Custom markup with headless hook", code: "import { useGridraStepper } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const stepper = useGridraStepper({ items: [{ id: \"first\", label: \"First\" }, { id: \"last\", label: \"Last\" }], defaultCurrentId: \"last\" });\n  return <nav aria-label=\"Custom steps\">{stepper.steps.map(step => <button key={step.item.id} {...stepper.getStepProps(step.item.id)}>{step.item.label}</button>)}</nav>;\n}" }, ...(variants.map((variant) => ({
     title: variant[0].toUpperCase() + variant.slice(1),
     description: "Horizontal checkout with an editable panel controlled by currentId, plus vertical setup. Click a completed step to go back, use Next to advance, or Reset steps to restore the illustrated state.",
     code: exampleCode(variant),
     preview: <StepperExample variant={variant} />,
-  })),
+  })))],
   preview: <StepperExample variant="boxes" />,
   previewCode: exampleCode("boxes"),
   accessibility: "The step list uses nav, ol, and li. Each step is a native button whose name includes its number, label, description, and completed or locked state. Unavailable steps remain in the Tab order with aria-disabled=true so their status can be read, but do not activate. The current step has aria-current=step. Ruler provides a progressbar with a percentage and textual position, adding labels.progress to the navigation's accessible name. All generated text is customizable through labels. Decorative strokes, ticks, and markers are hidden to avoid duplicate announcements.",

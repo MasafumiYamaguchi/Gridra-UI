@@ -231,3 +231,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraPagination` from `@gridra-ui/headless` for custom markup. The existing
 `GridraPagination` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraStepper
+
+Import `useGridraStepper` from `@gridra-ui/headless` for custom markup. The existing
+`GridraStepper` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

@@ -29,6 +29,12 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraStepper through caller-owned DOM", () => {
+    const preview = renderExample("GridraStepper", "Custom markup with headless hook");
+    const first=preview.getByRole("button",{name:"First"});
+    fireEvent.click(first);
+    expect(first.getAttribute("aria-current")).toBe("step");
+  });
   it("runs headless GridraPagination through caller-owned DOM", () => {
     const preview = renderExample("GridraPagination", "Custom markup with headless hook");
     fireEvent.click(preview.getByRole("button", { name: "Next" }));

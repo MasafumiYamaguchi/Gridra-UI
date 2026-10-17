@@ -1,3 +1,4 @@
+import { useGridraStepper } from "@gridra-ui/headless";
 import { useId, useMemo, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from "react";
 
 export type GridraStepperOrientation = "horizontal" | "vertical";
@@ -70,32 +71,8 @@ export function GridraStepper({
   const text = { ...defaultLabels, ...labels };
   const navLabel = ariaLabel ?? text.navigation;
   const progressLabelId = useId();
-  const enabledIds = useMemo(() => items.filter((item) => !item.disabled).map((item) => item.id), [items]);
-  const [internalCurrentId, setInternalCurrentId] = useState(() => defaultCurrentId ?? "");
-  const rawCurrentId = currentIdProp ?? internalCurrentId;
-  const currentId = enabledIds.includes(rawCurrentId) ? rawCurrentId : enabledIds[0] ?? null;
-  const currentIndex = currentId == null ? -1 : items.findIndex((item) => item.id === currentId);
-  const positionOf = (index: number) => index < 0 ? 0 : items.length === 1 ? 100 : index / (items.length - 1) * 100;
-  const progress = positionOf(currentIndex);
+  const {currentId, currentIndex, progress, steps, positionOf, handleStepClick,getStepProps} = useGridraStepper({items,currentId:currentIdProp,defaultCurrentId,disabled,onStepChange});
   const positionText = currentIndex < 0 ? text.noCurrentStep : text.position(currentIndex + 1, items.length);
-  const steps = items.map((item, index) => {
-    const locked = Boolean(item.disabled);
-    const completed = currentIndex >= 0 && index < currentIndex && !locked;
-    const current = index === currentIndex;
-    const pending = !locked && (currentIndex < 0 || index > currentIndex);
-    const buttonDisabled = disabled || locked || pending || currentIndex < 0;
-    const traversed = index < currentIndex;
-    const connectorState = traversed ? "completed" : current ? "current" : pending ? "pending" : "locked";
-    return { item, index, locked, completed, current, pending, buttonDisabled, traversed, connectorState,
-      canGoBack: completed && !buttonDisabled };
-  });
-
-  const handleStepClick = (id: string) => {
-    if (currentId == null) return;
-    if (currentIdProp === undefined) setInternalCurrentId(id);
-    onStepChange?.(id, currentId);
-  };
-
   const rootClassName = ["gridra-stepper", `gridra-stepper--${orientation}`, `gridra-stepper--${size}`,
     `gridra-stepper--${variant}`, disabled && "gridra-stepper--disabled", className].filter(Boolean).join(" ");
   const rootStyle = {
@@ -117,9 +94,8 @@ export function GridraStepper({
         const number = String(index + 1).padStart(2, "0");
 
         return <li key={item.id} className={itemClassName}>
-          <button type="button" aria-current={current ? "step" : undefined}
-            aria-disabled={buttonDisabled || undefined}
-            className={buttonClassName} onClick={canGoBack ? () => handleStepClick(item.id) : undefined}>
+          <button {...getStepProps(item.id)}
+            className={buttonClassName}>
             {completed && <span className="gridra-stepper__sr-only">{text.completed} </span>}
             {locked && <span className="gridra-stepper__sr-only">{text.locked} </span>}
             <span className="gridra-stepper__sr-only">{index + 1} </span>
