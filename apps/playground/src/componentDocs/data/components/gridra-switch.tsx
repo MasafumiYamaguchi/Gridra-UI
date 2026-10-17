@@ -2,6 +2,7 @@ import { GridraSwitch } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const switchDoc: ComponentDoc = {
+  notes: "Behavior is provided by getGridraSwitchProps from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Controls",
     name: "GridraSwitch",
     summary: "Button-based switch for binary settings.",
@@ -33,7 +34,7 @@ export const switchDoc: ComponentDoc = {
       "Maps checked to aria-checked.",
       "Reports the next checked value through onCheckedChange."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { getGridraSwitchProps } from \"@gridra-ui/headless\";\nimport { useState } from \"react\";\n\nexport default function Example() {\n  const [checked,setChecked]=useState(false);\n  return <button {...getGridraSwitchProps({checked,onCheckedChange:setChecked})}>Custom switch</button>;\n}" }, ...([
       {
         title: "Switch with label",
         code: `<GridraSwitch
@@ -43,6 +44,6 @@ export const switchDoc: ComponentDoc = {
   size="lg"
 />`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: <GridraSwitch checked description="Shows live editor state" label="Preview" size="lg" />
   };

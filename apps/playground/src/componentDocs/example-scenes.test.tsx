@@ -29,6 +29,12 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraSwitch through caller-owned DOM", () => {
+    const preview = renderExample("GridraSwitch", "Custom markup with headless hook");
+    const button=preview.getByRole("switch",{name:"Custom switch"});
+    fireEvent.click(button);
+    expect(button.getAttribute("aria-checked")).toBe("true");
+  });
   it("runs headless GridraRadio through caller-owned DOM", () => {
     const preview = renderExample("GridraRadio", "Custom markup with headless hook");
     const input=preview.getByRole("radio",{name:"Custom radio"});
