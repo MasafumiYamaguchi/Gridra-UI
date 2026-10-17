@@ -2,6 +2,7 @@ import { GridraBox, GridraBreadcrumb } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const breadcrumbDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraBreadcrumb from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Navigation",
     name: "GridraBreadcrumb",
     summary: "Hierarchical path indicator using items with href, supporting current/disabled states and optional parentId validation.",
@@ -33,7 +34,7 @@ export const breadcrumbDoc: ComponentDoc = {
     ],
     usage: "Use GridraBreadcrumb to show the user's location within a hierarchical structure. Pass an array of trail items in order from root to leaf. For simple flat trails, omit parentId. For validated hierarchy, include parentId on each non-root item pointing to the previous item's id.",
     avoid: "GridraBreadcrumb does not compute paths from a tree structure automatically. Pass the trail in display order. It does not integrate with client-side routers (use href for plain links, or wrap with your router's Link component).",
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraBreadcrumb } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const path=useGridraBreadcrumb({items:[{id:\"home\",label:\"Home\",href:\"#home\"},{id:\"page\",label:\"Current page\",current:true,parentId:\"home\"}]});\n  return <nav aria-label=\"Custom path\"><ol>{path.visibleItems.map(entry=>entry.item?<li key={entry.item.id}>{path.getItemState(entry.item).canNavigate?<a {...path.getItemState(entry.item).linkProps}>{entry.item.label}</a>:<span {...path.getItemState(entry.item).currentProps}>{entry.item.label}</span>}</li>:<li key=\"ellipsis\">…</li>)}</ol></nav>;\n}" }, ...([
       {
         title: "Basic breadcrumb",
         code: `<GridraBreadcrumb
@@ -69,7 +70,7 @@ export const breadcrumbDoc: ComponentDoc = {
   onHierarchyInvalid={(issues) => console.warn(issues)}
 />`,
       },
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <GridraBox padding="md">
         <GridraBreadcrumb
