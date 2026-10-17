@@ -225,3 +225,9 @@ Multiple hook instances have isolated containers, even with matching node IDs.
 Import `useGridraSelectableGrid` from `@gridra-ui/headless` for custom markup. The existing
 `GridraSelectableGrid` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraPagination
+
+Import `useGridraPagination` from `@gridra-ui/headless` for custom markup. The existing
+`GridraPagination` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

@@ -2,6 +2,7 @@ import { GridraBox, GridraPagination } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const paginationDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraPagination from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Navigation",
     name: "GridraPagination",
     summary: "Button-based pagination with page controls, page size selection, and item range summary.",
@@ -51,7 +52,7 @@ export const paginationDoc: ComponentDoc = {
       "GridraPagination + data table: pagination footer.",
       "GridraPagination + GridraBox/GridraStack: layout within a card or toolbar.",
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraPagination } from \"@gridra-ui/headless\";\n\nfunction Example() {\n  const pagination = useGridraPagination({ totalItems: 100, defaultPageSize: 10 });\n  return <nav aria-label=\"Custom pages\"><output>Page {pagination.currentPage}</output><button disabled={pagination.isLastPage} onClick={() => pagination.goToPage(pagination.currentPage + 1)}>Next</button></nav>;\n}" },
       {
         title: "Basic uncontrolled pagination",
         code: `<GridraPagination

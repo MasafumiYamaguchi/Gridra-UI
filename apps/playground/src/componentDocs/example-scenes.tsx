@@ -1,3 +1,4 @@
+import { useGridraPagination } from "@gridra-ui/headless";
 import { useGridraSelectableGrid } from "@gridra-ui/headless";
 // Live examples use the same props as the snippets in data/components.
 import { createContext, useContext, useId, useState } from "react";
@@ -1527,6 +1528,11 @@ function ExampleHeadlessGridraSelectableGrid() {
   return <section>{grid.items.map(item => <button key={item.id} {...grid.getItemProps(item.id)}>{item.id}</button>)}</section>;
 }
 
+function ExampleHeadlessGridraPagination() {
+  const pagination = useGridraPagination({ totalItems: 100, defaultPageSize: 10 });
+  return <nav aria-label="Custom pages"><output>Page {pagination.currentPage}</output><button disabled={pagination.isLastPage} onClick={() => pagination.goToPage(pagination.currentPage + 1)}>Next</button></nav>;
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -1655,6 +1661,7 @@ export const examplePreviews: Record<string, Record<string, ReactNode>> = {
     "Hook bindings": <ExampleGridraNode2 />
   },
   "GridraPagination": {
+    "Custom markup with headless hook": <ExampleHeadlessGridraPagination />,
     "Basic uncontrolled pagination": <ExampleGridraPagination1 />,
     "Controlled pagination": <ExampleGridraPagination2 />,
     "Custom page size options and hidden controls": <ExampleGridraPagination3 />
