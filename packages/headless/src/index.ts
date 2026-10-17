@@ -66,3 +66,5 @@ export * from "./forms/getGridraButtonProps";
 export * from "./forms/getGridraIconButtonProps";
 
 export * from "./navigation/useGridraBreadcrumb";
+
+export * from "./editors/useGridraInspectorPanel";

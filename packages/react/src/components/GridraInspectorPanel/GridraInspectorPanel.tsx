@@ -1,3 +1,4 @@
+import {useGridraInspectorPanel} from "@gridra-ui/headless";
 import { useId, type HTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { GridraField } from "../GridraField";
@@ -32,11 +33,6 @@ export interface GridraInspectorPanelProps
   disabled?: boolean;
 }
 
-function isValidNumber(value: string): boolean {
-  const n = Number(value);
-  return value.trim() !== "" && !Number.isNaN(n) && Number.isFinite(n);
-}
-
 export function GridraInspectorPanel({
   className,
   disabled = false,
@@ -45,31 +41,7 @@ export function GridraInspectorPanel({
   selectedNode,
   ...props
 }: GridraInspectorPanelProps) {
-  const fieldId = useId();
-  const hasSelection = selectedNode != null;
-
-  // 設定がdisabledまたは選択されていない場合は、onChangeを呼び出さない
-  const handleLabelChange = (value: string) => {
-    if (disabled || !hasSelection) {
-      return;
-    }
-    onChange?.({ label: value });
-  };
-
-  const handlePlacementChange = (
-    key: keyof GridraInspectorPlacement,
-    value: string,
-  ) => {
-    if (disabled || !hasSelection) {
-      return;
-    }
-
-    if (!isValidNumber(value)) {
-      return;
-    }
-
-    onChange?.({ placement: { [key]: Number(value) } });
-  };
+  const {fieldId,hasSelection,handleLabelChange,handlePlacementChange,commit}=useGridraInspectorPanel({selectedNode,disabled,onChange,onCommit});
 
   // 以下data-testid属性は、テストで使用するためのものであり、UI上では表示されない
   return (
@@ -88,11 +60,11 @@ export function GridraInspectorPanel({
               onChange={(event) => handleLabelChange(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
-                  onCommit?.();
+                  commit();
                 }
               }}
               type="text"
-              value={String(selectedNode.label ?? "")}
+              value={String(selectedNode!.label ?? "")}
             />
           </GridraField>
           <GridraField htmlFor={`${fieldId}-x`} label="X">
@@ -104,7 +76,7 @@ export function GridraInspectorPanel({
                 handlePlacementChange("x", event.target.value)
               }
               type="number"
-              value={selectedNode.placement.x}
+              value={selectedNode!.placement.x}
             />
           </GridraField>
           <GridraField htmlFor={`${fieldId}-y`} label="Y">
@@ -116,7 +88,7 @@ export function GridraInspectorPanel({
                 handlePlacementChange("y", event.target.value)
               }
               type="number"
-              value={selectedNode.placement.y}
+              value={selectedNode!.placement.y}
             />
           </GridraField>
           <GridraField htmlFor={`${fieldId}-w`} label="W">
@@ -128,7 +100,7 @@ export function GridraInspectorPanel({
                 handlePlacementChange("w", event.target.value)
               }
               type="number"
-              value={selectedNode.placement.w}
+              value={selectedNode!.placement.w}
             />
           </GridraField>
           <GridraField htmlFor={`${fieldId}-h`} label="H">
@@ -140,7 +112,7 @@ export function GridraInspectorPanel({
                 handlePlacementChange("h", event.target.value)
               }
               type="number"
-              value={selectedNode.placement.h}
+              value={selectedNode!.placement.h}
             />
           </GridraField>
         </div>

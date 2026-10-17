@@ -1,3 +1,4 @@
+import { useGridraInspectorPanel } from "@gridra-ui/headless";
 import { useGridraBreadcrumb } from "@gridra-ui/headless";
 import { getGridraIconButtonProps } from "@gridra-ui/headless";
 import { getGridraButtonProps } from "@gridra-ui/headless";
@@ -1657,6 +1658,12 @@ function ExampleHeadlessGridraBreadcrumb() {
   return <nav aria-label="Custom path"><ol>{path.visibleItems.map(entry=>entry.item?<li key={entry.item.id}>{path.getItemState(entry.item).canNavigate?<a {...path.getItemState(entry.item).linkProps}>{entry.item.label}</a>:<span {...path.getItemState(entry.item).currentProps}>{entry.item.label}</span>}</li>:<li key="ellipsis">…</li>)}</ol></nav>;
 }
 
+function ExampleHeadlessGridraInspectorPanel() {
+  const [node,setNode]=useState({id:"one",label:"Node",placement:{x:1,y:1,w:2,h:2}});
+  const inspector=useGridraInspectorPanel({selectedNode:node,onChange:patch=>setNode(previous=>({...previous,...patch,label:String(patch.label??previous.label),placement:{...previous.placement,...patch.placement}}))});
+  return <label>Custom node label<input value={node.label} onChange={event=>inspector.handleLabelChange(event.target.value)}/></label>;
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -1938,3 +1945,5 @@ examplePreviews["GridraButton"] = {...examplePreviews["GridraButton"], "Custom m
 examplePreviews["GridraIconButton"] = {...examplePreviews["GridraIconButton"], "Custom markup with headless hook": <ExampleHeadlessGridraIconButton />};
 
 examplePreviews["GridraBreadcrumb"] = {...examplePreviews["GridraBreadcrumb"], "Custom markup with headless hook": <ExampleHeadlessGridraBreadcrumb />};
+
+examplePreviews["GridraInspectorPanel"] = {...examplePreviews["GridraInspectorPanel"], "Custom markup with headless hook": <ExampleHeadlessGridraInspectorPanel />};
