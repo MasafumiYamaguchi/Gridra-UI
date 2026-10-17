@@ -63,7 +63,7 @@ import {
   GridraTreeView,
   useToast,
 } from "@gridra-ui/react";
-import { useGridraCanvas } from "@gridra-ui/headless";
+import { useGridraCanvas, useGridraTabs } from "@gridra-ui/headless";
 import type {
   GridraBuiltInThemeName,
   GridraCanvasState,
@@ -1495,6 +1495,19 @@ function ExampleuseGridraCanvas1() {
   </div>;
 }
 
+function ExampleHeadlessTabs() {
+  const tabs = useGridraTabs({ items: [
+    { id: "overview", label: "Overview", content: "Custom overview" },
+    { id: "details", label: "Details", content: "Custom details" },
+  ] });
+  return <article>
+    <div {...tabs.getTabListProps({ "aria-label": "Custom tabs" })}>
+      {tabs.items.map(item => <button key={item.id} {...tabs.getTabProps(item.id)}>{item.label}</button>)}
+    </div>
+    {tabs.selectedItem ? <section {...tabs.getPanelProps(tabs.selectedItem.id)}>{tabs.selectedItem.content}</section> : null}
+  </article>;
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Default single accordion": <ExampleGridraAccordion1 />,
@@ -1701,6 +1714,7 @@ export const examplePreviews: Record<string, Record<string, ReactNode>> = {
     "Switch with label": <ExampleGridraSwitch1 />
   },
   "GridraTabs": {
+    "Custom markup with headless hook": <ExampleHeadlessTabs />,
     "Basic horizontal tabs": <ExampleGridraTabs1 />,
     "Controlled tabs": <ExampleGridraTabs2 />,
     "Boxed variant with manual activation": <ExampleGridraTabs3 />

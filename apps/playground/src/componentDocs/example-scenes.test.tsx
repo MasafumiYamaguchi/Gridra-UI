@@ -29,6 +29,16 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs the custom Tabs markup with headless selection and keyboard focus", () => {
+    const preview = renderExample("GridraTabs", "Custom markup with headless hook");
+    expect(preview.getByRole("tabpanel").textContent).toBe("Custom overview");
+    fireEvent.click(preview.getByRole("tab", { name: "Details" }));
+    expect(preview.getByRole("tabpanel").textContent).toBe("Custom details");
+    fireEvent.keyDown(preview.getByRole("tablist"), { key: "Home" });
+    expect(document.activeElement).toBe(preview.getByRole("tab", { name: "Overview" }));
+    expect(preview.getByRole("tabpanel").textContent).toBe("Custom overview");
+    expect(preview.getByRole("article").querySelector(".gridra-tabs")).toBeNull();
+  });
   it.each(["Portfolio history", "Horizontal milestones"])("renders %s as a readable history with usable project links", (title) => {
     const preview = renderExample("GridraTimeline", title);
     const history = within(preview.getByRole("list", { name: "ポートフォリオの活動履歴" }));

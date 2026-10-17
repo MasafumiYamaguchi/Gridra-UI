@@ -7,7 +7,8 @@ export const tabsDoc: ComponentDoc = {
     summary: "Tabbed content switching with items-based API, ARIA tab panel pattern, and full keyboard navigation.",
     description:
       "GridraTabs renders a tablist with tab buttons and a single visible panel. It supports horizontal and vertical orientation, line and boxed variants, automatic and manual activation, and controlled/uncontrolled selection with roving tabindex keyboard navigation.",
-    importExample: 'import { GridraTabs } from "@gridra-ui/react";',
+    importExample: 'import { GridraTabs } from "@gridra-ui/react";\nimport { useGridraTabs } from "@gridra-ui/headless";',
+    notes: "GridraTabs applies the Gridra DOM composition and design to useGridraTabs from @gridra-ui/headless. For a custom design, use the hook with your own tablist, native buttons and panels. Getters compose handlers and refs; preventDefault cancels the added behavior. Item ids are unique: the first occurrence is kept. Closed panels may be unmounted or kept with the hidden attribute supplied by getPanelProps.",
     props: [
       { name: "items", type: "GridraTabItem[]", required: true, description: "Array of { id, label, content, disabled? }." },
       { name: "selectedId", type: "string", description: "Controlled selected tab id." },
@@ -41,6 +42,24 @@ export const tabsDoc: ComponentDoc = {
       "GridraTabs + GridraLabel/GridraBadge: tab decoration.",
     ],
     examples: [
+      {
+        title: "Custom markup with headless hook",
+        code: `const tabs = useGridraTabs({ items: [
+  { id: "overview", label: "Overview", content: "Custom overview" },
+  { id: "details", label: "Details", content: "Custom details" },
+] });
+
+<article>
+  <div {...tabs.getTabListProps({ "aria-label": "Custom tabs" })}>
+    {tabs.items.map(item => (
+      <button key={item.id} {...tabs.getTabProps(item.id)}>{item.label}</button>
+    ))}
+  </div>
+  {tabs.selectedItem ? (
+    <section {...tabs.getPanelProps(tabs.selectedItem.id)}>{tabs.selectedItem.content}</section>
+  ) : null}
+</article>`,
+      },
       {
         title: "Basic horizontal tabs",
         code: `<GridraTabs

@@ -1,228 +1,41 @@
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type HTMLAttributes,
-  type KeyboardEvent,
-  type ReactNode,
-} from "react";
-import { useControllableValue } from "@gridra-ui/headless";
-import { wrapIndex } from "@gridra-ui/core";
+import type { HTMLAttributes, ReactNode } from "react";
+import { useGridraTabs, type UseGridraTabsOptions } from "@gridra-ui/headless";
+import { cx } from "../../internal/classNames";
 
-export type GridraTabsOrientation = "horizontal" | "vertical";
+export type { GridraTabsOrientation, GridraTabsActivationMode } from "@gridra-ui/headless";
 export type GridraTabsSize = "sm" | "md" | "lg";
 export type GridraTabsVariant = "line" | "boxed";
-export type GridraTabsActivationMode = "automatic" | "manual";
-
 export interface GridraTabItem {
   id: string;
   label: ReactNode;
   content: ReactNode;
   disabled?: boolean;
 }
-
-export interface GridraTabsProps extends HTMLAttributes<HTMLDivElement> {
+export interface GridraTabsProps extends HTMLAttributes<HTMLDivElement>, UseGridraTabsOptions<GridraTabItem> {
   items: GridraTabItem[];
-  selectedId?: string;
-  defaultSelectedId?: string;
-  onSelectionChange?: (nextId: string, previousId: string | null) => void;
-  orientation?: GridraTabsOrientation;
   size?: GridraTabsSize;
   variant?: GridraTabsVariant;
-  activationMode?: GridraTabsActivationMode;
 }
 
+/** 振る舞いはheadlessに委譲し、GridraのDOM構造と装飾を適用する。 */
 export function GridraTabs({
-  className,
-  activationMode = "automatic",
-  defaultSelectedId,
-  items,
-  onSelectionChange,
-  orientation = "horizontal",
-  selectedId,
-  size = "md",
-  variant = "line",
-  ...props
+  className, activationMode, defaultSelectedId, items, onSelectionChange,
+  orientation = "horizontal", selectedId, size = "md", variant = "line", ...props
 }: GridraTabsProps) {
-  // tabとtabpanelをARIAで結び付けるため、インスタンス固有のidを作る。
-  const baseId = useId();
-  // disabledなtabは選択・フォーカス移動の候補から除外する。
-  const enabledIds = useMemo(
-    () => items.filter((item) => !item.disabled).map((item) => item.id),
-    [items],
-  );
-
-  // controlled値が無効になった場合は、最初の有効tabへフォールバックする。
-  const fallbackId = enabledIds[0] ?? "";
-  const safeSelectedIdProp = selectedId === undefined
-    ? undefined
-    : enabledIds.includes(selectedId)
-      ? selectedId
-      : fallbackId;
-
-  const [currentId, setCurrentId] = useControllableValue(
-    safeSelectedIdProp,
-    enabledIds.includes(defaultSelectedId ?? "") ? defaultSelectedId! : fallbackId,
-    onSelectionChange,
-  );
-
-  const safeSelectedId = enabledIds.includes(currentId) ? currentId : fallbackId;
-
-  const [focusedIndex, setFocusedIndex] = useState(
-    () => enabledIds.indexOf(safeSelectedId),
-  );
-
-  // roving tabIndexでフォーカスする実DOMをidから参照する。
-  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
-
-  useEffect(() => {
-    // 外部から選択値やitemsが変わった場合、フォーカス位置も選択tabへ同期する。
-    const idx = enabledIds.indexOf(safeSelectedId);
-    setFocusedIndex(idx >= 0 ? idx : 0);
-  }, [safeSelectedId, enabledIds]);
-
-  const enabledCount = enabledIds.length;
-
-  const focusTab = useCallback(
-    (index: number) => {
-      // 端を越えた移動は先頭・末尾へ循環させる。
-      const clamped = wrapIndex(index, enabledCount);
-      setFocusedIndex(clamped);
-      const id = enabledIds[clamped];
-      tabRefs.current.get(id)?.focus();
-
-      // automaticではフォーカス移動と選択を同時に行い、manualでは分離する。
-      if (activationMode === "automatic") {
-        setCurrentId(id);
-      }
-    },
-    [enabledCount, enabledIds, activationMode, setCurrentId],
-  );
-
-  const selectTab = useCallback(
-    (id: string) => {
-      if (!enabledIds.includes(id)) return;
-      setCurrentId(id);
-      setFocusedIndex(enabledIds.indexOf(id));
-    },
-    [enabledIds, setCurrentId],
-  );
-
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      // orientationに合わせて有効な矢印キーの軸を切り替える。
-      const isHorizontal = orientation === "horizontal";
-      let handled = true;
-
-      switch (event.key) {
-        case isHorizontal ? "ArrowRight" : "ArrowDown":
-          event.preventDefault();
-          focusTab(focusedIndex + 1);
-          break;
-        case isHorizontal ? "ArrowLeft" : "ArrowUp":
-          event.preventDefault();
-          focusTab(focusedIndex - 1);
-          break;
-        case "Home":
-          event.preventDefault();
-          focusTab(0);
-          break;
-        case "End":
-          event.preventDefault();
-          focusTab(enabledCount - 1);
-          break;
-        case "Enter":
-        case " ":
-          // manual時だけEnter/Spaceでフォーカス中のtabを確定する。
-          if (activationMode === "manual") {
-            event.preventDefault();
-            const id = enabledIds[focusedIndex];
-            if (id) selectTab(id);
-          }
-          break;
-        default:
-          handled = false;
-      }
-
-      if (handled) {
-        event.stopPropagation();
-      }
-    },
-    [orientation, focusTab, focusedIndex, enabledCount, enabledIds, activationMode, selectTab],
-  );
-
-  const rootClassName = [
-    "gridra-tabs",
-    `gridra-tabs--${orientation}`,
-    `gridra-tabs--${variant}`,
-    `gridra-tabs--${size}`,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const selectedItem = items.find((item) => item.id === safeSelectedId);
-
+  const tabs = useGridraTabs({ items, selectedId, defaultSelectedId, onSelectionChange, orientation, activationMode });
   return (
-    <div {...props} className={rootClassName}>
-      <div
-        aria-orientation={orientation}
-        className="gridra-tabs__list"
-        onKeyDown={handleKeyDown}
-        role="tablist"
-      >
-        {items.map((item) => {
-          const isSelected = item.id === safeSelectedId;
-          const tabId = `${baseId}-tab-${item.id}`;
-          const panelId = `${baseId}-panel-${item.id}`;
-
-          // 有効tabのうちフォーカス対象だけをTabキーの停止位置にする。
-          return (
-            <button
-              aria-controls={panelId}
-              aria-disabled={item.disabled || undefined}
-              aria-selected={isSelected}
-              className={[
-                "gridra-tabs__tab",
-                item.disabled ? "gridra-tabs__tab--disabled" : null,
-                isSelected ? "gridra-tabs__tab--selected" : null,
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              disabled={item.disabled}
-              id={tabId}
-              key={item.id}
-              onClick={() => selectTab(item.id)}
-              ref={(el) => {
-                if (el) tabRefs.current.set(item.id, el);
-                else tabRefs.current.delete(item.id);
-              }}
-              role="tab"
-              tabIndex={
-                item.disabled
-                  ? -1
-                  : focusedIndex === enabledIds.indexOf(item.id)
-                    ? 0
-                    : -1
-              }
-              type="button"
-            >
-              {item.label}
-            </button>
-          );
-        })}
+    <div {...props} className={cx("gridra-tabs", `gridra-tabs--${orientation}`, `gridra-tabs--${variant}`, `gridra-tabs--${size}`, className)}>
+      <div {...tabs.getTabListProps({ className: "gridra-tabs__list" })}>
+        {tabs.items.map(item => (
+          <button key={item.id} {...tabs.getTabProps(item.id, {
+            className: cx("gridra-tabs__tab", item.disabled && "gridra-tabs__tab--disabled",
+              item.id === tabs.selectedId && "gridra-tabs__tab--selected"),
+          })}>{item.label}</button>
+        ))}
       </div>
-      {selectedItem ? (
-        <div
-          aria-labelledby={`${baseId}-tab-${selectedItem.id}`}
-          className="gridra-tabs__panel"
-          id={`${baseId}-panel-${selectedItem.id}`}
-          role="tabpanel"
-        >
-          {selectedItem.content}
+      {tabs.selectedItem ? (
+        <div {...tabs.getPanelProps(tabs.selectedItem.id, { className: "gridra-tabs__panel" })}>
+          {tabs.selectedItem.content}
         </div>
       ) : null}
     </div>
