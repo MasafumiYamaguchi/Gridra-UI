@@ -1,7 +1,7 @@
 import { GridraSelectionBox } from "../GridraSelectionBox";
 import { GridraSnapGuide } from "../GridraSnapGuide";
 import { cx } from "../../internal/classNames";
-import type { GridraCanvasOverlayProps } from "./types";
+import type { GridraCanvasOverlayProps } from "@gridra-ui/headless";
 
 /** 描画だけを担当し、座標と接続選択のイベント処理はHookから受け取る。 */
 export function GridraCanvasOverlay({

@@ -5,6 +5,24 @@ The former `GridraRoot` and `GridraCanvasArea` exports have been removed.
 
 ## Styles and themes
 
+### Headless Canvas
+
+`useGridraCanvas` and its interaction types now live in `@gridra-ui/headless`.
+Imports from `@gridra-ui/react` still re-export the same implementation.
+The controlled state contract and prop getters are unchanged. For a custom
+design, import the hook directly and render your own container, buttons,
+handles and overlay. No theme CSS is required for the hook; its grid placement
+and pointer styles express structural geometry.
+`GridraCanvasOverlay`, `GridraNode` and the decorated handles stay in
+`@gridra-ui/react` and use the existing theme CSS.
+
+```tsx
+import { useGridraCanvas, type GridraCanvasState } from "@gridra-ui/headless";
+import { GridraCanvasOverlay } from "@gridra-ui/react";
+```
+
+### Gridra design CSS
+
 Keep importing `@gridra-ui/theme/base.css` and the palettes you need.
 Components work without a Root. Apply `gridra-theme-*` classes to ordinary DOM
 for scoped colors; your CSS owns page sizing, layout and padding.

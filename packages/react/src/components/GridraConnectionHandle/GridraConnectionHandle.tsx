@@ -1,3 +1,4 @@
+import type { GridraConnectionHandleKind } from "@gridra-ui/headless";
 import type { HTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 
@@ -8,7 +9,7 @@ export type GridraConnectionHandlePosition =
   | "left"
   | "inline";
 
-export type GridraConnectionHandleKind = "input" | "output";
+export type { GridraConnectionHandleKind } from "@gridra-ui/headless";
 
 export interface GridraConnectionHandleProps extends HTMLAttributes<HTMLSpanElement> {
   active?: boolean;

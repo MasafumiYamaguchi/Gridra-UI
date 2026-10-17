@@ -1,9 +1,9 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { createRef, useState, type HTMLAttributes, type ButtonHTMLAttributes, type Ref } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { useGridraCanvas } from "./useGridraCanvas";
+import { useGridraCanvas } from "@gridra-ui/headless";
 import { GridraCanvasOverlay } from "./GridraCanvasOverlay";
-import type { GridraCanvasState, GridraCanvasNode, UseGridraCanvasOptions } from "./types";
+import type { GridraCanvasState, GridraCanvasNode, UseGridraCanvasOptions } from "@gridra-ui/headless";
 
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 const initial: GridraCanvasState<GridraCanvasNode & { label?: string; data?: string }> = {

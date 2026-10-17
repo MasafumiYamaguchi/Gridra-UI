@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GridraNode, GridraDragHandle, GridraResizeHandle, GridraConnectionHandle,
-  GridraCanvasOverlay, useGridraCanvas, type GridraCanvasNode, type GridraCanvasState } from "@gridra-ui/react";
+  GridraCanvasOverlay } from "@gridra-ui/react";
+import { useGridraCanvas, type GridraCanvasNode, type GridraCanvasState } from "@gridra-ui/headless";
 import type { ComponentDoc } from "../../types";
 
 export function CanvasPreview() {
@@ -28,7 +29,8 @@ export const canvasHookDoc: ComponentDoc = {
   category: "Core", name: "useGridraCanvas",
   summary: "Controlled grid interactions attached to your own DOM.",
   description: "Own the container, node rendering, and persistent state. The hook supplies DOM props for selection, dragging, resizing and connecting, plus pixel geometry for an optional visual overlay. No Root or canvas component is required.",
-  importExample: 'import { useGridraCanvas, GridraCanvasOverlay } from "@gridra-ui/react";',
+  importExample: 'import { useGridraCanvas } from "@gridra-ui/headless";\nimport { GridraCanvasOverlay } from "@gridra-ui/react";',
+  notes: "The hook and its interaction types live in @gridra-ui/headless. It works without Gridra components or theme CSS; only structural grid geometry is supplied. GridraCanvasOverlay remains an optional styled renderer. Existing imports from @gridra-ui/react re-export the same hook.",
   props: [
     { name: "state", type: "GridraCanvasState<TNode>", required: true, description: "Nodes with placement, connections, selectedIds, selectedConnections." },
     { name: "onStateChange", type: "(next, previous) => void", required: true, description: "Accept changes in your own state store; input state is never mutated." },
