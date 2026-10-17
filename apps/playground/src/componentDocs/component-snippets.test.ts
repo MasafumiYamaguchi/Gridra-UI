@@ -1,11 +1,14 @@
+import { componentDocs } from "./data";
 import * as ts from "typescript";
 import { expect, it } from "vitest";
 import { stepperDoc } from "./data/components/gridra-stepper";
 import { timelineDoc } from "./data/components/gridra-timeline";
 
-it.each([stepperDoc, timelineDoc])("typechecks $name examples as standalone React modules", (doc) => {
-  const sources = new Map(doc.examples.map((example) => [
-    ts.sys.resolvePath(`src/${doc.name}-${example.title.toLowerCase().replaceAll(" ", "-")}.tsx`), example.code,
+const headlessExamples = {name: "headless", examples: componentDocs.flatMap(doc => doc.examples.filter(example => doc.name === "useGridraCanvas" || example.title === "Custom markup with headless hook"))};
+
+it.each([stepperDoc, timelineDoc, headlessExamples])("typechecks $name examples as standalone React modules", (doc) => {
+  const sources = new Map(doc.examples.map((example, index) => [
+    ts.sys.resolvePath(`src/${doc.name}-${index}-${example.title.toLowerCase().replaceAll(" ", "-")}.tsx`), example.code,
   ]));
   const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ES2022,

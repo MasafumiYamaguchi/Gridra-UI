@@ -39,14 +39,25 @@ export const canvasHookDoc: ComponentDoc = {
   ],
   options: ["getContainerProps", "getNodeProps", "getDragHandleProps", "getResizeHandleProps", "getConnectionHandleProps", "overlayProps"],
   features: ["Application-owned state and DOM.", "Custom nodes keep their additional data.", "Shared pixel geometry accounts for padding, gaps and scrolling."],
-  examples: [{ title: "Your own container and buttons", code: `const canvas = useGridraCanvas({ state, onStateChange: setState });
+  examples: [{ title: "Your own container and buttons", code: `import { useState } from "react";
+import { useGridraCanvas, type GridraCanvasNode, type GridraCanvasState } from "@gridra-ui/headless";
+import { GridraCanvasOverlay } from "@gridra-ui/react";
 
-<section {...canvas.getContainerProps({ style: { height: 300, gap: 10 } })}>
-  {canvas.nodes.map(node => (
-    <button key={node.id} {...canvas.getNodeProps(node.id)}>{node.label}</button>
-  ))}
-  <GridraCanvasOverlay {...canvas.overlayProps} />
-</section>` }],
+export default function Example() {
+  const [state, setState] = useState<GridraCanvasState<GridraCanvasNode & { label: string }>>({
+    nodes: [
+      { id: "source", label: "Source", placement: { column: 1, row: 1, columnSpan: 2 } },
+      { id: "target", label: "Target", placement: { column: 4, row: 2, columnSpan: 2 } },
+    ], connections: [], selectedIds: ["source"], selectedConnections: [],
+  });
+  const canvas = useGridraCanvas({ state, onStateChange: setState });
+  return <section {...canvas.getContainerProps({ style: { height: 300, gap: 10 } })}>
+    {canvas.nodes.map(node => (
+      <button key={node.id} {...canvas.getNodeProps(node.id)}>{node.label}</button>
+    ))}
+    <GridraCanvasOverlay {...canvas.overlayProps} />
+  </section>;
+}` }],
   usage: "Give the container a definite size. Nodes must be direct grid children. Pass your handlers, refs and styles into the getters so they are composed. A prevented event skips the hook handler. Connection stroke width is styled with --gridra-connection-line-width.",
   preview: <CanvasPreview />,
 };
