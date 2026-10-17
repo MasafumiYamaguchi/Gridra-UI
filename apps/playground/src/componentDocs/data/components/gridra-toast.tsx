@@ -17,6 +17,7 @@ function ToastPreview() {
 }
 
 export const toastDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraToastQueue from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
   category: "Feedback",
   name: "GridraToast",
   summary:
@@ -94,7 +95,7 @@ export const toastDoc: ComponentDoc = {
     "GridraToast + toolbars / action buttons: confirm an action silently.",
     "GridraToast + copy-to-clipboard: brief \"Copied\" confirmation.",
   ],
-  examples: [
+  examples: [{ title: "Custom markup with headless hook", code: "import { useGridraToastQueue } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const toast=useGridraToastQueue();\n  return <section><button onClick={()=>toast.show(\"Custom notification\")}>Show custom toast</button>{toast.currentToast?<output role={toast.currentToast.options.role}>{toast.currentToast.message}<button onClick={toast.dismiss}>Dismiss</button></output>:null}</section>;\n}" }, ...([
     {
       title: "Basic toast",
       code: `<GridraToastProvider>
@@ -125,7 +126,7 @@ show("Third");`,
   <App />
 </GridraToastProvider>`,
     },
-  ],
+  ] satisfies ComponentDoc["examples"])],
   preview: (
     <GridraToastProvider>
       <ToastPreview />
