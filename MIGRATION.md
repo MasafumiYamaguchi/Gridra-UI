@@ -345,3 +345,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraSlider` from `@gridra-ui/headless` for custom markup. The existing
 `GridraSlider` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraButton
+
+Import `getGridraButtonProps` from `@gridra-ui/headless` for custom markup. The existing
+`GridraButton` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

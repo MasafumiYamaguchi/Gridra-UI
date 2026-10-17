@@ -1,3 +1,4 @@
+import {getGridraButtonProps} from "@gridra-ui/headless";
 import type { ButtonHTMLAttributes } from "react";
 import { cx } from "../../internal/classNames";
 import { GridraSpinner } from "../GridraSpinner";
@@ -35,16 +36,12 @@ export function GridraButton({
     className,
   );
   // loading中は二重送信を避けるため、disabledと同じ操作ロックとして扱う。
-  const isDisabled = disabled || loading;
+
 
   return (
     <button
-      aria-busy={loading || undefined}
-      aria-pressed={pressed}
+      {...getGridraButtonProps({loading,pressed,disabled,type,...props})}
       className={buttonClassName}
-      disabled={isDisabled}
-      type={type}
-      {...props}
     >
       {loading ? <GridraSpinner aria-hidden="true" label="Loading" size="sm" /> : null}
       {children}
