@@ -2,6 +2,7 @@ import { GridraField, GridraInput, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const fieldDoc: ComponentDoc = {
+  notes: "Behavior is provided by useGridraField from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
     category: "Controls",
     name: "GridraField",
     summary: "Label, control, hint, and error wrapper.",
@@ -40,7 +41,7 @@ export const fieldDoc: ComponentDoc = {
       "Can expose hint and error ids for aria-describedby wiring.",
       "Supports required, disabled, and horizontal layout styling."
     ],
-    examples: [
+    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraField } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const field=useGridraField({hasHint:true,required:true});\n  return <section><label {...field.labelProps}>Custom field</label><input {...field.controlProps}/><p {...field.hintProps}>A helpful description</p></section>;\n}" }, ...([
       {
         title: "Automatic label and state wiring",
         code: `<GridraField label="Name" required error="Required" control={<GridraInput />} />
@@ -58,7 +59,7 @@ export const fieldDoc: ComponentDoc = {
   <GridraInput id="name" invalid />
 </GridraField>`
       }
-    ],
+    ] satisfies ComponentDoc["examples"])],
     preview: (
       <GridraStack gap="sm">
         <GridraField label="Automatic wiring" hint="IDs and descriptions are connected automatically" required control={<GridraInput defaultValue="Value" />} />

@@ -64,6 +64,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraToast: useGridraToastQueue and styled integration.
 
+- [x] GridraField: useGridraField and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes
