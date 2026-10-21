@@ -2,64 +2,116 @@ import { GridraSelectableGrid, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const selectableGridDoc: ComponentDoc = {
-  notes: "Behavior is provided by useGridraSelectableGrid from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
-    category: "Core",
-    name: "GridraSelectableGrid",
-    summary: "Compact selectable item grid for dense lists and panel navigation.",
-    description:
-      "GridraSelectableGrid renders a dense grid of selectable items. Each item is rendered as a button with aria-selected support. It supports controlled and uncontrolled selection, custom item rendering, and an empty state. Use GridraGridLayout for layout without item selection.",
-    importExample: 'import { GridraSelectableGrid } from "@gridra-ui/react";',
-    props: [
-      { name: "items", type: "TItem[]", required: true, description: "Array of grid items with id and optional label." },
-      { name: "columns", type: "number | string", default: "auto-fill", description: "Number of columns or CSS grid-template-columns value." },
-      { name: "selectedId", type: "GridraId | null", description: "Controlled selected item id." },
-      { name: "defaultSelectedId", type: "GridraId | null", default: "null", description: "Uncontrolled selected item id." },
-      { name: "onSelectionChange", type: "(selectedId, prev) => void", description: "Selection change callback." },
-      { name: "renderItem", type: "(item, state) => ReactNode", description: "Custom item renderer. Receives selected state." },
-      { name: "emptyState", type: "ReactNode", default: "\"No items\"", description: "Content shown when items is empty." },
-      { name: "className", type: "string", description: "Additional CSS classes." }
-    ],
-    options: ["items", "columns", "selectedId", "onSelectionChange", "emptyLabel", "HTML div attributes"],
-    features: ["Renders items as selectable buttons.", "Marks the selected item with aria-selected.", "Selection and layout use separate components."],
-    examples: [{ title: "Custom markup with headless hook", code: "import { useGridraSelectableGrid } from \"@gridra-ui/headless\";\n\nfunction Example() {\n  const grid = useGridraSelectableGrid({ items: [{ id: \"A\" }, { id: \"B\" }] });\n  return <section>{grid.items.map(item => <button key={item.id} {...grid.getItemProps(item.id)}>{item.id}</button>)}</section>;\n}" },
-      {
-        title: "Selectable grid",
-        code: `<GridraSelectableGrid
+  notes:
+    "Behavior is provided by useGridraSelectableGrid from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
+  category: "Core",
+  name: "GridraSelectableGrid",
+  summary: "Compact selectable item grid for dense lists and panel navigation.",
+  description:
+    "GridraSelectableGrid renders a dense grid of selectable items. Each item is rendered as a button with aria-selected support. It supports controlled and uncontrolled selection, custom item rendering, and an empty state. Use GridraGridLayout for layout without item selection.",
+  importExample: 'import { GridraSelectableGrid } from "@gridra-ui/react";',
+  props: [
+    {
+      name: "items",
+      type: "TItem[]",
+      required: true,
+      description: "Array of grid items with id and optional label.",
+    },
+    {
+      name: "columns",
+      type: "number | string",
+      default: "auto-fill",
+      description: "Number of columns or CSS grid-template-columns value.",
+    },
+    {
+      name: "selectedId",
+      type: "GridraId | null",
+      description: "Controlled selected item id.",
+    },
+    {
+      name: "defaultSelectedId",
+      type: "GridraId | null",
+      default: "null",
+      description: "Uncontrolled selected item id.",
+    },
+    {
+      name: "onSelectionChange",
+      type: "(selectedId, prev) => void",
+      description: "Selection change callback.",
+    },
+    {
+      name: "renderItem",
+      type: "(item, state) => ReactNode",
+      description: "Custom item renderer. Receives selected state.",
+    },
+    {
+      name: "emptyState",
+      type: "ReactNode",
+      default: '"No items"',
+      description: "Content shown when items is empty.",
+    },
+    {
+      name: "className",
+      type: "string",
+      description: "Additional CSS classes.",
+    },
+  ],
+  options: [
+    "items",
+    "columns",
+    "selectedId",
+    "onSelectionChange",
+    "emptyLabel",
+    "HTML div attributes",
+  ],
+  features: [
+    "Renders items as selectable buttons.",
+    "Marks the selected item with aria-selected.",
+    "Selection and layout use separate components.",
+  ],
+  examples: [
+    {
+      title: "Custom markup with headless hook",
+      code: 'import { useGridraSelectableGrid } from "@gridra-ui/headless";\n\nfunction Example() {\n  const grid = useGridraSelectableGrid({ items: [{ id: "A" }, { id: "B" }] });\n  return <section>{grid.items.map(item => <button key={item.id} {...grid.getItemProps(item.id)}>{item.id}</button>)}</section>;\n}',
+    },
+    {
+      title: "Selectable grid",
+      code: `<GridraSelectableGrid
   columns={2}
   items={[
     { id: "a", label: "Input" },
     { id: "b", label: "Output" }
   ]}
   selectedId="a"
-/>`
-      }
-    ],
-    preview: (
-      <GridraStack gap="sm">
-        <GridraSelectableGrid
-          columns={2}
-          items={[
-            { id: "a", label: "Input" },
-            { id: "b", label: "Output" }
-          ]}
-        />
-        <GridraSelectableGrid
-          columns={2}
-          items={[
-            { id: "a", label: "Input" },
-            { id: "b", label: "Output" }
-          ]}
-          selectedId="a"
-        />
-        <GridraSelectableGrid
-          columns={3}
-          items={[
-            { id: "x", label: "A" },
-            { id: "y", label: "B" },
-            { id: "z", label: "C" }
-          ]}
-          selectedId="y"
-        />
-      </GridraStack>
-    )
-  };
+/>`,
+    },
+  ],
+  preview: (
+    <GridraStack gap="sm">
+      <GridraSelectableGrid
+        columns={2}
+        items={[
+          { id: "a", label: "Input" },
+          { id: "b", label: "Output" },
+        ]}
+      />
+      <GridraSelectableGrid
+        columns={2}
+        items={[
+          { id: "a", label: "Input" },
+          { id: "b", label: "Output" },
+        ]}
+        selectedId="a"
+      />
+      <GridraSelectableGrid
+        columns={3}
+        items={[
+          { id: "x", label: "A" },
+          { id: "y", label: "B" },
+          { id: "z", label: "C" },
+        ]}
+        selectedId="y"
+      />
+    </GridraStack>
+  ),
+};

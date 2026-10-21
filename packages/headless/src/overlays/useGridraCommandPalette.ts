@@ -1,9 +1,23 @@
-import {useEffect,useId,useMemo,useRef,useState,type ChangeEvent,type HTMLAttributes,type InputHTMLAttributes,type ButtonHTMLAttributes,type KeyboardEvent,type ReactNode,type Ref} from "react";
-import {useControllableValue} from "../useControllableValue";
-import {getFocusableElements} from "../internal/focus";
-import {composeHandlers} from "../internal/composeHandlers";
-import {mergeRefs} from "../internal/mergeRefs";
-import {clampIndex} from "@gridra-ui/core";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type HTMLAttributes,
+  type InputHTMLAttributes,
+  type ButtonHTMLAttributes,
+  type KeyboardEvent,
+  type ReactNode,
+  type Ref,
+} from "react";
+import { useControllableValue } from "../useControllableValue";
+import { getFocusableElements } from "../internal/focus";
+import { composeHandlers } from "../internal/composeHandlers";
+import { mergeRefs } from "../internal/mergeRefs";
+import { clampIndex } from "@gridra-ui/core";
+
 // idは選択状態・action通知・ref管理をつなぐ安定したコマンド識別子として使う。
 export interface GridraCommandPaletteCommandItem {
   id: string;
@@ -22,11 +36,21 @@ export type GridraCommandPaletteSeparatorItem = {
 };
 
 export type GridraCommandPaletteItem =
-  | GridraCommandPaletteCommandItem
-  | GridraCommandPaletteSeparatorItem;
+  GridraCommandPaletteCommandItem | GridraCommandPaletteSeparatorItem;
 
+export interface UseGridraCommandPaletteOptions {
+  items: GridraCommandPaletteItem[];
+  onAction?: (id: string) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (next: boolean, previous: boolean) => void;
+  query?: string;
+  defaultQuery?: string;
+  onQueryChange?: (next: string, previous: string) => void;
+  closeOnAction?: boolean;
+  closeOnEscape?: boolean;
+}
 
-export interface UseGridraCommandPaletteOptions {items:GridraCommandPaletteItem[];onAction?:(id:string)=>void;open?:boolean;defaultOpen?:boolean;onOpenChange?:(next:boolean,previous:boolean)=>void;query?:string;defaultQuery?:string;onQueryChange?:(next:string,previous:string)=>void;closeOnAction?:boolean;closeOnEscape?:boolean}
 function isCommand(
   item: GridraCommandPaletteItem,
 ): item is GridraCommandPaletteCommandItem {
@@ -40,6 +64,7 @@ function itemMatchesQuery(
   if (!query) {
     return true;
   }
+
   // ReactNodeは完全なテキスト抽出をしない。検索対象は文字列として安全に読める範囲に限定する。
   const lower = query.toLowerCase();
   const fields = [
@@ -48,6 +73,7 @@ function itemMatchesQuery(
     item.group ?? "",
     ...(item.keywords ?? []),
   ];
+
   return fields.some((f) => f.toLowerCase().includes(lower));
 }
 
@@ -55,12 +81,23 @@ function getPlainSearchText(value: ReactNode): string {
   if (typeof value === "string" || typeof value === "number") {
     return String(value);
   }
+
   return "";
 }
 
-
 /** 検索・選択・モーダルのフォーカス制御を独自DOMでも利用できる。 */
-export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,onOpenChange,query,defaultQuery="",onQueryChange,closeOnAction=true,closeOnEscape=true}:UseGridraCommandPaletteOptions){
+export function useGridraCommandPalette({
+  items,
+  onAction,
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  query,
+  defaultQuery = "",
+  onQueryChange,
+  closeOnAction = true,
+  closeOnEscape = true,
+}: UseGridraCommandPaletteOptions) {
   const [currentOpen, setCurrentOpen] = useControllableValue(
     open,
     defaultOpen,
@@ -95,6 +132,7 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
     if (!currentQuery) {
       return commandItems;
     }
+
     return commandItems.filter((item) => itemMatchesQuery(item, currentQuery));
   }, [commandItems, currentQuery]);
   const enabledFiltered = useMemo(
@@ -122,6 +160,7 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
     if (!item || item.disabled) {
       return;
     }
+
     onAction?.(id);
     if (closeOnAction) {
       close();
@@ -132,6 +171,7 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
     if (enabledIds.length === 0) {
       return;
     }
+
     const clamped = clampIndex(index, enabledIds.length);
     setActiveIndex(clamped);
     const id = enabledIds[clamped];
@@ -155,6 +195,7 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
       if (prev && typeof prev.focus === "function") {
         prev.focus();
       }
+
       previousFocusRef.current = null;
     };
   }, [currentOpen]);
@@ -174,6 +215,7 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
     if (!currentOpen) {
       return;
     }
+
     const handleEscape = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape" && closeOnEscape) {
         event.preventDefault();
@@ -182,6 +224,7 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
     };
 
     document.addEventListener("keydown", handleEscape);
+
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
@@ -208,6 +251,7 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
       if (focusable.length === 0) {
         event.preventDefault();
         event.stopPropagation();
+
         return;
       }
 
@@ -231,6 +275,7 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
       }
 
       event.stopPropagation();
+
       return;
     }
 
@@ -246,29 +291,35 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
         focusItemByIndex(safeActiveIndex + 1);
         break;
       }
+
       case "ArrowUp": {
         event.preventDefault();
         focusItemByIndex(safeActiveIndex - 1);
         break;
       }
+
       case "Home": {
         event.preventDefault();
         focusItemByIndex(0);
         break;
       }
+
       case "End": {
         event.preventDefault();
         focusItemByIndex(enabledIds.length - 1);
         break;
       }
+
       case "Enter": {
         event.preventDefault();
         const activeId = enabledIds[safeActiveIndex];
         if (activeId) {
           activateItem(activeId);
         }
+
         break;
       }
+
       default:
         handled = false;
     }
@@ -278,34 +329,107 @@ export function useGridraCommandPalette({items,onAction,open,defaultOpen=false,o
     }
   };
 
+  const getItemProps = (
+    id: string,
+    props: ButtonHTMLAttributes<HTMLButtonElement> & {
+      ref?: Ref<HTMLButtonElement>;
+    } = {},
+  ): ButtonHTMLAttributes<HTMLButtonElement> & {
+    ref?: Ref<HTMLButtonElement>;
+  } => {
+    const item = filteredCommands.find((item) => item.id === id) ?? {
+      id,
+      label: null,
+      disabled: true,
+    };
+    const isActive = enabledIds[safeActiveIndex] === id;
 
-const getItemProps=(id:string,props:ButtonHTMLAttributes<HTMLButtonElement>&{ref?:Ref<HTMLButtonElement>}={}):ButtonHTMLAttributes<HTMLButtonElement>&{ref?:Ref<HTMLButtonElement>}=>{const item=filteredCommands.find(item=>item.id===id)??{id,label:null,disabled:true};const isActive=enabledIds[safeActiveIndex]===id;return {...props,"disabled": item.disabled,
-"onClick": composeHandlers(props.onClick, () => activateItem(item.id)),
-"onMouseEnter": composeHandlers(props.onMouseEnter, () => {
-                        if (!item.disabled) {
-                          const idx = enabledIds.indexOf(item.id);
-                          if (idx !== -1) {
-                            setActiveIndex(idx);
-                          }
-                        }
-                      }),
-"ref": mergeRefs(props.ref,(el) => {
-                        if (el) {
-                          itemRefs.current.set(item.id, el);
-                        } else {
-                          itemRefs.current.delete(item.id);
-                        }
-                      }),
-"tabIndex": isActive ? 0 : -1,
-"type": "button"};};
-const getInputProps=(props:InputHTMLAttributes<HTMLInputElement>&{ref?:Ref<HTMLInputElement>}={}):InputHTMLAttributes<HTMLInputElement>&{ref?:Ref<HTMLInputElement>}=>{return {...props,"autoComplete": "off",
-"id": inputId,
-"onChange": composeHandlers(props.onChange, handleSearchChange),
-"ref": mergeRefs(props.ref,(element:HTMLInputElement|null)=>{inputRef.current=element;}),
-"type": "text",
-"value": currentQuery};};
+    return {
+      ...props,
+      "disabled": item.disabled,
+      "onClick": composeHandlers(props.onClick, () => activateItem(item.id)),
+      "onMouseEnter": composeHandlers(props.onMouseEnter, () => {
+        if (!item.disabled) {
+          const idx = enabledIds.indexOf(item.id);
+          if (idx !== -1) {
+            setActiveIndex(idx);
+          }
+        }
+      }),
+      "ref": mergeRefs(props.ref, (el) => {
+        if (el) {
+          itemRefs.current.set(item.id, el);
+        } else {
+          itemRefs.current.delete(item.id);
+        }
+      }),
+      "tabIndex": isActive ? 0 : -1,
+      "type": "button",
+    };
+  };
 
-const getDialogProps=(props:HTMLAttributes<HTMLDivElement>&{ref?:Ref<HTMLDivElement>}={})=>({...props,role:"dialog" as const,"aria-modal":true as const,"aria-labelledby":titleId,onKeyDown:composeHandlers(props.onKeyDown,handleKeyDown),ref:mergeRefs(props.ref,(element:HTMLDivElement|null)=>{dialogRef.current=element;})});
-const getBackdropProps=(props:HTMLAttributes<HTMLDivElement>={})=>({...props,onPointerDown:composeHandlers(props.onPointerDown,handleBackdropPointerDown)});
-return {currentOpen,currentQuery,portalMounted,dialogRef,inputRef,listRef,titleId,inputId,filteredCommands,enabledIds,safeActiveIndex,close,handleKeyDown,handleBackdropPointerDown,setOpen:setCurrentOpen,setQuery:setCurrentQuery,activateItem,getDialogProps,getBackdropProps,getItemProps,getInputProps};
+  const getInputProps = (
+    props: InputHTMLAttributes<HTMLInputElement> & {
+      ref?: Ref<HTMLInputElement>;
+    } = {},
+  ): InputHTMLAttributes<HTMLInputElement> & {
+    ref?: Ref<HTMLInputElement>;
+  } => {
+    return {
+      ...props,
+      "autoComplete": "off",
+      "id": inputId,
+      "onChange": composeHandlers(props.onChange, handleSearchChange),
+      "ref": mergeRefs(props.ref, (element: HTMLInputElement | null) => {
+        inputRef.current = element;
+      }),
+      "type": "text",
+      "value": currentQuery,
+    };
+  };
+
+  const getDialogProps = (
+    props: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> } = {},
+  ) => ({
+    ...props,
+    role: "dialog" as const,
+    "aria-modal": true as const,
+    "aria-labelledby": titleId,
+    onKeyDown: composeHandlers(props.onKeyDown, handleKeyDown),
+    ref: mergeRefs(props.ref, (element: HTMLDivElement | null) => {
+      dialogRef.current = element;
+    }),
+  });
+
+  const getBackdropProps = (props: HTMLAttributes<HTMLDivElement> = {}) => ({
+    ...props,
+    onPointerDown: composeHandlers(
+      props.onPointerDown,
+      handleBackdropPointerDown,
+    ),
+  });
+
+  return {
+    currentOpen,
+    currentQuery,
+    portalMounted,
+    dialogRef,
+    inputRef,
+    listRef,
+    titleId,
+    inputId,
+    filteredCommands,
+    enabledIds,
+    safeActiveIndex,
+    close,
+    handleKeyDown,
+    handleBackdropPointerDown,
+    setOpen: setCurrentOpen,
+    setQuery: setCurrentQuery,
+    activateItem,
+    getDialogProps,
+    getBackdropProps,
+    getItemProps,
+    getInputProps,
+  };
 }

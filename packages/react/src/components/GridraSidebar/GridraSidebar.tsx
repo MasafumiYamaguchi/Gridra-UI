@@ -1,4 +1,4 @@
-import {useGridraSidebar} from "@gridra-ui/headless";
+import { useGridraSidebar } from "@gridra-ui/headless";
 import type { CSSProperties, HTMLAttributes } from "react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useControllableValue } from "@gridra-ui/headless";
@@ -13,8 +13,10 @@ import { GridraSidebarToggle } from "./GridraSidebarToggle";
 
 export type GridraSidebarSide = "left" | "right";
 
-export interface GridraSidebarProps
-  extends Omit<HTMLAttributes<HTMLElement>, "onChange"> {
+export interface GridraSidebarProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "onChange"
+> {
   side?: GridraSidebarSide;
   open?: boolean;
   defaultOpen?: boolean;
@@ -28,9 +30,13 @@ export interface GridraSidebarProps
 }
 
 const DEFAULT_OPEN_WIDTH = 280;
+
 const DEFAULT_MIN_WIDTH = 180;
+
 const DEFAULT_MAX_WIDTH = 480;
+
 const DEFAULT_TOGGLE_SIZE = 20;
+
 const KEYBOARD_STEP = 8;
 
 export function GridraSidebar({
@@ -50,7 +56,23 @@ export function GridraSidebar({
   width = DEFAULT_OPEN_WIDTH,
   ...props
 }: GridraSidebarProps) {
-  const {contentId,currentOpen,setCurrentOpen,openWidth,getSeparatorProps}=useGridraSidebar({side,open,defaultOpen,onOpenChange,width,resizable,minWidth,maxWidth,onKeyDown});
+  const {
+    contentId,
+    currentOpen,
+    setCurrentOpen,
+    openWidth,
+    getSeparatorProps,
+  } = useGridraSidebar({
+    side,
+    open,
+    defaultOpen,
+    onOpenChange,
+    width,
+    resizable,
+    minWidth,
+    maxWidth,
+    onKeyDown,
+  });
   const collapsedLength = formatCssLength(collapsedWidth);
   const baseOpenLength = formatCssLength(width);
   // 手動リサイズ時だけpx値を使い、通常時は利用側のCSS長を保つ。
@@ -93,25 +115,14 @@ export function GridraSidebar({
         open={currentOpen}
         onOpenChange={setCurrentOpen}
       />
-      <div id={contentId} className="gridra-sidebar__content">{children}</div>
+      <div id={contentId} className="gridra-sidebar__content">
+        {children}
+      </div>
       {resizable ? (
         <div
           {...getSeparatorProps()}
 
-
-
           className="gridra-sidebar__separator"
-
-
-
-
-
-
-
-
-
-
-
         />
       ) : null}
     </aside>
