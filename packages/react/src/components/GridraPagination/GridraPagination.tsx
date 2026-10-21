@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from "react";
 import { useGridraPagination } from "@gridra-ui/headless";
 import { GridraSelect } from "../GridraSelect";
+
 export type GridraPaginationSize = "sm" | "md" | "lg";
 
 export interface GridraPaginationProps extends HTMLAttributes<HTMLElement> {
@@ -41,7 +42,32 @@ export function GridraPagination({
   disabled = false,
   ...props
 }: GridraPaginationProps) {
-  const {currentPage, currentPageSize, totalItems, pageCount, isFirstPage, isLastPage, handlePageSizeChange, goToPage, pages, startItem, endItem, pageSizeOptionValues} = useGridraPagination({page: pageProp, defaultPage: defaultPageProp, onPageChange, pageSize: pageSizeProp, defaultPageSize: defaultPageSizeProp, onPageSizeChange, totalItems: totalItemsRaw, pageSizeOptions: pageSizeOptionsRaw, siblingCount: siblingCountRaw, boundaryCount: boundaryCountRaw, disabled});
+  const {
+    currentPage,
+    currentPageSize,
+    totalItems,
+    pageCount,
+    isFirstPage,
+    isLastPage,
+    handlePageSizeChange,
+    goToPage,
+    pages,
+    startItem,
+    endItem,
+    pageSizeOptionValues,
+  } = useGridraPagination({
+    page: pageProp,
+    defaultPage: defaultPageProp,
+    onPageChange,
+    pageSize: pageSizeProp,
+    defaultPageSize: defaultPageSizeProp,
+    onPageSizeChange,
+    totalItems: totalItemsRaw,
+    pageSizeOptions: pageSizeOptionsRaw,
+    siblingCount: siblingCountRaw,
+    boundaryCount: boundaryCountRaw,
+    disabled,
+  });
   const rootClassName = [
     "gridra-pagination",
     `gridra-pagination--${size}`,
@@ -58,7 +84,9 @@ export function GridraPagination({
             aria-label="First page"
             className={[
               "gridra-pagination__button",
-              isFirstPage || disabled ? "gridra-pagination__button--disabled" : null,
+              isFirstPage || disabled
+                ? "gridra-pagination__button--disabled"
+                : null,
             ]
               .filter(Boolean)
               .join(" ")}
@@ -74,7 +102,9 @@ export function GridraPagination({
           aria-label="Previous page"
           className={[
             "gridra-pagination__button",
-            isFirstPage || disabled ? "gridra-pagination__button--disabled" : null,
+            isFirstPage || disabled
+              ? "gridra-pagination__button--disabled"
+              : null,
           ]
             .filter(Boolean)
             .join(" ")}
@@ -125,7 +155,9 @@ export function GridraPagination({
           aria-label="Next page"
           className={[
             "gridra-pagination__button",
-            isLastPage || disabled ? "gridra-pagination__button--disabled" : null,
+            isLastPage || disabled
+              ? "gridra-pagination__button--disabled"
+              : null,
           ]
             .filter(Boolean)
             .join(" ")}
@@ -141,7 +173,9 @@ export function GridraPagination({
             aria-label="Last page"
             className={[
               "gridra-pagination__button",
-              isLastPage || disabled ? "gridra-pagination__button--disabled" : null,
+              isLastPage || disabled
+                ? "gridra-pagination__button--disabled"
+                : null,
             ]
               .filter(Boolean)
               .join(" ")}
