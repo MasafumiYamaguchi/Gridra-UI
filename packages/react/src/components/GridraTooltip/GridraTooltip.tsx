@@ -1,5 +1,5 @@
-import {useGridraTooltip} from "@gridra-ui/headless";
-import type {Ref} from "react";
+import { useGridraTooltip } from "@gridra-ui/headless";
+import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
@@ -23,10 +23,13 @@ import { useGridraPortalTheme } from "../../internal/portalTheme";
 import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraTooltipPlacement = "top" | "right" | "bottom" | "left";
+
 export type GridraTooltipSize = "sm" | "md" | "lg";
 
-export interface GridraTooltipProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "content" | "children" | "onChange"> {
+export interface GridraTooltipProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "content" | "children" | "onChange"
+> {
   children: ReactElement<Record<string, unknown>>;
   content: ReactNode;
   placement?: GridraTooltipPlacement;
@@ -40,6 +43,7 @@ export interface GridraTooltipProps
 }
 
 const TOOLTIP_OFFSET = 8;
+
 const DEFAULT_SHOW_DELAY = 120;
 
 export function GridraTooltip({
@@ -57,9 +61,39 @@ export function GridraTooltip({
   style,
   ...props
 }: GridraTooltipProps) {
-  const {currentOpen,portalMounted,anchorRef,tooltipRef,tooltipId,coords,resolvedPlacement,getTriggerProps}=useGridraTooltip({open,defaultOpen,onOpenChange,showDelay,disabled,placement,offset:TOOLTIP_OFFSET});
-  const anchorProps=getTriggerProps<HTMLElement>(isValidElement(children)?{...children.props,ref:(children.props.ref as Ref<HTMLElement>|undefined)??(children as ReactElement&{ref?:Ref<HTMLElement>}).ref}:{});
-  const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
+  const {
+    currentOpen,
+    portalMounted,
+    anchorRef,
+    tooltipRef,
+    tooltipId,
+    coords,
+    resolvedPlacement,
+    getTriggerProps,
+  } = useGridraTooltip({
+    open,
+    defaultOpen,
+    onOpenChange,
+    showDelay,
+    disabled,
+    placement,
+    offset: TOOLTIP_OFFSET,
+  });
+  const anchorProps = getTriggerProps<HTMLElement>(
+    isValidElement(children)
+      ? {
+          ...children.props,
+          ref:
+            (children.props.ref as Ref<HTMLElement> | undefined) ??
+            (children as ReactElement & { ref?: Ref<HTMLElement> }).ref,
+        }
+      : {},
+  );
+  const portalTheme = useGridraPortalTheme(
+    anchorRef,
+    undefined,
+    currentOpen && !disabled && portalMounted,
+  );
   const tooltipClassName = cx(
     "gridra-portal-root",
     portalTheme.className,
