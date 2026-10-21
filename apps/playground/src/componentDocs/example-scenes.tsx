@@ -1,3 +1,4 @@
+import { useGridraField } from "@gridra-ui/headless";
 import { useGridraToastQueue } from "@gridra-ui/headless";
 import { useGridraCommandPalette } from "@gridra-ui/headless";
 import { useGridraContextMenu } from "@gridra-ui/headless";
@@ -2371,6 +2372,18 @@ function ExampleHeadlessGridraToast() {
   );
 }
 
+function ExampleHeadlessGridraField() {
+  const field = useGridraField({ hasHint: true, required: true });
+
+  return (
+    <section>
+      <label {...field.labelProps}>Custom field</label>
+      <input {...field.controlProps} />
+      <p {...field.hintProps}>A helpful description</p>
+    </section>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2679,4 +2692,9 @@ examplePreviews["GridraCommandPalette"] = {
 examplePreviews["GridraToast"] = {
   ...examplePreviews["GridraToast"],
   "Custom markup with headless hook": <ExampleHeadlessGridraToast />,
+};
+
+examplePreviews["GridraField"] = {
+  ...examplePreviews["GridraField"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraField />,
 };
