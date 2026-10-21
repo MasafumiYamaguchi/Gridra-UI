@@ -12,6 +12,7 @@ export function useDocumentEvent<K extends keyof DocumentEventMap>(
     }
 
     document.addEventListener(type, handler as EventListener, options);
+
     return () => {
       document.removeEventListener(type, handler as EventListener, options);
     };
