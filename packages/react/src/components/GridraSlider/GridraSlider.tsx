@@ -1,11 +1,13 @@
-import {useGridraSlider} from "@gridra-ui/headless";
+import { useGridraSlider } from "@gridra-ui/headless";
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { useState } from "react";
 
 export type GridraSliderSize = "sm" | "md" | "lg";
 
-export interface GridraSliderProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
+export interface GridraSliderProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size" | "type"
+> {
   showValue?: boolean;
   size?: GridraSliderSize;
   valueFormatter?: (value: number) => ReactNode;
@@ -25,8 +27,14 @@ export function GridraSlider({
   const sliderClassName = ["gridra-slider", `gridra-slider--${size}`, className]
     .filter(Boolean)
     .join(" ");
-  const {displayNumericValue,inputProps}=useGridraSlider({value,defaultValue,min,onChange,...props});
-  const input=<input className={sliderClassName} {...inputProps}/>;
+  const { displayNumericValue, inputProps } = useGridraSlider({
+    value,
+    defaultValue,
+    min,
+    onChange,
+    ...props,
+  });
+  const input = <input className={sliderClassName} {...inputProps} />;
 
   if (!showValue) {
     return input;

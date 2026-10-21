@@ -1,4 +1,11 @@
-import {useEffect,useMemo,type ReactNode,type HTMLAttributes,type AnchorHTMLAttributes} from "react";
+import {
+  useEffect,
+  useMemo,
+  type ReactNode,
+  type HTMLAttributes,
+  type AnchorHTMLAttributes,
+} from "react";
+
 export interface GridraBreadcrumbHierarchyIssue {
   itemId: string;
   index: number;
@@ -14,9 +21,10 @@ export interface GridraBreadcrumbItem {
   parentId?: string;
 }
 
-
 // Breadcrumbは表示順そのものが階層を表すため、parentIdがある場合だけ軽く整合性を検証する。
-function validateHierarchy(items: GridraBreadcrumbItem[]): GridraBreadcrumbHierarchyIssue[] {
+function validateHierarchy(
+  items: GridraBreadcrumbItem[],
+): GridraBreadcrumbHierarchyIssue[] {
   const anyParentId = items.some((item) => item.parentId != null);
   if (!anyParentId) return [];
 
@@ -37,10 +45,18 @@ function validateHierarchy(items: GridraBreadcrumbItem[]): GridraBreadcrumbHiera
   return issues;
 }
 
+export interface UseGridraBreadcrumbOptions {
+  items: GridraBreadcrumbItem[];
+  maxItems?: number;
+  onHierarchyInvalid?: (issues: GridraBreadcrumbHierarchyIssue[]) => void;
+}
 
-export interface UseGridraBreadcrumbOptions {items:GridraBreadcrumbItem[];maxItems?:number;onHierarchyInvalid?:(issues:GridraBreadcrumbHierarchyIssue[])=>void}
 /** 階層データの検証と省略表示に使うモデルを返す。 */
-export function useGridraBreadcrumb({items,maxItems,onHierarchyInvalid}:UseGridraBreadcrumbOptions){
+export function useGridraBreadcrumb({
+  items,
+  maxItems,
+  onHierarchyInvalid,
+}: UseGridraBreadcrumbOptions) {
   const issues = useMemo(() => validateHierarchy(items), [items]);
 
   // 表示は継続しつつ、呼び出し側がデータ不整合を検知できるように通知する。
@@ -50,15 +66,26 @@ export function useGridraBreadcrumb({items,maxItems,onHierarchyInvalid}:UseGridr
     }
   }, [issues, onHierarchyInvalid]);
 
-  const effectiveMaxItems = maxItems != null && Number.isFinite(maxItems) ? Math.max(3, Math.floor(maxItems)) : undefined;
+  const effectiveMaxItems =
+    maxItems != null && Number.isFinite(maxItems)
+      ? Math.max(3, Math.floor(maxItems))
+      : undefined;
 
   // 省略表示でも現在地の文脈を失わないよう、先頭と末尾側のitemは必ず残す。
   const visibleItems = useMemo(() => {
     if (effectiveMaxItems == null || items.length <= effectiveMaxItems) {
-      return items.map((item, i) => ({ type: "item" as const, item, index: i }));
+      return items.map((item, i) => ({
+        type: "item" as const,
+        item,
+        index: i,
+      }));
     }
 
-    const result: { type: "item" | "ellipsis"; item?: GridraBreadcrumbItem; index: number }[] = [];
+    const result: {
+      type: "item" | "ellipsis";
+      item?: GridraBreadcrumbItem;
+      index: number;
+    }[] = [];
 
     result.push({ type: "item", item: items[0], index: 0 });
 
@@ -75,7 +102,15 @@ export function useGridraBreadcrumb({items,maxItems,onHierarchyInvalid}:UseGridr
 
   const hasInvalidHierarchy = issues.length > 0;
 
+  const getItemState = (item: GridraBreadcrumbItem) => ({
+    canNavigate: Boolean(item.href) && !item.current && !item.disabled,
+    currentProps: {
+      "aria-current": item.current ? "page" : undefined,
+    } satisfies HTMLAttributes<HTMLElement>,
+    linkProps: {
+      href: item.href,
+    } satisfies AnchorHTMLAttributes<HTMLAnchorElement>,
+  });
 
-const getItemState=(item:GridraBreadcrumbItem)=>({canNavigate:Boolean(item.href)&&!item.current&&!item.disabled,currentProps:{"aria-current":item.current?"page":undefined} satisfies HTMLAttributes<HTMLElement>,linkProps:{href:item.href} satisfies AnchorHTMLAttributes<HTMLAnchorElement>});
-return {visibleItems,issues,hasInvalidHierarchy,getItemState};
+  return { visibleItems, issues, hasInvalidHierarchy, getItemState };
 }
