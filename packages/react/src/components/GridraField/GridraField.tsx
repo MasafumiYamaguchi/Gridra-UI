@@ -1,5 +1,12 @@
-import {useGridraField} from "@gridra-ui/headless";
-import { cloneElement, useId, type AriaAttributes, type HTMLAttributes, type ReactElement, type ReactNode } from "react";
+import { useGridraField } from "@gridra-ui/headless";
+import {
+  cloneElement,
+  useId,
+  type AriaAttributes,
+  type HTMLAttributes,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import { cx } from "../../internal/classNames";
 import { GridraCheckbox } from "../GridraCheckbox";
 import { GridraErrorMessage } from "../GridraErrorMessage";
@@ -31,7 +38,15 @@ interface ControlProps extends AriaAttributes {
   invalid?: boolean;
   description?: ReactNode;
 }
-const invalidControls = new Set<unknown>([GridraInput, GridraTextarea, GridraSelect, GridraCheckbox, GridraRadio, GridraSwitch]);
+
+const invalidControls = new Set<unknown>([
+  GridraInput,
+  GridraTextarea,
+  GridraSelect,
+  GridraCheckbox,
+  GridraRadio,
+  GridraSwitch,
+]);
 
 export function GridraField({
   children,
@@ -48,8 +63,35 @@ export function GridraField({
   required = false,
   ...props
 }: GridraFieldProps) {
-  const {controlId,resolvedHintId,resolvedErrorId,resolvedDisabled,resolvedRequired,controlProps:bindings}=useGridraField({controlProps:control?.props as ControlProps|undefined,hasControl:Boolean(control),htmlFor,hintId,errorId,hasHint:Boolean(hint),hasError:Boolean(error),disabled,required,usesAriaRequired:control?.type===GridraSwitch||control?.type==="button",supportsInvalid:invalidControls.has(control?.type),hasControlDescription:Boolean(control&&(control.type===GridraCheckbox||control.type===GridraRadio)&&(control.props as ControlProps).description)});
-  const linkedControl=control?cloneElement(control as ReactElement<ControlProps>,bindings):children;
+  const {
+    controlId,
+    resolvedHintId,
+    resolvedErrorId,
+    resolvedDisabled,
+    resolvedRequired,
+    controlProps: bindings,
+  } = useGridraField({
+    controlProps: control?.props as ControlProps | undefined,
+    hasControl: Boolean(control),
+    htmlFor,
+    hintId,
+    errorId,
+    hasHint: Boolean(hint),
+    hasError: Boolean(error),
+    disabled,
+    required,
+    usesAriaRequired:
+      control?.type === GridraSwitch || control?.type === "button",
+    supportsInvalid: invalidControls.has(control?.type),
+    hasControlDescription: Boolean(
+      control &&
+      (control.type === GridraCheckbox || control.type === GridraRadio) &&
+      (control.props as ControlProps).description,
+    ),
+  });
+  const linkedControl = control
+    ? cloneElement(control as ReactElement<ControlProps>, bindings)
+    : children;
   const fieldClassName = cx(
     "gridra-field",
     `gridra-field--${orientation}`,
@@ -58,15 +100,31 @@ export function GridraField({
     resolvedRequired ? "gridra-field--required" : null,
     className,
   );
+
   return (
     <div className={fieldClassName} {...props}>
       <GridraLabel className="gridra-field__label" htmlFor={controlId}>
         {label}
-        {resolvedRequired ? <span className="gridra-field__required" aria-hidden="true">*</span> : null}
+        {resolvedRequired ? (
+          <span className="gridra-field__required" aria-hidden="true">
+            *
+          </span>
+        ) : null}
       </GridraLabel>
       {linkedControl}
-      {hint && !error ? <div className="gridra-field__hint" id={resolvedHintId}>{hint}</div> : null}
-      {error ? <GridraErrorMessage className="gridra-field__error" id={resolvedErrorId}>{error}</GridraErrorMessage> : null}
+      {hint && !error ? (
+        <div className="gridra-field__hint" id={resolvedHintId}>
+          {hint}
+        </div>
+      ) : null}
+      {error ? (
+        <GridraErrorMessage
+          className="gridra-field__error"
+          id={resolvedErrorId}
+        >
+          {error}
+        </GridraErrorMessage>
+      ) : null}
     </div>
   );
 }
