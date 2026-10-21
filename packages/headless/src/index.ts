@@ -8,3 +8,5 @@ export * from "./canvas/types";
 export * from "./canvas/useGridraCanvas";
 
 export * from "./tabs/useGridraTabs";
+
+export * from "./accordion/useGridraAccordion";

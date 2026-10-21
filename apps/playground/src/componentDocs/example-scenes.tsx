@@ -63,7 +63,11 @@ import {
   GridraTreeView,
   useToast,
 } from "@gridra-ui/react";
-import { useGridraCanvas, useGridraTabs } from "@gridra-ui/headless";
+import {
+  useGridraCanvas,
+  useGridraTabs,
+  useGridraAccordion,
+} from "@gridra-ui/headless";
 import type {
   GridraBuiltInThemeName,
   GridraCanvasState,
@@ -2062,8 +2066,34 @@ function ExampleHeadlessTabs() {
   );
 }
 
+function ExampleHeadlessAccordion() {
+  const accordion = useGridraAccordion({
+    collapsible: true,
+    items: [
+      { id: "general", title: "General", content: "Custom general content" },
+      { id: "account", title: "Account", content: "Custom account content" },
+    ],
+  });
+
+  return (
+    <article>
+      {accordion.items.map((item) => (
+        <section key={item.id}>
+          <h3>
+            <button {...accordion.getTriggerProps(item.id)}>
+              {item.title}
+            </button>
+          </h3>
+          <div {...accordion.getPanelProps(item.id)}>{item.content}</div>
+        </section>
+      ))}
+    </article>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
+    "Custom markup with headless hook": <ExampleHeadlessAccordion />,
     "Default single accordion": <ExampleGridraAccordion1 />,
     "Multiple mode with controlled value": <ExampleGridraAccordion2 />,
     "Collapsible single mode": <ExampleGridraAccordion3 />,
