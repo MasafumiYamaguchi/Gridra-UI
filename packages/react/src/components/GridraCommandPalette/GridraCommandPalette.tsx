@@ -1,4 +1,4 @@
-import {useGridraCommandPalette} from "@gridra-ui/headless";
+import { useGridraCommandPalette } from "@gridra-ui/headless";
 import type { GridraThemeName } from "../../theme";
 import {
   useEffect,
@@ -41,8 +41,7 @@ export type GridraCommandPaletteSeparatorItem = {
 };
 
 export type GridraCommandPaletteItem =
-  | GridraCommandPaletteCommandItem
-  | GridraCommandPaletteSeparatorItem;
+  GridraCommandPaletteCommandItem | GridraCommandPaletteSeparatorItem;
 
 // HTML属性とぶつかるonChange/titleは、検索queryと見出しの意味に合わせて独自propsとして定義する。
 export interface GridraCommandPaletteProps extends Omit<
@@ -88,8 +87,41 @@ export function GridraCommandPalette({
   theme,
   ...props
 }: GridraCommandPaletteProps) {
-  const {currentOpen,currentQuery,portalMounted,dialogRef,inputRef,listRef,titleId,inputId,filteredCommands,enabledIds,safeActiveIndex,close,handleKeyDown,handleBackdropPointerDown,getInputProps,getItemProps,getDialogProps}=useGridraCommandPalette({items,onAction,open,defaultOpen,onOpenChange,query,defaultQuery,onQueryChange,closeOnAction,closeOnEscape});
-  const portalTheme=useGridraPortalTheme(undefined,theme,currentOpen&&portalMounted);
+  const {
+    currentOpen,
+    currentQuery,
+    portalMounted,
+    dialogRef,
+    inputRef,
+    listRef,
+    titleId,
+    inputId,
+    filteredCommands,
+    enabledIds,
+    safeActiveIndex,
+    close,
+    handleKeyDown,
+    handleBackdropPointerDown,
+    getInputProps,
+    getItemProps,
+    getDialogProps,
+  } = useGridraCommandPalette({
+    items,
+    onAction,
+    open,
+    defaultOpen,
+    onOpenChange,
+    query,
+    defaultQuery,
+    onQueryChange,
+    closeOnAction,
+    closeOnEscape,
+  });
+  const portalTheme = useGridraPortalTheme(
+    undefined,
+    theme,
+    currentOpen && portalMounted,
+  );
   const dialogClassName = cx(
     "gridra-command-palette",
     `gridra-command-palette--${size}`,
@@ -112,6 +144,7 @@ export function GridraCommandPalette({
       list.push(item);
       map.set(key, list);
     }
+
     return Array.from(map.entries());
   }, [filteredCommands]);
 
@@ -146,14 +179,8 @@ export function GridraCommandPalette({
             </header>
             <div className="gridra-command-palette__search">
               <input
-                {...getInputProps({placeholder})}
+                {...getInputProps({ placeholder })}
                 className="gridra-command-palette__input"
-
-
-
-
-
-
               />
             </div>
             <div className="gridra-command-palette__list" ref={listRef}>
@@ -174,9 +201,11 @@ export function GridraCommandPalette({
                     ) : null}
                     {groupItems.map((item) => {
                       const isActive = enabledIds[safeActiveIndex] === item.id;
+
                       return (
                         <button
-                          {...getItemProps(item.id)} className={cx(
+                          {...getItemProps(item.id)}
+                          className={cx(
                             "gridra-command-palette__item",
                             item.disabled
                               ? "gridra-command-palette__item--disabled"
@@ -190,11 +219,6 @@ export function GridraCommandPalette({
                           )}
 
                           key={item.id}
-
-
-
-
-
                         >
                           <span className="gridra-command-palette__item-label">
                             {item.label}
@@ -212,9 +236,11 @@ export function GridraCommandPalette({
               ) : (
                 filteredCommands.map((item) => {
                   const isActive = enabledIds[safeActiveIndex] === item.id;
+
                   return (
                     <button
-                      {...getItemProps(item.id)} className={cx(
+                      {...getItemProps(item.id)}
+                      className={cx(
                         "gridra-command-palette__item",
                         item.disabled
                           ? "gridra-command-palette__item--disabled"
@@ -228,11 +254,6 @@ export function GridraCommandPalette({
                       )}
 
                       key={item.id}
-
-
-
-
-
                     >
                       <span className="gridra-command-palette__item-label">
                         {item.label}
