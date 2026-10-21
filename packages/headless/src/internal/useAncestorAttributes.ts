@@ -1,6 +1,8 @@
+/** 要素と祖先のclass・style、およびDOM移動を監視して継承情報の再計算を促すヘルパー。 */
 import { useRef } from "react";
 import { useClientLayoutEffect } from "./useClientLayoutEffect";
 
+/** 対象要素自身から最上位の祖先までを、内側から順に収集する。 */
 function collectAncestors(source: HTMLElement): HTMLElement[] {
   const ancestors: HTMLElement[] = [];
   for (let element: HTMLElement | null = source; element; element = element.parentElement) ancestors.push(element);
