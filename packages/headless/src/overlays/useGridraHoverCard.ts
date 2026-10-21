@@ -1,12 +1,43 @@
-import {useCallback,useEffect,useId,useRef,useState,type HTMLAttributes,type Ref,type FocusEvent as ReactFocusEvent} from "react";
-import {useControllableValue} from "../useControllableValue";
-import {composeHandlers} from "../internal/composeHandlers";
-import {mergeRefs} from "../internal/mergeRefs";
-import {useDocumentEvent} from "../internal/useDocumentEvent";
-import {useFloatingPosition} from "../internal/useFloatingPosition";
-export interface UseGridraHoverCardOptions{open?:boolean;defaultOpen?:boolean;onOpenChange?:(next:boolean,previous:boolean)=>void;showDelay?:number;hideDelay?:number;disabled?:boolean;closeOnEscape?:boolean;placement?:"top"|"right"|"bottom"|"left";offset?:number}
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type HTMLAttributes,
+  type Ref,
+  type FocusEvent as ReactFocusEvent,
+} from "react";
+import { useControllableValue } from "../useControllableValue";
+import { composeHandlers } from "../internal/composeHandlers";
+import { mergeRefs } from "../internal/mergeRefs";
+import { useDocumentEvent } from "../internal/useDocumentEvent";
+import { useFloatingPosition } from "../internal/useFloatingPosition";
+
+export interface UseGridraHoverCardOptions {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (next: boolean, previous: boolean) => void;
+  showDelay?: number;
+  hideDelay?: number;
+  disabled?: boolean;
+  closeOnEscape?: boolean;
+  placement?: "top" | "right" | "bottom" | "left";
+  offset?: number;
+}
+
 /** hover/focusの移動、遅延開閉と配置を管理する。 */
-export function useGridraHoverCard({open,defaultOpen=false,onOpenChange,showDelay=120,hideDelay=120,disabled=false,closeOnEscape=true,placement="bottom",offset=0}:UseGridraHoverCardOptions={}){
+export function useGridraHoverCard({
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  showDelay = 120,
+  hideDelay = 120,
+  disabled = false,
+  closeOnEscape = true,
+  placement = "bottom",
+  offset = 0,
+}: UseGridraHoverCardOptions = {}) {
   const anchorRef = useRef<HTMLElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
   // show/hideの遅延処理をまたいでtimerIDを保持する。
@@ -28,6 +59,7 @@ export function useGridraHoverCard({open,defaultOpen=false,onOpenChange,showDela
       window.clearTimeout(showTimerRef.current);
       showTimerRef.current = null;
     }
+
     if (hideTimerRef.current !== null) {
       window.clearTimeout(hideTimerRef.current);
       hideTimerRef.current = null;
@@ -38,6 +70,7 @@ export function useGridraHoverCard({open,defaultOpen=false,onOpenChange,showDela
   // SSR 時や初回レンダリング時に document へアクセスしないようにする。
   useEffect(() => {
     setPortalMounted(true);
+
     return clearTimers;
   }, [clearTimers]);
 
@@ -56,6 +89,7 @@ export function useGridraHoverCard({open,defaultOpen=false,onOpenChange,showDela
     if (disabled) {
       return;
     }
+
     clearTimers();
     showTimerRef.current = window.setTimeout(
       () => {
@@ -111,6 +145,7 @@ export function useGridraHoverCard({open,defaultOpen=false,onOpenChange,showDela
     if (!(target instanceof Node)) {
       return false;
     }
+
     return (
       anchorRef.current?.contains(target) === true ||
       cardRef.current?.contains(target) === true
@@ -122,8 +157,10 @@ export function useGridraHoverCard({open,defaultOpen=false,onOpenChange,showDela
     (event: ReactFocusEvent<HTMLElement>) => {
       if (isWithinHoverCard(event.relatedTarget)) {
         cancelHide();
+
         return;
       }
+
       startHide();
     },
     [cancelHide, isWithinHoverCard, startHide],
@@ -133,15 +170,65 @@ export function useGridraHoverCard({open,defaultOpen=false,onOpenChange,showDela
     (event: ReactFocusEvent<HTMLDivElement>) => {
       if (isWithinHoverCard(event.relatedTarget)) {
         cancelHide();
+
         return;
       }
+
       startHide();
     },
     [cancelHide, isWithinHoverCard, startHide],
   );
 
+  const getTriggerProps = <T extends HTMLElement = HTMLButtonElement>(
+    props: HTMLAttributes<T> & { ref?: Ref<T> } = {},
+  ) => ({
+    ...props,
+    "aria-controls": !disabled && currentOpen ? cardId : undefined,
+    "aria-expanded": !disabled ? currentOpen : undefined,
+    "aria-haspopup": "dialog" as const,
+    onBlur: composeHandlers(props.onBlur, handleAnchorBlur),
+    onFocus: composeHandlers(props.onFocus, startShow),
+    onMouseEnter: composeHandlers(props.onMouseEnter, startShow),
+    onMouseLeave: composeHandlers(props.onMouseLeave, startHide),
+    ref: mergeRefs(props.ref, (element: T | null) => {
+      anchorRef.current = element;
+    }),
+  });
 
-const getTriggerProps=<T extends HTMLElement=HTMLButtonElement>(props:HTMLAttributes<T>&{ref?:Ref<T>}={})=>({...props,"aria-controls":!disabled&&currentOpen?cardId:undefined,"aria-expanded":!disabled?currentOpen:undefined,"aria-haspopup":"dialog" as const,onBlur:composeHandlers(props.onBlur,handleAnchorBlur),onFocus:composeHandlers(props.onFocus,startShow),onMouseEnter:composeHandlers(props.onMouseEnter,startShow),onMouseLeave:composeHandlers(props.onMouseLeave,startHide),ref:mergeRefs(props.ref,(element:T|null)=>{anchorRef.current=element;})});
-const getContentProps=(props:HTMLAttributes<HTMLDivElement>&{ref?:Ref<HTMLDivElement>}={})=>({...props,id:cardId,role:"dialog" as const,onFocus:composeHandlers(props.onFocus,cancelHide),onBlur:composeHandlers(props.onBlur,handleCardBlur),onMouseEnter:composeHandlers(props.onMouseEnter,cancelHide),onMouseLeave:composeHandlers(props.onMouseLeave,startHide),ref:mergeRefs(props.ref,(element:HTMLDivElement|null)=>{cardRef.current=element;}),style:{...props.style,position:"fixed" as const,top:coords.top,left:coords.left}});
-return {currentOpen,portalMounted,anchorRef,cardRef,cardId,coords,resolvedPlacement,handleCardBlur,cancelHide,startHide,getTriggerProps,getContentProps,close:closeImmediately};
+  const getContentProps = (
+    props: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> } = {},
+  ) => ({
+    ...props,
+    id: cardId,
+    role: "dialog" as const,
+    onFocus: composeHandlers(props.onFocus, cancelHide),
+    onBlur: composeHandlers(props.onBlur, handleCardBlur),
+    onMouseEnter: composeHandlers(props.onMouseEnter, cancelHide),
+    onMouseLeave: composeHandlers(props.onMouseLeave, startHide),
+    ref: mergeRefs(props.ref, (element: HTMLDivElement | null) => {
+      cardRef.current = element;
+    }),
+    style: {
+      ...props.style,
+      position: "fixed" as const,
+      top: coords.top,
+      left: coords.left,
+    },
+  });
+
+  return {
+    currentOpen,
+    portalMounted,
+    anchorRef,
+    cardRef,
+    cardId,
+    coords,
+    resolvedPlacement,
+    handleCardBlur,
+    cancelHide,
+    startHide,
+    getTriggerProps,
+    getContentProps,
+    close: closeImmediately,
+  };
 }
