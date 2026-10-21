@@ -1,5 +1,5 @@
-import {useGridraDialog} from "@gridra-ui/headless";
-import type {Ref} from "react";
+import { useGridraDialog } from "@gridra-ui/headless";
+import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
@@ -62,10 +62,40 @@ export function GridraDialog({
   title,
   ...props
 }: GridraDialogProps) {
-  const {currentOpen,portalMounted,triggerRef,titleId,descriptionId,close,handleBackdropPointerDown,getTriggerProps,getDialogProps}=useGridraDialog({open,defaultOpen,onOpenChange,closeOnEscape,closeOnBackdropPointerDown,initialFocusRef,hasDescription:Boolean(description)});
-  const triggerElement=children;
-  const triggerProps=triggerElement&&isValidElement(triggerElement)?getTriggerProps<HTMLElement>({...triggerElement.props,ref:(triggerElement.props.ref as Ref<HTMLElement>|undefined)??(triggerElement as ReactElement&{ref?:Ref<HTMLElement>}).ref}):undefined;
-  const portalTheme = useGridraPortalTheme(triggerRef, undefined, currentOpen && portalMounted);
+  const {
+    currentOpen,
+    portalMounted,
+    triggerRef,
+    titleId,
+    descriptionId,
+    close,
+    handleBackdropPointerDown,
+    getTriggerProps,
+    getDialogProps,
+  } = useGridraDialog({
+    open,
+    defaultOpen,
+    onOpenChange,
+    closeOnEscape,
+    closeOnBackdropPointerDown,
+    initialFocusRef,
+    hasDescription: Boolean(description),
+  });
+  const triggerElement = children;
+  const triggerProps =
+    triggerElement && isValidElement(triggerElement)
+      ? getTriggerProps<HTMLElement>({
+          ...triggerElement.props,
+          ref:
+            (triggerElement.props.ref as Ref<HTMLElement> | undefined) ??
+            (triggerElement as ReactElement & { ref?: Ref<HTMLElement> }).ref,
+        })
+      : undefined;
+  const portalTheme = useGridraPortalTheme(
+    triggerRef,
+    undefined,
+    currentOpen && portalMounted,
+  );
   const dialogClassName = cx(
     "gridra-dialog",
     `gridra-dialog--${size}`,

@@ -40,8 +40,7 @@ export type GridraCommandPaletteSeparatorItem = {
 };
 
 export type GridraCommandPaletteItem =
-  | GridraCommandPaletteCommandItem
-  | GridraCommandPaletteSeparatorItem;
+  GridraCommandPaletteCommandItem | GridraCommandPaletteSeparatorItem;
 
 // HTML属性とぶつかるonChange/titleは、検索queryと見出しの意味に合わせて独自propsとして定義する。
 export interface GridraCommandPaletteProps extends Omit<
@@ -79,6 +78,7 @@ function itemMatchesQuery(
   if (!query) {
     return true;
   }
+
   // ReactNodeは完全なテキスト抽出をしない。検索対象は文字列として安全に読める範囲に限定する。
   const lower = query.toLowerCase();
   const fields = [
@@ -87,6 +87,7 @@ function itemMatchesQuery(
     item.group ?? "",
     ...(item.keywords ?? []),
   ];
+
   return fields.some((f) => f.toLowerCase().includes(lower));
 }
 
@@ -94,6 +95,7 @@ function getPlainSearchText(value: ReactNode): string {
   if (typeof value === "string" || typeof value === "number") {
     return String(value);
   }
+
   return "";
 }
 
@@ -138,7 +140,11 @@ export function GridraCommandPalette({
   const [activeIndex, setActiveIndex] = useState(0);
   const [portalMounted, setPortalMounted] = useState(false);
   // PortalはテーマDOMの外へ出るため、現在のテーマclassをbackdropへコピーする。
-  const portalTheme = useGridraPortalTheme(undefined, theme, currentOpen && portalMounted);
+  const portalTheme = useGridraPortalTheme(
+    undefined,
+    theme,
+    currentOpen && portalMounted,
+  );
   const titleId = useId();
   const inputId = useId();
 
@@ -154,6 +160,7 @@ export function GridraCommandPalette({
     if (!currentQuery) {
       return commandItems;
     }
+
     return commandItems.filter((item) => itemMatchesQuery(item, currentQuery));
   }, [commandItems, currentQuery]);
   const enabledFiltered = useMemo(
@@ -181,6 +188,7 @@ export function GridraCommandPalette({
     if (!item || item.disabled) {
       return;
     }
+
     onAction?.(id);
     if (closeOnAction) {
       close();
@@ -191,6 +199,7 @@ export function GridraCommandPalette({
     if (enabledIds.length === 0) {
       return;
     }
+
     const clamped = clampIndex(index, enabledIds.length);
     setActiveIndex(clamped);
     const id = enabledIds[clamped];
@@ -214,6 +223,7 @@ export function GridraCommandPalette({
       if (prev && typeof prev.focus === "function") {
         prev.focus();
       }
+
       previousFocusRef.current = null;
       itemRefs.current.clear();
     };
@@ -234,6 +244,7 @@ export function GridraCommandPalette({
     if (!currentOpen) {
       return;
     }
+
     const handleEscape = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape" && closeOnEscape) {
         event.preventDefault();
@@ -242,6 +253,7 @@ export function GridraCommandPalette({
     };
 
     document.addEventListener("keydown", handleEscape);
+
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
@@ -268,6 +280,7 @@ export function GridraCommandPalette({
       if (focusable.length === 0) {
         event.preventDefault();
         event.stopPropagation();
+
         return;
       }
 
@@ -291,6 +304,7 @@ export function GridraCommandPalette({
       }
 
       event.stopPropagation();
+
       return;
     }
 
@@ -306,29 +320,35 @@ export function GridraCommandPalette({
         focusItemByIndex(safeActiveIndex + 1);
         break;
       }
+
       case "ArrowUp": {
         event.preventDefault();
         focusItemByIndex(safeActiveIndex - 1);
         break;
       }
+
       case "Home": {
         event.preventDefault();
         focusItemByIndex(0);
         break;
       }
+
       case "End": {
         event.preventDefault();
         focusItemByIndex(enabledIds.length - 1);
         break;
       }
+
       case "Enter": {
         event.preventDefault();
         const activeId = enabledIds[safeActiveIndex];
         if (activeId) {
           activateItem(activeId);
         }
+
         break;
       }
+
       default:
         handled = false;
     }
@@ -360,6 +380,7 @@ export function GridraCommandPalette({
       list.push(item);
       map.set(key, list);
     }
+
     return Array.from(map.entries());
   }, [filteredCommands]);
 
@@ -427,6 +448,7 @@ export function GridraCommandPalette({
                     ) : null}
                     {groupItems.map((item) => {
                       const isActive = enabledIds[safeActiveIndex] === item.id;
+
                       return (
                         <button
                           className={cx(
@@ -478,6 +500,7 @@ export function GridraCommandPalette({
               ) : (
                 filteredCommands.map((item) => {
                   const isActive = enabledIds[safeActiveIndex] === item.id;
+
                   return (
                     <button
                       className={cx(
