@@ -1,4 +1,4 @@
-import {useGridraInspectorPanel} from "@gridra-ui/headless";
+import { useGridraInspectorPanel } from "@gridra-ui/headless";
 import { useId, type HTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { GridraField } from "../GridraField";
@@ -25,8 +25,10 @@ export type GridraInspectorPatch = Partial<{
 
 // HTML属性とぶつかるため、HTMLAttributesからonChangeを除外して独自定義する
 // onChangeとonCommitに?オプションがついているのは、表示のみのときにonChangeやonCommitを指定しない場合があるため
-export interface GridraInspectorPanelProps
-  extends Omit<HTMLAttributes<HTMLElement>, "onChange"> {
+export interface GridraInspectorPanelProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "onChange"
+> {
   selectedNode?: GridraInspectorValue | null;
   onChange?: (patch: GridraInspectorPatch) => void;
   onCommit?: () => void;
@@ -41,7 +43,13 @@ export function GridraInspectorPanel({
   selectedNode,
   ...props
 }: GridraInspectorPanelProps) {
-  const {fieldId,hasSelection,handleLabelChange,handlePlacementChange,commit}=useGridraInspectorPanel({selectedNode,disabled,onChange,onCommit});
+  const {
+    fieldId,
+    hasSelection,
+    handleLabelChange,
+    handlePlacementChange,
+    commit,
+  } = useGridraInspectorPanel({ selectedNode, disabled, onChange, onCommit });
 
   // 以下data-testid属性は、テストで使用するためのものであり、UI上では表示されない
   return (

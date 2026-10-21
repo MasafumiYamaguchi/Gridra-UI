@@ -5,7 +5,13 @@ function ToastPreview() {
   const { show } = useToast();
 
   return (
-    <div style={{ display: "flex", gap: "var(--gridra-space-sm)", flexWrap: "wrap" }}>
+    <div
+      style={{
+        display: "flex",
+        gap: "var(--gridra-space-sm)",
+        flexWrap: "wrap",
+      }}
+    >
       <GridraButton onClick={() => show("File saved successfully")}>
         Show toast
       </GridraButton>
@@ -17,7 +23,8 @@ function ToastPreview() {
 }
 
 export const toastDoc: ComponentDoc = {
-  notes: "Behavior is provided by useGridraToastQueue from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
+  notes:
+    "Behavior is provided by useGridraToastQueue from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
   category: "Feedback",
   name: "GridraToast",
   summary:
@@ -88,45 +95,53 @@ export const toastDoc: ComponentDoc = {
     "Never captures focus — toast is purely a visual notification.",
     "Accessible default role=status with consumer override support.",
   ],
-  usage: "Wrap your app (or a section) with GridraToastProvider and call useToast().show() from any descendant component. Best suited for lightweight confirmations (\"Saved\", \"Copied\") and transient status messages.",
-  avoid: "Avoid using GridraToast for interactive or blocking feedback — use GridraAlert or GridraDialog instead. Toasts cannot contain buttons or links since they disappear automatically. Avoid chaining very long messages that need time to read.",
+  usage:
+    'Wrap your app (or a section) with GridraToastProvider and call useToast().show() from any descendant component. Best suited for lightweight confirmations ("Saved", "Copied") and transient status messages.',
+  avoid:
+    "Avoid using GridraToast for interactive or blocking feedback — use GridraAlert or GridraDialog instead. Toasts cannot contain buttons or links since they disappear automatically. Avoid chaining very long messages that need time to read.",
   compositions: [
     "GridraToastProvider + useToast: anywhere in the React tree.",
     "GridraToast + toolbars / action buttons: confirm an action silently.",
-    "GridraToast + copy-to-clipboard: brief \"Copied\" confirmation.",
+    'GridraToast + copy-to-clipboard: brief "Copied" confirmation.',
   ],
-  examples: [{ title: "Custom markup with headless hook", code: "import { useGridraToastQueue } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const toast=useGridraToastQueue();\n  return <section><button onClick={()=>toast.show(\"Custom notification\")}>Show custom toast</button>{toast.currentToast?<output role={toast.currentToast.options.role}>{toast.currentToast.message}<button onClick={toast.dismiss}>Dismiss</button></output>:null}</section>;\n}" }, ...([
+  examples: [
     {
-      title: "Basic toast",
-      code: `<GridraToastProvider>
+      title: "Custom markup with headless hook",
+      code: 'import { useGridraToastQueue } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const toast=useGridraToastQueue();\n  return <section><button onClick={()=>toast.show("Custom notification")}>Show custom toast</button>{toast.currentToast?<output role={toast.currentToast.options.role}>{toast.currentToast.message}<button onClick={toast.dismiss}>Dismiss</button></output>:null}</section>;\n}',
+    },
+    ...([
+      {
+        title: "Basic toast",
+        code: `<GridraToastProvider>
   <App />
 </GridraToastProvider>
 
 // In any descendant:
 const { show } = useToast();
 show("File saved successfully");`,
-    },
-    {
-      title: "With custom duration",
-      code: `const { show } = useToast();
+      },
+      {
+        title: "With custom duration",
+        code: `const { show } = useToast();
 show("This stays longer", { duration: 5000 });`,
-    },
-    {
-      title: "Quick burst (queued)",
-      code: `const { show } = useToast();
+      },
+      {
+        title: "Quick burst (queued)",
+        code: `const { show } = useToast();
 
 // Each appears one at a time, FIFO order.
 show("First");
 show("Second");
 show("Third");`,
-    },
-    {
-      title: "Position at top",
-      code: `<GridraToastProvider position="top">
+      },
+      {
+        title: "Position at top",
+        code: `<GridraToastProvider position="top">
   <App />
 </GridraToastProvider>`,
-    },
-  ] satisfies ComponentDoc["examples"])],
+      },
+    ] satisfies ComponentDoc["examples"]),
+  ],
   preview: (
     <GridraToastProvider>
       <ToastPreview />

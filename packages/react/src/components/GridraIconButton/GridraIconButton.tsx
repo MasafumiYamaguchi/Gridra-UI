@@ -1,9 +1,10 @@
-import {getGridraIconButtonProps} from "@gridra-ui/headless";
+import { getGridraIconButtonProps } from "@gridra-ui/headless";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { GridraSpinner } from "../GridraSpinner";
 
 export type GridraIconButtonSize = "sm" | "md" | "lg";
+
 export type GridraIconButtonVariant = "default" | "primary" | "ghost";
 
 export interface GridraIconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -40,14 +41,22 @@ export function GridraIconButton({
   const icon: ReactNode = loading ? (
     <GridraSpinner aria-hidden="true" label="Loading" size="sm" />
   ) : (
-    children ?? label.slice(0, 1)
+    (children ?? label.slice(0, 1))
   );
-  // loading中とdisabled中を同時に管理して、ボタンのdisabled属性を制御する
 
+  // loading中とdisabled中を同時に管理して、ボタンのdisabled属性を制御する
 
   return (
     <button
-      {...getGridraIconButtonProps({label,title,loading,pressed,disabled,type,...props})}
+      {...getGridraIconButtonProps({
+        label,
+        title,
+        loading,
+        pressed,
+        disabled,
+        type,
+        ...props,
+      })}
       className={iconButtonClassName}
     >
       {icon}

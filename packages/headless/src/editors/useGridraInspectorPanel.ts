@@ -1,4 +1,5 @@
-import {useId,type ReactNode} from "react";
+import { useId, type ReactNode } from "react";
+
 export interface GridraInspectorPlacement {
   x: number;
   y: number;
@@ -17,16 +18,26 @@ export type GridraInspectorPatch = Partial<{
   placement: Partial<GridraInspectorPlacement>;
 }>;
 
-
 function isValidNumber(value: string): boolean {
   const n = Number(value);
+
   return value.trim() !== "" && !Number.isNaN(n) && Number.isFinite(n);
 }
 
+export interface UseGridraInspectorPanelOptions {
+  selectedNode?: GridraInspectorValue | null;
+  disabled?: boolean;
+  onChange?: (patch: GridraInspectorPatch) => void;
+  onCommit?: () => void;
+}
 
-export interface UseGridraInspectorPanelOptions {selectedNode?:GridraInspectorValue|null;disabled?:boolean;onChange?:(patch:GridraInspectorPatch)=>void;onCommit?:()=>void}
 /** 選択ノードの編集を検証し、controlledなpatchだけを通知する。 */
-export function useGridraInspectorPanel({selectedNode,disabled=false,onChange,onCommit}:UseGridraInspectorPanelOptions={}){
+export function useGridraInspectorPanel({
+  selectedNode,
+  disabled = false,
+  onChange,
+  onCommit,
+}: UseGridraInspectorPanelOptions = {}) {
   const fieldId = useId();
   const hasSelection = selectedNode != null;
 
@@ -35,6 +46,7 @@ export function useGridraInspectorPanel({selectedNode,disabled=false,onChange,on
     if (disabled || !hasSelection) {
       return;
     }
+
     onChange?.({ label: value });
   };
 
@@ -53,7 +65,15 @@ export function useGridraInspectorPanel({selectedNode,disabled=false,onChange,on
     onChange?.({ placement: { [key]: Number(value) } });
   };
 
+  const commit = () => {
+    if (!disabled && hasSelection) onCommit?.();
+  };
 
-const commit=()=>{if(!disabled&&hasSelection)onCommit?.();};
-return {fieldId,hasSelection,handleLabelChange,handlePlacementChange,commit};
+  return {
+    fieldId,
+    hasSelection,
+    handleLabelChange,
+    handlePlacementChange,
+    commit,
+  };
 }

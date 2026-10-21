@@ -1,4 +1,4 @@
-import {getGridraMinimap} from "@gridra-ui/headless";
+import { getGridraMinimap } from "@gridra-ui/headless";
 import type { CSSProperties, HTMLAttributes } from "react";
 import type { GridraId } from "@gridra-ui/core";
 import type { GridraNodePlacement } from "../GridraNode";
@@ -37,16 +37,25 @@ export function GridraMinimap({
   viewport,
   ...props
 }: GridraMinimapProps) {
-  const minimap=getGridraMinimap({gridColumns,gridRows,nodes,selectedIds,viewport});
-  const {safeColumns,safeRows}=minimap;
+  const minimap = getGridraMinimap({
+    gridColumns,
+    gridRows,
+    nodes,
+    selectedIds,
+    viewport,
+  });
+  const { safeColumns, safeRows } = minimap;
+
   return (
     <div
       className={["gridra-minimap", className].filter(Boolean).join(" ")}
-      style={{
-        ...style,
-        "--gridra-minimap-columns": safeColumns.toString(),
-        "--gridra-minimap-rows": safeRows.toString()
-      } as CSSProperties}
+      style={
+        {
+          ...style,
+          "--gridra-minimap-columns": safeColumns.toString(),
+          "--gridra-minimap-rows": safeRows.toString(),
+        } as CSSProperties
+      }
       {...props}
     >
       <div className="gridra-minimap__surface" aria-hidden="true">
@@ -56,7 +65,7 @@ export function GridraMinimap({
               key={node.id}
               className={[
                 "gridra-minimap__node",
-                node.selected ? "gridra-minimap__node--selected" : null
+                node.selected ? "gridra-minimap__node--selected" : null,
               ]
                 .filter(Boolean)
                 .join(" ")}
@@ -66,7 +75,7 @@ export function GridraMinimap({
                 left: `${node.rect.left}%`,
                 top: `${node.rect.top}%`,
                 width: `${node.rect.width}%`,
-                height: `${node.rect.height}%`
+                height: `${node.rect.height}%`,
               }}
             />
           );
@@ -79,7 +88,7 @@ export function GridraMinimap({
               left: `${minimap.viewport.left}%`,
               top: `${minimap.viewport.top}%`,
               width: `${minimap.viewport.width}%`,
-              height: `${minimap.viewport.height}%`
+              height: `${minimap.viewport.height}%`,
             }}
           />
         ) : null}

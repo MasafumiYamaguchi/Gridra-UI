@@ -4,7 +4,10 @@ import { resolveAriaInvalid } from "@gridra-ui/headless";
 
 export type GridraSelectSize = "sm" | "md" | "lg";
 
-export interface GridraSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> {
+export interface GridraSelectProps extends Omit<
+  SelectHTMLAttributes<HTMLSelectElement>,
+  "size"
+> {
   invalid?: boolean;
   size?: GridraSelectSize;
 }

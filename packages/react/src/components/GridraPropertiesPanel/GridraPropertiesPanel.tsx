@@ -1,4 +1,4 @@
-import {useGridraPropertiesPanel} from "@gridra-ui/headless";
+import { useGridraPropertiesPanel } from "@gridra-ui/headless";
 import { useId, type HTMLAttributes } from "react";
 import { GridraField } from "../GridraField";
 import { GridraInput } from "../GridraInput";
@@ -29,8 +29,10 @@ export type GridraNodePropertiesValue = Record<
 
 export type GridraPropertiesPatch = Partial<GridraNodePropertiesValue>;
 
-export interface GridraPropertiesPanelProps
-  extends Omit<HTMLAttributes<HTMLElement>, "onChange"> {
+export interface GridraPropertiesPanelProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "onChange"
+> {
   selectedNodeId?: string | null;
   selectedNodeType?: string | null;
   value?: GridraNodePropertiesValue;
@@ -49,11 +51,28 @@ export function GridraPropertiesPanel({
   value,
   ...props
 }: GridraPropertiesPanelProps) {
-  const {fieldId,hasSelection,fields,hasFields,handleChange,changeNumber,getFieldValue}=useGridraPropertiesPanel({selectedNodeId,selectedNodeType,value,schema,onChange,disabled});
+  const {
+    fieldId,
+    hasSelection,
+    fields,
+    hasFields,
+    handleChange,
+    changeNumber,
+    getFieldValue,
+  } = useGridraPropertiesPanel({
+    selectedNodeId,
+    selectedNodeType,
+    value,
+    schema,
+    onChange,
+    disabled,
+  });
 
   return (
     <GridraPanel
-      className={["gridra-properties-panel", className].filter(Boolean).join(" ")}
+      className={["gridra-properties-panel", className]
+        .filter(Boolean)
+        .join(" ")}
       heading="Properties"
       {...props}
     >
@@ -64,7 +83,11 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "text") {
               return (
-                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
+                <GridraField
+                  htmlFor={`${fieldId}-${field.id}`}
+                  key={field.id}
+                  label={field.label}
+                >
                   <GridraInput
                     data-testid={`property-${field.id}`}
                     id={`${fieldId}-${field.id}`}
@@ -81,17 +104,23 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "number") {
               return (
-                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
+                <GridraField
+                  htmlFor={`${fieldId}-${field.id}`}
+                  key={field.id}
+                  label={field.label}
+                >
                   <GridraInput
                     data-testid={`property-${field.id}`}
                     id={`${fieldId}-${field.id}`}
                     disabled={disabled}
                     max={field.max}
                     min={field.min}
-                    onChange={event=>changeNumber(field.id,event.target.value)}
+                    onChange={(event) =>
+                      changeNumber(field.id, event.target.value)
+                    }
                     step={field.step}
                     type="number"
-                    value={fieldValue as string|number}
+                    value={fieldValue as string | number}
                   />
                 </GridraField>
               );
@@ -99,7 +128,11 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "select") {
               return (
-                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
+                <GridraField
+                  htmlFor={`${fieldId}-${field.id}`}
+                  key={field.id}
+                  label={field.label}
+                >
                   <GridraSelect
                     data-testid={`property-${field.id}`}
                     id={`${fieldId}-${field.id}`}
@@ -121,7 +154,11 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "toggle") {
               return (
-                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
+                <GridraField
+                  htmlFor={`${fieldId}-${field.id}`}
+                  key={field.id}
+                  label={field.label}
+                >
                   <GridraSwitch
                     checked={Boolean(fieldValue)}
                     data-testid={`property-${field.id}`}

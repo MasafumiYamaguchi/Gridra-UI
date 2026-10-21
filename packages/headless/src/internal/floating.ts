@@ -15,31 +15,38 @@ export function computeFloatingPosition(
   if (placement === "top") {
     return {
       top: anchorRect.top - floatRect.height - offset,
-      left: alignment === "start"
-        ? anchorRect.left
-        : anchorRect.left + (anchorRect.width - floatRect.width) / 2,
+      left:
+        alignment === "start"
+          ? anchorRect.left
+          : anchorRect.left + (anchorRect.width - floatRect.width) / 2,
     };
   }
+
   if (placement === "right") {
     return {
-      top: alignment === "start"
-        ? anchorRect.top
-        : anchorRect.top + (anchorRect.height - floatRect.height) / 2,
+      top:
+        alignment === "start"
+          ? anchorRect.top
+          : anchorRect.top + (anchorRect.height - floatRect.height) / 2,
       left: anchorRect.right + offset,
     };
   }
+
   if (placement === "bottom") {
     return {
       top: anchorRect.bottom + offset,
-      left: alignment === "start"
-        ? anchorRect.left
-        : anchorRect.left + (anchorRect.width - floatRect.width) / 2,
+      left:
+        alignment === "start"
+          ? anchorRect.left
+          : anchorRect.left + (anchorRect.width - floatRect.width) / 2,
     };
   }
+
   return {
-    top: alignment === "start"
-      ? anchorRect.top
-      : anchorRect.top + (anchorRect.height - floatRect.height) / 2,
+    top:
+      alignment === "start"
+        ? anchorRect.top
+        : anchorRect.top + (anchorRect.height - floatRect.height) / 2,
     left: anchorRect.left - floatRect.width - offset,
   };
 }
@@ -58,7 +65,10 @@ export function isOutOfViewport(
 
 export function oppositePlacement(placement: Placement): Placement {
   if (placement === "top") return "bottom";
+
   if (placement === "bottom") return "top";
+
   if (placement === "left") return "right";
+
   return "left";
 }

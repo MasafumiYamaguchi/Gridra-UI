@@ -1,4 +1,4 @@
-import {useControlDescriptionIds} from "@gridra-ui/headless";
+import { useControlDescriptionIds } from "@gridra-ui/headless";
 import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { resolveAriaInvalid } from "@gridra-ui/headless";
@@ -7,7 +7,10 @@ import { GridraField } from "../GridraField";
 export type GridraInputSize = "sm" | "md" | "lg";
 
 // HTML属性とぶつかるため、InputHTMLAttributesからsizeを除外して独自定義する
-export interface GridraInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+export interface GridraInputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   invalid?: boolean;
   label?: ReactNode;
   size?: GridraInputSize;
@@ -22,7 +25,7 @@ export function GridraInput({
   type = "text",
   ...props
 }: GridraInputProps) {
-  const {controlId}=useControlDescriptionIds(props.id,false);
+  const { controlId } = useControlDescriptionIds(props.id, false);
   const input = (
     <input
       aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}
