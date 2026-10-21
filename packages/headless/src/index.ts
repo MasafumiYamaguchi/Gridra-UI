@@ -10,3 +10,5 @@ export * from "./canvas/useGridraCanvas";
 export * from "./tabs/useGridraTabs";
 
 export * from "./accordion/useGridraAccordion";
+
+export * from "./selection/useGridraSelectableGrid";

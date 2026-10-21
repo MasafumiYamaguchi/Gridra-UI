@@ -50,6 +50,17 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraSelectableGrid through caller-owned DOM", () => {
+    const preview = renderExample(
+      "GridraSelectableGrid",
+      "Custom markup with headless hook",
+    );
+    const button = preview.getByRole("button", { name: "B" });
+
+    fireEvent.click(button);
+
+    expect(button.getAttribute("aria-selected")).toBe("true");
+  });
   it("runs custom Accordion headings and panels with headless open state", () => {
     const preview = renderExample(
       "GridraAccordion",
