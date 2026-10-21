@@ -48,11 +48,14 @@ export function useGridraTabs<TItem extends GridraTabsItem>({
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   useEffect(() => { setFocusedId(currentId); }, [currentId]);
   const currentFocusId = enabledIds.includes(focusedId) ? focusedId : currentId;
+  // selectは表示するパネルを選ぶ処理。選択状態とtabIndexの基準を更新するが、DOMのfocus()は呼ばない。
   const select = (id: string) => {
     if (!enabledIds.includes(id)) return;
     if (id !== currentId) setRawSelectedId(id);
     setFocusedId(id);
   };
+  // focusはキーボード操作の行き先を移す処理。DOMのfocus()を呼び、manualでは表示パネルを変えない。
+  // automaticでは移動先をselectしてパネルも切り替える。manualではEnter／Spaceで選択を確定する。
   const focus = (index: number) => {
     if (!enabledIds.length) return;
     const id = enabledIds[wrapIndex(index, enabledIds.length)];
