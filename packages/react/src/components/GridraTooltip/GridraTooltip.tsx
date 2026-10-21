@@ -21,10 +21,13 @@ import { useGridraPortalTheme } from "../../internal/portalTheme";
 import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraTooltipPlacement = "top" | "right" | "bottom" | "left";
+
 export type GridraTooltipSize = "sm" | "md" | "lg";
 
-export interface GridraTooltipProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "content" | "children" | "onChange"> {
+export interface GridraTooltipProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "content" | "children" | "onChange"
+> {
   children: ReactElement<Record<string, unknown>>;
   content: ReactNode;
   placement?: GridraTooltipPlacement;
@@ -38,6 +41,7 @@ export interface GridraTooltipProps
 }
 
 const TOOLTIP_OFFSET = 8;
+
 const DEFAULT_SHOW_DELAY = 120;
 
 export function GridraTooltip({
@@ -60,13 +64,18 @@ export function GridraTooltip({
   const anchorRef = useRef<HTMLElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const openTimerRef = useRef<number | null>(null);
-  const [currentOpen, setCurrentOpen] = useControllableValue(open, defaultOpen, onOpenChange);
+  const [currentOpen, setCurrentOpen] = useControllableValue(
+    open,
+    defaultOpen,
+    onOpenChange,
+  );
   const [portalMounted, setPortalMounted] = useState(false);
   const tooltipId = useId();
 
   useEffect(() => {
     // documentが使えるクライアント側でのみPortalを許可する。
     setPortalMounted(true);
+
     return () => {
       // 表示待ちのまま破棄された場合に、遅延コールバックがstateを更新しないようにする。
       if (openTimerRef.current !== null) {
@@ -89,14 +98,19 @@ export function GridraTooltip({
     if (disabled) {
       return;
     }
+
     if (openTimerRef.current !== null) {
       // hoverとfocusが連続しても、表示タイマーを重複させない。
       window.clearTimeout(openTimerRef.current);
     }
-    openTimerRef.current = window.setTimeout(() => {
-      setCurrentOpen(true);
-      openTimerRef.current = null;
-    }, Math.max(0, showDelay));
+
+    openTimerRef.current = window.setTimeout(
+      () => {
+        setCurrentOpen(true);
+        openTimerRef.current = null;
+      },
+      Math.max(0, showDelay),
+    );
   };
 
   const closeImmediately = () => {
@@ -105,22 +119,44 @@ export function GridraTooltip({
       window.clearTimeout(openTimerRef.current);
       openTimerRef.current = null;
     }
+
     setCurrentOpen(false);
   };
 
   // 元のイベントとrefを残したまま、hover・focusによる開閉処理を合成する。
   const anchorProps = {
     "aria-describedby": !disabled && currentOpen ? tooltipId : undefined,
-    onMouseEnter: composeHandlers(anchorElement.props.onMouseEnter as ((event: unknown) => void) | undefined, openWithDelay),
-    onMouseLeave: composeHandlers(anchorElement.props.onMouseLeave as ((event: unknown) => void) | undefined, closeImmediately),
-    onFocus: composeHandlers(anchorElement.props.onFocus as ((event: unknown) => void) | undefined, openWithDelay),
-    onBlur: composeHandlers(anchorElement.props.onBlur as ((event: unknown) => void) | undefined, closeImmediately),
-    ref: mergeRefs((anchorElement as ReactElement & { ref?: unknown }).ref, (node: HTMLElement | null) => {
-      anchorRef.current = node;
-    }),
+    onMouseEnter: composeHandlers(
+      anchorElement.props.onMouseEnter as
+        ((event: unknown) => void) | undefined,
+      openWithDelay,
+    ),
+    onMouseLeave: composeHandlers(
+      anchorElement.props.onMouseLeave as
+        ((event: unknown) => void) | undefined,
+      closeImmediately,
+    ),
+    onFocus: composeHandlers(
+      anchorElement.props.onFocus as ((event: unknown) => void) | undefined,
+      openWithDelay,
+    ),
+    onBlur: composeHandlers(
+      anchorElement.props.onBlur as ((event: unknown) => void) | undefined,
+      closeImmediately,
+    ),
+    ref: mergeRefs(
+      (anchorElement as ReactElement & { ref?: unknown }).ref,
+      (node: HTMLElement | null) => {
+        anchorRef.current = node;
+      },
+    ),
   };
 
-  const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
+  const portalTheme = useGridraPortalTheme(
+    anchorRef,
+    undefined,
+    currentOpen && !disabled && portalMounted,
+  );
   const tooltipClassName = cx(
     "gridra-portal-root",
     portalTheme.className,

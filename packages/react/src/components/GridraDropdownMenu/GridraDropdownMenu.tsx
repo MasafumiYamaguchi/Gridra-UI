@@ -23,6 +23,7 @@ import { useGridraPortalTheme } from "../../internal/portalTheme";
 import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraDropdownMenuPlacement = "top" | "right" | "bottom" | "left";
+
 export type GridraDropdownMenuSize = "sm" | "md" | "lg";
 
 export type GridraDropdownMenuCommandItem = {
@@ -38,8 +39,7 @@ export type GridraDropdownMenuSeparatorItem = {
 };
 
 export type GridraDropdownMenuItem =
-  | GridraDropdownMenuCommandItem
-  | GridraDropdownMenuSeparatorItem;
+  GridraDropdownMenuCommandItem | GridraDropdownMenuSeparatorItem;
 
 // HTML属性とぶつかるonChange/childrenは、menu状態とtrigger要素の意味に合わせて独自propsとして定義する。
 export interface GridraDropdownMenuProps extends Omit<
@@ -125,6 +125,7 @@ export function GridraDropdownMenu({
     if (disabled) {
       return;
     }
+
     setCurrentOpen(true);
     setActiveIndex(0);
   };
@@ -146,10 +147,12 @@ export function GridraDropdownMenu({
     if (disabled) {
       return;
     }
+
     const item = commandItems.find((c) => c.id === id);
     if (!item || item.disabled) {
       return;
     }
+
     onAction?.(id);
     if (closeOnAction) {
       close();
@@ -175,6 +178,7 @@ export function GridraDropdownMenu({
     if (enabledIds.length === 0) {
       return;
     }
+
     const firstId = enabledIds[0];
     const el = itemRefs.current.get(firstId);
     el?.focus();
@@ -188,6 +192,7 @@ export function GridraDropdownMenu({
     if (enabledIds.length === 0) {
       return;
     }
+
     const clamped = clampIndex(index, enabledIds.length);
     setActiveIndex(clamped);
     const id = enabledIds[clamped];
@@ -211,6 +216,7 @@ export function GridraDropdownMenu({
       if (!closeOnOutsidePointerDown) {
         return;
       }
+
       const target = event.target as Node | null;
       if (
         target &&
@@ -223,6 +229,7 @@ export function GridraDropdownMenu({
 
     document.addEventListener("keydown", handleEscape);
     document.addEventListener("pointerdown", handleOutsidePointerDown, true);
+
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener(
@@ -247,6 +254,7 @@ export function GridraDropdownMenu({
         focusItemByIndex(nextIndex);
         break;
       }
+
       case "ArrowUp": {
         event.preventDefault();
         const prevIndex =
@@ -254,16 +262,19 @@ export function GridraDropdownMenu({
         focusItemByIndex(prevIndex);
         break;
       }
+
       case "Home": {
         event.preventDefault();
         focusItemByIndex(0);
         break;
       }
+
       case "End": {
         event.preventDefault();
         focusItemByIndex(enabledIds.length - 1);
         break;
       }
+
       case "Enter":
       case " ": {
         event.preventDefault();
@@ -271,12 +282,15 @@ export function GridraDropdownMenu({
         if (activeId) {
           activateItem(activeId);
         }
+
         break;
       }
+
       case "Tab": {
         close();
         break;
       }
+
       default:
         handled = false;
     }
@@ -299,16 +313,20 @@ export function GridraDropdownMenu({
         if (!currentOpen) {
           openMenu();
         }
+
         break;
       }
+
       case "ArrowUp": {
         event.preventDefault();
         if (!currentOpen) {
           openMenu();
           setActiveIndex(enabledIds.length > 0 ? enabledIds.length - 1 : 0);
         }
+
         break;
       }
+
       default:
         break;
     }
@@ -325,8 +343,7 @@ export function GridraDropdownMenu({
     ),
     onKeyDown: composeHandlers(
       triggerElement.props.onKeyDown as
-        | ((event: KeyboardEvent) => void)
-        | undefined,
+        ((event: KeyboardEvent) => void) | undefined,
       handleTriggerKeyDown,
     ),
     ref: mergeRefs(
@@ -337,7 +354,11 @@ export function GridraDropdownMenu({
     ),
   };
 
-  const portalTheme = useGridraPortalTheme(triggerRef, undefined, currentOpen && !disabled && portalMounted);
+  const portalTheme = useGridraPortalTheme(
+    triggerRef,
+    undefined,
+    currentOpen && !disabled && portalMounted,
+  );
   const menuClassName = cx(
     "gridra-portal-root",
     portalTheme.className,
