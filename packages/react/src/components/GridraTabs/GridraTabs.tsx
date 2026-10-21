@@ -6,7 +6,9 @@ export type {
   GridraTabsOrientation,
   GridraTabsActivationMode,
 } from "@gridra-ui/headless";
+
 export type GridraTabsSize = "sm" | "md" | "lg";
+
 export type GridraTabsVariant = "line" | "boxed";
 
 export interface GridraTabItem {

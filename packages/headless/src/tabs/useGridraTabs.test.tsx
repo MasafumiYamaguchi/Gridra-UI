@@ -131,6 +131,7 @@ describe("useGridraTabs without Gridra CSS or components", () => {
   it("composes refs and click handlers, including preventDefault", () => {
     const ref = createRef<HTMLButtonElement>();
     const onClick = vi.fn((event) => event.preventDefault());
+
     function Custom() {
       const tabs = useGridraTabs({ items });
 
@@ -163,6 +164,7 @@ describe("useGridraTabs without Gridra CSS or components", () => {
     const { rerender } = render(
       <Fixture options={{ defaultSelectedId: "b", onSelectionChange }} />,
     );
+
     rerender(
       <Fixture
         options={{ items: [{ id: "a" }, { id: "c" }], onSelectionChange }}

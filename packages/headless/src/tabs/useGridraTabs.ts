@@ -15,6 +15,7 @@ import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
 
 export type GridraTabsOrientation = "horizontal" | "vertical";
+
 export type GridraTabsActivationMode = "automatic" | "manual";
 
 export interface GridraTabsItem {
@@ -66,6 +67,7 @@ export function useGridraTabs<TItem extends GridraTabsItem>({
   );
 
   const fallbackId = enabledIds[0] ?? "";
+
   const resolve = (id: string) => (enabledIds.includes(id) ? id : fallbackId);
 
   const [rawSelectedId, setRawSelectedId] = useControllableValue(
