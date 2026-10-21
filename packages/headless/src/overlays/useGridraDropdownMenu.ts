@@ -1,9 +1,21 @@
-import {useEffect,useId,useMemo,useRef,useState,type ReactNode,type HTMLAttributes,type ButtonHTMLAttributes,type KeyboardEvent,type Ref} from "react";
-import {useControllableValue} from "../useControllableValue";
-import {composeHandlers} from "../internal/composeHandlers";
-import {mergeRefs} from "../internal/mergeRefs";
-import {useFloatingPosition} from "../internal/useFloatingPosition";
-import {clampIndex} from "@gridra-ui/core";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type HTMLAttributes,
+  type ButtonHTMLAttributes,
+  type KeyboardEvent,
+  type Ref,
+} from "react";
+import { useControllableValue } from "../useControllableValue";
+import { composeHandlers } from "../internal/composeHandlers";
+import { mergeRefs } from "../internal/mergeRefs";
+import { useFloatingPosition } from "../internal/useFloatingPosition";
+import { clampIndex } from "@gridra-ui/core";
+
 export type GridraDropdownMenuCommandItem = {
   id: string;
   label: ReactNode;
@@ -17,20 +29,42 @@ export type GridraDropdownMenuSeparatorItem = {
 };
 
 export type GridraDropdownMenuItem =
-  | GridraDropdownMenuCommandItem
-  | GridraDropdownMenuSeparatorItem;
+  GridraDropdownMenuCommandItem | GridraDropdownMenuSeparatorItem;
 
+export interface UseGridraDropdownMenuOptions {
+  items: GridraDropdownMenuItem[];
+  onAction?: (id: string) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (next: boolean, previous: boolean) => void;
+  disabled?: boolean;
+  placement?: "top" | "right" | "bottom" | "left";
+  offset?: number;
+  closeOnEscape?: boolean;
+  closeOnOutsidePointerDown?: boolean;
+  closeOnAction?: boolean;
+}
 
-export interface UseGridraDropdownMenuOptions {items:GridraDropdownMenuItem[];onAction?:(id:string)=>void;open?:boolean;defaultOpen?:boolean;onOpenChange?:(next:boolean,previous:boolean)=>void;disabled?:boolean;placement?:"top"|"right"|"bottom"|"left";offset?:number;closeOnEscape?:boolean;closeOnOutsidePointerDown?:boolean;closeOnAction?:boolean}
 function isCommand(
   item: GridraDropdownMenuItem,
 ): item is GridraDropdownMenuCommandItem {
   return !("type" in item) || item.type !== "separator";
 }
 
-
 /** メニューの開閉・項目操作とキーボードフォーカスを共有する。 */
-export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onOpenChange,disabled=false,placement="bottom",offset=0,closeOnEscape=true,closeOnOutsidePointerDown=true,closeOnAction=true}:UseGridraDropdownMenuOptions){
+export function useGridraDropdownMenu({
+  items,
+  onAction,
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  disabled = false,
+  placement = "bottom",
+  offset = 0,
+  closeOnEscape = true,
+  closeOnOutsidePointerDown = true,
+  closeOnAction = true,
+}: UseGridraDropdownMenuOptions) {
   const triggerRef = useRef<HTMLElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
@@ -66,6 +100,7 @@ export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onO
     if (disabled) {
       return;
     }
+
     setCurrentOpen(true);
     setActiveIndex(0);
   };
@@ -87,10 +122,12 @@ export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onO
     if (disabled) {
       return;
     }
+
     const item = commandItems.find((c) => c.id === id);
     if (!item || item.disabled) {
       return;
     }
+
     onAction?.(id);
     if (closeOnAction) {
       close();
@@ -116,16 +153,17 @@ export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onO
     if (enabledIds.length === 0) {
       return;
     }
+
     const firstId = enabledIds[0];
     const el = itemRefs.current.get(firstId);
     el?.focus();
-
   }, [currentOpen, JSON.stringify(enabledIds)]);
 
   const focusItemByIndex = (index: number) => {
     if (enabledIds.length === 0) {
       return;
     }
+
     const clamped = clampIndex(index, enabledIds.length);
     setActiveIndex(clamped);
     const id = enabledIds[clamped];
@@ -149,6 +187,7 @@ export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onO
       if (!closeOnOutsidePointerDown) {
         return;
       }
+
       const target = event.target as Node | null;
       if (
         target &&
@@ -161,6 +200,7 @@ export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onO
 
     document.addEventListener("keydown", handleEscape);
     document.addEventListener("pointerdown", handleOutsidePointerDown, true);
+
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener(
@@ -185,6 +225,7 @@ export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onO
         focusItemByIndex(nextIndex);
         break;
       }
+
       case "ArrowUp": {
         event.preventDefault();
         const prevIndex =
@@ -192,16 +233,19 @@ export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onO
         focusItemByIndex(prevIndex);
         break;
       }
+
       case "Home": {
         event.preventDefault();
         focusItemByIndex(0);
         break;
       }
+
       case "End": {
         event.preventDefault();
         focusItemByIndex(enabledIds.length - 1);
         break;
       }
+
       case "Enter":
       case " ": {
         event.preventDefault();
@@ -209,12 +253,15 @@ export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onO
         if (activeId) {
           activateItem(activeId);
         }
+
         break;
       }
+
       case "Tab": {
         close();
         break;
       }
+
       default:
         handled = false;
     }
@@ -237,44 +284,114 @@ export function useGridraDropdownMenu({items,onAction,open,defaultOpen=false,onO
         if (!currentOpen) {
           openMenu();
         }
+
         break;
       }
+
       case "ArrowUp": {
         event.preventDefault();
         if (!currentOpen) {
           openMenu();
           setActiveIndex(enabledIds.length > 0 ? enabledIds.length - 1 : 0);
         }
+
         break;
       }
+
       default:
         break;
     }
   };
 
+  const getTriggerProps = <T extends HTMLElement = HTMLButtonElement>(
+    props: HTMLAttributes<T> & { ref?: Ref<T> } = {},
+  ) => ({
+    ...props,
+    "aria-controls": !disabled && currentOpen ? menuId : undefined,
+    "aria-expanded": !disabled ? currentOpen : undefined,
+    "aria-haspopup": "menu" as const,
+    onClick: composeHandlers(props.onClick, toggleOpen),
+    onKeyDown: composeHandlers(props.onKeyDown, handleTriggerKeyDown),
+    ref: mergeRefs(props.ref, (element: T | null) => {
+      triggerRef.current = element;
+    }),
+  });
 
-const getTriggerProps=<T extends HTMLElement=HTMLButtonElement>(props:HTMLAttributes<T>&{ref?:Ref<T>}={})=>({...props,"aria-controls":!disabled&&currentOpen?menuId:undefined,"aria-expanded":!disabled?currentOpen:undefined,"aria-haspopup":"menu" as const,onClick:composeHandlers(props.onClick,toggleOpen),onKeyDown:composeHandlers(props.onKeyDown,handleTriggerKeyDown),ref:mergeRefs(props.ref,(element:T|null)=>{triggerRef.current=element;})});
-const getMenuProps=(props:HTMLAttributes<HTMLDivElement>&{ref?:Ref<HTMLDivElement>}={})=>({...props,id:menuId,role:"menu" as const,onKeyDown:composeHandlers(props.onKeyDown,handleMenuKeyDown),ref:mergeRefs(props.ref,(element:HTMLDivElement|null)=>{menuRef.current=element;}),style:{...props.style,position:"fixed" as const,top:coords.top,left:coords.left}});
-const getItemProps=(id:string,props:ButtonHTMLAttributes<HTMLButtonElement>&{ref?:Ref<HTMLButtonElement>}={}):ButtonHTMLAttributes<HTMLButtonElement>&{ref?:Ref<HTMLButtonElement>}=>{const item=commandItems.find(item=>item.id===id)??{id,label:null,disabled:true};const isActive=enabledIds[safeActiveIndex]===item.id;return {...props,"disabled": item.disabled,
-"id": item.id,
-"onClick": composeHandlers(props.onClick, () => activateItem(item.id)),
-"onMouseEnter": composeHandlers(props.onMouseEnter, () => {
-                      if (!item.disabled) {
-                        const idx = enabledIds.indexOf(item.id);
-                        if (idx !== -1) {
-                          setActiveIndex(idx);
-                        }
-                      }
-                    }),
-"ref": mergeRefs<HTMLButtonElement>(props.ref,(el) => {
-                      if (el) {
-                        itemRefs.current.set(item.id, el);
-                      } else {
-                        itemRefs.current.delete(item.id);
-                      }
-                    }),
-"role": "menuitem",
-"tabIndex": isActive ? 0 : -1,
-"type": "button"};};
-return {currentOpen,portalMounted,triggerRef,menuRef,menuId,coords,resolvedPlacement,enabledIds,safeActiveIndex,handleMenuKeyDown,isCommand,getTriggerProps,getMenuProps,getItemProps,activateItem,close};
+  const getMenuProps = (
+    props: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> } = {},
+  ) => ({
+    ...props,
+    id: menuId,
+    role: "menu" as const,
+    onKeyDown: composeHandlers(props.onKeyDown, handleMenuKeyDown),
+    ref: mergeRefs(props.ref, (element: HTMLDivElement | null) => {
+      menuRef.current = element;
+    }),
+    style: {
+      ...props.style,
+      position: "fixed" as const,
+      top: coords.top,
+      left: coords.left,
+    },
+  });
+
+  const getItemProps = (
+    id: string,
+    props: ButtonHTMLAttributes<HTMLButtonElement> & {
+      ref?: Ref<HTMLButtonElement>;
+    } = {},
+  ): ButtonHTMLAttributes<HTMLButtonElement> & {
+    ref?: Ref<HTMLButtonElement>;
+  } => {
+    const item = commandItems.find((item) => item.id === id) ?? {
+      id,
+      label: null,
+      disabled: true,
+    };
+    const isActive = enabledIds[safeActiveIndex] === item.id;
+
+    return {
+      ...props,
+      "disabled": item.disabled,
+      "id": item.id,
+      "onClick": composeHandlers(props.onClick, () => activateItem(item.id)),
+      "onMouseEnter": composeHandlers(props.onMouseEnter, () => {
+        if (!item.disabled) {
+          const idx = enabledIds.indexOf(item.id);
+          if (idx !== -1) {
+            setActiveIndex(idx);
+          }
+        }
+      }),
+      "ref": mergeRefs<HTMLButtonElement>(props.ref, (el) => {
+        if (el) {
+          itemRefs.current.set(item.id, el);
+        } else {
+          itemRefs.current.delete(item.id);
+        }
+      }),
+      "role": "menuitem",
+      "tabIndex": isActive ? 0 : -1,
+      "type": "button",
+    };
+  };
+
+  return {
+    currentOpen,
+    portalMounted,
+    triggerRef,
+    menuRef,
+    menuId,
+    coords,
+    resolvedPlacement,
+    enabledIds,
+    safeActiveIndex,
+    handleMenuKeyDown,
+    isCommand,
+    getTriggerProps,
+    getMenuProps,
+    getItemProps,
+    activateItem,
+    close,
+  };
 }

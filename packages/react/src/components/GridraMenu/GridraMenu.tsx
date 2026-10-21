@@ -11,6 +11,7 @@ import { cx } from "../../internal/classNames";
 import { clampIndex } from "@gridra-ui/core";
 
 export type GridraMenuOrientation = "vertical" | "horizontal";
+
 export type GridraMenuSize = "sm" | "md" | "lg";
 
 export interface GridraMenuCommandItem {
@@ -41,9 +42,15 @@ export interface GridraMenuProps extends HTMLAttributes<HTMLElement> {
   items: GridraMenuItem[];
   activeId?: string;
   defaultActiveId?: string;
-  onActiveIdChange?: (nextId: string | undefined, previousId: string | undefined) => void;
+  onActiveIdChange?: (
+    nextId: string | undefined,
+    previousId: string | undefined,
+  ) => void;
   onAction?: (id: string) => void;
-  renderItem?: (item: GridraMenuCommandItem, state: GridraMenuItemState) => ReactNode;
+  renderItem?: (
+    item: GridraMenuCommandItem,
+    state: GridraMenuItemState,
+  ) => ReactNode;
   orientation?: GridraMenuOrientation;
   size?: GridraMenuSize;
 }
@@ -65,7 +72,14 @@ export function GridraMenu({
   size = "md",
   ...props
 }: GridraMenuProps) {
-  const {safeActiveId,getRootProps,getItemProps} = useGridraMenu({items,activeId,defaultActiveId,onActiveIdChange,onAction,orientation});
+  const { safeActiveId, getRootProps, getItemProps } = useGridraMenu({
+    items,
+    activeId,
+    defaultActiveId,
+    onActiveIdChange,
+    onAction,
+    orientation,
+  });
   const rootClassName = cx(
     "gridra-menu",
     `gridra-menu--${orientation}`,

@@ -1,18 +1,13 @@
-import {getGridraProgress} from "@gridra-ui/headless";
+import { getGridraProgress } from "@gridra-ui/headless";
 import type { HTMLAttributes } from "react";
 import { clampNumber } from "@gridra-ui/core";
 
 export type GridraProgressSize = "sm" | "md" | "lg";
-export type GridraProgressTone =
-  | "default"
-  | "muted"
-  | "accent"
-  | "success"
-  | "warning"
-  | "danger";
 
-export interface GridraProgressProps
-  extends HTMLAttributes<HTMLDivElement> {
+export type GridraProgressTone =
+  "default" | "muted" | "accent" | "success" | "warning" | "danger";
+
+export interface GridraProgressProps extends HTMLAttributes<HTMLDivElement> {
   label?: string;
   max?: number;
   size?: GridraProgressSize;
@@ -29,7 +24,11 @@ export function GridraProgress({
   value,
   ...props
 }: GridraProgressProps) {
-  const {isIndeterminate,percent,rootProps}=getGridraProgress({value,max,label});
+  const { isIndeterminate, percent, rootProps } = getGridraProgress({
+    value,
+    max,
+    label,
+  });
 
   const rootClassName = [
     "gridra-progress",
@@ -43,16 +42,10 @@ export function GridraProgress({
 
   // indeterminate時は、確定値を示すARIA属性を公開しない。
   return (
-    <div
-      className={rootClassName}
-      {...rootProps}
-      {...props}
-    >
+    <div className={rootClassName} {...rootProps} {...props}>
       <div
         className="gridra-progress__fill"
-        style={
-          isIndeterminate ? undefined : { width: `${percent}%` }
-        }
+        style={isIndeterminate ? undefined : { width: `${percent}%` }}
       />
     </div>
   );
