@@ -1,3 +1,4 @@
+import { useGridraPopover } from "@gridra-ui/headless";
 import { useGridraSplitPane } from "@gridra-ui/headless";
 import { useGridraSidebar } from "@gridra-ui/headless";
 import { useGridraTreeView } from "@gridra-ui/headless";
@@ -2228,6 +2229,19 @@ function ExampleHeadlessGridraSplitPane() {
   );
 }
 
+function ExampleHeadlessGridraPopover() {
+  const popover = useGridraPopover();
+
+  return (
+    <section>
+      <button {...popover.getTriggerProps()}>Open custom popover</button>
+      {popover.currentOpen ? (
+        <div {...popover.getContentProps()}>Custom popover content</div>
+      ) : null}
+    </section>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2496,4 +2510,9 @@ examplePreviews["GridraSidebar"] = {
 examplePreviews["GridraSplitPane"] = {
   ...examplePreviews["GridraSplitPane"],
   "Custom markup with headless hook": <ExampleHeadlessGridraSplitPane />,
+};
+
+examplePreviews["GridraPopover"] = {
+  ...examplePreviews["GridraPopover"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraPopover />,
 };

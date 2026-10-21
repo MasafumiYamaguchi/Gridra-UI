@@ -267,3 +267,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraSplitPane` from `@gridra-ui/headless` for custom markup. The existing
 `GridraSplitPane` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraPopover
+
+Import `useGridraPopover` from `@gridra-ui/headless` for custom markup. The existing
+`GridraPopover` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

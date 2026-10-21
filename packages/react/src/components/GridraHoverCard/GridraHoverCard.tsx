@@ -21,10 +21,11 @@ import { composeHandlers } from "@gridra-ui/headless";
 import { mergeRefs } from "@gridra-ui/headless";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
-import { useDocumentEvent } from "../../internal/useDocumentEvent";
-import { useFloatingPosition } from "../../internal/useFloatingPosition";
+import { useDocumentEvent } from "@gridra-ui/headless";
+import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraHoverCardPlacement = "top" | "right" | "bottom" | "left";
+
 export type GridraHoverCardSize = "sm" | "md" | "lg";
 
 // HTML属性とぶつかるcontent/children/onChangeは、anchor・card内容・開閉状態の意味に合わせて独自定義する。
@@ -52,7 +53,9 @@ export interface GridraHoverCardProps extends Omit<
 }
 
 const HOVER_CARD_OFFSET = 4;
+
 const DEFAULT_SHOW_DELAY = 120;
+
 const DEFAULT_HIDE_DELAY = 120;
 
 export function GridraHoverCard({
@@ -80,6 +83,7 @@ export function GridraHoverCard({
   // childrenが有効なReact要素でない場合は何もレンダリングしない
   if (!isValidElement(children)) {
     console.warn("GridraHoverCard: children must be a valid React element.");
+
     return null;
   }
 
@@ -104,6 +108,7 @@ export function GridraHoverCard({
       window.clearTimeout(showTimerRef.current);
       showTimerRef.current = null;
     }
+
     if (hideTimerRef.current !== null) {
       window.clearTimeout(hideTimerRef.current);
       hideTimerRef.current = null;
@@ -114,6 +119,7 @@ export function GridraHoverCard({
   // SSR 時や初回レンダリング時に document へアクセスしないようにする。
   useEffect(() => {
     setPortalMounted(true);
+
     return clearTimers;
   }, [clearTimers]);
 
@@ -132,6 +138,7 @@ export function GridraHoverCard({
     if (disabled) {
       return;
     }
+
     clearTimers();
     showTimerRef.current = window.setTimeout(
       () => {
@@ -187,6 +194,7 @@ export function GridraHoverCard({
     if (!(target instanceof Node)) {
       return false;
     }
+
     return (
       anchorRef.current?.contains(target) === true ||
       cardRef.current?.contains(target) === true
@@ -198,8 +206,10 @@ export function GridraHoverCard({
     (event: ReactFocusEvent<HTMLElement>) => {
       if (isWithinHoverCard(event.relatedTarget)) {
         cancelHide();
+
         return;
       }
+
       startHide();
     },
     [cancelHide, isWithinHoverCard, startHide],
@@ -209,8 +219,10 @@ export function GridraHoverCard({
     (event: ReactFocusEvent<HTMLDivElement>) => {
       if (isWithinHoverCard(event.relatedTarget)) {
         cancelHide();
+
         return;
       }
+
       startHide();
     },
     [cancelHide, isWithinHoverCard, startHide],
@@ -224,26 +236,22 @@ export function GridraHoverCard({
     "aria-haspopup": "dialog",
     onBlur: composeHandlers(
       children.props.onBlur as
-        | ((event: ReactFocusEvent<HTMLElement>) => void)
-        | undefined,
+        ((event: ReactFocusEvent<HTMLElement>) => void) | undefined,
       handleAnchorBlur,
     ),
     onFocus: composeHandlers(
       children.props.onFocus as
-        | ((event: ReactFocusEvent<HTMLElement>) => void)
-        | undefined,
+        ((event: ReactFocusEvent<HTMLElement>) => void) | undefined,
       startShow,
     ),
     onMouseEnter: composeHandlers(
       children.props.onMouseEnter as
-        | ((event: ReactMouseEvent<HTMLElement>) => void)
-        | undefined,
+        ((event: ReactMouseEvent<HTMLElement>) => void) | undefined,
       startShow,
     ),
     onMouseLeave: composeHandlers(
       children.props.onMouseLeave as
-        | ((event: ReactMouseEvent<HTMLElement>) => void)
-        | undefined,
+        ((event: ReactMouseEvent<HTMLElement>) => void) | undefined,
       startHide,
     ),
     // children が元々持っている ref を壊さず、内部でも anchor 要素を参照できるようにする。
@@ -255,7 +263,11 @@ export function GridraHoverCard({
     ),
   };
 
-  const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
+  const portalTheme = useGridraPortalTheme(
+    anchorRef,
+    undefined,
+    currentOpen && !disabled && portalMounted,
+  );
   const cardClassName = cx(
     "gridra-portal-root",
     portalTheme.className,
