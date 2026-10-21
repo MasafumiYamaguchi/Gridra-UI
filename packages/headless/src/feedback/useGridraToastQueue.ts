@@ -1,4 +1,13 @@
-import {createContext,useCallback,useContext,useEffect,useRef,useState,type ReactNode} from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+
 export interface GridraToastOptions {
   duration?: number;
   id?: string;
@@ -17,12 +26,15 @@ export interface QueuedToast {
 }
 
 const DEFAULT_DURATION = 3000;
+
 const DEFAULT_ROLE = "status";
 
 let nextId = 0;
 
 // Provider配下の任意の子孫から、Toast表示関数だけを参照できるようにする。
-export const GridraToastContext = createContext<GridraToastContextValue | null>(null);
+export const GridraToastContext = createContext<GridraToastContextValue | null>(
+  null,
+);
 
 export function useToast(): GridraToastContextValue {
   const context = useContext(GridraToastContext);
@@ -30,12 +42,14 @@ export function useToast(): GridraToastContextValue {
   if (!context) {
     throw new Error("useToast must be used within a <GridraToastProvider>");
   }
+
   return context;
 }
 
-
 /** 表示キューとタイマーを管理する。終了遷移の時間は描画側が指定する。 */
-export function useGridraToastQueue({exitDuration=0}:{exitDuration?:number}={}){
+export function useGridraToastQueue({
+  exitDuration = 0,
+}: { exitDuration?: number } = {}) {
   const [currentToast, setCurrentToast] = useState<QueuedToast | null>(null);
   const [exiting, setExiting] = useState(false);
   // 待機キューとタイマーは再描画の対象ではないためrefで保持する。
@@ -44,7 +58,6 @@ export function useGridraToastQueue({exitDuration=0}:{exitDuration?:number}={}){
   const exitTimerRef = useRef<number | null>(null);
   // show内から最新の表示有無を同期的に判定するため、stateと同じ値をrefにも持つ。
   const currentRef = useRef<QueuedToast | null>(null);
-
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {
@@ -86,9 +99,11 @@ export function useGridraToastQueue({exitDuration=0}:{exitDuration?:number}={}){
     if (!currentToast) {
       return;
     }
+
     timerRef.current = window.setTimeout(() => {
       beginExit();
     }, currentToast.options.duration);
+
     return clearTimer;
   }, [currentToast, beginExit, clearTimer]);
 
@@ -125,6 +140,5 @@ export function useGridraToastQueue({exitDuration=0}:{exitDuration?:number}={}){
     [],
   );
 
-
-return {currentToast,exiting,show,dismiss:beginExit};
+  return { currentToast, exiting, show, dismiss: beginExit };
 }

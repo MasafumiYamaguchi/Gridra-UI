@@ -53,11 +53,21 @@ export function GridraTreeView({
   size = "md",
   ...props
 }: GridraTreeViewProps) {
-  const {baseId,flatItems,focusedId,expandedSet,getRowProps}=useGridraTreeView({items,expandedIds:expandedIdsProp,defaultExpandedIds,onExpandedIdsChange,onItemClick});
+  const { baseId, flatItems, focusedId, expandedSet, getRowProps } =
+    useGridraTreeView({
+      items,
+      expandedIds: expandedIdsProp,
+      defaultExpandedIds,
+      onExpandedIdsChange,
+      onItemClick,
+    });
   if (items.length === 0) {
     // 空の場合はtree roleを作らず、任意のemptyStateだけを表示する。
     return (
-      <div {...props} className={["gridra-tree-view", className].filter(Boolean).join(" ")}>
+      <div
+        {...props}
+        className={["gridra-tree-view", className].filter(Boolean).join(" ")}
+      >
         {emptyState != null ? (
           <div className="gridra-tree-view__empty">{emptyState}</div>
         ) : null}
@@ -65,7 +75,13 @@ export function GridraTreeView({
     );
   }
 
-  const rootClassName = ["gridra-tree-view", `gridra-tree-view--${size}`, className].filter(Boolean).join(" ");
+  const rootClassName = [
+    "gridra-tree-view",
+    `gridra-tree-view--${size}`,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div {...props} className={rootClassName}>
@@ -73,7 +89,8 @@ export function GridraTreeView({
         {flatItems.map(({ item, depth, hasChildren, key }) => {
           // disabled項目は表示に残すが、フォーカス・クリック・展開の対象外にする。
           const isDisabled = item.disabled ?? false;
-          const isExpanded = !isDisabled && hasChildren && expandedSet.has(item.id);
+          const isExpanded =
+            !isDisabled && hasChildren && expandedSet.has(item.id);
           const isFocused = focusedId === item.id;
           const groupId = `${baseId}-group-${key}`;
           const itemContent = renderItem ? (
@@ -93,21 +110,36 @@ export function GridraTreeView({
               key={key}
               aria-expanded={hasChildren ? isExpanded : undefined}
               aria-level={depth + 1}
-              className={["gridra-tree-view__item", isDisabled ? "gridra-tree-view__item--disabled" : null].filter(Boolean).join(" ")}
+              className={[
+                "gridra-tree-view__item",
+                isDisabled ? "gridra-tree-view__item--disabled" : null,
+              ]
+                .filter(Boolean)
+                .join(" ")}
               role="treeitem"
             >
               <div
-                {...getRowProps(item, hasChildren)} className={["gridra-tree-view__row", isFocused ? "gridra-tree-view__row--focused" : null].filter(Boolean).join(" ")}
-
-
-
-
+                {...getRowProps(item, hasChildren)}
+                className={[
+                  "gridra-tree-view__row",
+                  isFocused ? "gridra-tree-view__row--focused" : null,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
               >
-                <span className="gridra-tree-view__indent" style={{ width: depth * 16 }} />
+                <span
+                  className="gridra-tree-view__indent"
+                  style={{ width: depth * 16 }}
+                />
                 {hasChildren ? (
                   <span
                     aria-hidden="true"
-                    className={["gridra-tree-view__chevron", isExpanded ? "gridra-tree-view__chevron--expanded" : null].filter(Boolean).join(" ")}
+                    className={[
+                      "gridra-tree-view__chevron",
+                      isExpanded ? "gridra-tree-view__chevron--expanded" : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
                   />
                 ) : (
                   <span className="gridra-tree-view__chevron-spacer" />
