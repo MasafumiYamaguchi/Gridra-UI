@@ -1,5 +1,5 @@
-import {useGridraContextMenu} from "@gridra-ui/headless";
-import type {Ref} from "react";
+import { useGridraContextMenu } from "@gridra-ui/headless";
+import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
@@ -71,10 +71,46 @@ export function GridraContextMenu({
   style,
   ...props
 }: GridraContextMenuProps) {
-  const {currentOpen,portalMounted,targetRef,menuRef,menuId,coords,enabledIds,safeActiveIndex,handleMenuKeyDown,isCommand,getTargetProps,getItemProps}=useGridraContextMenu({items,onAction,open,defaultOpen,onOpenChange,disabled,closeOnEscape,closeOnOutsidePointerDown,closeOnAction});
-  const triggerElement=children;
-  const targetProps=getTargetProps<HTMLElement>(isValidElement(children)?{...children.props,ref:(children.props.ref as Ref<HTMLElement>|undefined)??(children as ReactElement&{ref?:Ref<HTMLElement>}).ref}:{});
-  const portalTheme = useGridraPortalTheme(targetRef, undefined, currentOpen && !disabled && portalMounted);
+  const {
+    currentOpen,
+    portalMounted,
+    targetRef,
+    menuRef,
+    menuId,
+    coords,
+    enabledIds,
+    safeActiveIndex,
+    handleMenuKeyDown,
+    isCommand,
+    getTargetProps,
+    getItemProps,
+  } = useGridraContextMenu({
+    items,
+    onAction,
+    open,
+    defaultOpen,
+    onOpenChange,
+    disabled,
+    closeOnEscape,
+    closeOnOutsidePointerDown,
+    closeOnAction,
+  });
+  const triggerElement = children;
+  const targetProps = getTargetProps<HTMLElement>(
+    isValidElement(children)
+      ? {
+          ...children.props,
+          ref:
+            (children.props.ref as Ref<HTMLElement> | undefined) ??
+            (children as ReactElement & { ref?: Ref<HTMLElement> }).ref,
+        }
+      : {},
+  );
+  const portalTheme = useGridraPortalTheme(
+    targetRef,
+    undefined,
+    currentOpen && !disabled && portalMounted,
+  );
   const menuClassName = cx(
     "gridra-portal-root",
     portalTheme.className,
@@ -142,7 +178,8 @@ export function GridraContextMenu({
 
                 return (
                   <button
-                    {...getItemProps(item.id)} className={cx(
+                    {...getItemProps(item.id)}
+                    className={cx(
                       "gridra-dropdown-menu__item",
                       item.disabled && "gridra-dropdown-menu__item--disabled",
                       item.destructive &&
@@ -151,12 +188,6 @@ export function GridraContextMenu({
                     )}
 
                     key={item.id}
-
-
-
-
-
-
                   >
                     <span className="gridra-dropdown-menu__item-label">
                       {item.label}

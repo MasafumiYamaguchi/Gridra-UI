@@ -6,18 +6,25 @@ export interface GridraSelectableGridItem extends GridraSelectableItem {
   label?: ReactNode;
 }
 
-export interface GridraSelectableGridProps<TItem extends GridraSelectableGridItem = GridraSelectableGridItem> {
+export interface GridraSelectableGridProps<
+  TItem extends GridraSelectableGridItem = GridraSelectableGridItem,
+> {
   items: TItem[];
   selectedId?: GridraId | null;
   defaultSelectedId?: GridraId | null;
   columns?: number | string;
   className?: string;
   emptyState?: ReactNode;
-  onSelectionChange?: (selectedId: GridraId | null, previousSelectedId: GridraId | null) => void;
+  onSelectionChange?: (
+    selectedId: GridraId | null,
+    previousSelectedId: GridraId | null,
+  ) => void;
   renderItem?: (item: TItem, state: { selected: boolean }) => ReactNode;
 }
 
-export function GridraSelectableGrid<TItem extends GridraSelectableGridItem = GridraSelectableGridItem>({
+export function GridraSelectableGrid<
+  TItem extends GridraSelectableGridItem = GridraSelectableGridItem,
+>({
   className,
   columns = "repeat(auto-fill, minmax(160px, 1fr))",
   defaultSelectedId = null,
@@ -25,12 +32,20 @@ export function GridraSelectableGrid<TItem extends GridraSelectableGridItem = Gr
   items,
   onSelectionChange,
   renderItem,
-  selectedId
+  selectedId,
 }: GridraSelectableGridProps<TItem>) {
-  const grid = useGridraSelectableGrid({ items, selectedId, defaultSelectedId, onSelectionChange });
+  const grid = useGridraSelectableGrid({
+    items,
+    selectedId,
+    defaultSelectedId,
+    onSelectionChange,
+  });
   const currentSelectedId = grid.selectedId;
   // 数値は等分列へ変換し、文字列なら利用側が指定したCSS Grid定義をそのまま使う。
-  const gridTemplateColumns = typeof columns === "number" ? `repeat(${columns}, minmax(0, 1fr))` : columns;
+  const gridTemplateColumns =
+    typeof columns === "number"
+      ? `repeat(${columns}, minmax(0, 1fr))`
+      : columns;
   const gridClassName = ["gridra-grid", className].filter(Boolean).join(" ");
 
   if (items.length === 0) {
@@ -54,7 +69,9 @@ export function GridraSelectableGrid<TItem extends GridraSelectableGridItem = Gr
             key={item.id}
             type="button"
           >
-            {renderItem ? renderItem(item, { selected }) : item.label ?? item.id}
+            {renderItem
+              ? renderItem(item, { selected })
+              : (item.label ?? item.id)}
           </button>
         );
       })}

@@ -4,8 +4,10 @@ import { resolveAriaInvalid } from "@gridra-ui/headless";
 
 export type GridraSwitchSize = "sm" | "md" | "lg";
 
-export interface GridraSwitchProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "role"> {
+export interface GridraSwitchProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "role"
+> {
   checked?: boolean;
   description?: ReactNode;
   invalid?: boolean;
@@ -58,7 +60,9 @@ export function GridraSwitch({
       {label || description ? (
         <span className="gridra-switch__content">
           {label ? <span className="gridra-switch__label">{label}</span> : null}
-          {description ? <span className="gridra-switch__description">{description}</span> : null}
+          {description ? (
+            <span className="gridra-switch__description">{description}</span>
+          ) : null}
         </span>
       ) : null}
     </button>
