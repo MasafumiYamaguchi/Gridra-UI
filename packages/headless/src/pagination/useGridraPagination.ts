@@ -1,4 +1,10 @@
-import { useCallback, useMemo, useState, type ChangeEvent, type HTMLAttributes } from "react";
+import {
+  useCallback,
+  useMemo,
+  useState,
+  type ChangeEvent,
+  type HTMLAttributes,
+} from "react";
 import {
   generatePages,
   normalizePage,
@@ -7,7 +13,6 @@ import {
   normalizeSiblingOrBoundaryCount,
   normalizeTotalItems,
 } from "./paginationUtils";
-
 
 export interface UseGridraPaginationOptions {
   page?: number;
@@ -22,19 +27,40 @@ export interface UseGridraPaginationOptions {
   boundaryCount?: number;
   disabled?: boolean;
 }
+
 const DEFAULT_PAGE = 1;
+
 const DEFAULT_PAGE_SIZE = 25;
+
 const DEFAULT_SIBLING_COUNT = 1;
+
 const DEFAULT_BOUNDARY_COUNT = 1;
 
-
 /** ページ計算と更新規則を共有し、ナビゲーションの描画は利用側が決める。 */
-export function useGridraPagination({page: pageProp, defaultPage: defaultPageProp, onPageChange, pageSize: pageSizeProp, defaultPageSize: defaultPageSizeProp, onPageSizeChange, totalItems: totalItemsRaw, pageSizeOptions: pageSizeOptionsRaw, siblingCount: siblingCountRaw, boundaryCount: boundaryCountRaw, disabled = false}: UseGridraPaginationOptions = {}) {
+export function useGridraPagination({
+  page: pageProp,
+  defaultPage: defaultPageProp,
+  onPageChange,
+  pageSize: pageSizeProp,
+  defaultPageSize: defaultPageSizeProp,
+  onPageSizeChange,
+  totalItems: totalItemsRaw,
+  pageSizeOptions: pageSizeOptionsRaw,
+  siblingCount: siblingCountRaw,
+  boundaryCount: boundaryCountRaw,
+  disabled = false,
+}: UseGridraPaginationOptions = {}) {
   // 外部入力を先に正規化し、以降のページ計算を有限の正数だけで行う。
   const totalItems = normalizeTotalItems(totalItemsRaw);
   const pageSizeOptions = normalizePageSizeOptions(pageSizeOptionsRaw);
-  const siblingCount = normalizeSiblingOrBoundaryCount(siblingCountRaw, DEFAULT_SIBLING_COUNT);
-  const boundaryCount = normalizeSiblingOrBoundaryCount(boundaryCountRaw, DEFAULT_BOUNDARY_COUNT);
+  const siblingCount = normalizeSiblingOrBoundaryCount(
+    siblingCountRaw,
+    DEFAULT_SIBLING_COUNT,
+  );
+  const boundaryCount = normalizeSiblingOrBoundaryCount(
+    boundaryCountRaw,
+    DEFAULT_BOUNDARY_COUNT,
+  );
 
   const [uncontrolledPageSize, setUncontrolledPageSize] = useState(() =>
     normalizePageSize(defaultPageSizeProp ?? DEFAULT_PAGE_SIZE),
@@ -91,6 +117,7 @@ export function useGridraPagination({page: pageProp, defaultPage: defaultPagePro
   const goToPage = useCallback(
     (nextPage: number) => {
       if (disabled) return;
+
       const next = normalizePage(nextPage, pageCount);
       if (Object.is(next, currentPage)) return;
 
@@ -109,7 +136,8 @@ export function useGridraPagination({page: pageProp, defaultPage: defaultPagePro
     [currentPage, pageCount, siblingCount, boundaryCount],
   );
 
-  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * currentPageSize + 1;
+  const startItem =
+    totalItems === 0 ? 0 : (currentPage - 1) * currentPageSize + 1;
   const endItem = Math.min(currentPage * currentPageSize, totalItems);
 
   // controlledな値が候補にない場合も、selectの現在値として表示できるよう補完する。
@@ -117,7 +145,22 @@ export function useGridraPagination({page: pageProp, defaultPage: defaultPagePro
     ? pageSizeOptions
     : [...pageSizeOptions, currentPageSize].sort((a, b) => a - b);
 
+  const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>) =>
+    setPageSize(Number(event.target.value));
 
- const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>) => setPageSize(Number(event.target.value));
- return { currentPage, currentPageSize, totalItems, pageCount, isFirstPage, isLastPage, handlePageSizeChange, setPageSize, goToPage, pages, startItem, endItem, pageSizeOptionValues };
+  return {
+    currentPage,
+    currentPageSize,
+    totalItems,
+    pageCount,
+    isFirstPage,
+    isLastPage,
+    handlePageSizeChange,
+    setPageSize,
+    goToPage,
+    pages,
+    startItem,
+    endItem,
+    pageSizeOptionValues,
+  };
 }

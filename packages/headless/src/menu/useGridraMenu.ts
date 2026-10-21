@@ -1,9 +1,18 @@
-import { useMemo,useRef,type ReactNode,type KeyboardEvent,type HTMLAttributes,type Ref } from "react";
+import {
+  useMemo,
+  useRef,
+  type ReactNode,
+  type KeyboardEvent,
+  type HTMLAttributes,
+  type Ref,
+} from "react";
 import { useControllableValue } from "../useControllableValue";
 import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
-import {clampIndex} from "@gridra-ui/core";
-export type GridraMenuOrientation="vertical"|"horizontal";
+import { clampIndex } from "@gridra-ui/core";
+
+export type GridraMenuOrientation = "vertical" | "horizontal";
+
 export interface GridraMenuCommandItem {
   id: string;
   label: ReactNode;
@@ -28,8 +37,18 @@ export interface GridraMenuItemState {
   orientation: GridraMenuOrientation;
 }
 
+export interface UseGridraMenuOptions {
+  items: GridraMenuItem[];
+  activeId?: string;
+  defaultActiveId?: string;
+  onActiveIdChange?: (
+    next: string | undefined,
+    previous: string | undefined,
+  ) => void;
+  onAction?: (id: string) => void;
+  orientation?: GridraMenuOrientation;
+}
 
-export interface UseGridraMenuOptions {items:GridraMenuItem[];activeId?:string;defaultActiveId?:string;onActiveIdChange?:(next:string|undefined,previous:string|undefined)=>void;onAction?:(id:string)=>void;orientation?:GridraMenuOrientation}
 function isCommand(item: GridraMenuItem): item is GridraMenuCommandItem {
   return !("type" in item) || item.type !== "separator";
 }
@@ -40,14 +59,22 @@ function normalizeActiveId(
   commandItems: GridraMenuCommandItem[],
 ): string | undefined {
   if (requestedId == null) return undefined;
+
   const item = commandItems.find((c) => c.id === requestedId);
   if (!item || item.disabled) return undefined;
+
   return requestedId;
 }
 
-
 /** ナビゲーション項目の選択とフォーカスを管理する。 */
-export function useGridraMenu({items,activeId,defaultActiveId,onActiveIdChange,onAction,orientation="vertical"}:UseGridraMenuOptions){
+export function useGridraMenu({
+  items,
+  activeId,
+  defaultActiveId,
+  onActiveIdChange,
+  onAction,
+  orientation = "vertical",
+}: UseGridraMenuOptions) {
   // itemをidで参照するため、itemのidをキーにしたMapを保持する
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
 
@@ -78,7 +105,8 @@ export function useGridraMenu({items,activeId,defaultActiveId,onActiveIdChange,o
   const [currentActiveId, setActiveId] = useControllableValue(
     activeId,
     safeDefaultActiveId,
-    (next, previous) => onActiveIdChange?.(next, normalizeActiveId(previous, commandItems)),
+    (next, previous) =>
+      onActiveIdChange?.(next, normalizeActiveId(previous, commandItems)),
   );
 
   // items変更で現在のactiveIdが無効になる場合があるため、描画直前にも正規化する。
@@ -102,7 +130,9 @@ export function useGridraMenu({items,activeId,defaultActiveId,onActiveIdChange,o
   const handleActivate = (id: string) => {
     const item = commandItems.find((c) => c.id === id);
     if (!item || item.disabled) return;
+
     if (id !== safeActiveId) setActiveId(id);
+
     onAction?.(id);
   };
 
@@ -134,20 +164,22 @@ export function useGridraMenu({items,activeId,defaultActiveId,onActiveIdChange,o
         navigateByIndex(next);
         break;
       }
+
       case prevKey: {
         event.preventDefault();
-        const prev =
-          (currentIndex - 1 + enabledIds.length) % enabledIds.length;
+        const prev = (currentIndex - 1 + enabledIds.length) % enabledIds.length;
         focusedIndexRef.current = prev;
         navigateByIndex(prev);
         break;
       }
+
       case "Home": {
         event.preventDefault();
         focusedIndexRef.current = 0;
         navigateByIndex(0);
         break;
       }
+
       case "End": {
         event.preventDefault();
         focusedIndexRef.current = enabledIds.length - 1;
@@ -157,16 +189,40 @@ export function useGridraMenu({items,activeId,defaultActiveId,onActiveIdChange,o
     }
   };
 
+  const getRootProps = (props: HTMLAttributes<HTMLElement> = {}) => ({
+    ...props,
+    onKeyDown: composeHandlers(props.onKeyDown, handleKeyDown),
+  });
 
-  const getRootProps = (props:HTMLAttributes<HTMLElement>={}) => ({...props,onKeyDown:composeHandlers(props.onKeyDown,handleKeyDown)});
-  const getItemProps = <TElement extends HTMLElement = HTMLButtonElement>(id:string,props:HTMLAttributes<TElement>&{ref?:Ref<TElement>}={}) => {
-    const item=commandItems.find(item=>item.id===id);
-    const disabled=!item || Boolean(item.disabled);
-    return {...props, "aria-current":id===safeActiveId?"page" as const:undefined,"aria-disabled":disabled||undefined,
-      tabIndex:id===safeActiveId?0:-1, disabled,
-      onClick:composeHandlers(props.onClick,()=>{if(!item?.href)handleActivate(id);}),
-      ref:mergeRefs(props.ref,(element:TElement|null)=>{if(element)itemRefs.current.set(id,element);else itemRefs.current.delete(id);})};
+  const getItemProps = <TElement extends HTMLElement = HTMLButtonElement>(
+    id: string,
+    props: HTMLAttributes<TElement> & { ref?: Ref<TElement> } = {},
+  ) => {
+    const item = commandItems.find((item) => item.id === id);
+    const disabled = !item || Boolean(item.disabled);
+
+    return {
+      ...props,
+      "aria-current": id === safeActiveId ? ("page" as const) : undefined,
+      "aria-disabled": disabled || undefined,
+      tabIndex: id === safeActiveId ? 0 : -1,
+      disabled,
+      onClick: composeHandlers(props.onClick, () => {
+        if (!item?.href) handleActivate(id);
+      }),
+      ref: mergeRefs(props.ref, (element: TElement | null) => {
+        if (element) itemRefs.current.set(id, element);
+        else itemRefs.current.delete(id);
+      }),
+    };
   };
 
-return {items,safeActiveId,handleActivate,getRootProps,getItemProps,isCommand};
+  return {
+    items,
+    safeActiveId,
+    handleActivate,
+    getRootProps,
+    getItemProps,
+    isCommand,
+  };
 }
