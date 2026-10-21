@@ -1,11 +1,16 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
-import { resolveAriaInvalid, useControlDescriptionIds } from "../../internal/formControl";
+import {
+  resolveAriaInvalid,
+  useControlDescriptionIds,
+} from "@gridra-ui/headless";
 
 export type GridraRadioSize = "sm" | "md" | "lg";
 
-export interface GridraRadioProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
+export interface GridraRadioProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size" | "type"
+> {
   description?: ReactNode;
   invalid?: boolean;
   label?: string;
@@ -22,7 +27,10 @@ export function GridraRadio({
   ...props
 }: GridraRadioProps) {
   // inputと説明文をARIAで結び付けるため、衝突しないidの組を用意する。
-  const { controlId, descriptionId } = useControlDescriptionIds(props.id, Boolean(description));
+  const { controlId, descriptionId } = useControlDescriptionIds(
+    props.id,
+    Boolean(description),
+  );
   const radioClassName = cx(
     "gridra-radio",
     `gridra-radio--${size}`,
@@ -47,7 +55,11 @@ export function GridraRadio({
           {label ? <span className="gridra-radio__label">{label}</span> : null}
           {description ? (
             // 説明はaria-describedby経由で読ませ、label内での重複読み上げを避ける。
-            <span id={descriptionId} className="gridra-radio__description" aria-hidden="true">
+            <span
+              id={descriptionId}
+              className="gridra-radio__description"
+              aria-hidden="true"
+            >
               {description}
             </span>
           ) : null}

@@ -321,3 +321,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraField` from `@gridra-ui/headless` for custom markup. The existing
 `GridraField` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraCheckbox
+
+Import `useGridraCheckbox` from `@gridra-ui/headless` for custom markup. The existing
+`GridraCheckbox` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.
