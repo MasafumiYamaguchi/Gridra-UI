@@ -1,3 +1,5 @@
+import { useGridraDialog } from "@gridra-ui/headless";
+import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
@@ -15,7 +17,7 @@ import { createPortal } from "react-dom";
 import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
 import { composeHandlers } from "@gridra-ui/headless";
-import { FOCUSABLE_SELECTOR, getFocusableElements } from "../../internal/focus";
+import { FOCUSABLE_SELECTOR, getFocusableElements } from "@gridra-ui/headless";
 import { mergeRefs } from "@gridra-ui/headless";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
@@ -60,162 +62,40 @@ export function GridraDialog({
   title,
   ...props
 }: GridraDialogProps) {
-  const triggerElement = children;
-  const triggerRef = useRef<HTMLElement | null>(null);
-  const dialogRef = useRef<HTMLDivElement | null>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
-  const [currentOpen, setCurrentOpen] = useControllableValue(
+  const {
+    currentOpen,
+    portalMounted,
+    triggerRef,
+    titleId,
+    descriptionId,
+    close,
+    handleBackdropPointerDown,
+    getTriggerProps,
+    getDialogProps,
+  } = useGridraDialog({
     open,
     defaultOpen,
     onOpenChange,
-  );
-  const [portalMounted, setPortalMounted] = useState(false);
-  const titleId = useId();
-  const descriptionId = useId();
-
-  // Portal先のdocument.bodyはクライアントでしか存在しないため、mount後にだけ描画する。
-  useEffect(() => {
-    setPortalMounted(true);
-  }, []);
-
-  const close = () => {
-    setCurrentOpen(false);
-  };
-
-  const openDialog = () => {
-    setCurrentOpen(true);
-  };
-
-  const toggleOpen = () => {
-    if (currentOpen) {
-      close();
-    } else {
-      openDialog();
-    }
-  };
-
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-
-    previousFocusRef.current = document.activeElement as HTMLElement | null;
-
-    // initialFocusRefを優先し、なければdialog内の最初の操作可能要素へfocusを移す。
-    if (initialFocusRef?.current) {
-      initialFocusRef.current.focus();
-    } else {
-      const dialog = dialogRef.current;
-      if (dialog) {
-        const focusable = dialog.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-        if (focusable) {
-          focusable.focus();
-        } else {
-          dialog.focus();
-        }
-      }
-    }
-
-    return () => {
-      // 閉じた後は開く前のfocus、なければtriggerへ戻して操作の文脈を保つ。
-      const prev = previousFocusRef.current;
-      if (prev && typeof prev.focus === "function") {
-        prev.focus();
-      } else {
-        triggerRef.current?.focus();
-      }
-      previousFocusRef.current = null;
-    };
-  }, [currentOpen, initialFocusRef]);
-
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && closeOnEscape) {
-        event.preventDefault();
-        setCurrentOpen(false);
-        return;
-      }
-
-      if (event.key !== "Tab") {
-        return;
-      }
-
-      // Tabはdialog内で循環させ、背後のページへfocusが抜けないようにする。
-      const dialog = dialogRef.current;
-      if (!dialog) {
-        return;
-      }
-
-      const focusable = getFocusableElements(dialog);
-      if (focusable.length === 0) {
-        event.preventDefault();
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (event.shiftKey) {
-        if (
-          document.activeElement === first ||
-          !dialog.contains(document.activeElement)
-        ) {
-          event.preventDefault();
-          last.focus();
-        }
-      } else {
-        if (
-          document.activeElement === last ||
-          !dialog.contains(document.activeElement)
-        ) {
-          event.preventDefault();
-          first.focus();
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [currentOpen, closeOnEscape, setCurrentOpen]);
-
-  const handleBackdropPointerDown = (event: React.PointerEvent) => {
-    if (!closeOnBackdropPointerDown) {
-      return;
-    }
-    if (event.target === event.currentTarget) {
-      close();
-    }
-  };
-
-  // triggerをcloneして開閉handlerとrefだけを合成する。利用者側のonClick/refはcompose/mergeで維持する。
+    closeOnEscape,
+    closeOnBackdropPointerDown,
+    initialFocusRef,
+    hasDescription: Boolean(description),
+  });
+  const triggerElement = children;
   const triggerProps =
     triggerElement && isValidElement(triggerElement)
-      ? {
-          "aria-controls": undefined,
-          "aria-expanded": currentOpen,
-          "aria-haspopup": "dialog" as const,
-          onClick: composeHandlers(
-            triggerElement.props.onClick as
-              | ((event: MouseEvent) => void)
-              | undefined,
-            toggleOpen,
-          ),
-          ref: mergeRefs(
-            (triggerElement as ReactElement & { ref?: unknown }).ref,
-            (node: HTMLElement | null) => {
-              triggerRef.current = node;
-            },
-          ),
-        }
+      ? getTriggerProps<HTMLElement>({
+          ...triggerElement.props,
+          ref:
+            (triggerElement.props.ref as Ref<HTMLElement> | undefined) ??
+            (triggerElement as ReactElement & { ref?: Ref<HTMLElement> }).ref,
+        })
       : undefined;
-
-  const portalTheme = useGridraPortalTheme(triggerRef, undefined, currentOpen && portalMounted);
+  const portalTheme = useGridraPortalTheme(
+    triggerRef,
+    undefined,
+    currentOpen && portalMounted,
+  );
   const dialogClassName = cx(
     "gridra-dialog",
     `gridra-dialog--${size}`,
@@ -241,13 +121,8 @@ export function GridraDialog({
               onPointerDown={handleBackdropPointerDown}
             >
               <div
-                {...props}
-                aria-describedby={description ? descriptionId : undefined}
-                aria-labelledby={titleId}
-                aria-modal="true"
+                {...getDialogProps(props)}
                 className={dialogClassName}
-                ref={dialogRef}
-                role="dialog"
                 style={style}
               >
                 <header className="gridra-dialog__header">
