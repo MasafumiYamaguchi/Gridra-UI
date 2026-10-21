@@ -1,3 +1,4 @@
+/** ポップアップの実寸とアンカー位置を測り、表示方向と座標を管理するヘルパー。 */
 import { useEffect, useLayoutEffect, useState, type RefObject } from "react";
 import {
   computeFloatingPosition,
@@ -24,6 +25,7 @@ export interface UseFloatingPositionResult<TPlacement extends Placement> {
 
 const HIDDEN_COORDS: PositionCoords = { top: -9999, left: -9999 };
 
+/** 表示中は描画・リサイズ・スクロールに合わせて座標を更新し、画面外なら反対方向の配置を試す。 */
 export function useFloatingPosition<TPlacement extends Placement>({
   alignment = "center",
   anchorRef,

@@ -1,3 +1,4 @@
+/** アンカーに隣接するポップアップの座標と配置方向を計算するヘルパー。 */
 export type Placement = "top" | "right" | "bottom" | "left";
 
 export interface PositionCoords {
@@ -5,6 +6,7 @@ export interface PositionCoords {
   left: number;
 }
 
+/** アンカーと表示要素の矩形から、方向・間隔・揃え方に応じたビューポート座標を求める。 */
 export function computeFloatingPosition(
   anchorRect: DOMRect,
   floatRect: DOMRect,
@@ -44,6 +46,7 @@ export function computeFloatingPosition(
   };
 }
 
+/** 指定座標に置いた要素が、ビューポートのいずれかの辺からはみ出すか判定する。 */
 export function isOutOfViewport(
   coords: PositionCoords,
   rect: DOMRect,
@@ -56,6 +59,7 @@ export function isOutOfViewport(
   );
 }
 
+/** 画面外へのはみ出し時に試す、現在と反対の配置方向を返す。 */
 export function oppositePlacement(placement: Placement): Placement {
   if (placement === "top") return "bottom";
   if (placement === "bottom") return "top";

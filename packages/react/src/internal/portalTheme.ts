@@ -1,3 +1,4 @@
+/** Portal先へテーマクラスとCSSトークンを渡し、アンカー側の見た目を引き継ぐヘルパー。 */
 import { useCallback, useState, type CSSProperties, type RefObject } from "react";
 import { getGridraThemeClassName, getGridraThemeClassNameFromName } from "./theme";
 import { useAncestorAttributes } from "@gridra-ui/headless";
