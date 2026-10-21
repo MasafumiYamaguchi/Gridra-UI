@@ -1,12 +1,14 @@
-import {getGridraSwitchProps} from "@gridra-ui/headless";
+import { getGridraSwitchProps } from "@gridra-ui/headless";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { resolveAriaInvalid } from "@gridra-ui/headless";
 
 export type GridraSwitchSize = "sm" | "md" | "lg";
 
-export interface GridraSwitchProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "role"> {
+export interface GridraSwitchProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "role"
+> {
   checked?: boolean;
   description?: ReactNode;
   invalid?: boolean;
@@ -38,7 +40,14 @@ export function GridraSwitch({
 
   return (
     <button
-      {...getGridraSwitchProps({checked,invalid,onCheckedChange,onClick,type,...props})}
+      {...getGridraSwitchProps({
+        checked,
+        invalid,
+        onCheckedChange,
+        onClick,
+        type,
+        ...props,
+      })}
       className={switchClassName}
     >
       {/* trackとthumbは装飾として隠し、状態はroleとaria-checkedで伝える。 */}
@@ -48,7 +57,9 @@ export function GridraSwitch({
       {label || description ? (
         <span className="gridra-switch__content">
           {label ? <span className="gridra-switch__label">{label}</span> : null}
-          {description ? <span className="gridra-switch__description">{description}</span> : null}
+          {description ? (
+            <span className="gridra-switch__description">{description}</span>
+          ) : null}
         </span>
       ) : null}
     </button>
