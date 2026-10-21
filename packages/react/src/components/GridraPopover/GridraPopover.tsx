@@ -1,5 +1,5 @@
-import {useGridraPopover} from "@gridra-ui/headless";
-import type {Ref} from "react";
+import { useGridraPopover } from "@gridra-ui/headless";
+import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
@@ -25,10 +25,13 @@ import { useDocumentEvent } from "@gridra-ui/headless";
 import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraPopoverPlacement = "top" | "right" | "bottom" | "left";
+
 export type GridraPopoverSize = "sm" | "md" | "lg";
 
-export interface GridraPopoverProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "content" | "children" | "onChange"> {
+export interface GridraPopoverProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "content" | "children" | "onChange"
+> {
   children: ReactElement<Record<string, unknown>>;
   content: ReactNode;
   placement?: GridraPopoverPlacement;
@@ -60,9 +63,40 @@ export function GridraPopover({
   style,
   ...props
 }: GridraPopoverProps) {
-  const {currentOpen,portalMounted,anchorRef,popoverRef,popoverId,coords,resolvedPlacement,getTriggerProps}=useGridraPopover({open,defaultOpen,onOpenChange,disabled,closeOnEscape,closeOnOutsidePointerDown,placement,offset:POPOVER_OFFSET});
-  const anchorProps=getTriggerProps<HTMLElement>(isValidElement(children)?{...children.props,ref:(children.props.ref as Ref<HTMLElement>|undefined)??(children as ReactElement&{ref?:Ref<HTMLElement>}).ref}:{});
-  const portalTheme = useGridraPortalTheme(anchorRef, undefined, currentOpen && !disabled && portalMounted);
+  const {
+    currentOpen,
+    portalMounted,
+    anchorRef,
+    popoverRef,
+    popoverId,
+    coords,
+    resolvedPlacement,
+    getTriggerProps,
+  } = useGridraPopover({
+    open,
+    defaultOpen,
+    onOpenChange,
+    disabled,
+    closeOnEscape,
+    closeOnOutsidePointerDown,
+    placement,
+    offset: POPOVER_OFFSET,
+  });
+  const anchorProps = getTriggerProps<HTMLElement>(
+    isValidElement(children)
+      ? {
+          ...children.props,
+          ref:
+            (children.props.ref as Ref<HTMLElement> | undefined) ??
+            (children as ReactElement & { ref?: Ref<HTMLElement> }).ref,
+        }
+      : {},
+  );
+  const portalTheme = useGridraPortalTheme(
+    anchorRef,
+    undefined,
+    currentOpen && !disabled && portalMounted,
+  );
   const popoverClassName = cx(
     "gridra-portal-root",
     portalTheme.className,

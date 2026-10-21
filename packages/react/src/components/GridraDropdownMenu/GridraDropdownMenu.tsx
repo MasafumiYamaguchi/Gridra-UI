@@ -1,5 +1,5 @@
-import {useGridraDropdownMenu} from "@gridra-ui/headless";
-import type {Ref} from "react";
+import { useGridraDropdownMenu } from "@gridra-ui/headless";
+import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
@@ -25,6 +25,7 @@ import { useGridraPortalTheme } from "../../internal/portalTheme";
 import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraDropdownMenuPlacement = "top" | "right" | "bottom" | "left";
+
 export type GridraDropdownMenuSize = "sm" | "md" | "lg";
 
 export type GridraDropdownMenuCommandItem = {
@@ -40,8 +41,7 @@ export type GridraDropdownMenuSeparatorItem = {
 };
 
 export type GridraDropdownMenuItem =
-  | GridraDropdownMenuCommandItem
-  | GridraDropdownMenuSeparatorItem;
+  GridraDropdownMenuCommandItem | GridraDropdownMenuSeparatorItem;
 
 // HTML属性とぶつかるonChange/childrenは、menu状態とtrigger要素の意味に合わせて独自propsとして定義する。
 export interface GridraDropdownMenuProps extends Omit<
@@ -85,10 +85,49 @@ export function GridraDropdownMenu({
   style,
   ...props
 }: GridraDropdownMenuProps) {
-  const {currentOpen,portalMounted,triggerRef,menuRef,menuId,coords,resolvedPlacement,enabledIds,safeActiveIndex,handleMenuKeyDown,isCommand,getTriggerProps,getItemProps}=useGridraDropdownMenu({items,onAction,open,defaultOpen,onOpenChange,disabled,placement,offset:MENU_OFFSET,closeOnEscape,closeOnOutsidePointerDown,closeOnAction});
-  const triggerElement=children;
-  const triggerProps=getTriggerProps<HTMLElement>(isValidElement(children)?{...children.props,ref:(children.props.ref as Ref<HTMLElement>|undefined)??(children as ReactElement&{ref?:Ref<HTMLElement>}).ref}:{});
-  const portalTheme = useGridraPortalTheme(triggerRef, undefined, currentOpen && !disabled && portalMounted);
+  const {
+    currentOpen,
+    portalMounted,
+    triggerRef,
+    menuRef,
+    menuId,
+    coords,
+    resolvedPlacement,
+    enabledIds,
+    safeActiveIndex,
+    handleMenuKeyDown,
+    isCommand,
+    getTriggerProps,
+    getItemProps,
+  } = useGridraDropdownMenu({
+    items,
+    onAction,
+    open,
+    defaultOpen,
+    onOpenChange,
+    disabled,
+    placement,
+    offset: MENU_OFFSET,
+    closeOnEscape,
+    closeOnOutsidePointerDown,
+    closeOnAction,
+  });
+  const triggerElement = children;
+  const triggerProps = getTriggerProps<HTMLElement>(
+    isValidElement(children)
+      ? {
+          ...children.props,
+          ref:
+            (children.props.ref as Ref<HTMLElement> | undefined) ??
+            (children as ReactElement & { ref?: Ref<HTMLElement> }).ref,
+        }
+      : {},
+  );
+  const portalTheme = useGridraPortalTheme(
+    triggerRef,
+    undefined,
+    currentOpen && !disabled && portalMounted,
+  );
   const menuClassName = cx(
     "gridra-portal-root",
     portalTheme.className,
@@ -156,7 +195,8 @@ export function GridraDropdownMenu({
 
                 return (
                   <button
-                    {...getItemProps(item.id)} className={cx(
+                    {...getItemProps(item.id)}
+                    className={cx(
                       "gridra-dropdown-menu__item",
                       item.disabled
                         ? "gridra-dropdown-menu__item--disabled"
@@ -167,14 +207,7 @@ export function GridraDropdownMenu({
                       isActive ? "gridra-dropdown-menu__item--active" : null,
                     )}
 
-
                     key={item.id}
-
-
-
-
-
-
                   >
                     <span className="gridra-dropdown-menu__item-label">
                       {item.label}
