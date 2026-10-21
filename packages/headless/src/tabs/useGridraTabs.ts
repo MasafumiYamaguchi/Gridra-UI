@@ -81,7 +81,11 @@ export function useGridraTabs<TItem extends GridraTabsItem>({
         break;
       default: return;
     }
+    // 処理したキーの既定動作を止め、矢印・Home・Endによるスクロールや、
+    // manual時のEnter／Spaceによるbuttonのclick生成と選択処理の重複を防ぐ。
+    // 未処理のキーは上でreturnするため、Tabなどの既定動作は妨げない。
     event.preventDefault();
+    // 同じキーを親のウィジェットでも処理しないよう、イベントの伝播も止める。
     event.stopPropagation();
   };
   const getTabListProps = (props: HTMLAttributes<HTMLDivElement> = {}): HTMLAttributes<HTMLDivElement> => ({
