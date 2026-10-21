@@ -1,23 +1,68 @@
-import { GridraBadge, GridraBox, GridraStack, GridraMenu } from "@gridra-ui/react";
+import {
+  GridraBadge,
+  GridraBox,
+  GridraStack,
+  GridraMenu,
+} from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const menuDoc: ComponentDoc = {
-  notes: "Behavior is provided by useGridraMenu from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
+  notes:
+    "Behavior is provided by useGridraMenu from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
   category: "Navigation",
   name: "GridraMenu",
-  summary: "Permanent navigation menu with item links, active state, and keyboard navigation.",
+  summary:
+    "Permanent navigation menu with item links, active state, and keyboard navigation.",
   description:
     "GridraMenu renders a persistent navigation menu as a nav landmark. Command items with href render as anchor links; items without href render as buttons that fire onAction. The activeId prop tracks the current page and applies aria-current='page'. Supports vertical and horizontal orientation, controlled/uncontrolled active state, and full keyboard navigation with Arrow keys and Home/End.",
   importExample: 'import { GridraMenu } from "@gridra-ui/react";',
   props: [
-    { name: "items", type: "GridraMenuItem[]", required: true, description: "Array of command items ({ id, label, href?, disabled?, destructive? }) and separator items ({ type: 'separator' })." },
-    { name: "activeId", type: "string", description: "Controlled active item id." },
-    { name: "defaultActiveId", type: "string", description: "Initial active item id when uncontrolled." },
-    { name: "onActiveIdChange", type: "(nextId, previousId) => void", description: "Callback when activeId changes." },
-    { name: "onAction", type: "(id: string) => void", description: "Called with the item id when a non-href command item is clicked." },
-    { name: "renderItem", type: "(item, state) => ReactNode", description: "Custom row content renderer for richer labels with badges/metadata." },
-    { name: "orientation", type: '"vertical" | "horizontal"', default: '"vertical"', description: "Layout direction of the menu list." },
-    { name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Row padding and font size." },
+    {
+      name: "items",
+      type: "GridraMenuItem[]",
+      required: true,
+      description:
+        "Array of command items ({ id, label, href?, disabled?, destructive? }) and separator items ({ type: 'separator' }).",
+    },
+    {
+      name: "activeId",
+      type: "string",
+      description: "Controlled active item id.",
+    },
+    {
+      name: "defaultActiveId",
+      type: "string",
+      description: "Initial active item id when uncontrolled.",
+    },
+    {
+      name: "onActiveIdChange",
+      type: "(nextId, previousId) => void",
+      description: "Callback when activeId changes.",
+    },
+    {
+      name: "onAction",
+      type: "(id: string) => void",
+      description:
+        "Called with the item id when a non-href command item is clicked.",
+    },
+    {
+      name: "renderItem",
+      type: "(item, state) => ReactNode",
+      description:
+        "Custom row content renderer for richer labels with badges/metadata.",
+    },
+    {
+      name: "orientation",
+      type: '"vertical" | "horizontal"',
+      default: '"vertical"',
+      description: "Layout direction of the menu list.",
+    },
+    {
+      name: "size",
+      type: '"sm" | "md" | "lg"',
+      default: '"md"',
+      description: "Row padding and font size.",
+    },
   ],
   options: [
     "vertical or horizontal orientation",
@@ -85,11 +130,16 @@ export const menuDoc: ComponentDoc = {
 />`,
     },
   ],
-  examples: [{ title: "Custom markup with headless hook", code: "import { useGridraMenu } from \"@gridra-ui/headless\";\n\nexport default function Example() {\n  const menu=useGridraMenu({items:[{id:\"a\",label:\"A\"},{id:\"b\",label:\"B\"}]});\n  return <nav {...menu.getRootProps()} aria-label=\"Custom navigation\">{menu.items.filter(menu.isCommand).map(item=><button key={item.id} {...menu.getItemProps(item.id)}>{item.label}</button>)}</nav>;\n}" }, ...(([
+  examples: [
     {
-      title: "Sidebar menu pattern",
-      description: "A typical vertical sidebar menu inside a box panel.",
-      code: `<GridraBox border="default" padding="md" surface="input" style={{ width: 200 }}>
+      title: "Custom markup with headless hook",
+      code: 'import { useGridraMenu } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const menu=useGridraMenu({items:[{id:"a",label:"A"},{id:"b",label:"B"}]});\n  return <nav {...menu.getRootProps()} aria-label="Custom navigation">{menu.items.filter(menu.isCommand).map(item=><button key={item.id} {...menu.getItemProps(item.id)}>{item.label}</button>)}</nav>;\n}',
+    },
+    ...([
+      {
+        title: "Sidebar menu pattern",
+        description: "A typical vertical sidebar menu inside a box panel.",
+        code: `<GridraBox border="default" padding="md" surface="input" style={{ width: 200 }}>
   <GridraMenu
     defaultActiveId="nodes"
     items={[
@@ -100,12 +150,13 @@ export const menuDoc: ComponentDoc = {
     ]}
   />
 </GridraBox>`,
-    },
-    {
-      title: "Custom row content",
-      description: "Use renderItem to add badges, counts, or icons alongside labels.",
-      language: "tsx",
-      code: `<GridraMenu
+      },
+      {
+        title: "Custom row content",
+        description:
+          "Use renderItem to add badges, counts, or icons alongside labels.",
+        language: "tsx",
+        code: `<GridraMenu
   items={items}
   renderItem={(item, state) => (
     <GridraStack direction="horizontal" inline align="center" gap="sm" fullWidth justify="between">
@@ -114,20 +165,26 @@ export const menuDoc: ComponentDoc = {
     </GridraStack>
   )}
 />`,
-    },
-    {
-      title: "Controlled active state",
-      code: `const [active, setActive] = useState("dashboard");
+      },
+      {
+        title: "Controlled active state",
+        code: `const [active, setActive] = useState("dashboard");
 
 <GridraMenu
   items={items}
   activeId={active}
   onActiveIdChange={(next) => setActive(next)}
 />`,
-    },
-  ]) satisfies ComponentDoc["examples"])],
+      },
+    ] satisfies ComponentDoc["examples"]),
+  ],
   preview: (
-    <GridraBox border="default" padding="md" surface="input" style={{ width: 200 }}>
+    <GridraBox
+      border="default"
+      padding="md"
+      surface="input"
+      style={{ width: 200 }}
+    >
       <GridraMenu
         defaultActiveId="projects"
         items={[
