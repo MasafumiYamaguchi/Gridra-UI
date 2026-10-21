@@ -1,3 +1,4 @@
+import { getGridraIconButtonProps } from "@gridra-ui/headless";
 import { getGridraButtonProps } from "@gridra-ui/headless";
 import { useGridraSlider } from "@gridra-ui/headless";
 import { getGridraSwitchProps } from "@gridra-ui/headless";
@@ -2449,6 +2450,14 @@ function ExampleHeadlessGridraButton() {
   );
 }
 
+function ExampleHeadlessGridraIconButton() {
+  return (
+    <button {...getGridraIconButtonProps({ label: "Custom save" })}>
+      <span aria-hidden="true">✓</span>
+    </button>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2787,4 +2796,9 @@ examplePreviews["GridraSlider"] = {
 examplePreviews["GridraButton"] = {
   ...examplePreviews["GridraButton"],
   "Custom markup with headless hook": <ExampleHeadlessGridraButton />,
+};
+
+examplePreviews["GridraIconButton"] = {
+  ...examplePreviews["GridraIconButton"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraIconButton />,
 };
