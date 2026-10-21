@@ -5,6 +5,21 @@ The former `GridraRoot` and `GridraCanvasArea` exports have been removed.
 
 ## Styles and themes
 
+### Headless Tabs
+
+`GridraTabs` keeps its existing import, props and CSS classes. Its behavior now
+comes from `useGridraTabs` in `@gridra-ui/headless`. The hook accepts item metadata
+(`id`, optional `disabled`, plus your own fields), selection, orientation and
+activation mode. It returns `items`, `selectedId`, `selectedItem`, `select`,
+`getTabListProps`, `getTabProps` and `getPanelProps`.
+Render native buttons for tabs; the hook supplies ARIA relationships and roving
+focus. Pass custom handlers and refs into getters to compose them. Panels can
+be unmounted or kept in the DOM using the returned `hidden` attribute.
+
+The first occurrence of a duplicate id is retained. Selecting a removed or
+disabled id is ignored. Change callbacks use the resolved current selection as
+`previous`, including after an uncontrolled item's removal.
+
 ### Headless Canvas
 
 `useGridraCanvas` and its interaction types now live in `@gridra-ui/headless`.

@@ -6,3 +6,5 @@ export { useAncestorAttributes } from "./internal/useAncestorAttributes";
 
 export * from "./canvas/types";
 export * from "./canvas/useGridraCanvas";
+
+export * from "./tabs/useGridraTabs";
