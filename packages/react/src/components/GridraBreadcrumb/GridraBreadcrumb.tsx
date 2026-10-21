@@ -1,4 +1,4 @@
-import {useGridraBreadcrumb} from "@gridra-ui/headless";
+import { useGridraBreadcrumb } from "@gridra-ui/headless";
 import { useEffect, useMemo, type HTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 
@@ -37,7 +37,8 @@ export function GridraBreadcrumb({
   size = "md",
   ...props
 }: GridraBreadcrumbProps) {
-  const {visibleItems,hasInvalidHierarchy,getItemState}=useGridraBreadcrumb({items,maxItems,onHierarchyInvalid});
+  const { visibleItems, hasInvalidHierarchy, getItemState } =
+    useGridraBreadcrumb({ items, maxItems, onHierarchyInvalid });
 
   const rootClassName = cx(
     "gridra-breadcrumb",
@@ -50,7 +51,9 @@ export function GridraBreadcrumb({
       {...props}
       aria-label={ariaLabel}
       className={rootClassName}
-      {...(hasInvalidHierarchy ? { "data-gridra-invalid-hierarchy": "true" } : {})}
+      {...(hasInvalidHierarchy
+        ? { "data-gridra-invalid-hierarchy": "true" }
+        : {})}
     >
       <ol className="gridra-breadcrumb__list">
         {visibleItems.map((entry, visibleIndex) => {
@@ -62,7 +65,10 @@ export function GridraBreadcrumb({
                 className="gridra-breadcrumb__item gridra-breadcrumb__item--ellipsis"
               >
                 <span className="gridra-breadcrumb__ellipsis">&hellip;</span>
-                <span className="gridra-breadcrumb__separator" aria-hidden="true">
+                <span
+                  className="gridra-breadcrumb__separator"
+                  aria-hidden="true"
+                >
                   {separator}
                 </span>
               </li>
@@ -72,7 +78,7 @@ export function GridraBreadcrumb({
           const item = entry.item!;
           const isLast = visibleIndex === visibleItems.length - 1;
           const isCurrent = item.current;
-          const itemState=getItemState(item);
+          const itemState = getItemState(item);
           const isDisabled = item.disabled;
 
           const itemClassName = cx(
@@ -84,7 +90,11 @@ export function GridraBreadcrumb({
           const content = !itemState.canNavigate ? (
             <span
               {...itemState.currentProps}
-              className={isCurrent ? "gridra-breadcrumb__current" : "gridra-breadcrumb__text"}
+              className={
+                isCurrent
+                  ? "gridra-breadcrumb__current"
+                  : "gridra-breadcrumb__text"
+              }
             >
               {item.label}
             </span>
@@ -98,7 +108,10 @@ export function GridraBreadcrumb({
             <li key={item.id} className={itemClassName}>
               {content}
               {!isLast ? (
-                <span className="gridra-breadcrumb__separator" aria-hidden="true">
+                <span
+                  className="gridra-breadcrumb__separator"
+                  aria-hidden="true"
+                >
                   {separator}
                 </span>
               ) : null}
