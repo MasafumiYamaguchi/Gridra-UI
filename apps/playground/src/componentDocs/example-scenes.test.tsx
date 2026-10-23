@@ -50,6 +50,16 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraToolbar through caller-owned DOM", () => {
+    const preview = renderExample(
+      "GridraToolbar",
+      "Custom markup with headless hook",
+    );
+
+    fireEvent.click(preview.getByRole("button", { name: "Custom save" }));
+
+    expect(preview.getByText("save")).toBeTruthy();
+  });
   it("runs headless GridraInput through caller-owned DOM", () => {
     const preview = renderExample(
       "GridraInput",

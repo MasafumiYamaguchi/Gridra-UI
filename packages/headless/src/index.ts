@@ -76,3 +76,5 @@ export * from "./feedback/getGridraProgress";
 export * from "./feedback/getGridraAvatar";
 
 export * from "./canvas/getGridraMinimap";
+
+export * from "./navigation/getGridraToolbar";

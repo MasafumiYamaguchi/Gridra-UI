@@ -402,3 +402,9 @@ The component documentation includes a live custom-markup example.
 Import `useControlDescriptionIds` from `@gridra-ui/headless` for custom markup. The existing
 `GridraInput` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraToolbar
+
+Import `getGridraToolbar` from `@gridra-ui/headless` for custom markup. The existing
+`GridraToolbar` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.
