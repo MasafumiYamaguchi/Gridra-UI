@@ -217,7 +217,7 @@ describe("interactive example scenes", () => {
   );
 
   it.each(["Cards", "Ruler", "Line", "Boxes"])(
-    "lets both %s stepper examples go back and reset independently",
+    "lets both %s stepper examples navigate by click, advance and reset independently",
     (title) => {
       const preview = renderExample("GridraStepper", title);
       const variant = title.toLowerCase();
@@ -232,6 +232,15 @@ describe("interactive example scenes", () => {
       );
 
       expect(panel.getByRole("textbox", { name: "Payment card" })).toBeTruthy();
+
+      fireEvent.click(checkout.getByRole("button", { name: /Confirm/ }));
+
+      expect(
+        checkout
+          .getByRole("button", { name: /Confirm/ })
+          .getAttribute("aria-current"),
+      ).toBe("step");
+      expect(panel.getByText("Order ready for confirmation.")).toBeTruthy();
 
       fireEvent.click(checkout.getByRole("button", { name: /Cart/ }));
 
