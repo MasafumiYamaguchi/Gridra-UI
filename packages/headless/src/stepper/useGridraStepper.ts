@@ -21,7 +21,7 @@ export interface UseGridraStepperOptions {
   onStepChange?: (nextId: string, previousId: string) => void;
 }
 
-/** 手順の進行判定と戻る操作を共有し、表示と進捗文言は利用側が担当する。 */
+/** 手順の状態と前後への移動を共有し、表示・進捗文言・入力検証は利用側が担当する。 */
 export function useGridraStepper({
   items,
   currentId: currentIdProp,
@@ -56,7 +56,8 @@ export function useGridraStepper({
     const completed = currentIndex >= 0 && index < currentIndex && !locked;
     const current = index === currentIndex;
     const pending = !locked && (currentIndex < 0 || index > currentIndex);
-    const buttonDisabled = disabled || locked || pending || currentIndex < 0;
+    // pendingは未到達を表す表示状態。明示的に無効化しない限り、先の手順もクリックで選べる。
+    const buttonDisabled = disabled || locked || currentIndex < 0;
     const traversed = index < currentIndex;
     const connectorState = traversed
       ? "completed"
@@ -83,10 +84,12 @@ export function useGridraStepper({
   const handleStepClick = (id: string) => {
     if (
       currentId == null ||
-      !steps.some((step) => step.item.id === id && step.canGoBack)
+      id === currentId ||
+      !steps.some((step) => step.item.id === id && !step.buttonDisabled)
     )
       return;
 
+    // uncontrolledでは内部状態を更新し、controlledでは親への通知だけを行う。
     if (currentIdProp === undefined) setInternalCurrentId(id);
 
     onStepChange?.(id, currentId);
