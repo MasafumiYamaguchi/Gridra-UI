@@ -3526,10 +3526,12 @@
   font-family: var(--gridra-font-mono);
   text-align: start;
 }
-.gridra-stepper__button--completed:not([aria-disabled="true"]) {
+.gridra-stepper__button--completed:not([aria-disabled="true"]),
+.gridra-stepper__button--pending:not([aria-disabled="true"]) {
   cursor: pointer;
 }
-.gridra-stepper__button--completed:hover:not([aria-disabled="true"]) {
+.gridra-stepper__button--completed:hover:not([aria-disabled="true"]),
+.gridra-stepper__button--pending:hover:not([aria-disabled="true"]) {
   background: var(--gridra-color-selected);
 }
 .gridra-stepper .gridra-stepper__button:focus-visible {
