@@ -1,3 +1,4 @@
+import { getGridraProgress } from "@gridra-ui/headless";
 import { useGridraPropertiesPanel } from "@gridra-ui/headless";
 import { useGridraInspectorPanel } from "@gridra-ui/headless";
 import { useGridraBreadcrumb } from "@gridra-ui/headless";
@@ -2550,6 +2551,16 @@ function ExampleHeadlessGridraPropertiesPanel() {
   );
 }
 
+function ExampleHeadlessGridraProgress() {
+  const progress = getGridraProgress({
+    value: 40,
+    max: 80,
+    label: "Custom progress",
+  });
+
+  return <div {...progress.rootProps}>{progress.percent}% complete</div>;
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2908,4 +2919,9 @@ examplePreviews["GridraInspectorPanel"] = {
 examplePreviews["GridraPropertiesPanel"] = {
   ...examplePreviews["GridraPropertiesPanel"],
   "Custom markup with headless hook": <ExampleHeadlessGridraPropertiesPanel />,
+};
+
+examplePreviews["GridraProgress"] = {
+  ...examplePreviews["GridraProgress"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraProgress />,
 };

@@ -26,14 +26,15 @@ function ProgressPreview() {
 }
 
 export const progressDoc: ComponentDoc = {
+  notes:
+    "Behavior is provided by getGridraProgress from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
   category: "Feedback",
   name: "GridraProgress",
   summary:
     "Linear progress bar with determinate and indeterminate modes, multiple sizes and tones.",
   description:
     "GridraProgress renders a linear progress indicator that supports both determinate (value-based) and indeterminate (ongoing) states. It is a read-only display component — no interaction events or controlled/uncontrolled state management. For circular loading spinners use GridraSpinner.",
-  importExample:
-    'import { GridraProgress } from "@gridra-ui/react";',
+  importExample: 'import { GridraProgress } from "@gridra-ui/react";',
   props: [
     {
       default: "undefined",
@@ -80,8 +81,10 @@ export const progressDoc: ComponentDoc = {
     "Width transitions smoothly between value changes.",
     "Accepts all standard HTML div attributes (className, etc.).",
   ],
-  usage: "Use GridraProgress for linear loading indicators such as file uploads, form steps, or resource loading. For indeterminate circular loading use GridraSpinner. For skeleton/placeholder loading of entire surfaces, that will be covered by a future GridraSkeleton component.",
-  avoid: "Avoid using GridraProgress as a circular loading spinner. Avoid placing interactive elements inside the progress bar — it is display-only. Avoid animating value changes faster than 10-30 FPS without throttling to prevent layout thrash.",
+  usage:
+    "Use GridraProgress for linear loading indicators such as file uploads, form steps, or resource loading. For indeterminate circular loading use GridraSpinner. For skeleton/placeholder loading of entire surfaces, that will be covered by a future GridraSkeleton component.",
+  avoid:
+    "Avoid using GridraProgress as a circular loading spinner. Avoid placing interactive elements inside the progress bar — it is display-only. Avoid animating value changes faster than 10-30 FPS without throttling to prevent layout thrash.",
   compositions: [
     "GridraProgress + GridraButton: manual progress advancement.",
     "GridraProgress + GridraStack: stacked multi-step progress indicators.",
@@ -89,23 +92,29 @@ export const progressDoc: ComponentDoc = {
   ],
   examples: [
     {
-      title: "Determinate",
-      code: `<GridraProgress label="Upload progress" value={65} />`,
+      title: "Custom markup with headless hook",
+      code: 'import { getGridraProgress } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const progress=getGridraProgress({value:40,max:80,label:"Custom progress"});\n  return <div {...progress.rootProps}>{progress.percent}% complete</div>;\n}',
     },
-    {
-      title: "Indeterminate",
-      code: `<GridraProgress label="Loading data" />`,
-    },
-    {
-      title: "With tone and size",
-      code: `<GridraProgress
+    ...([
+      {
+        title: "Determinate",
+        code: `<GridraProgress label="Upload progress" value={65} />`,
+      },
+      {
+        title: "Indeterminate",
+        code: `<GridraProgress label="Loading data" />`,
+      },
+      {
+        title: "With tone and size",
+        code: `<GridraProgress
   label="Disk usage"
   max={1024}
   size="lg"
   tone="warning"
   value={873}
 />`,
-    },
+      },
+    ] satisfies ComponentDoc["examples"]),
   ],
   preview: <ProgressPreview />,
   accessibility:
