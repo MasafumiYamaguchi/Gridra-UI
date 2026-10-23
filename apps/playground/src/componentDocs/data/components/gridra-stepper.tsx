@@ -22,7 +22,7 @@ export const stepperDoc: ComponentDoc = {
   summary:
     "Four stepper designs for linear workflows: cards, ruler, line, and square boxes.",
   description:
-    "Choose one of four variants with horizontal or vertical orientation. Completed steps display a check and support backtracking. The current step is highlighted, pending steps remain inactive, and explicitly disabled steps are locked. Ruler shows the current position along the axis; a single current step is the terminal position at 100%. Cards and line keep readable column widths and scroll horizontally within the component when needed.",
+    "Choose one of four variants with horizontal or vertical orientation. Completed steps display a check and support backtracking. The current step is highlighted, pending steps can be selected to move forward, and explicitly disabled steps are locked. Ruler shows the current position along the axis; a single current step is the terminal position at 100%. Cards and line keep readable column widths and scroll horizontally within the component when needed.",
   importExample: 'import { GridraStepper } from "@gridra-ui/react";',
   props: [
     {
@@ -53,7 +53,8 @@ export const stepperDoc: ComponentDoc = {
     {
       name: "currentId",
       type: "string",
-      description: "Controlled current step id. Update this to move forward.",
+      description:
+        "Controlled current step id. Clicks request changes; the parent decides whether to update this value.",
     },
     {
       name: "defaultCurrentId",
@@ -63,7 +64,8 @@ export const stepperDoc: ComponentDoc = {
     {
       name: "onStepChange",
       type: "(nextId, previousId) => void",
-      description: "Called when returning to a completed step.",
+      description:
+        "Called when selecting a different enabled step, forward or backward.",
     },
     {
       name: "disabled",
@@ -102,13 +104,13 @@ export const stepperDoc: ComponentDoc = {
     "Completed checks, a highlighted current step, pending steps, and locked steps.",
     "Four theme-aware designs with horizontal and vertical orientations.",
     "Ruler announces its percentage and current position through a progressbar named after the stepper.",
-    "Completed steps support keyboard and pointer backtracking.",
+    "Enabled steps support keyboard and pointer navigation in either direction.",
     "Invalid or disabled current ids fall back to the first enabled step.",
   ],
   usage:
-    "Use cards for steps with summary details, ruler for position along a measured workflow, line for a compact progress overview, and boxes for a classic numbered sequence. Use currentId to advance after validation and onStepChange to allow reviewing completed steps. The examples switch a checkout panel using currentId. Use labels to translate status text and ruler formats.",
+    "Use cards for steps with summary details, ruler for position along a measured workflow, line for a compact progress overview, and boxes for a classic numbered sequence. Enabled steps can be clicked to move forward or back. For validated workflows, control currentId and accept or reject the destination in onStepChange. The examples switch a checkout panel using currentId. Use labels to translate status text and ruler formats.",
   avoid:
-    "Pending and locked steps do not support direct navigation. Keep step content and validation outside the stepper. Ruler percentage describes position along the sequence rather than the amount of work completed.",
+    "Explicitly disabled steps do not support direct navigation. Pending steps are selectable; their position does not imply validation has passed. Keep step content and validation outside the stepper. Ruler percentage describes position along the sequence rather than the amount of work completed.",
   compositions: [
     "GridraStepper + GridraStack: arrange step-specific content.",
     "GridraStepper + GridraButton: advance currentId after completing a step.",
@@ -121,7 +123,7 @@ export const stepperDoc: ComponentDoc = {
     ...variants.map((variant) => ({
       title: variant[0].toUpperCase() + variant.slice(1),
       description:
-        "Horizontal checkout with an editable panel controlled by currentId, plus vertical setup. Click a completed step to go back, use Next to advance, or Reset steps to restore the illustrated state.",
+        "Horizontal checkout with an editable panel controlled by currentId, plus vertical setup. Click any enabled step to go forward or back, use Next to advance one step, or Reset steps to restore the illustrated state.",
       code: exampleCode(variant),
       preview: <StepperExample variant={variant} />,
     })),
