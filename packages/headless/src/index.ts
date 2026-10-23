@@ -14,3 +14,5 @@ export * from "./accordion/useGridraAccordion";
 export * from "./selection/useGridraSelectableGrid";
 
 export * from "./pagination/useGridraPagination";
+
+export * from "./stepper/useGridraStepper";

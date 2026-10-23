@@ -50,6 +50,17 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraStepper through caller-owned DOM", () => {
+    const preview = renderExample(
+      "GridraStepper",
+      "Custom markup with headless hook",
+    );
+    const first = preview.getByRole("button", { name: "First" });
+
+    fireEvent.click(first);
+
+    expect(first.getAttribute("aria-current")).toBe("step");
+  });
   it("runs headless GridraPagination through caller-owned DOM", () => {
     const preview = renderExample(
       "GridraPagination",
@@ -148,7 +159,7 @@ describe("interactive example scenes", () => {
   );
 
   it.each(["Cards", "Ruler", "Line", "Boxes"])(
-    "lets both %s stepper examples go back and reset independently",
+    "lets both %s stepper examples navigate by click, advance and reset independently",
     (title) => {
       const preview = renderExample("GridraStepper", title);
       const variant = title.toLowerCase();
@@ -163,6 +174,15 @@ describe("interactive example scenes", () => {
       );
 
       expect(panel.getByRole("textbox", { name: "Payment card" })).toBeTruthy();
+
+      fireEvent.click(checkout.getByRole("button", { name: /Confirm/ }));
+
+      expect(
+        checkout
+          .getByRole("button", { name: /Confirm/ })
+          .getAttribute("aria-current"),
+      ).toBe("step");
+      expect(panel.getByText("Order ready for confirmation.")).toBeTruthy();
 
       fireEvent.click(checkout.getByRole("button", { name: /Cart/ }));
 

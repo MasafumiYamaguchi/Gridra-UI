@@ -36,6 +36,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraPagination: useGridraPagination and styled integration.
 
+- [x] GridraStepper: useGridraStepper and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

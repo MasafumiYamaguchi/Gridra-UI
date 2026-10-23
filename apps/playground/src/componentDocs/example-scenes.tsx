@@ -1,3 +1,4 @@
+import { useGridraStepper } from "@gridra-ui/headless";
 import { useGridraPagination } from "@gridra-ui/headless";
 import { useGridraSelectableGrid } from "@gridra-ui/headless";
 // Live examples use the same props as the snippets in data/components.
@@ -2126,6 +2127,26 @@ function ExampleHeadlessGridraPagination() {
   );
 }
 
+function ExampleHeadlessGridraStepper() {
+  const stepper = useGridraStepper({
+    items: [
+      { id: "first", label: "First" },
+      { id: "last", label: "Last" },
+    ],
+    defaultCurrentId: "last",
+  });
+
+  return (
+    <nav aria-label="Custom steps">
+      {stepper.steps.map((step) => (
+        <button key={step.item.id} {...stepper.getStepProps(step.item.id)}>
+          {step.item.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2369,4 +2390,9 @@ export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "useGridraCanvas": {
     "Your own container and buttons": <ExampleuseGridraCanvas1 />,
   },
+};
+
+examplePreviews["GridraStepper"] = {
+  ...examplePreviews["GridraStepper"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraStepper />,
 };
