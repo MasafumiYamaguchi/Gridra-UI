@@ -75,8 +75,11 @@ both orientations and the existing sizes. No variant restores the former design.
   onStepChange={setCurrentId} />
 ```
 
-The items, controlled/uncontrolled state, and backtracking APIs remain unchanged.
-Advance by updating `currentId` in the parent after validation. Explicitly disabled
+Enabled steps now accept clicks in either direction, including pending steps.
+Uncontrolled steppers update their current step; controlled steppers only notify
+`onStepChange(nextId, previousId)` and wait for the parent's `currentId` update.
+Clicking the current step does not notify. To require validation, control
+`currentId` and accept or reject navigation in `onStepChange`. Explicitly disabled
 items are locked, even before the current position, and cannot be current or
 completed. Connectors describe the interval traversed, so an interval before the
 current position remains filled even when its starting item is locked. Line uses
