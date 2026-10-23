@@ -1,3 +1,4 @@
+import { useGridraPropertiesPanel } from "@gridra-ui/headless";
 import { useGridraInspectorPanel } from "@gridra-ui/headless";
 import { useGridraBreadcrumb } from "@gridra-ui/headless";
 import { getGridraIconButtonProps } from "@gridra-ui/headless";
@@ -2521,6 +2522,34 @@ function ExampleHeadlessGridraInspectorPanel() {
   );
 }
 
+function ExampleHeadlessGridraPropertiesPanel() {
+  const [value, setValue] = useState({ count: 1 });
+  const properties = useGridraPropertiesPanel({
+    selectedNodeId: "one",
+    selectedNodeType: "custom",
+    value,
+    schema: { custom: [{ id: "count", label: "Count", kind: "number" }] },
+    onChange: (patch) =>
+      setValue((previous) => ({
+        ...previous,
+        count: typeof patch.count === "number" ? patch.count : previous.count,
+      })),
+  });
+
+  return (
+    <label>
+      Custom count
+      <input
+        type="number"
+        value={value.count}
+        onChange={(event) =>
+          properties.changeNumber("count", event.target.value)
+        }
+      />
+    </label>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2874,4 +2903,9 @@ examplePreviews["GridraBreadcrumb"] = {
 examplePreviews["GridraInspectorPanel"] = {
   ...examplePreviews["GridraInspectorPanel"],
   "Custom markup with headless hook": <ExampleHeadlessGridraInspectorPanel />,
+};
+
+examplePreviews["GridraPropertiesPanel"] = {
+  ...examplePreviews["GridraPropertiesPanel"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraPropertiesPanel />,
 };

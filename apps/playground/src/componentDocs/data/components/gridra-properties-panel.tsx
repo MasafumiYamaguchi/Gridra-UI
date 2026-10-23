@@ -2,39 +2,78 @@ import { GridraPropertiesPanel, GridraStack } from "@gridra-ui/react";
 import type { ComponentDoc } from "../../types";
 
 export const propertiesPanelDoc: ComponentDoc = {
-    category: "Core",
-    name: "GridraPropertiesPanel",
-    summary: "Schema-driven properties panel for node-type-specific custom attributes.",
-    description:
-      "GridraPropertiesPanel is a controlled, canvas-agnostic panel for editing node-type-specific custom properties. The consumer provides a schema that declares fields per node type, the current value object, and receives partial patches via onChange. In v1 it supports text, number, select, and toggle fields. Unknown field kinds are skipped for forward compatibility.",
-    importExample: 'import { GridraPropertiesPanel } from "@gridra-ui/react";',
-    props: [
-      { name: "selectedNodeId", type: "string | null", default: "null", description: "Id of the currently selected node." },
-      { name: "selectedNodeType", type: "string | null", default: "null", description: "Type key used to look up the schema." },
-      { name: "value", type: "GridraNodePropertiesValue", description: "Current property values for the selected node." },
-      { name: "schema", type: "GridraNodePropertiesSchema", description: "Schema map of node type -> field definitions." },
-      { name: "onChange", type: "(patch: GridraPropertiesPatch) => void", description: "Called with a partial update when any property changes." },
-      { name: "disabled", type: "boolean", default: "false", description: "Disables all controls and suppresses onChange." },
-      { name: "className", type: "string", description: "Additional CSS classes." }
-    ],
-    options: [
-      "selectedNodeId",
-      "selectedNodeType",
-      "value",
-      "schema",
-      "onChange",
-      "disabled",
-      "HTML aside attributes"
-    ],
-    features: [
-      "Schema-driven field rendering per node type.",
-      "Emits partial patches so the parent normalizes and persists.",
-      "Shows a built-in empty state when selection or schema is missing."
-    ],
-    examples: [
+  notes:
+    "Behavior is provided by useGridraPropertiesPanel from @gridra-ui/headless. Use the same state and semantic bindings with your own DOM and CSS. Gridra visual variants and theme integration remain in @gridra-ui/react.",
+  category: "Core",
+  name: "GridraPropertiesPanel",
+  summary:
+    "Schema-driven properties panel for node-type-specific custom attributes.",
+  description:
+    "GridraPropertiesPanel is a controlled, canvas-agnostic panel for editing node-type-specific custom properties. The consumer provides a schema that declares fields per node type, the current value object, and receives partial patches via onChange. In v1 it supports text, number, select, and toggle fields. Unknown field kinds are skipped for forward compatibility.",
+  importExample: 'import { GridraPropertiesPanel } from "@gridra-ui/react";',
+  props: [
+    {
+      name: "selectedNodeId",
+      type: "string | null",
+      default: "null",
+      description: "Id of the currently selected node.",
+    },
+    {
+      name: "selectedNodeType",
+      type: "string | null",
+      default: "null",
+      description: "Type key used to look up the schema.",
+    },
+    {
+      name: "value",
+      type: "GridraNodePropertiesValue",
+      description: "Current property values for the selected node.",
+    },
+    {
+      name: "schema",
+      type: "GridraNodePropertiesSchema",
+      description: "Schema map of node type -> field definitions.",
+    },
+    {
+      name: "onChange",
+      type: "(patch: GridraPropertiesPatch) => void",
+      description: "Called with a partial update when any property changes.",
+    },
+    {
+      name: "disabled",
+      type: "boolean",
+      default: "false",
+      description: "Disables all controls and suppresses onChange.",
+    },
+    {
+      name: "className",
+      type: "string",
+      description: "Additional CSS classes.",
+    },
+  ],
+  options: [
+    "selectedNodeId",
+    "selectedNodeType",
+    "value",
+    "schema",
+    "onChange",
+    "disabled",
+    "HTML aside attributes",
+  ],
+  features: [
+    "Schema-driven field rendering per node type.",
+    "Emits partial patches so the parent normalizes and persists.",
+    "Shows a built-in empty state when selection or schema is missing.",
+  ],
+  examples: [
+    {
+      title: "Custom markup with headless hook",
+      code: 'import { useGridraPropertiesPanel } from "@gridra-ui/headless";\nimport { useState } from "react";\n\nexport default function Example() {\n  const [value,setValue]=useState({count:1});\n  const properties=useGridraPropertiesPanel({selectedNodeId:"one",selectedNodeType:"custom",value,schema:{custom:[{id:"count",label:"Count",kind:"number"}]},onChange:patch=>setValue(previous=>({...previous,count:typeof patch.count==="number"?patch.count:previous.count}))});\n  return <label>Custom count<input type="number" value={value.count} onChange={event=>properties.changeNumber("count",event.target.value)}/></label>;\n}',
+    },
+    ...([
       {
         title: "Empty state",
-        code: `<GridraPropertiesPanel />`
+        code: `<GridraPropertiesPanel />`,
       },
       {
         title: "Editing properties for a transform node",
@@ -54,26 +93,39 @@ export const propertiesPanelDoc: ComponentDoc = {
   value={{ mode: "merge", intensity: 50 }}
   schema={schema}
   onChange={(patch) => setProperties((prev) => ({ ...prev, ...patch }))}
-/>`
-      }
-    ],
-    preview: (
-      <GridraStack gap="sm">
-        <GridraPropertiesPanel />
-        <GridraPropertiesPanel
-          schema={{
-            transform: [
-              { id: "mode", label: "Mode", kind: "select", options: [
+/>`,
+      },
+    ] satisfies ComponentDoc["examples"]),
+  ],
+  preview: (
+    <GridraStack gap="sm">
+      <GridraPropertiesPanel />
+      <GridraPropertiesPanel
+        schema={{
+          transform: [
+            {
+              id: "mode",
+              label: "Mode",
+              kind: "select",
+              options: [
                 { value: "merge", label: "Merge" },
-                { value: "replace", label: "Replace" }
-              ]},
-              { id: "intensity", label: "Intensity", kind: "number", min: 0, max: 100, step: 1 }
-            ]
-          }}
-          selectedNodeId="preview-node"
-          selectedNodeType="transform"
-          value={{ mode: "merge", intensity: 50 }}
-        />
-      </GridraStack>
-    )
-  };
+                { value: "replace", label: "Replace" },
+              ],
+            },
+            {
+              id: "intensity",
+              label: "Intensity",
+              kind: "number",
+              min: 0,
+              max: 100,
+              step: 1,
+            },
+          ],
+        }}
+        selectedNodeId="preview-node"
+        selectedNodeType="transform"
+        value={{ mode: "merge", intensity: 50 }}
+      />
+    </GridraStack>
+  ),
+};

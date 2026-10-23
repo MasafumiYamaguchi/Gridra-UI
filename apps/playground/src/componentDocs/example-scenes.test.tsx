@@ -50,6 +50,17 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraPropertiesPanel through caller-owned DOM", () => {
+    const preview = renderExample(
+      "GridraPropertiesPanel",
+      "Custom markup with headless hook",
+    );
+    const input = preview.getByRole("spinbutton", { name: "Custom count" });
+
+    fireEvent.change(input, { target: { value: "4" } });
+
+    expect((input as HTMLInputElement).value).toBe("4");
+  });
   it("runs headless GridraInspectorPanel through caller-owned DOM", () => {
     const preview = renderExample(
       "GridraInspectorPanel",

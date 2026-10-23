@@ -1,3 +1,4 @@
+import { useGridraPropertiesPanel } from "@gridra-ui/headless";
 import { useId, type HTMLAttributes } from "react";
 import { GridraField } from "../GridraField";
 import { GridraInput } from "../GridraInput";
@@ -28,8 +29,10 @@ export type GridraNodePropertiesValue = Record<
 
 export type GridraPropertiesPatch = Partial<GridraNodePropertiesValue>;
 
-export interface GridraPropertiesPanelProps
-  extends Omit<HTMLAttributes<HTMLElement>, "onChange"> {
+export interface GridraPropertiesPanelProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "onChange"
+> {
   selectedNodeId?: string | null;
   selectedNodeType?: string | null;
   value?: GridraNodePropertiesValue;
@@ -48,39 +51,43 @@ export function GridraPropertiesPanel({
   value,
   ...props
 }: GridraPropertiesPanelProps) {
-  const fieldId = useId();
-  // 選択対象・型・schema・現在値が揃った場合だけ編集可能な状態とみなす。
-  const hasSelection =
-    selectedNodeId != null &&
-    selectedNodeType != null &&
-    schema != null &&
-    value != null;
-
-  const fields = hasSelection ? schema[selectedNodeType] : undefined;
-  const hasFields = fields != null && fields.length > 0;
-
-  const handleChange = (fieldId: string, nextValue: string | number | boolean) => {
-    // 無効状態や選択情報が不足している場合は、patchを外部へ通知しない。
-    if (disabled || !hasSelection) {
-      return;
-    }
-    onChange?.({ [fieldId]: nextValue });
-  };
+  const {
+    fieldId,
+    hasSelection,
+    fields,
+    hasFields,
+    handleChange,
+    changeNumber,
+    getFieldValue,
+  } = useGridraPropertiesPanel({
+    selectedNodeId,
+    selectedNodeType,
+    value,
+    schema,
+    onChange,
+    disabled,
+  });
 
   return (
     <GridraPanel
-      className={["gridra-properties-panel", className].filter(Boolean).join(" ")}
+      className={["gridra-properties-panel", className]
+        .filter(Boolean)
+        .join(" ")}
       heading="Properties"
       {...props}
     >
       {hasSelection && hasFields ? (
         <div className="gridra-properties-panel__fields">
-          {fields.map((field) => {
-            const fieldValue = value[field.id];
+          {fields!.map((field) => {
+            const fieldValue = getFieldValue(field);
 
             if (field.kind === "text") {
               return (
-                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
+                <GridraField
+                  htmlFor={`${fieldId}-${field.id}`}
+                  key={field.id}
+                  label={field.label}
+                >
                   <GridraInput
                     data-testid={`property-${field.id}`}
                     id={`${fieldId}-${field.id}`}
@@ -97,24 +104,23 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "number") {
               return (
-                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
+                <GridraField
+                  htmlFor={`${fieldId}-${field.id}`}
+                  key={field.id}
+                  label={field.label}
+                >
                   <GridraInput
                     data-testid={`property-${field.id}`}
                     id={`${fieldId}-${field.id}`}
                     disabled={disabled}
                     max={field.max}
                     min={field.min}
-                    onChange={(event) => {
-                      const raw = event.target.value;
-                      // 空文字や非有限値は、数値プロパティのpatchとして確定させない。
-                      if (raw.trim() === "" || Number.isNaN(Number(raw)) || !Number.isFinite(Number(raw))) {
-                        return;
-                      }
-                      handleChange(field.id, Number(raw));
-                    }}
+                    onChange={(event) =>
+                      changeNumber(field.id, event.target.value)
+                    }
                     step={field.step}
                     type="number"
-                    value={formatNumberValue(fieldValue)}
+                    value={fieldValue as string | number}
                   />
                 </GridraField>
               );
@@ -122,7 +128,11 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "select") {
               return (
-                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
+                <GridraField
+                  htmlFor={`${fieldId}-${field.id}`}
+                  key={field.id}
+                  label={field.label}
+                >
                   <GridraSelect
                     data-testid={`property-${field.id}`}
                     id={`${fieldId}-${field.id}`}
@@ -144,7 +154,11 @@ export function GridraPropertiesPanel({
 
             if (field.kind === "toggle") {
               return (
-                <GridraField htmlFor={`${fieldId}-${field.id}`} key={field.id} label={field.label}>
+                <GridraField
+                  htmlFor={`${fieldId}-${field.id}`}
+                  key={field.id}
+                  label={field.label}
+                >
                   <GridraSwitch
                     checked={Boolean(fieldValue)}
                     data-testid={`property-${field.id}`}
@@ -171,10 +185,4 @@ export function GridraPropertiesPanel({
       )}
     </GridraPanel>
   );
-}
-
-function formatNumberValue(value: unknown): string | number {
-  // 不正な値はinputへNaNを渡さず、未入力として表示する。
-  if (typeof value !== "number" || !Number.isFinite(value)) return "";
-  return value;
 }
