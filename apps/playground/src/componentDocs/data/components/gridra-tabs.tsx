@@ -92,21 +92,7 @@ export const tabsDoc: ComponentDoc = {
   examples: [
     {
       title: "Custom markup with headless hook",
-      code: `const tabs = useGridraTabs({ items: [
-  { id: "overview", label: "Overview", content: "Custom overview" },
-  { id: "details", label: "Details", content: "Custom details" },
-] });
-
-<article>
-  <div {...tabs.getTabListProps({ "aria-label": "Custom tabs" })}>
-    {tabs.items.map(item => (
-      <button key={item.id} {...tabs.getTabProps(item.id)}>{item.label}</button>
-    ))}
-  </div>
-  {tabs.selectedItem ? (
-    <section {...tabs.getPanelProps(tabs.selectedItem.id)}>{tabs.selectedItem.content}</section>
-  ) : null}
-</article>`,
+      code: 'import { useGridraTabs } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const tabs = useGridraTabs({ items: [\n    { id: "overview", label: "Overview", content: "Custom overview" },\n    { id: "details", label: "Details", content: "Custom details" },\n  ] });\n  \n  return (<article>\n    <div {...tabs.getTabListProps({ "aria-label": "Custom tabs" })}>\n      {tabs.items.map(item => (\n        <button key={item.id} {...tabs.getTabProps(item.id)}>{item.label}</button>\n      ))}\n    </div>\n    {tabs.selectedItem ? (\n      <section {...tabs.getPanelProps(tabs.selectedItem.id)}>{tabs.selectedItem.content}</section>\n    ) : null}\n  </article>);\n}',
     },
     {
       title: "Basic horizontal tabs",

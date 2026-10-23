@@ -87,19 +87,7 @@ export const accordionDoc: ComponentDoc = {
   examples: [
     {
       title: "Custom markup with headless hook",
-      code: `const accordion = useGridraAccordion({ collapsible: true, items: [
-  { id: "general", title: "General", content: "Custom general content" },
-  { id: "account", title: "Account", content: "Custom account content" },
-] });
-
-<article>
-  {accordion.items.map(item => (
-    <section key={item.id}>
-      <h3><button {...accordion.getTriggerProps(item.id)}>{item.title}</button></h3>
-      <div {...accordion.getPanelProps(item.id)}>{item.content}</div>
-    </section>
-  ))}
-</article>`,
+      code: 'import { useGridraAccordion } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const accordion = useGridraAccordion({ collapsible: true, items: [\n    { id: "general", title: "General", content: "Custom general content" },\n    { id: "account", title: "Account", content: "Custom account content" },\n  ] });\n  \n  return (<article>\n    {accordion.items.map(item => (\n      <section key={item.id}>\n        <h3><button {...accordion.getTriggerProps(item.id)}>{item.title}</button></h3>\n        <div {...accordion.getPanelProps(item.id)}>{item.content}</div>\n      </section>\n    ))}\n  </article>);\n}',
     },
     {
       title: "Default single accordion",

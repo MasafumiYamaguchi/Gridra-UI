@@ -16,7 +16,9 @@ describe("resolveAriaInvalid", () => {
 
 describe("useControlDescriptionIds", () => {
   it("uses a provided control id and derives a description id when needed", () => {
-    const { result } = renderHook(() => useControlDescriptionIds("field", true));
+    const { result } = renderHook(() =>
+      useControlDescriptionIds("field", true),
+    );
 
     expect(result.current).toEqual({
       controlId: "field",
@@ -25,7 +27,9 @@ describe("useControlDescriptionIds", () => {
   });
 
   it("omits description id when there is no description", () => {
-    const { result } = renderHook(() => useControlDescriptionIds("field", false));
+    const { result } = renderHook(() =>
+      useControlDescriptionIds("field", false),
+    );
 
     expect(result.current).toEqual({
       controlId: "field",
