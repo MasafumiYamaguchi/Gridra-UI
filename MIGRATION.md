@@ -273,3 +273,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraPopover` from `@gridra-ui/headless` for custom markup. The existing
 `GridraPopover` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+## Headless GridraTooltip
+
+Import `useGridraTooltip` from `@gridra-ui/headless` for custom markup. The existing
+`GridraTooltip` export keeps the Gridra design and delegates to the same behavior.
+The component documentation includes a live custom-markup example.

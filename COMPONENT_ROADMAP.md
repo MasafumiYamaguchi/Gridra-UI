@@ -50,6 +50,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraPopover: useGridraPopover and styled integration.
 
+- [x] GridraTooltip: useGridraTooltip and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes
