@@ -86,6 +86,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraProgress: getGridraProgress and styled integration.
 
+- [x] GridraAvatar: getGridraAvatar and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

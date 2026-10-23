@@ -1,3 +1,4 @@
+import { getGridraAvatar } from "@gridra-ui/headless";
 import { getGridraProgress } from "@gridra-ui/headless";
 import { useGridraPropertiesPanel } from "@gridra-ui/headless";
 import { useGridraInspectorPanel } from "@gridra-ui/headless";
@@ -2561,6 +2562,16 @@ function ExampleHeadlessGridraProgress() {
   return <div {...progress.rootProps}>{progress.percent}% complete</div>;
 }
 
+function ExampleHeadlessGridraAvatar() {
+  const avatar = getGridraAvatar({ alt: "Ada Lovelace", fallback: "AL" });
+
+  return (
+    <span {...avatar.rootProps}>
+      <span {...avatar.fallbackProps}>{avatar.fallbackText}</span>
+    </span>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2924,4 +2935,9 @@ examplePreviews["GridraPropertiesPanel"] = {
 examplePreviews["GridraProgress"] = {
   ...examplePreviews["GridraProgress"],
   "Custom markup with headless hook": <ExampleHeadlessGridraProgress />,
+};
+
+examplePreviews["GridraAvatar"] = {
+  ...examplePreviews["GridraAvatar"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraAvatar />,
 };

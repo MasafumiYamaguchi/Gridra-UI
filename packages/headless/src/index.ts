@@ -72,3 +72,5 @@ export * from "./editors/useGridraInspectorPanel";
 export * from "./editors/useGridraPropertiesPanel";
 
 export * from "./feedback/getGridraProgress";
+
+export * from "./feedback/getGridraAvatar";
