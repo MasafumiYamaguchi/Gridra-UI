@@ -34,6 +34,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraSelectableGrid: useGridraSelectableGrid and styled integration.
 
+- [x] GridraPagination: useGridraPagination and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes
