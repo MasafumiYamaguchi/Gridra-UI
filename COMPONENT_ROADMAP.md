@@ -88,6 +88,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraAvatar: getGridraAvatar and styled integration.
 
+- [x] GridraMinimap: getGridraMinimap and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

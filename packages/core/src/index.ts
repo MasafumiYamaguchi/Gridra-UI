@@ -82,12 +82,12 @@ export interface GridraChange<TValue> {
 }
 
 export const emptySelection: GridraSelectionState = {
-  selectedId: null
+  selectedId: null,
 };
 
 export function selectGridraItem(
   state: GridraSelectionState,
-  selectedId: GridraId | null
+  selectedId: GridraId | null,
 ): GridraSelectionState {
   if (state.selectedId === selectedId) {
     return state;
@@ -98,21 +98,24 @@ export function selectGridraItem(
 
 export function toggleGridraSelection(
   state: GridraSelectionState,
-  selectedId: GridraId
+  selectedId: GridraId,
 ): GridraSelectionState {
   return {
-    selectedId: state.selectedId === selectedId ? null : selectedId
+    selectedId: state.selectedId === selectedId ? null : selectedId,
   };
 }
 
 export function movePoint(point: GridraPoint, delta: GridraPoint): GridraPoint {
   return {
     x: point.x + delta.x,
-    y: point.y + delta.y
+    y: point.y + delta.y,
   };
 }
 
-export function rectContainsPoint(rect: GridraRect, point: GridraPoint): boolean {
+export function rectContainsPoint(
+  rect: GridraRect,
+  point: GridraPoint,
+): boolean {
   return (
     point.x >= rect.x &&
     point.y >= rect.y &&
@@ -122,3 +125,5 @@ export function rectContainsPoint(rect: GridraRect, point: GridraPoint): boolean
 }
 
 export * from "./numeric";
+
+export * from "./minimap";

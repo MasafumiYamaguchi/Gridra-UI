@@ -1,3 +1,4 @@
+import { getGridraMinimap } from "@gridra-ui/headless";
 import { getGridraAvatar } from "@gridra-ui/headless";
 import { getGridraProgress } from "@gridra-ui/headless";
 import { useGridraPropertiesPanel } from "@gridra-ui/headless";
@@ -2572,6 +2573,30 @@ function ExampleHeadlessGridraAvatar() {
   );
 }
 
+function ExampleHeadlessGridraMinimap() {
+  const map = getGridraMinimap({
+    gridColumns: 4,
+    gridRows: 4,
+    nodes: [{ id: "one", placement: { column: 2, row: 2, columnSpan: 2 } }],
+    selectedIds: ["one"],
+  });
+
+  return (
+    <svg aria-label="Custom minimap" role="img" viewBox="0 0 100 100">
+      {map.nodes.map((node) => (
+        <rect
+          key={node.id}
+          x={node.rect.left}
+          y={node.rect.top}
+          width={node.rect.width}
+          height={node.rect.height}
+          fill={node.selected ? "currentColor" : "none"}
+        />
+      ))}
+    </svg>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2940,4 +2965,9 @@ examplePreviews["GridraProgress"] = {
 examplePreviews["GridraAvatar"] = {
   ...examplePreviews["GridraAvatar"],
   "Custom markup with headless hook": <ExampleHeadlessGridraAvatar />,
+};
+
+examplePreviews["GridraMinimap"] = {
+  ...examplePreviews["GridraMinimap"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraMinimap />,
 };
