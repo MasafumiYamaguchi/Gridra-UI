@@ -1,3 +1,4 @@
+import { getGridraButtonProps } from "@gridra-ui/headless";
 import { useGridraSlider } from "@gridra-ui/headless";
 import { getGridraSwitchProps } from "@gridra-ui/headless";
 import { useGridraRadio } from "@gridra-ui/headless";
@@ -2440,6 +2441,14 @@ function ExampleHeadlessGridraSlider() {
   );
 }
 
+function ExampleHeadlessGridraButton() {
+  return (
+    <button {...getGridraButtonProps({ loading: true, pressed: true })}>
+      Custom busy button
+    </button>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2773,4 +2782,9 @@ examplePreviews["GridraSwitch"] = {
 examplePreviews["GridraSlider"] = {
   ...examplePreviews["GridraSlider"],
   "Custom markup with headless hook": <ExampleHeadlessGridraSlider />,
+};
+
+examplePreviews["GridraButton"] = {
+  ...examplePreviews["GridraButton"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraButton />,
 };
