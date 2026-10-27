@@ -1,3 +1,4 @@
+import { useGridraDialog } from "@gridra-ui/headless";
 import { useGridraHoverCard } from "@gridra-ui/headless";
 import { useGridraTooltip } from "@gridra-ui/headless";
 import { useGridraPopover } from "@gridra-ui/headless";
@@ -2272,6 +2273,24 @@ function ExampleHeadlessGridraHoverCard() {
   );
 }
 
+function ExampleHeadlessGridraDialog() {
+  const dialog = useGridraDialog();
+
+  return (
+    <section>
+      <button {...dialog.getTriggerProps()}>Open custom dialog</button>
+      {dialog.currentOpen ? (
+        <div {...dialog.getBackdropProps()}>
+          <div {...dialog.getDialogProps()}>
+            <h2 id={dialog.titleId}>Custom dialog</h2>
+            <button {...dialog.getCloseProps()}>Close custom dialog</button>
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2555,4 +2574,9 @@ examplePreviews["GridraTooltip"] = {
 examplePreviews["GridraHoverCard"] = {
   ...examplePreviews["GridraHoverCard"],
   "Custom markup with headless hook": <ExampleHeadlessGridraHoverCard />,
+};
+
+examplePreviews["GridraDialog"] = {
+  ...examplePreviews["GridraDialog"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraDialog />,
 };

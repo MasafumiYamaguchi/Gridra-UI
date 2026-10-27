@@ -36,3 +36,7 @@ export * from "./overlays/useGridraPopover";
 export * from "./overlays/useGridraTooltip";
 
 export * from "./overlays/useGridraHoverCard";
+
+export * from "./internal/focus";
+
+export * from "./overlays/useGridraDialog";

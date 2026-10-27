@@ -15,12 +15,17 @@ describe("GridraDialog", () => {
       </GridraDialog>,
     );
     const trigger = screen.getByRole("button", { name: "Open" });
+
     expect(screen.queryByRole("dialog")).toBeNull();
 
     fireEvent.click(trigger);
+
     const dialog = screen.getByRole("dialog");
+
     expect(dialog).toBeDefined();
     expect(dialog.getAttribute("aria-modal")).toBe("true");
+    expect(trigger.getAttribute("aria-controls")).toBe(dialog.id);
+    expect(dialog.id).not.toBe("");
     expect(screen.getByText("Test Dialog")).toBeDefined();
     expect(screen.getByText("Dialog body")).toBeDefined();
   });
@@ -35,7 +40,10 @@ describe("GridraDialog", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Open" }));
-    const backdrop = document.querySelector(".gridra-dialog__backdrop") as HTMLElement;
+
+    const backdrop = document.querySelector(
+      ".gridra-dialog__backdrop",
+    ) as HTMLElement;
 
     expect(backdrop.className).toContain("gridra-portal-root");
     expect(backdrop.classList.contains("gridra-root")).toBe(false);
@@ -65,9 +73,11 @@ describe("GridraDialog", () => {
         <button type="button">Trigger</button>
       </GridraDialog>,
     );
+
     expect(screen.getByRole("dialog")).toBeDefined();
 
     fireEvent.keyDown(document, { key: "Escape" });
+
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
@@ -77,7 +87,9 @@ describe("GridraDialog", () => {
         <button type="button">Trigger</button>
       </GridraDialog>,
     );
+
     fireEvent.keyDown(document, { key: "Escape" });
+
     expect(screen.getByRole("dialog")).toBeDefined();
   });
 
@@ -87,8 +99,12 @@ describe("GridraDialog", () => {
         <button type="button">Trigger</button>
       </GridraDialog>,
     );
-    const backdrop = document.querySelector(".gridra-dialog__backdrop") as HTMLElement;
+    const backdrop = document.querySelector(
+      ".gridra-dialog__backdrop",
+    ) as HTMLElement;
+
     fireEvent.pointerDown(backdrop);
+
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
@@ -99,31 +115,49 @@ describe("GridraDialog", () => {
       </GridraDialog>,
     );
     const dialog = screen.getByRole("dialog");
+
     fireEvent.pointerDown(dialog);
+
     expect(screen.getByRole("dialog")).toBeDefined();
   });
 
   it("does not close on backdrop when closeOnBackdropPointerDown is false", () => {
     render(
-      <GridraDialog closeOnBackdropPointerDown={false} content="Body" open title="Dialog">
+      <GridraDialog
+        closeOnBackdropPointerDown={false}
+        content="Body"
+        open
+        title="Dialog"
+      >
         <button type="button">Trigger</button>
       </GridraDialog>,
     );
-    const backdrop = document.querySelector(".gridra-dialog__backdrop") as HTMLElement;
+    const backdrop = document.querySelector(
+      ".gridra-dialog__backdrop",
+    ) as HTMLElement;
+
     fireEvent.pointerDown(backdrop);
+
     expect(screen.getByRole("dialog")).toBeDefined();
   });
 
   it("close button closes dialog with correct label", () => {
     render(
-      <GridraDialog closeLabel="Dismiss" content="Body" defaultOpen title="Dialog">
+      <GridraDialog
+        closeLabel="Dismiss"
+        content="Body"
+        defaultOpen
+        title="Dialog"
+      >
         <button type="button">Trigger</button>
       </GridraDialog>,
     );
     const closeButton = screen.getByRole("button", { name: "Dismiss" });
+
     expect(closeButton).toBeDefined();
 
     fireEvent.click(closeButton);
+
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
@@ -133,6 +167,7 @@ describe("GridraDialog", () => {
         <button type="button">Trigger</button>
       </GridraDialog>,
     );
+
     expect(screen.queryByRole("button", { name: "Close dialog" })).toBeNull();
   });
 
@@ -143,10 +178,12 @@ describe("GridraDialog", () => {
       </GridraDialog>,
     );
     const trigger = screen.getByRole("button", { name: "Trigger" });
+
     expect(trigger.getAttribute("aria-haspopup")).toBe("dialog");
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
 
     fireEvent.click(trigger);
+
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
   });
 
@@ -165,6 +202,7 @@ describe("GridraDialog", () => {
     const trigger = screen.getByRole("button", { name: "Trigger" });
 
     fireEvent.click(trigger);
+
     expect(onOpenChange).toHaveBeenCalledWith(true, false);
     expect(screen.queryByRole("dialog")).toBeNull();
   });
@@ -173,7 +211,10 @@ describe("GridraDialog", () => {
     const existingClick = vi.fn();
     render(
       <GridraDialog content="Body" title="Dialog">
-        <button type="button" onClick={existingClick as unknown as React.MouseEventHandler}>
+        <button
+          type="button"
+          onClick={existingClick as unknown as React.MouseEventHandler}
+        >
           Trigger
         </button>
       </GridraDialog>,
@@ -181,22 +222,21 @@ describe("GridraDialog", () => {
     const trigger = screen.getByRole("button", { name: "Trigger" });
 
     fireEvent.click(trigger);
+
     expect(existingClick).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("dialog")).toBeDefined();
   });
 
   it("renders with size class", () => {
-    render(
-      <GridraDialog content="Body" open size="lg" title="Dialog" />,
-    );
+    render(<GridraDialog content="Body" open size="lg" title="Dialog" />);
     const dialog = screen.getByRole("dialog");
+
     expect(dialog.className).toContain("gridra-dialog--lg");
   });
 
   it("renders without trigger element when children not provided", () => {
-    render(
-      <GridraDialog content="Body" open title="No Trigger Dialog" />,
-    );
+    render(<GridraDialog content="Body" open title="No Trigger Dialog" />);
+
     expect(screen.getByRole("dialog")).toBeDefined();
     expect(screen.getByText("No Trigger Dialog")).toBeDefined();
   });
@@ -204,16 +244,14 @@ describe("GridraDialog", () => {
   it("respects preventDefault on trigger onClick", () => {
     render(
       <GridraDialog content="Body" title="Blocked">
-        <button
-          onClick={(e) => e.preventDefault()}
-          type="button"
-        >
+        <button onClick={(e) => e.preventDefault()} type="button">
           Open
         </button>
       </GridraDialog>,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Open" }));
+
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 

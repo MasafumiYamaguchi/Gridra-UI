@@ -54,6 +54,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraHoverCard: useGridraHoverCard and styled integration.
 
+- [x] GridraDialog: useGridraDialog and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

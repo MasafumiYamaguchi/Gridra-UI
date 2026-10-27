@@ -50,6 +50,24 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraDialog through caller-owned DOM", () => {
+    const preview = renderExample(
+      "GridraDialog",
+      "Custom markup with headless hook",
+    );
+
+    fireEvent.click(
+      preview.getByRole("button", { name: "Open custom dialog" }),
+    );
+
+    expect(preview.getByRole("dialog")).toBeTruthy();
+
+    fireEvent.click(
+      preview.getByRole("button", { name: "Close custom dialog" }),
+    );
+
+    expect(preview.queryByRole("dialog")).toBeNull();
+  });
   it("runs headless GridraHoverCard through caller-owned DOM", () => {
     const preview = renderExample(
       "GridraHoverCard",
