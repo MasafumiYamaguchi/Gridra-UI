@@ -33,7 +33,8 @@ export function useFloatingPosition<TPlacement extends Placement>({
   open,
   placement,
 }: UseFloatingPositionOptions<TPlacement>): UseFloatingPositionResult<TPlacement> {
-  const [resolvedPlacement, setResolvedPlacement] = useState<TPlacement>(placement);
+  const [resolvedPlacement, setResolvedPlacement] =
+    useState<TPlacement>(placement);
   const [coords, setCoords] = useState(HIDDEN_COORDS);
 
   useEffect(() => {
@@ -77,13 +78,17 @@ export function useFloatingPosition<TPlacement extends Placement>({
       }
 
       setResolvedPlacement(nextPlacement);
-      setCoords((previous) => previous.top === nextCoords.top && previous.left === nextCoords.left
-        ? previous : nextCoords);
+      setCoords((previous) =>
+        previous.top === nextCoords.top && previous.left === nextCoords.left
+          ? previous
+          : nextCoords,
+      );
     };
 
     updatePosition();
     window.addEventListener("resize", updatePosition);
     window.addEventListener("scroll", updatePosition, true);
+
     return () => {
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition, true);

@@ -26,3 +26,9 @@ export * from "./sidebar/useGridraSidebarToggle";
 export * from "./sidebar/useGridraSidebar";
 
 export * from "./split-pane/useGridraSplitPane";
+
+export * from "./internal/useFloatingPosition";
+
+export * from "./internal/useDocumentEvent";
+
+export * from "./overlays/useGridraPopover";
