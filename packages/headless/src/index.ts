@@ -34,3 +34,5 @@ export * from "./internal/useDocumentEvent";
 export * from "./overlays/useGridraPopover";
 
 export * from "./overlays/useGridraTooltip";
+
+export * from "./overlays/useGridraHoverCard";
