@@ -1,3 +1,4 @@
+import { useGridraSplitPane } from "@gridra-ui/headless";
 import { useGridraSidebar } from "@gridra-ui/headless";
 import { useGridraTreeView } from "@gridra-ui/headless";
 import { useGridraMenu } from "@gridra-ui/headless";
@@ -2216,6 +2217,17 @@ function ExampleHeadlessGridraSidebar() {
   );
 }
 
+function ExampleHeadlessGridraSplitPane() {
+  const split = useGridraSplitPane({ defaultSize: 50 });
+
+  return (
+    <section {...split.getContainerProps()}>
+      <output>First pane {split.effectiveSizes[0]}%</output>
+      <div {...split.getSeparatorProps(0)} aria-label="Custom separator" />
+    </section>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2479,4 +2491,9 @@ examplePreviews["GridraTreeView"] = {
 examplePreviews["GridraSidebar"] = {
   ...examplePreviews["GridraSidebar"],
   "Custom markup with headless hook": <ExampleHeadlessGridraSidebar />,
+};
+
+examplePreviews["GridraSplitPane"] = {
+  ...examplePreviews["GridraSplitPane"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraSplitPane />,
 };

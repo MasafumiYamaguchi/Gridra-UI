@@ -50,6 +50,16 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraSplitPane through caller-owned DOM", () => {
+    const preview = renderExample(
+      "GridraSplitPane",
+      "Custom markup with headless hook",
+    );
+
+    fireEvent.keyDown(preview.getByRole("separator"), { key: "ArrowRight" });
+
+    expect(preview.getByRole("status").textContent).toBe("First pane 52%");
+  });
   it("runs headless GridraSidebar through caller-owned DOM", () => {
     const preview = renderExample(
       "GridraSidebar",

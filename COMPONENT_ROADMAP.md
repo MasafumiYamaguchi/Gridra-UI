@@ -46,6 +46,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraSidebar: useGridraSidebar and styled integration.
 
+- [x] GridraSplitPane: useGridraSplitPane and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

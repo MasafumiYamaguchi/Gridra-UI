@@ -1,9 +1,14 @@
 import { clampNumber } from "@gridra-ui/core";
 
-export function clampSize(value: number, minSize: number, maxSize: number): number {
+export function clampSize(
+  value: number,
+  minSize: number,
+  maxSize: number,
+): number {
   // 値と制約を有限な0〜100の範囲へ揃えてからclampする。
   const { min, max } = normalizeSizeConstraints(minSize, maxSize);
   const safeValue = Number.isFinite(value) ? value : min;
+
   return clampNumber(safeValue, min, max);
 }
 
@@ -20,7 +25,10 @@ function normalizeSizeConstraints(
     : { min: rawMax, max: rawMin };
 }
 
-export function sumBeforeIndex(values: number[], indexExclusive: number): number {
+export function sumBeforeIndex(
+  values: number[],
+  indexExclusive: number,
+): number {
   return values.slice(0, indexExclusive).reduce((sum, value) => sum + value, 0);
 }
 
@@ -35,15 +43,27 @@ export function normalizePaneSizes(
   while (base.length < paneCount) {
     base.push(100 / paneCount);
   }
-  const total = base.reduce((sum, value) => sum + (Number.isFinite(value) ? value : 0), 0) || 1;
-  let normalized = base.map((value) => ((Number.isFinite(value) ? value : 0) / total) * 100);
+  const total =
+    base.reduce(
+      (sum, value) => sum + (Number.isFinite(value) ? value : 0),
+      0,
+    ) || 1;
+  let normalized = base.map(
+    (value) => ((Number.isFinite(value) ? value : 0) / total) * 100,
+  );
   normalized = normalized.map((value) => clampSize(value, minSize, maxSize));
-  const normalizedTotal = normalized.reduce((sum, value) => sum + value, 0) || 1;
+  const normalizedTotal =
+    normalized.reduce((sum, value) => sum + value, 0) || 1;
   normalized = normalized.map((value) => (value / normalizedTotal) * 100);
   // 丸め誤差は最後のpaneへ戻し、CSS上の合計を常に100%にする。
   const rounded = normalized.map((value) => Number(value.toFixed(4)));
-  const diff = Number((100 - rounded.reduce((sum, value) => sum + value, 0)).toFixed(4));
-  rounded[rounded.length - 1] = Number((rounded[rounded.length - 1] + diff).toFixed(4));
+  const diff = Number(
+    (100 - rounded.reduce((sum, value) => sum + value, 0)).toFixed(4),
+  );
+  rounded[rounded.length - 1] = Number(
+    (rounded[rounded.length - 1] + diff).toFixed(4),
+  );
+
   return rounded;
 }
 
@@ -64,4 +84,3 @@ export function clampSizeInPair(
 
   return clampNumber(safeValue, lower, upper);
 }
-
