@@ -1,3 +1,4 @@
+import { useGridraSidebar } from "@gridra-ui/headless";
 import { useGridraTreeView } from "@gridra-ui/headless";
 import { useGridraMenu } from "@gridra-ui/headless";
 import { useGridraStepper } from "@gridra-ui/headless";
@@ -2198,6 +2199,23 @@ function ExampleHeadlessGridraTreeView() {
   );
 }
 
+function ExampleHeadlessGridraSidebar() {
+  const sidebar = useGridraSidebar({ defaultOpen: true, resizable: true });
+
+  return (
+    <aside>
+      <button aria-expanded={sidebar.currentOpen} onClick={sidebar.toggleOpen}>
+        Toggle
+      </button>
+      <div hidden={!sidebar.currentOpen}>Custom sidebar content</div>
+      <div
+        {...sidebar.getSeparatorProps()}
+        aria-label="Resize custom sidebar"
+      />
+    </aside>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2456,4 +2474,9 @@ examplePreviews["GridraMenu"] = {
 examplePreviews["GridraTreeView"] = {
   ...examplePreviews["GridraTreeView"],
   "Custom markup with headless hook": <ExampleHeadlessGridraTreeView />,
+};
+
+examplePreviews["GridraSidebar"] = {
+  ...examplePreviews["GridraSidebar"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraSidebar />,
 };
