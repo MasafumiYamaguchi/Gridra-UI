@@ -1,3 +1,4 @@
+import { useGridraMenu } from "@gridra-ui/headless";
 import { useGridraStepper } from "@gridra-ui/headless";
 import { useGridraPagination } from "@gridra-ui/headless";
 import { useGridraSelectableGrid } from "@gridra-ui/headless";
@@ -2147,6 +2148,25 @@ function ExampleHeadlessGridraStepper() {
   );
 }
 
+function ExampleHeadlessGridraMenu() {
+  const menu = useGridraMenu({
+    items: [
+      { id: "a", label: "A" },
+      { id: "b", label: "B" },
+    ],
+  });
+
+  return (
+    <nav {...menu.getRootProps()} aria-label="Custom navigation">
+      {menu.items.filter(menu.isCommand).map((item) => (
+        <button key={item.id} {...menu.getItemProps(item.id)}>
+          {item.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2395,4 +2415,9 @@ export const examplePreviews: Record<string, Record<string, ReactNode>> = {
 examplePreviews["GridraStepper"] = {
   ...examplePreviews["GridraStepper"],
   "Custom markup with headless hook": <ExampleHeadlessGridraStepper />,
+};
+
+examplePreviews["GridraMenu"] = {
+  ...examplePreviews["GridraMenu"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraMenu />,
 };

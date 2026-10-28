@@ -16,3 +16,5 @@ export * from "./selection/useGridraSelectableGrid";
 export * from "./pagination/useGridraPagination";
 
 export * from "./stepper/useGridraStepper";
+
+export * from "./menu/useGridraMenu";
