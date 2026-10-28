@@ -1,3 +1,4 @@
+import { useGridraTreeView } from "@gridra-ui/headless";
 import { useGridraMenu } from "@gridra-ui/headless";
 import { useGridraStepper } from "@gridra-ui/headless";
 import { useGridraPagination } from "@gridra-ui/headless";
@@ -2167,6 +2168,36 @@ function ExampleHeadlessGridraMenu() {
   );
 }
 
+function ExampleHeadlessGridraTreeView() {
+  const tree = useGridraTreeView({
+    items: [
+      {
+        id: "parent",
+        label: "Parent",
+        children: [{ id: "child", label: "Child" }],
+      },
+    ],
+  });
+
+  return (
+    <div role="tree">
+      {tree.flatItems.map((row) => (
+        <div
+          key={row.key}
+          role="treeitem"
+          aria-expanded={
+            row.hasChildren ? tree.expandedSet.has(row.item.id) : undefined
+          }
+        >
+          <div {...tree.getRowProps(row.item, row.hasChildren)}>
+            {row.item.label}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2420,4 +2451,9 @@ examplePreviews["GridraStepper"] = {
 examplePreviews["GridraMenu"] = {
   ...examplePreviews["GridraMenu"],
   "Custom markup with headless hook": <ExampleHeadlessGridraMenu />,
+};
+
+examplePreviews["GridraTreeView"] = {
+  ...examplePreviews["GridraTreeView"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraTreeView />,
 };

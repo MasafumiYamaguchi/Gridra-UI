@@ -40,6 +40,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraMenu: useGridraMenu and styled integration.
 
+- [x] GridraTreeView: useGridraTreeView and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

@@ -50,6 +50,16 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraTreeView through caller-owned DOM", () => {
+    const preview = renderExample(
+      "GridraTreeView",
+      "Custom markup with headless hook",
+    );
+
+    fireEvent.click(preview.getByText("Parent"));
+
+    expect(preview.getByText("Child")).toBeTruthy();
+  });
   it("runs headless GridraMenu through caller-owned DOM", () => {
     const preview = renderExample(
       "GridraMenu",
