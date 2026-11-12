@@ -1,3 +1,4 @@
+import { useGridraRadio } from "@gridra-ui/headless";
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import {
@@ -27,10 +28,11 @@ export function GridraRadio({
   ...props
 }: GridraRadioProps) {
   // inputと説明文をARIAで結び付けるため、衝突しないidの組を用意する。
-  const { controlId, descriptionId } = useControlDescriptionIds(
-    props.id,
-    Boolean(description),
-  );
+  const { descriptionId, inputProps } = useGridraRadio({
+    inputProps: { ...props, "aria-invalid": ariaInvalid },
+    hasDescription: Boolean(description),
+    invalid,
+  });
   const radioClassName = cx(
     "gridra-radio",
     `gridra-radio--${size}`,
@@ -41,14 +43,7 @@ export function GridraRadio({
   // 明示されたaria-invalidを優先しつつ、invalid propもアクセシビリティ属性へ反映する。
   return (
     <label className={radioClassName}>
-      <input
-        aria-describedby={descriptionId}
-        aria-invalid={resolveAriaInvalid(ariaInvalid, invalid)}
-        className="gridra-radio__input"
-        id={controlId}
-        type="radio"
-        {...props}
-      />
+      <input className="gridra-radio__input" {...inputProps} />
       <span className="gridra-radio__mark" aria-hidden="true" />
       {label || description ? (
         <span className="gridra-radio__content">
