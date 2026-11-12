@@ -80,6 +80,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraBreadcrumb: useGridraBreadcrumb and styled integration.
 
+- [x] GridraInspectorPanel: useGridraInspectorPanel and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes
