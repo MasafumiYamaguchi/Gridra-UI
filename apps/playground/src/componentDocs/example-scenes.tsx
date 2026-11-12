@@ -1,3 +1,4 @@
+import { useGridraCommandPalette } from "@gridra-ui/headless";
 import { useGridraContextMenu } from "@gridra-ui/headless";
 import { useGridraDropdownMenu } from "@gridra-ui/headless";
 import { useGridraDialog } from "@gridra-ui/headless";
@@ -2323,6 +2324,34 @@ function ExampleHeadlessGridraContextMenu() {
   );
 }
 
+function ExampleHeadlessGridraCommandPalette() {
+  const palette = useGridraCommandPalette({
+    items: [
+      { id: "one", label: "First command" },
+      { id: "two", label: "Second command" },
+    ],
+  });
+
+  return (
+    <section>
+      <button onClick={() => palette.setOpen(true)}>Open custom palette</button>
+      {palette.currentOpen ? (
+        <div {...palette.getDialogProps()}>
+          <h2 id={palette.titleId}>Custom commands</h2>
+          <input
+            {...palette.getInputProps({ "aria-label": "Search commands" })}
+          />
+          {palette.filteredCommands.map((item) => (
+            <button key={item.id} {...palette.getItemProps(item.id)}>
+              {item.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2621,4 +2650,9 @@ examplePreviews["GridraDropdownMenu"] = {
 examplePreviews["GridraContextMenu"] = {
   ...examplePreviews["GridraContextMenu"],
   "Custom markup with headless hook": <ExampleHeadlessGridraContextMenu />,
+};
+
+examplePreviews["GridraCommandPalette"] = {
+  ...examplePreviews["GridraCommandPalette"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraCommandPalette />,
 };

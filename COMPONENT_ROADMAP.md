@@ -60,6 +60,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraContextMenu: useGridraContextMenu and styled integration.
 
+- [x] GridraCommandPalette: useGridraCommandPalette and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

@@ -50,6 +50,25 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraCommandPalette through caller-owned DOM", () => {
+    const preview = renderExample(
+      "GridraCommandPalette",
+      "Custom markup with headless hook",
+    );
+
+    fireEvent.click(
+      preview.getByRole("button", { name: "Open custom palette" }),
+    );
+    fireEvent.change(preview.getByRole("textbox"), {
+      target: { value: "Second" },
+    });
+
+    expect(preview.queryByRole("button", { name: "First command" })).toBeNull();
+
+    fireEvent.click(preview.getByRole("button", { name: "Second command" }));
+
+    expect(preview.queryByRole("dialog")).toBeNull();
+  });
   it("runs headless GridraContextMenu through caller-owned DOM", () => {
     const preview = renderExample(
       "GridraContextMenu",
