@@ -1,3 +1,4 @@
+import { useGridraBreadcrumb } from "@gridra-ui/headless";
 import { getGridraIconButtonProps } from "@gridra-ui/headless";
 import { getGridraButtonProps } from "@gridra-ui/headless";
 import { useGridraSlider } from "@gridra-ui/headless";
@@ -2458,6 +2459,39 @@ function ExampleHeadlessGridraIconButton() {
   );
 }
 
+function ExampleHeadlessGridraBreadcrumb() {
+  const path = useGridraBreadcrumb({
+    items: [
+      { id: "home", label: "Home", href: "#home" },
+      { id: "page", label: "Current page", current: true, parentId: "home" },
+    ],
+  });
+
+  return (
+    <nav aria-label="Custom path">
+      <ol>
+        {path.visibleItems.map((entry) =>
+          entry.item ? (
+            <li key={entry.item.id}>
+              {path.getItemState(entry.item).canNavigate ? (
+                <a {...path.getItemState(entry.item).linkProps}>
+                  {entry.item.label}
+                </a>
+              ) : (
+                <span {...path.getItemState(entry.item).currentProps}>
+                  {entry.item.label}
+                </span>
+              )}
+            </li>
+          ) : (
+            <li key="ellipsis">…</li>
+          ),
+        )}
+      </ol>
+    </nav>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2801,4 +2835,9 @@ examplePreviews["GridraButton"] = {
 examplePreviews["GridraIconButton"] = {
   ...examplePreviews["GridraIconButton"],
   "Custom markup with headless hook": <ExampleHeadlessGridraIconButton />,
+};
+
+examplePreviews["GridraBreadcrumb"] = {
+  ...examplePreviews["GridraBreadcrumb"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraBreadcrumb />,
 };

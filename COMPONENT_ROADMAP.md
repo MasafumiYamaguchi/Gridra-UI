@@ -78,6 +78,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraIconButton: getGridraIconButtonProps and styled integration.
 
+- [x] GridraBreadcrumb: useGridraBreadcrumb and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes

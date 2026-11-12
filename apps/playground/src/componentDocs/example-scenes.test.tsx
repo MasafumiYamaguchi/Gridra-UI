@@ -50,6 +50,19 @@ describe.each(componentDocs)("$name live examples", (doc) => {
 });
 
 describe("interactive example scenes", () => {
+  it("runs headless GridraBreadcrumb through caller-owned DOM", () => {
+    const preview = renderExample(
+      "GridraBreadcrumb",
+      "Custom markup with headless hook",
+    );
+
+    expect(
+      preview.getByRole("link", { name: "Home" }).getAttribute("href"),
+    ).toBe("#home");
+    expect(preview.getByText("Current page").getAttribute("aria-current")).toBe(
+      "page",
+    );
+  });
   it("runs headless GridraIconButton through caller-owned DOM", () => {
     const preview = renderExample(
       "GridraIconButton",
