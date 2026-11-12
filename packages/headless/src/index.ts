@@ -58,3 +58,5 @@ export * from "./forms/useGridraCheckbox";
 export * from "./forms/useGridraRadio";
 
 export * from "./forms/getGridraSwitchProps";
+
+export * from "./forms/useGridraSlider";

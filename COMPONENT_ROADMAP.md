@@ -72,6 +72,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraSwitch: getGridraSwitchProps and styled integration.
 
+- [x] GridraSlider: useGridraSlider and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes
