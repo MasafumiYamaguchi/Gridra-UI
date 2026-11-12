@@ -56,3 +56,5 @@ export * from "./internal/formControl";
 export * from "./forms/useGridraCheckbox";
 
 export * from "./forms/useGridraRadio";
+
+export * from "./forms/getGridraSwitchProps";

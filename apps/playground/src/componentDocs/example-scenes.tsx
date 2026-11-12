@@ -1,3 +1,4 @@
+import { getGridraSwitchProps } from "@gridra-ui/headless";
 import { useGridraRadio } from "@gridra-ui/headless";
 import { useGridraCheckbox } from "@gridra-ui/headless";
 import { useGridraField } from "@gridra-ui/headless";
@@ -2414,6 +2415,16 @@ function ExampleHeadlessGridraRadio() {
   );
 }
 
+function ExampleHeadlessGridraSwitch() {
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <button {...getGridraSwitchProps({ checked, onCheckedChange: setChecked })}>
+      Custom switch
+    </button>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2737,4 +2748,9 @@ examplePreviews["GridraCheckbox"] = {
 examplePreviews["GridraRadio"] = {
   ...examplePreviews["GridraRadio"],
   "Custom markup with headless hook": <ExampleHeadlessGridraRadio />,
+};
+
+examplePreviews["GridraSwitch"] = {
+  ...examplePreviews["GridraSwitch"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraSwitch />,
 };

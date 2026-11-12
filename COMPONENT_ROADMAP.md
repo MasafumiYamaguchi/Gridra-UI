@@ -70,6 +70,8 @@ do not create a matching headless component for every styled component.
 
 - [x] GridraRadio: useGridraRadio and styled integration.
 
+- [x] GridraSwitch: getGridraSwitchProps and styled integration.
+
 ## Current Implemented Surface
 
 - [x] Parent-free CSS tokens and scoped theme classes
