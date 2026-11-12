@@ -1,6 +1,6 @@
 import type { TextareaHTMLAttributes } from "react";
 import { cx } from "../../internal/classNames";
-import { resolveAriaInvalid } from "../../internal/formControl";
+import { resolveAriaInvalid } from "@gridra-ui/headless";
 
 export type GridraTextareaSize = "sm" | "md" | "lg";
 

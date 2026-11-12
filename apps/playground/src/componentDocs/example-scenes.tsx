@@ -1,3 +1,4 @@
+import { useGridraCheckbox } from "@gridra-ui/headless";
 import { useGridraField } from "@gridra-ui/headless";
 import { useGridraToastQueue } from "@gridra-ui/headless";
 import { useGridraCommandPalette } from "@gridra-ui/headless";
@@ -2384,6 +2385,20 @@ function ExampleHeadlessGridraField() {
   );
 }
 
+function ExampleHeadlessGridraCheckbox() {
+  const control = useGridraCheckbox({ hasDescription: true });
+
+  return (
+    <section>
+      <label>
+        <input {...control.inputProps} />
+        Custom checkbox
+      </label>
+      <p {...control.descriptionProps}>Custom description</p>
+    </section>
+  );
+}
+
 export const examplePreviews: Record<string, Record<string, ReactNode>> = {
   "GridraAccordion": {
     "Custom markup with headless hook": <ExampleHeadlessAccordion />,
@@ -2697,4 +2712,9 @@ examplePreviews["GridraToast"] = {
 examplePreviews["GridraField"] = {
   ...examplePreviews["GridraField"],
   "Custom markup with headless hook": <ExampleHeadlessGridraField />,
+};
+
+examplePreviews["GridraCheckbox"] = {
+  ...examplePreviews["GridraCheckbox"],
+  "Custom markup with headless hook": <ExampleHeadlessGridraCheckbox />,
 };
