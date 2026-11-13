@@ -374,3 +374,9 @@ Behavior changes in `GridraContextMenu`:
 Import `useGridraCommandPalette` from `@gridra-ui/headless` for custom markup. The existing
 `GridraCommandPalette` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+Render the backdrop with `getBackdropProps()`. `useGridraCommandPalette` does not return
+`dialogRef`, `inputRef`, `listRef`, `handleKeyDown`, `handleBackdropPointerDown`, or `setQuery`;
+`getDialogProps()` and `getInputProps()` attach the refs and handlers, and the query is changed
+through `getInputProps()` or the controlled `query` option. `setOpen` is still returned for
+opening the palette from custom markup.
