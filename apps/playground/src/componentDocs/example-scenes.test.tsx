@@ -58,7 +58,7 @@ describe("interactive example scenes", () => {
 
     fireEvent.click(preview.getByRole("button", { name: "Custom save" }));
 
-    expect(preview.getByText("save")).toBeTruthy();
+    expect(preview.getByRole("status").textContent).toBe("save");
   });
   it("runs headless GridraInput through caller-owned DOM", () => {
     const preview = renderExample(

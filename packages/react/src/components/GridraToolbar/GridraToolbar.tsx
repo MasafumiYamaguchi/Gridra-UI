@@ -1,14 +1,12 @@
-import { getGridraToolbar } from "@gridra-ui/headless";
+import {
+  getGridraToolbar,
+  type GridraToolbarAction,
+} from "@gridra-ui/headless";
 import { Fragment, type HTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 import { GridraButton, type GridraButtonProps } from "../GridraButton";
 
-export interface GridraToolbarAction {
-  id: string;
-  label: ReactNode;
-  pressed?: boolean;
-  disabled?: boolean;
-}
+export type { GridraToolbarAction };
 
 export interface GridraToolbarProps extends HTMLAttributes<HTMLDivElement> {
   actions?: GridraToolbarAction[];
