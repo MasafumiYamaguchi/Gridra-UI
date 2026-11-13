@@ -2471,7 +2471,7 @@ function ExampleHeadlessGridraBreadcrumb() {
     <nav aria-label="Custom path">
       <ol>
         {path.visibleItems.map((entry) =>
-          entry.item ? (
+          entry.type === "item" ? (
             <li key={entry.item.id}>
               {path.getItemState(entry.item).canNavigate ? (
                 <a {...path.getItemState(entry.item).linkProps}>
