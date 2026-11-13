@@ -6,10 +6,10 @@ import {
   type HTMLAttributes,
   type ReactElement,
   type ReactNode,
-  type Ref,
 } from "react";
 import { createPortal } from "react-dom";
 import { cx } from "../../internal/classNames";
+import { getChildRef } from "../../internal/getChildRef";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
 
@@ -92,9 +92,7 @@ export function GridraHoverCard({
   });
   const anchorProps = getTriggerProps<HTMLElement>({
     ...children.props,
-    ref:
-      (children.props.ref as Ref<HTMLElement> | undefined) ??
-      (children as ReactElement & { ref?: Ref<HTMLElement> }).ref,
+    ref: getChildRef<HTMLElement>(children),
   });
   const portalTheme = useGridraPortalTheme(
     anchorRef,
