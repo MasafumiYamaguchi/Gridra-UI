@@ -37,6 +37,7 @@ export * from "./overlays/useGridraTooltip";
 
 export * from "./overlays/useGridraHoverCard";
 
-export * from "./internal/focus";
+// trapTabFocusはheadless内部の部品なので公開しない。react側が使う2つだけを公開する。
+export { FOCUSABLE_SELECTOR, getFocusableElements } from "./internal/focus";
 
 export * from "./overlays/useGridraDialog";

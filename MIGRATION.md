@@ -294,3 +294,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraDialog` from `@gridra-ui/headless` for custom markup. The existing
 `GridraDialog` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+Render the backdrop and close button with `getBackdropProps()` and `getCloseProps()`.
+`useGridraDialog` no longer returns `handleBackdropPointerDown`; spread `getBackdropProps()`
+on the backdrop element instead. Pass `id` to `useGridraDialog` to set the dialog id; the
+trigger's `aria-controls` uses the same id. An `id` passed directly to `getDialogProps()` is
+no longer overwritten. `GridraDialog` keeps an `id` prop on the dialog element.
