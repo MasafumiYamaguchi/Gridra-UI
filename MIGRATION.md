@@ -276,3 +276,11 @@ The component documentation includes a live custom-markup example.
 Import `useGridraPopover` from `@gridra-ui/headless` for custom markup. The existing
 `GridraPopover` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+`useGridraPopover` does not return `popoverRef`, `popoverId`, or `coords`. Spread
+`getContentProps()` on the floating element instead; it supplies the `id`, the ref, and the
+structural `position: fixed` / `top` / `left` style. `GridraPopover` uses the same getter, so the
+floating element now also carries an inline `position: fixed` that overrides `style.position`.
+
+`@gridra-ui/headless` exports `useFloatingPosition` and `useDocumentEvent` by name only. Their
+option/result types (`UseFloatingPositionOptions`, `UseFloatingPositionResult`) are not exported.

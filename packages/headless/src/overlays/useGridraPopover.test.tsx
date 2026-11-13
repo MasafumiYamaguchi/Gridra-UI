@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { createRef, type RefObject } from "react";
 import { afterEach, expect, it, vi } from "vitest";
 import { useGridraPopover } from "../index";
 
@@ -53,4 +54,38 @@ it("keeps disabled actions inert and controlled state owned externally", () => {
 
   expect(onOpenChange).toHaveBeenCalledWith(true, false);
   expect(screen.queryByText("Content")).toBeNull();
+});
+
+function ContentPropsExample({
+  contentRef,
+}: {
+  contentRef: RefObject<HTMLDivElement | null>;
+}) {
+  const p = useGridraPopover({ defaultOpen: true });
+
+  return (
+    <>
+      <button {...p.getTriggerProps()}>Open</button>
+      <div
+        {...p.getContentProps({
+          ref: contentRef,
+          style: { position: "absolute", color: "red" },
+        })}
+      >
+        Content
+      </div>
+    </>
+  );
+}
+
+it("links content by id and applies structural fixed positioning over caller style", () => {
+  const contentRef = createRef<HTMLDivElement>();
+  render(<ContentPropsExample contentRef={contentRef} />);
+
+  const content = screen.getByText("Content");
+
+  expect(screen.getByRole("button").getAttribute("aria-controls")).toBe(content.id);
+  expect(contentRef.current).toBe(content);
+  expect(content.style.position).toBe("fixed");
+  expect(content.style.color).toBe("red");
 });
