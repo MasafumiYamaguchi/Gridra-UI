@@ -27,9 +27,8 @@ export * from "./sidebar/useGridraSidebar";
 
 export * from "./split-pane/useGridraSplitPane";
 
-export * from "./internal/useFloatingPosition";
-
-export * from "./internal/useDocumentEvent";
+export { useFloatingPosition } from "./internal/useFloatingPosition";
+export { useDocumentEvent } from "./internal/useDocumentEvent";
 
 export * from "./overlays/useGridraPopover";
 
@@ -37,10 +36,12 @@ export * from "./overlays/useGridraTooltip";
 
 export * from "./overlays/useGridraHoverCard";
 
-export * from "./internal/focus";
+// trapTabFocusはheadless内部の部品なので公開しない。react側が使う2つだけを公開する。
+export { FOCUSABLE_SELECTOR, getFocusableElements } from "./internal/focus";
 
 export * from "./overlays/useGridraDialog";
 
+export * from "./menu/menuItems";
 export * from "./overlays/useGridraDropdownMenu";
 
 export * from "./overlays/useGridraContextMenu";

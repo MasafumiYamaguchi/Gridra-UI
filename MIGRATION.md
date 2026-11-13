@@ -234,6 +234,7 @@ The component documentation includes a live custom-markup example.
 Import `useGridraPagination` from `@gridra-ui/headless` for custom markup. The existing
 `GridraPagination` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+`useGridraPagination` returns state and handlers only, without prop getters. `aria-current`, `aria-label` and `disabled` stay in the markup you render.
 
 ## Headless GridraStepper
 
@@ -252,6 +253,12 @@ The component documentation includes a live custom-markup example.
 Import `useGridraTreeView` from `@gridra-ui/headless` for custom markup. The existing
 `GridraTreeView` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+`getRowProps(item, props)` returns the focusable row bindings (roving `tabIndex`, click,
+and keyboard handlers) and derives whether the item is a branch from `item.children`.
+The caller places `role="treeitem"`, `aria-level`, and `aria-expanded` on the element that
+represents the tree item, because that element depends on the markup. Use
+`isExpanded(id)` and `isFocused(id)` to read the state for those attributes and styles.
 
 ## Headless GridraSidebarToggle
 
@@ -277,11 +284,25 @@ Import `useGridraPopover` from `@gridra-ui/headless` for custom markup. The exis
 `GridraPopover` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
 
+`useGridraPopover` does not return `popoverRef`, `popoverId`, or `coords`. Spread
+`getContentProps()` on the floating element instead; it supplies the `id`, the ref, and the
+structural `position: fixed` / `top` / `left` style. `GridraPopover` uses the same getter, so the
+floating element now also carries an inline `position: fixed` that overrides `style.position`.
+
+`@gridra-ui/headless` exports `useFloatingPosition` and `useDocumentEvent` by name only. Their
+option/result types (`UseFloatingPositionOptions`, `UseFloatingPositionResult`) are not exported.
+
 ## Headless GridraTooltip
 
 Import `useGridraTooltip` from `@gridra-ui/headless` for custom markup. The existing
 `GridraTooltip` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+`useGridraTooltip` does not return `tooltipRef`, `tooltipId`, or `coords`. Spread
+`getContentProps()` on the tooltip element instead; it supplies the `id`, `role="tooltip"`, the
+ref, and the structural `position: fixed` / `top` / `left` style. `GridraTooltip` uses the same
+getter, so the tooltip element now also carries an inline `position: fixed` that overrides
+`style.position`. The default `showDelay` (120 ms) is defined only by `useGridraTooltip`.
 
 ## Headless GridraHoverCard
 
@@ -289,11 +310,24 @@ Import `useGridraHoverCard` from `@gridra-ui/headless` for custom markup. The ex
 `GridraHoverCard` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
 
+`useGridraHoverCard` does not return `cardRef`, `cardId`, `coords`, `handleCardBlur`,
+`cancelHide`, or `startHide`. Spread `getContentProps()` on the card element instead; it supplies
+the `id`, `role="dialog"`, the ref, the card's hover/focus handlers, and the structural
+`position: fixed` / `top` / `left` style. `GridraHoverCard` uses the same getter, so the card
+element now also carries an inline `position: fixed` that overrides `style.position`. The default
+`showDelay` and `hideDelay` (120 ms each) are defined only by `useGridraHoverCard`.
+
 ## Headless GridraDialog
 
 Import `useGridraDialog` from `@gridra-ui/headless` for custom markup. The existing
 `GridraDialog` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+Render the backdrop and close button with `getBackdropProps()` and `getCloseProps()`.
+`useGridraDialog` no longer returns `handleBackdropPointerDown`; spread `getBackdropProps()`
+on the backdrop element instead. Pass `id` to `useGridraDialog` to set the dialog id; the
+trigger's `aria-controls` uses the same id. An `id` passed directly to `getDialogProps()` is
+no longer overwritten. `GridraDialog` keeps an `id` prop on the dialog element.
 
 ## Headless GridraDropdownMenu
 
@@ -301,11 +335,39 @@ Import `useGridraDropdownMenu` from `@gridra-ui/headless` for custom markup. The
 `GridraDropdownMenu` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
 
+Render the menu element with `getMenuProps()`. `useGridraDropdownMenu` no longer returns
+`menuRef`, `handleMenuKeyDown` or `isCommand`; `getMenuProps()` attaches the ref and the
+keyboard handler. Import `isCommand` from `@gridra-ui/headless` as a standalone function
+to tell command items from separators. The item types (`GridraDropdownMenuItem`,
+`GridraDropdownMenuCommandItem`, `GridraDropdownMenuSeparatorItem`) are still exported
+from both packages. A consumer `onKeyDown` on `GridraDropdownMenu` now runs before the
+menu keyboard handling instead of being replaced by it; call `preventDefault()` in it to
+skip the built-in handling. The menu element also gets an inline `position: fixed`, which
+matches the theme CSS.
+
 ## Headless GridraContextMenu
 
 Import `useGridraContextMenu` from `@gridra-ui/headless` for custom markup. The existing
 `GridraContextMenu` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+Render the menu element with `getMenuProps()`; it attaches the `id`, `role="menu"`, the ref,
+the keyboard handler, and the structural `position: fixed` / `top` / `left` style.
+`useGridraContextMenu` does not return `menuRef`, `handleMenuKeyDown`, or `isCommand`; import
+`isCommand` from `@gridra-ui/headless`. The item types are shared with `GridraDropdownMenu`, and
+`GridraContextMenu` uses the same menu keyboard handling and Escape / outside-pointerdown dismissal.
+
+Behavior changes in `GridraContextMenu`:
+
+- The target gets `aria-controls` pointing to the menu while the menu is open.
+- The menu element carries an inline `position: fixed`, which matches the theme CSS and overrides
+  `style.position`. A consumer `onKeyDown` on the menu runs before the menu keyboard handling
+  instead of being replaced by it; call `preventDefault()` in it to skip the built-in handling.
+- The menu position is also recalculated when the menu element resizes (via `ResizeObserver`
+  where available), and a recalculation that yields the same coordinates no longer re-renders.
+  Because of this, changing `size`, `minWidth`, or `maxWidth` no longer triggers the
+  recalculation directly. Without `ResizeObserver`, the menu is repositioned on the next window
+  resize or scroll.
 
 ## Headless GridraCommandPalette
 
@@ -313,17 +375,29 @@ Import `useGridraCommandPalette` from `@gridra-ui/headless` for custom markup. T
 `GridraCommandPalette` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
 
+Render the backdrop with `getBackdropProps()`. `useGridraCommandPalette` does not return
+`dialogRef`, `inputRef`, `listRef`, `handleKeyDown`, `handleBackdropPointerDown`, or `setQuery`;
+`getDialogProps()` and `getInputProps()` attach the refs and handlers, and the query is changed
+through `getInputProps()` or the controlled `query` option. `setOpen` is still returned for
+opening the palette from custom markup.
+
 ## Headless GridraToast
 
 Import `useGridraToastQueue` from `@gridra-ui/headless` for custom markup. The existing
 `GridraToast` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+`useToast` and `GridraToastContext` are also exported from `@gridra-ui/headless` so that a
+custom provider can supply the same `show` function that `useToast()` reads. `dismiss()` does
+nothing while no toast is visible.
 
 ## Headless GridraField
 
 Import `useGridraField` from `@gridra-ui/headless` for custom markup. The existing
 `GridraField` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+Spread `controlBindings` onto the control, and `labelProps` / `hintProps` / `errorProps` onto the
+label, hint and error elements. The `controlProps` option carries the control's own explicit props;
+the resolved output is named `controlBindings` so the two are not confused.
 
 ## Headless GridraCheckbox
 

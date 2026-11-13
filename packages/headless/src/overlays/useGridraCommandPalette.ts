@@ -13,7 +13,7 @@ import {
   type Ref,
 } from "react";
 import { useControllableValue } from "../useControllableValue";
-import { getFocusableElements } from "../internal/focus";
+import { trapTabFocus } from "../internal/focus";
 import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
 import { clampIndex } from "@gridra-ui/core";
@@ -108,11 +108,10 @@ export function useGridraCommandPalette({
     defaultQuery,
     onQueryChange,
   );
-  // queryがcontrolledかどうかのフラグ
+  // controlledなqueryは呼び出し側が値を持つため、閉じる時に空へ戻すかの判断に使う（closeを参照）。
   const isQueryControlled = query !== undefined;
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const listRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -228,6 +227,8 @@ export function useGridraCommandPalette({
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
+    // handleEscapeが呼ぶcloseは、isQueryControlledとsetCurrentOpen / setCurrentQueryで振る舞いが決まる。
+    // controlledへの切り替えなどでこれらが変わった時に古いcloseを呼び続けないよう、依存に入れてlistenerを登録し直す。
   }, [
     closeOnEscape,
     currentOpen,
@@ -247,33 +248,8 @@ export function useGridraCommandPalette({
         return;
       }
 
-      const focusable = getFocusableElements(dialog);
-      if (focusable.length === 0) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (event.shiftKey) {
-        if (
-          document.activeElement === first ||
-          !dialog.contains(document.activeElement)
-        ) {
-          event.preventDefault();
-          last.focus();
-        }
-      } else if (
-        document.activeElement === last ||
-        !dialog.contains(document.activeElement)
-      ) {
-        event.preventDefault();
-        first.focus();
-      }
-
+      trapTabFocus(dialog, event);
+      // dialog内のTabは循環させて処理済みとし、外側のキーボード処理へ渡さない。
       event.stopPropagation();
 
       return;
@@ -413,19 +389,13 @@ export function useGridraCommandPalette({
     currentOpen,
     currentQuery,
     portalMounted,
-    dialogRef,
-    inputRef,
-    listRef,
     titleId,
     inputId,
     filteredCommands,
     enabledIds,
     safeActiveIndex,
     close,
-    handleKeyDown,
-    handleBackdropPointerDown,
     setOpen: setCurrentOpen,
-    setQuery: setCurrentQuery,
     activateItem,
     getDialogProps,
     getBackdropProps,
