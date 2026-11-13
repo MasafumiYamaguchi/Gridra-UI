@@ -350,3 +350,21 @@ matches the theme CSS.
 Import `useGridraContextMenu` from `@gridra-ui/headless` for custom markup. The existing
 `GridraContextMenu` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+Render the menu element with `getMenuProps()`; it attaches the `id`, `role="menu"`, the ref,
+the keyboard handler, and the structural `position: fixed` / `top` / `left` style.
+`useGridraContextMenu` does not return `menuRef`, `handleMenuKeyDown`, or `isCommand`; import
+`isCommand` from `@gridra-ui/headless`. The item types are shared with `GridraDropdownMenu`, and
+`GridraContextMenu` uses the same menu keyboard handling and Escape / outside-pointerdown dismissal.
+
+Behavior changes in `GridraContextMenu`:
+
+- The target gets `aria-controls` pointing to the menu while the menu is open.
+- The menu element carries an inline `position: fixed`, which matches the theme CSS and overrides
+  `style.position`. A consumer `onKeyDown` on the menu runs before the menu keyboard handling
+  instead of being replaced by it; call `preventDefault()` in it to skip the built-in handling.
+- The menu position is also recalculated when the menu element resizes (via `ResizeObserver`
+  where available), and a recalculation that yields the same coordinates no longer re-renders.
+  Because of this, changing `size`, `minWidth`, or `maxWidth` no longer triggers the
+  recalculation directly. Without `ResizeObserver`, the menu is repositioned on the next window
+  resize or scroll.

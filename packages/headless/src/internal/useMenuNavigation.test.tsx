@@ -1,9 +1,9 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { GridraDropdownMenuItem } from "../menu/menuItems";
 import { isCommand } from "../menu/menuItems";
-import { useMenuNavigation } from "./useMenuNavigation";
+import { useMenuDismiss, useMenuNavigation } from "./useMenuNavigation";
 
 afterEach(cleanup);
 
@@ -266,5 +266,86 @@ describe("isCommand", () => {
       "b",
       "c",
     ]);
+  });
+});
+
+function DismissibleMenu({
+  closeOnEscape = true,
+  closeOnOutsidePointerDown = true,
+  close,
+}: {
+  closeOnEscape?: boolean;
+  closeOnOutsidePointerDown?: boolean;
+  close: () => void;
+}) {
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  useMenuDismiss({
+    open: true,
+    closeOnEscape,
+    closeOnOutsidePointerDown,
+    menuRef,
+    triggerRef,
+    close,
+  });
+
+  return (
+    <>
+      <button ref={triggerRef}>Trigger</button>
+      <div ref={menuRef} role="menu">
+        <button>Inside</button>
+      </div>
+      <p>Outside</p>
+    </>
+  );
+}
+
+describe("useMenuDismiss", () => {
+  it("closes on Escape and on pointerdown outside the menu and trigger", () => {
+    const close = vi.fn();
+    render(<DismissibleMenu close={close} />);
+
+    fireEvent.pointerDown(screen.getByText("Inside"));
+    fireEvent.pointerDown(screen.getByText("Trigger"));
+    expect(close).not.toHaveBeenCalled();
+
+    fireEvent.pointerDown(screen.getByText("Outside"));
+    expect(close).toHaveBeenCalledTimes(1);
+
+    const escape = new KeyboardEvent("keydown", {
+      key: "Escape",
+      cancelable: true,
+    });
+    document.dispatchEvent(escape);
+    expect(close).toHaveBeenCalledTimes(2);
+    expect(escape.defaultPrevented).toBe(true);
+  });
+
+  it("ignores Escape and outside pointerdown when disabled by options", () => {
+    const close = vi.fn();
+    render(
+      <DismissibleMenu
+        close={close}
+        closeOnEscape={false}
+        closeOnOutsidePointerDown={false}
+      />,
+    );
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    fireEvent.pointerDown(screen.getByText("Outside"));
+
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it("calls the latest close without re-registering listeners", () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender } = render(<DismissibleMenu close={first} />);
+    rerender(<DismissibleMenu close={second} />);
+
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
   });
 });

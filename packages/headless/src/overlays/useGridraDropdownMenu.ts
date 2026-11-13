@@ -12,6 +12,7 @@ import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
 import { useFloatingPosition } from "../internal/useFloatingPosition";
 import {
+  useMenuDismiss,
   useMenuNavigation,
   type MenuItemButtonProps,
 } from "../internal/useMenuNavigation";
@@ -110,45 +111,14 @@ export function useGridraDropdownMenu({
     placement,
   });
 
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-
-    const handleEscape = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape" && closeOnEscape) {
-        event.preventDefault();
-        close();
-      }
-    };
-
-    const handleOutsidePointerDown = (event: PointerEvent) => {
-      if (!closeOnOutsidePointerDown) {
-        return;
-      }
-
-      const target = event.target as Node | null;
-      if (
-        target &&
-        !menuRef.current?.contains(target) &&
-        !triggerRef.current?.contains(target)
-      ) {
-        close();
-      }
-    };
-
-    document.addEventListener("keydown", handleEscape);
-    document.addEventListener("pointerdown", handleOutsidePointerDown, true);
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.removeEventListener(
-        "pointerdown",
-        handleOutsidePointerDown,
-        true,
-      );
-    };
-  }, [closeOnEscape, closeOnOutsidePointerDown, currentOpen, setCurrentOpen]);
+  useMenuDismiss({
+    open: currentOpen,
+    closeOnEscape,
+    closeOnOutsidePointerDown,
+    menuRef,
+    triggerRef,
+    close,
+  });
 
   const handleTriggerKeyDown = (event: KeyboardEvent) => {
     if (disabled) {

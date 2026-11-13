@@ -7,6 +7,7 @@ import {
   type Dispatch,
   type KeyboardEvent,
   type Ref,
+  type RefObject,
   type SetStateAction,
 } from "react";
 import { clampIndex } from "@gridra-ui/core";
@@ -54,7 +55,7 @@ export interface UseMenuNavigationResult {
 
 /**
  * DropdownMenuとContextMenuに共通する、menu内の項目導出・activeIndex・キー操作・item getterをまとめる。
- * 開閉状態、triggerの扱い、menuの位置、Escapeと外側pointerdownは呼び出し側が持つ。
+ * 開閉状態、triggerの扱い、menuの位置は呼び出し側が持つ。Escapeと外側pointerdownはuseMenuDismissで扱う。
  */
 export function useMenuNavigation({
   items,
@@ -242,4 +243,72 @@ export function useMenuNavigation({
     handleMenuKeyDown,
     getItemProps,
   };
+}
+
+export interface UseMenuDismissOptions {
+  open: boolean;
+  closeOnEscape: boolean;
+  closeOnOutsidePointerDown: boolean;
+  /** この要素の内側でのpointerdownでは閉じない。 */
+  menuRef: RefObject<HTMLElement | null>;
+  /** menuを開いた要素。内側のpointerdownで閉じると、開閉の操作と競合するため除外する。 */
+  triggerRef: RefObject<HTMLElement | null>;
+  close: () => void;
+}
+
+/**
+ * menuが開いている間、documentのEscapeと外側pointerdownでmenuを閉じる。
+ * DropdownMenuとContextMenuで同じ閉じ方をそろえるため、useMenuNavigationと同じ場所に置く。
+ */
+export function useMenuDismiss({
+  open,
+  closeOnEscape,
+  closeOnOutsidePointerDown,
+  menuRef,
+  triggerRef,
+  close,
+}: UseMenuDismissOptions) {
+  // closeは毎render作り直されるため、listenerの再登録を避けつつ最新のcloseを呼べるようrefで持つ。
+  const closeRef = useRef(close);
+  closeRef.current = close;
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const handleEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape" && closeOnEscape) {
+        event.preventDefault();
+        closeRef.current();
+      }
+    };
+
+    const handleOutsidePointerDown = (event: PointerEvent) => {
+      if (!closeOnOutsidePointerDown) {
+        return;
+      }
+
+      const target = event.target as Node | null;
+      if (
+        target &&
+        !menuRef.current?.contains(target) &&
+        !triggerRef.current?.contains(target)
+      ) {
+        closeRef.current();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("pointerdown", handleOutsidePointerDown, true);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener(
+        "pointerdown",
+        handleOutsidePointerDown,
+        true,
+      );
+    };
+  }, [closeOnEscape, closeOnOutsidePointerDown, open]);
 }
