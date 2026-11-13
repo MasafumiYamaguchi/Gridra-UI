@@ -1,33 +1,23 @@
-import { useGridraPropertiesPanel } from "@gridra-ui/headless";
-import { useId, type HTMLAttributes } from "react";
+import {
+  useGridraPropertiesPanel,
+  type GridraNodePropertiesSchema,
+  type GridraNodePropertiesValue,
+  type GridraPropertiesPatch,
+  type GridraPropertyFieldSchema,
+} from "@gridra-ui/headless";
+import type { HTMLAttributes } from "react";
 import { GridraField } from "../GridraField";
 import { GridraInput } from "../GridraInput";
 import { GridraPanel } from "../GridraPanel";
 import { GridraSelect } from "../GridraSelect";
 import { GridraSwitch } from "../GridraSwitch";
 
-export interface GridraPropertyFieldSchema {
-  id: string;
-  label: string;
-  kind: "text" | "number" | "select" | "toggle";
-  options?: { value: string; label: string }[];
-  min?: number;
-  max?: number;
-  step?: number;
-}
-
-// ノード種別をキーに、その種別で表示するフィールド一覧を引けるようにする。
-export type GridraNodePropertiesSchema = Record<
-  string,
-  GridraPropertyFieldSchema[]
->;
-
-export type GridraNodePropertiesValue = Record<
-  string,
-  string | number | boolean
->;
-
-export type GridraPropertiesPatch = Partial<GridraNodePropertiesValue>;
+export type {
+  GridraNodePropertiesSchema,
+  GridraNodePropertiesValue,
+  GridraPropertiesPatch,
+  GridraPropertyFieldSchema,
+};
 
 export interface GridraPropertiesPanelProps extends Omit<
   HTMLAttributes<HTMLElement>,
@@ -59,6 +49,7 @@ export function GridraPropertiesPanel({
     handleChange,
     changeNumber,
     getFieldValue,
+    getNumberFieldValue,
   } = useGridraPropertiesPanel({
     selectedNodeId,
     selectedNodeType,
@@ -78,7 +69,7 @@ export function GridraPropertiesPanel({
     >
       {hasSelection && hasFields ? (
         <div className="gridra-properties-panel__fields">
-          {fields!.map((field) => {
+          {fields.map((field) => {
             const fieldValue = getFieldValue(field);
 
             if (field.kind === "text") {
@@ -120,7 +111,7 @@ export function GridraPropertiesPanel({
                     }
                     step={field.step}
                     type="number"
-                    value={fieldValue as string | number}
+                    value={getNumberFieldValue(field)}
                   />
                 </GridraField>
               );

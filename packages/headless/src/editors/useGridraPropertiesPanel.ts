@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { isValidNumber } from "../internal/number";
 
 export interface GridraPropertyFieldSchema {
   id: string;
@@ -23,11 +24,9 @@ export type GridraNodePropertiesValue = Record<
 
 export type GridraPropertiesPatch = Partial<GridraNodePropertiesValue>;
 
-function formatNumberValue(value: unknown): string | number {
+function formatNumberValue(value: unknown): number | "" {
   // 不正な値はinputへNaNを渡さず、未入力として表示する。
-  if (typeof value !== "number" || !Number.isFinite(value)) return "";
-
-  return value;
+  return isValidNumber(value) ? value : "";
 }
 
 export interface UseGridraPropertiesPanelOptions {
@@ -56,11 +55,12 @@ export function useGridraPropertiesPanel({
     schema != null &&
     value != null;
 
-  const fields = hasSelection ? schema[selectedNodeType] : undefined;
-  const hasFields = fields != null && fields.length > 0;
+  // 選択がない・種別に対応するschemaがない場合は空配列にして、呼び出し側で非nullを保証する。
+  const fields = hasSelection ? (schema[selectedNodeType] ?? []) : [];
+  const hasFields = fields.length > 0;
 
   const handleChange = (
-    fieldId: string,
+    id: string,
     nextValue: string | number | boolean,
   ) => {
     // 無効状態や選択情報が不足している場合は、patchを外部へ通知しない。
@@ -68,20 +68,26 @@ export function useGridraPropertiesPanel({
       return;
     }
 
-    onChange?.({ [fieldId]: nextValue });
+    onChange?.({ [id]: nextValue });
   };
 
   const changeNumber = (id: string, raw: string) => {
-    if (raw.trim() === "" || !Number.isFinite(Number(raw))) return;
+    const parsed = Number(raw);
 
-    handleChange(id, Number(raw));
+    // 空文字はNumber("")が0になるため、数値として扱わず除外する。
+    if (raw.trim() === "" || !isValidNumber(parsed)) return;
+
+    handleChange(id, parsed);
   };
+
+  const getNumberFieldValue = (field: GridraPropertyFieldSchema) =>
+    formatNumberValue(value?.[field.id]);
 
   const getFieldValue = (field: GridraPropertyFieldSchema) => {
     const current = value?.[field.id];
 
     return field.kind === "number"
-      ? formatNumberValue(current)
+      ? getNumberFieldValue(field)
       : field.kind === "toggle"
         ? Boolean(current)
         : String(current ?? "");
@@ -95,5 +101,6 @@ export function useGridraPropertiesPanel({
     handleChange,
     changeNumber,
     getFieldValue,
+    getNumberFieldValue,
   };
 }
