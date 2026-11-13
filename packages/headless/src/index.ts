@@ -41,4 +41,5 @@ export * from "./internal/focus";
 
 export * from "./overlays/useGridraDialog";
 
+export * from "./menu/menuItems";
 export * from "./overlays/useGridraDropdownMenu";

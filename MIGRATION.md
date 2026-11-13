@@ -300,3 +300,13 @@ The component documentation includes a live custom-markup example.
 Import `useGridraDropdownMenu` from `@gridra-ui/headless` for custom markup. The existing
 `GridraDropdownMenu` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+Render the menu element with `getMenuProps()`. `useGridraDropdownMenu` no longer returns
+`menuRef`, `handleMenuKeyDown` or `isCommand`; `getMenuProps()` attaches the ref and the
+keyboard handler. Import `isCommand` from `@gridra-ui/headless` as a standalone function
+to tell command items from separators. The item types (`GridraDropdownMenuItem`,
+`GridraDropdownMenuCommandItem`, `GridraDropdownMenuSeparatorItem`) are still exported
+from both packages. A consumer `onKeyDown` on `GridraDropdownMenu` now runs before the
+menu keyboard handling instead of being replaced by it; call `preventDefault()` in it to
+skip the built-in handling. The menu element also gets an inline `position: fixed`, which
+matches the theme CSS.
