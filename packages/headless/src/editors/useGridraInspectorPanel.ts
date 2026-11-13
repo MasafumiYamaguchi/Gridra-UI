@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from "react";
+import { isValidNumber } from "../internal/number";
 
 export interface GridraInspectorPlacement {
   x: number;
@@ -18,12 +19,6 @@ export type GridraInspectorPatch = Partial<{
   placement: Partial<GridraInspectorPlacement>;
 }>;
 
-function isValidNumber(value: string): boolean {
-  const n = Number(value);
-
-  return value.trim() !== "" && !Number.isNaN(n) && Number.isFinite(n);
-}
-
 export interface UseGridraInspectorPanelOptions {
   selectedNode?: GridraInspectorValue | null;
   disabled?: boolean;
@@ -39,7 +34,9 @@ export function useGridraInspectorPanel({
   onCommit,
 }: UseGridraInspectorPanelOptions = {}) {
   const fieldId = useId();
-  const hasSelection = selectedNode != null;
+  // 未選択はnullに統一し、利用側が型ガードとして使えるよう絞り込んだ値を返す。
+  const node = selectedNode ?? null;
+  const hasSelection = node != null;
 
   // 設定がdisabledまたは選択されていない場合は、onChangeを呼び出さない
   const handleLabelChange = (value: string) => {
@@ -72,6 +69,7 @@ export function useGridraInspectorPanel({
   return {
     fieldId,
     hasSelection,
+    selectedNode: node,
     handleLabelChange,
     handlePlacementChange,
     commit,
