@@ -288,3 +288,10 @@ The component documentation includes a live custom-markup example.
 Import `useGridraHoverCard` from `@gridra-ui/headless` for custom markup. The existing
 `GridraHoverCard` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+`useGridraHoverCard` does not return `cardRef`, `cardId`, `coords`, `handleCardBlur`,
+`cancelHide`, or `startHide`. Spread `getContentProps()` on the card element instead; it supplies
+the `id`, `role="dialog"`, the ref, the card's hover/focus handlers, and the structural
+`position: fixed` / `top` / `left` style. `GridraHoverCard` uses the same getter, so the card
+element now also carries an inline `position: fixed` that overrides `style.position`. The default
+`showDelay` and `hideDelay` (120 ms each) are defined only by `useGridraHoverCard`.
