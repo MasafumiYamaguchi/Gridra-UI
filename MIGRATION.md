@@ -234,6 +234,7 @@ The component documentation includes a live custom-markup example.
 Import `useGridraPagination` from `@gridra-ui/headless` for custom markup. The existing
 `GridraPagination` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+`useGridraPagination` returns state and handlers only, without prop getters. `aria-current`, `aria-label` and `disabled` stay in the markup you render.
 
 ## Headless GridraStepper
 
