@@ -1,6 +1,6 @@
-const DEFAULT_PAGE = 1;
+export const DEFAULT_PAGE = 1;
 
-const DEFAULT_PAGE_SIZE = 25;
+export const DEFAULT_PAGE_SIZE = 25;
 
 const DEFAULT_PAGE_SIZE_OPTIONS = Object.freeze([10, 25, 50, 100] as const);
 

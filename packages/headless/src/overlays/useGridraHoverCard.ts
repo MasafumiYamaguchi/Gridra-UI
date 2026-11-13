@@ -13,6 +13,7 @@ import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
 import { useDocumentEvent } from "../internal/useDocumentEvent";
 import { useFloatingPosition } from "../internal/useFloatingPosition";
+import type { Placement } from "../internal/floating";
 
 export interface UseGridraHoverCardOptions {
   open?: boolean;
@@ -22,7 +23,7 @@ export interface UseGridraHoverCardOptions {
   hideDelay?: number;
   disabled?: boolean;
   closeOnEscape?: boolean;
-  placement?: "top" | "right" | "bottom" | "left";
+  placement?: Placement;
   offset?: number;
 }
 
@@ -74,7 +75,7 @@ export function useGridraHoverCard({
     return clearTimers;
   }, [clearTimers]);
 
-  // anchor と card の位置・サイズから表示座標を計算する。
+  // アンカーとカードの位置・サイズから表示座標を計算する。
   const { coords, resolvedPlacement } = useFloatingPosition({
     anchorRef,
     disabled,
@@ -85,7 +86,7 @@ export function useGridraHoverCard({
   });
 
   // 表示開始はhover/focus共通の入口にし、delay中に状態がぶつからないようtimerを一本化する。
-  const startShow = useCallback(() => {
+  const startShow = () => {
     if (disabled) {
       return;
     }
@@ -98,10 +99,10 @@ export function useGridraHoverCard({
       },
       Math.max(0, showDelay),
     );
-  }, [disabled, clearTimers, showDelay, setCurrentOpen]);
+  };
 
   // 非表示もmouse/focusの両方から呼ばれるため、即閉じせずhideDelayで操作の揺れを吸収する。
-  const startHide = useCallback(() => {
+  const startHide = () => {
     clearTimers();
     hideTimerRef.current = window.setTimeout(
       () => {
@@ -110,38 +111,39 @@ export function useGridraHoverCard({
       },
       Math.max(0, hideDelay),
     );
-  }, [clearTimers, hideDelay, setCurrentOpen]);
+  };
 
   // Escapeなど明示的な閉じ操作ではdelayを待たず、残っているtimerも同時に破棄する。
-  const closeImmediately = useCallback(() => {
+  // documentのlistener(handleEscape)が依存するため、参照を安定させる。
+  const close = useCallback(() => {
     clearTimers();
     setCurrentOpen(false);
   }, [clearTimers, setCurrentOpen]);
 
-  // card内へ入った時はhideだけを止め、すでに予約されたshowはclearTimers側で管理する。
-  const cancelHide = useCallback(() => {
+  // カード内へ入った時はhideだけを止め、すでに予約されたshowはclearTimers側で管理する。
+  const cancelHide = () => {
     if (hideTimerRef.current !== null) {
       window.clearTimeout(hideTimerRef.current);
       hideTimerRef.current = null;
     }
-  }, []);
+  };
 
   const handleEscape = useCallback(
     (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape" && closeOnEscape && currentOpen) {
         event.preventDefault();
-        closeImmediately();
+        close();
       }
     },
-    [closeOnEscape, currentOpen, closeImmediately],
+    [closeOnEscape, currentOpen, close],
   );
 
   // document listenerの登録/解除は共通hookへ寄せ、HoverCard本体は閉じる条件だけを持つ。
   useDocumentEvent("keydown", handleEscape, currentOpen);
 
-  // focus が anchor と card の間を移動しただけの場合は HoverCard を閉じない。
+  // focus がアンカーとカードの間を移動しただけの場合は HoverCard を閉じない。
   // relatedTarget が DOM Node でない場合もあるため、contains の前に型を確認する。
-  const isWithinHoverCard = useCallback((target: EventTarget | null) => {
+  const isWithinHoverCard = (target: EventTarget | null) => {
     if (!(target instanceof Node)) {
       return false;
     }
@@ -150,34 +152,18 @@ export function useGridraHoverCard({
       anchorRef.current?.contains(target) === true ||
       cardRef.current?.contains(target) === true
     );
-  }, []);
+  };
 
-  // anchor から card 内へ focus が移った場合は、操作継続中として閉じない。
-  const handleAnchorBlur = useCallback(
-    (event: ReactFocusEvent<HTMLElement>) => {
-      if (isWithinHoverCard(event.relatedTarget)) {
-        cancelHide();
+  // アンカーとカードで共通のblur処理。移動先がどちらかの内部なら操作継続中として閉じない。
+  const handleBlur = (event: ReactFocusEvent<HTMLElement>) => {
+    if (isWithinHoverCard(event.relatedTarget)) {
+      cancelHide();
 
-        return;
-      }
+      return;
+    }
 
-      startHide();
-    },
-    [cancelHide, isWithinHoverCard, startHide],
-  );
-
-  const handleCardBlur = useCallback(
-    (event: ReactFocusEvent<HTMLDivElement>) => {
-      if (isWithinHoverCard(event.relatedTarget)) {
-        cancelHide();
-
-        return;
-      }
-
-      startHide();
-    },
-    [cancelHide, isWithinHoverCard, startHide],
-  );
+    startHide();
+  };
 
   const getTriggerProps = <T extends HTMLElement = HTMLButtonElement>(
     props: HTMLAttributes<T> & { ref?: Ref<T> } = {},
@@ -186,7 +172,7 @@ export function useGridraHoverCard({
     "aria-controls": !disabled && currentOpen ? cardId : undefined,
     "aria-expanded": !disabled ? currentOpen : undefined,
     "aria-haspopup": "dialog" as const,
-    onBlur: composeHandlers(props.onBlur, handleAnchorBlur),
+    onBlur: composeHandlers(props.onBlur, handleBlur),
     onFocus: composeHandlers(props.onFocus, startShow),
     onMouseEnter: composeHandlers(props.onMouseEnter, startShow),
     onMouseLeave: composeHandlers(props.onMouseLeave, startHide),
@@ -195,6 +181,11 @@ export function useGridraHoverCard({
     }),
   });
 
+  /**
+   * カード本体へ渡すprops。
+   * `position: fixed` と `top` / `left` は計測した座標を画面へ反映するための構造的なCSSなので、
+   * 見た目を持たないheadless側で付与し、利用側の `style` より優先する。
+   */
   const getContentProps = (
     props: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> } = {},
   ) => ({
@@ -202,7 +193,7 @@ export function useGridraHoverCard({
     id: cardId,
     role: "dialog" as const,
     onFocus: composeHandlers(props.onFocus, cancelHide),
-    onBlur: composeHandlers(props.onBlur, handleCardBlur),
+    onBlur: composeHandlers(props.onBlur, handleBlur),
     onMouseEnter: composeHandlers(props.onMouseEnter, cancelHide),
     onMouseLeave: composeHandlers(props.onMouseLeave, startHide),
     ref: mergeRefs(props.ref, (element: HTMLDivElement | null) => {
@@ -220,15 +211,9 @@ export function useGridraHoverCard({
     currentOpen,
     portalMounted,
     anchorRef,
-    cardRef,
-    cardId,
-    coords,
     resolvedPlacement,
-    handleCardBlur,
-    cancelHide,
-    startHide,
     getTriggerProps,
     getContentProps,
-    close: closeImmediately,
+    close,
   };
 }
