@@ -69,3 +69,28 @@ it("cancels pending display on blur, disabled state and unmount", () => {
 
   expect(vi.getTimerCount()).toBe(0);
 });
+
+function DefaultDelayExample() {
+  const t = useGridraTooltip();
+
+  return (
+    <>
+      <button {...t.getTriggerProps()}>Help</button>
+      {t.currentOpen ? <div {...t.getContentProps()}>Explanation</div> : null}
+    </>
+  );
+}
+
+it("waits for the default show delay when showDelay is omitted", () => {
+  vi.useFakeTimers();
+  render(<DefaultDelayExample />);
+
+  fireEvent.mouseEnter(screen.getByRole("button"));
+  act(() => vi.advanceTimersByTime(119));
+
+  expect(screen.queryByRole("tooltip")).toBeNull();
+
+  act(() => vi.advanceTimersByTime(1));
+
+  expect(screen.getByRole("tooltip").style.position).toBe("fixed");
+});

@@ -1,25 +1,18 @@
 import type { HTMLAttributes } from "react";
-import { useGridraPagination } from "@gridra-ui/headless";
+import {
+  useGridraPagination,
+  type UseGridraPaginationOptions,
+} from "@gridra-ui/headless";
 import { GridraSelect } from "../GridraSelect";
 
 export type GridraPaginationSize = "sm" | "md" | "lg";
 
-export interface GridraPaginationProps extends HTMLAttributes<HTMLElement> {
-  page?: number;
-  defaultPage?: number;
-  onPageChange?: (next: number, previous: number) => void;
-  pageSize?: number;
-  defaultPageSize?: number;
-  onPageSizeChange?: (next: number, previous: number) => void;
-  totalItems?: number;
-  pageSizeOptions?: number[];
-  siblingCount?: number;
-  boundaryCount?: number;
+export interface GridraPaginationProps
+  extends HTMLAttributes<HTMLElement>, UseGridraPaginationOptions {
   size?: GridraPaginationSize;
   showFirstLast?: boolean;
   showPageSize?: boolean;
   showSummary?: boolean;
-  disabled?: boolean;
 }
 
 export function GridraPagination({
