@@ -32,6 +32,8 @@ const DEFAULT_ROLE = "status";
 let nextId = 0;
 
 // Provider配下の任意の子孫から、Toast表示関数だけを参照できるようにする。
+// 値を供給する Provider (react の GridraToastProvider や独自 Provider) は別パッケージに
+// 置かれるため、useToast と対になるこの Context も公開する。
 export const GridraToastContext = createContext<GridraToastContextValue | null>(
   null,
 );
@@ -140,5 +142,14 @@ export function useGridraToastQueue({
     [],
   );
 
-  return { currentToast, exiting, show, dismiss: beginExit };
+  const dismiss = useCallback(() => {
+    // 表示中のToastがなければ何もしない。終了遷移中に呼ばれた場合は、遷移を最初からやり直す。
+    if (currentRef.current === null) {
+      return;
+    }
+
+    beginExit();
+  }, [beginExit]);
+
+  return { currentToast, exiting, show, dismiss };
 }

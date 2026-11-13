@@ -48,3 +48,14 @@ it("dismisses early and clears timers on unmount", () => {
 
   expect(vi.getTimerCount()).toBe(0);
 });
+
+it("ignores dismiss when no notification is visible", () => {
+  vi.useFakeTimers();
+  const { result } = renderHook(() =>
+    useGridraToastQueue({ exitDuration: 20 }),
+  );
+  act(() => result.current.dismiss());
+
+  expect(result.current.exiting).toBe(false);
+  expect(vi.getTimerCount()).toBe(0);
+});

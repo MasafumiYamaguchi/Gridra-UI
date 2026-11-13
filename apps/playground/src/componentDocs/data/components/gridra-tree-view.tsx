@@ -79,7 +79,7 @@ export const treeViewDoc: ComponentDoc = {
   examples: [
     {
       title: "Custom markup with headless hook",
-      code: 'import { useGridraTreeView } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const tree=useGridraTreeView({items:[{id:"parent",label:"Parent",children:[{id:"child",label:"Child"}]}]});\n  return <div role="tree">{tree.flatItems.map(row=><div key={row.key} role="treeitem" aria-expanded={row.hasChildren?tree.expandedSet.has(row.item.id):undefined}><div {...tree.getRowProps(row.item,row.hasChildren)}>{row.item.label}</div></div>)}</div>;\n}',
+      code: 'import { useGridraTreeView } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const tree=useGridraTreeView({items:[{id:"parent",label:"Parent",children:[{id:"child",label:"Child"}]}]});\n  return <div role="tree">{tree.flatItems.map(row=><div key={row.key} role="treeitem" aria-expanded={row.hasChildren?tree.isExpanded(row.item.id):undefined}><div {...tree.getRowProps(row.item)}>{row.item.label}</div></div>)}</div>;\n}',
     },
     ...([
       {
