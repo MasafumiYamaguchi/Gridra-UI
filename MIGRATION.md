@@ -451,3 +451,7 @@ The component documentation includes a live custom-markup example.
 Import `useGridraInspectorPanel` from `@gridra-ui/headless` for custom markup. The existing
 `GridraInspectorPanel` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+`useGridraInspectorPanel` also returns `selectedNode`, the `selectedNode` option normalized to
+`GridraInspectorValue | null` (`undefined` becomes `null`). Read the selected value from it after
+checking `selectedNode != null`, instead of re-reading the option with a non-null assertion.
