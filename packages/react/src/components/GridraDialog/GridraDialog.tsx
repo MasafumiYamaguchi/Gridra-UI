@@ -1,24 +1,15 @@
 import { useGridraDialog } from "@gridra-ui/headless";
-import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type CSSProperties,
   type HTMLAttributes,
   type ReactElement,
   type ReactNode,
+  type Ref,
   type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
-import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
-import { composeHandlers } from "@gridra-ui/headless";
-import { FOCUSABLE_SELECTOR, getFocusableElements } from "@gridra-ui/headless";
-import { mergeRefs } from "@gridra-ui/headless";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
 
@@ -68,10 +59,10 @@ export function GridraDialog({
     triggerRef,
     titleId,
     descriptionId,
-    close,
-    handleBackdropPointerDown,
     getTriggerProps,
     getDialogProps,
+    getBackdropProps,
+    getCloseProps,
   } = useGridraDialog({
     open,
     defaultOpen,
@@ -80,6 +71,7 @@ export function GridraDialog({
     closeOnBackdropPointerDown,
     initialFocusRef,
     hasDescription: Boolean(description),
+    id: props.id,
   });
   const triggerElement = children;
   const triggerProps =
@@ -116,9 +108,10 @@ export function GridraDialog({
       {currentOpen && portalMounted && portalTarget
         ? createPortal(
             <div
-              className={backdropClassName}
-              style={portalTheme.style}
-              onPointerDown={handleBackdropPointerDown}
+              {...getBackdropProps({
+                className: backdropClassName,
+                style: portalTheme.style,
+              })}
             >
               <div
                 {...getDialogProps(props)}
@@ -139,10 +132,10 @@ export function GridraDialog({
                   ) : null}
                   {showCloseButton ? (
                     <button
-                      aria-label={closeLabel}
-                      className="gridra-dialog__close"
-                      onClick={close}
-                      type="button"
+                      {...getCloseProps({
+                        "aria-label": closeLabel,
+                        className: "gridra-dialog__close",
+                      })}
                     >
                       <span aria-hidden="true">×</span>
                     </button>
