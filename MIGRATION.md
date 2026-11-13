@@ -282,3 +282,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraTooltip` from `@gridra-ui/headless` for custom markup. The existing
 `GridraTooltip` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+`useGridraTooltip` does not return `tooltipRef`, `tooltipId`, or `coords`. Spread
+`getContentProps()` on the tooltip element instead; it supplies the `id`, `role="tooltip"`, the
+ref, and the structural `position: fixed` / `top` / `left` style. `GridraTooltip` uses the same
+getter, so the tooltip element now also carries an inline `position: fixed` that overrides
+`style.position`. The default `showDelay` (120 ms) is defined only by `useGridraTooltip`.

@@ -1,5 +1,4 @@
 import { useGridraTooltip } from "@gridra-ui/headless";
-import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
@@ -7,20 +6,12 @@ import {
   type HTMLAttributes,
   type ReactElement,
   type ReactNode,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
-import { composeHandlers } from "@gridra-ui/headless";
-import { mergeRefs } from "@gridra-ui/headless";
+import { getChildRef } from "../../internal/getChildRef";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
-import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraTooltipPlacement = "top" | "right" | "bottom" | "left";
 
@@ -44,8 +35,6 @@ export interface GridraTooltipProps extends Omit<
 
 const TOOLTIP_OFFSET = 8;
 
-const DEFAULT_SHOW_DELAY = 120;
-
 export function GridraTooltip({
   children,
   className,
@@ -56,7 +45,7 @@ export function GridraTooltip({
   onOpenChange,
   open,
   placement = "top",
-  showDelay = DEFAULT_SHOW_DELAY,
+  showDelay,
   size = "md",
   style,
   ...props
@@ -65,11 +54,9 @@ export function GridraTooltip({
     currentOpen,
     portalMounted,
     anchorRef,
-    tooltipRef,
-    tooltipId,
-    coords,
     resolvedPlacement,
     getTriggerProps,
+    getContentProps,
   } = useGridraTooltip({
     open,
     defaultOpen,
@@ -81,12 +68,7 @@ export function GridraTooltip({
   });
   const anchorProps = getTriggerProps<HTMLElement>(
     isValidElement(children)
-      ? {
-          ...children.props,
-          ref:
-            (children.props.ref as Ref<HTMLElement> | undefined) ??
-            (children as ReactElement & { ref?: Ref<HTMLElement> }).ref,
-        }
+      ? { ...children.props, ref: getChildRef<HTMLElement>(children) }
       : {},
   );
   const portalTheme = useGridraPortalTheme(
@@ -103,22 +85,21 @@ export function GridraTooltip({
     className,
   );
 
-  const tooltipStyle = useMemo(
-    () =>
-      ({
-        ...portalTheme.style,
-        ...style,
-        top: `${coords.top}px`,
-        left: `${coords.left}px`,
-        "--gridra-tooltip-max-width":
-          maxWidth === undefined
-            ? undefined
-            : typeof maxWidth === "number"
-              ? `${maxWidth}px`
-              : maxWidth,
-      }) as CSSProperties,
-    [portalTheme.style, coords.left, coords.top, maxWidth, style],
-  );
+  // id / role / ref と座標(top / left)・位置指定はgetContentPropsが付与する。
+  const contentProps = getContentProps({
+    ...props,
+    className: tooltipClassName,
+    style: {
+      ...portalTheme.style,
+      ...style,
+      "--gridra-tooltip-max-width":
+        maxWidth === undefined
+          ? undefined
+          : typeof maxWidth === "number"
+            ? `${maxWidth}px`
+            : maxWidth,
+    } as CSSProperties,
+  });
   const portalTarget = getPortalTarget();
 
   // cloneElementできないchildrenはアンカーとして成立しないため描画しない。
@@ -128,25 +109,15 @@ export function GridraTooltip({
 
   return (
     <>
+      {/* アンカーは元のDOM位置に残し、説明要素だけをPortal先へ分離する。 */}
       {cloneElement(children, anchorProps)}
       {/* Portal先でもテーマとARIA参照を維持したTooltipだけを開いている間描画する。 */}
       {currentOpen && !disabled && portalMounted && portalTarget
         ? createPortal(
-            <div
-              {...props}
-              className={tooltipClassName}
-              id={tooltipId}
-              ref={tooltipRef}
-              role="tooltip"
-              style={tooltipStyle}
-            >
-              {content}
-            </div>,
+            <div {...contentProps}>{content}</div>,
             portalTarget,
           )
         : null}
     </>
   );
 }
-
-// アンカーは元のDOM位置に残し、説明要素だけをPortal先へ分離する。
