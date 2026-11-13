@@ -2210,10 +2210,10 @@ function ExampleHeadlessGridraTreeView() {
           key={row.key}
           role="treeitem"
           aria-expanded={
-            row.hasChildren ? tree.expandedSet.has(row.item.id) : undefined
+            row.hasChildren ? tree.isExpanded(row.item.id) : undefined
           }
         >
-          <div {...tree.getRowProps(row.item, row.hasChildren)}>
+          <div {...tree.getRowProps(row.item)}>
             {row.item.label}
           </div>
         </div>
@@ -2391,7 +2391,7 @@ function ExampleHeadlessGridraField() {
   return (
     <section>
       <label {...field.labelProps}>Custom field</label>
-      <input {...field.controlProps} />
+      <input {...field.controlBindings} />
       <p {...field.hintProps}>A helpful description</p>
     </section>
   );
@@ -2477,7 +2477,7 @@ function ExampleHeadlessGridraBreadcrumb() {
     <nav aria-label="Custom path">
       <ol>
         {path.visibleItems.map((entry) =>
-          entry.item ? (
+          entry.type === "item" ? (
             <li key={entry.item.id}>
               {path.getItemState(entry.item).canNavigate ? (
                 <a {...path.getItemState(entry.item).linkProps}>

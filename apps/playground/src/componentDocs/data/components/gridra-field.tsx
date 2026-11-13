@@ -94,7 +94,7 @@ export const fieldDoc: ComponentDoc = {
   examples: [
     {
       title: "Custom markup with headless hook",
-      code: 'import { useGridraField } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const field=useGridraField({hasHint:true,required:true});\n  return <section><label {...field.labelProps}>Custom field</label><input {...field.controlProps}/><p {...field.hintProps}>A helpful description</p></section>;\n}',
+      code: 'import { useGridraField } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const field=useGridraField({hasHint:true,required:true});\n  return <section><label {...field.labelProps}>Custom field</label><input {...field.controlBindings}/><p {...field.hintProps}>A helpful description</p></section>;\n}',
     },
     ...([
       {

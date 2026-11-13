@@ -1,10 +1,6 @@
 import { useGridraCheckbox } from "@gridra-ui/headless";
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
-import {
-  resolveAriaInvalid,
-  useControlDescriptionIds,
-} from "@gridra-ui/headless";
 
 export type GridraCheckboxSize = "sm" | "md" | "lg";
 
@@ -28,7 +24,7 @@ export function GridraCheckbox({
   size = "md",
   ...props
 }: GridraCheckboxProps) {
-  // id/descriptionIdの接続はformControl helperに寄せ、Checkbox本体はlabel構造と見た目に集中する。
+  // id/descriptionId/aria-invalidの解決はuseGridraCheckboxに任せ、Checkbox本体はlabel構造と見た目に集中する。
   const { descriptionId, inputProps } = useGridraCheckbox({
     inputProps: { ...props, "aria-invalid": ariaInvalid },
     hasDescription: Boolean(description),

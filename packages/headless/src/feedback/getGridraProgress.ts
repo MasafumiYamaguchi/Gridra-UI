@@ -15,35 +15,48 @@ function normalizeValue(value: number): number {
   return Number.isFinite(value) ? value : 0;
 }
 
-/** 進捗の正規化とアクセシビリティ属性を返す。 */
+/**
+ * 進捗の正規化とアクセシビリティ属性を返す。
+ * 描画用の値(割合など)と、ルート要素へ展開する `rootProps` を分けて返す。
+ */
 export function getGridraProgress({
   value,
   max = 100,
   label,
 }: GridraProgressOptions = {}) {
-  // value未指定は、完了量を特定できないindeterminate表示として扱う。
-  const isIndeterminate = value === undefined;
   const normalizedMax = normalizeMax(max);
-  const normalizedValue = isIndeterminate ? 0 : normalizeValue(value);
-  const clampedValue = isIndeterminate
-    ? 0
-    : clampNumber(normalizedValue, 0, normalizedMax);
-  const fraction = isIndeterminate ? 0 : clampedValue / normalizedMax;
-  // 確定値がある場合だけ、maxに対する割合を表示幅へ変換する。
-  const percent = fraction * 100;
+  const ariaLabel = label || undefined;
+
+  // value未指定は、完了量を特定できないindeterminate表示として扱い、確定値を示すARIA属性を公開しない。
+  if (value === undefined) {
+    return {
+      isIndeterminate: true,
+      normalizedMax,
+      clampedValue: 0,
+      fraction: 0,
+      percent: 0,
+      rootProps: {
+        role: "progressbar",
+        "aria-label": ariaLabel,
+      } satisfies HTMLAttributes<HTMLElement>,
+    };
+  }
+
+  const clampedValue = clampNumber(normalizeValue(value), 0, normalizedMax);
+  const fraction = clampedValue / normalizedMax;
 
   return {
-    isIndeterminate,
+    isIndeterminate: false,
     normalizedMax,
     clampedValue,
     fraction,
-    percent,
+    percent: fraction * 100,
     rootProps: {
       role: "progressbar",
-      "aria-label": label || undefined,
-      "aria-valuemax": isIndeterminate ? undefined : normalizedMax,
-      "aria-valuemin": isIndeterminate ? undefined : 0,
-      "aria-valuenow": isIndeterminate ? undefined : clampedValue,
+      "aria-label": ariaLabel,
+      "aria-valuemax": normalizedMax,
+      "aria-valuemin": 0,
+      "aria-valuenow": clampedValue,
     } satisfies HTMLAttributes<HTMLElement>,
   };
 }

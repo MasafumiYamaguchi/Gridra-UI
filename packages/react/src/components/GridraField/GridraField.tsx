@@ -1,7 +1,6 @@
 import { useGridraField } from "@gridra-ui/headless";
 import {
   cloneElement,
-  useId,
   type AriaAttributes,
   type HTMLAttributes,
   type ReactElement,
@@ -64,12 +63,12 @@ export function GridraField({
   ...props
 }: GridraFieldProps) {
   const {
-    controlId,
-    resolvedHintId,
-    resolvedErrorId,
     resolvedDisabled,
     resolvedRequired,
-    controlProps: bindings,
+    controlBindings,
+    labelProps,
+    hintProps,
+    errorProps,
   } = useGridraField({
     controlProps: control?.props as ControlProps | undefined,
     hasControl: Boolean(control),
@@ -90,7 +89,7 @@ export function GridraField({
     ),
   });
   const linkedControl = control
-    ? cloneElement(control as ReactElement<ControlProps>, bindings)
+    ? cloneElement(control as ReactElement<ControlProps>, controlBindings)
     : children;
   const fieldClassName = cx(
     "gridra-field",
@@ -103,7 +102,7 @@ export function GridraField({
 
   return (
     <div className={fieldClassName} {...props}>
-      <GridraLabel className="gridra-field__label" htmlFor={controlId}>
+      <GridraLabel className="gridra-field__label" {...labelProps}>
         {label}
         {resolvedRequired ? (
           <span className="gridra-field__required" aria-hidden="true">
@@ -113,14 +112,14 @@ export function GridraField({
       </GridraLabel>
       {linkedControl}
       {hint && !error ? (
-        <div className="gridra-field__hint" id={resolvedHintId}>
+        <div className="gridra-field__hint" {...hintProps}>
           {hint}
         </div>
       ) : null}
       {error ? (
         <GridraErrorMessage
           className="gridra-field__error"
-          id={resolvedErrorId}
+          {...errorProps}
         >
           {error}
         </GridraErrorMessage>

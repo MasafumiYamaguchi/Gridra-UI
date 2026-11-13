@@ -72,7 +72,7 @@ export const breadcrumbDoc: ComponentDoc = {
   examples: [
     {
       title: "Custom markup with headless hook",
-      code: 'import { useGridraBreadcrumb } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const path=useGridraBreadcrumb({items:[{id:"home",label:"Home",href:"#home"},{id:"page",label:"Current page",current:true,parentId:"home"}]});\n  return <nav aria-label="Custom path"><ol>{path.visibleItems.map(entry=>entry.item?<li key={entry.item.id}>{path.getItemState(entry.item).canNavigate?<a {...path.getItemState(entry.item).linkProps}>{entry.item.label}</a>:<span {...path.getItemState(entry.item).currentProps}>{entry.item.label}</span>}</li>:<li key="ellipsis">…</li>)}</ol></nav>;\n}',
+      code: 'import { useGridraBreadcrumb } from "@gridra-ui/headless";\n\nexport default function Example() {\n  const path=useGridraBreadcrumb({items:[{id:"home",label:"Home",href:"#home"},{id:"page",label:"Current page",current:true,parentId:"home"}]});\n  return <nav aria-label="Custom path"><ol>{path.visibleItems.map(entry=>entry.type==="item"?<li key={entry.item.id}>{path.getItemState(entry.item).canNavigate?<a {...path.getItemState(entry.item).linkProps}>{entry.item.label}</a>:<span {...path.getItemState(entry.item).currentProps}>{entry.item.label}</span>}</li>:<li key="ellipsis">…</li>)}</ol></nav>;\n}',
     },
     ...([
       {

@@ -12,9 +12,9 @@ export function getGridraAvatar({
   alt = "",
   fallback,
 }: GridraAvatarOptions = {}) {
-  const fallbackAccessibleName = !src
-    ? alt || fallback || undefined
-    : undefined;
+  // 画像がない場合だけfallback側にアクセシブル名を付与し、imgのaltと名前が二重にならないようにする。
+  const name = alt || fallback || undefined;
+  const fallbackAccessibleName = src ? undefined : name;
 
   return {
     hasImage: Boolean(src),

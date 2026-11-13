@@ -1,21 +1,12 @@
-import { getGridraMinimap } from "@gridra-ui/headless";
+import {
+  getGridraMinimap,
+  type GridraMinimapNode,
+  type GridraMinimapViewport,
+} from "@gridra-ui/headless";
 import type { CSSProperties, HTMLAttributes } from "react";
 import type { GridraId } from "@gridra-ui/core";
-import type { GridraNodePlacement } from "../GridraNode";
-import { clampInt, clampNumber } from "@gridra-ui/core";
 
-export interface GridraMinimapNode {
-  id: GridraId;
-  placement: GridraNodePlacement;
-}
-
-// viewportはミニマップ上の表示領域を、グリッド座標系で表す。
-export interface GridraMinimapViewport {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+export type { GridraMinimapNode, GridraMinimapViewport };
 
 export interface GridraMinimapProps extends HTMLAttributes<HTMLDivElement> {
   gridColumns?: number;
