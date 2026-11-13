@@ -40,7 +40,6 @@ export function GridraSelectableGrid<
     defaultSelectedId,
     onSelectionChange,
   });
-  const currentSelectedId = grid.selectedId;
   // 数値は等分列へ変換し、文字列なら利用側が指定したCSS Grid定義をそのまま使う。
   const gridTemplateColumns =
     typeof columns === "number"
@@ -59,15 +58,13 @@ export function GridraSelectableGrid<
   return (
     <div className={gridClassName} style={{ gridTemplateColumns }}>
       {items.map((item) => {
-        const selected = item.id === currentSelectedId;
+        const selected = item.id === grid.selectedId;
 
-        // 選択済みの項目を再度押すと、未選択状態へ戻す。
         return (
           <button
             {...grid.getItemProps(item.id)}
             className="gridra-grid__item"
             key={item.id}
-            type="button"
           >
             {renderItem
               ? renderItem(item, { selected })

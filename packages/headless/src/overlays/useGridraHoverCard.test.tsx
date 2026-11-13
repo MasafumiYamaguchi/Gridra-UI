@@ -65,3 +65,33 @@ it("cancels pending timers on unmount and does not open when disabled", () => {
 
   expect(vi.getTimerCount()).toBe(0);
 });
+
+it("applies the shared blur handling to the card and closes after hideDelay", () => {
+  vi.useFakeTimers();
+  render(<Example />);
+  const trigger = screen.getByRole("button", { name: "Open" });
+
+  fireEvent.focus(trigger);
+
+  act(() => vi.advanceTimersByTime(10));
+  const card = screen.getByRole("dialog");
+
+  expect(card.style.position).toBe("fixed");
+  expect(trigger.getAttribute("aria-controls")).toBe(card.id);
+
+  fireEvent.blur(card, { relatedTarget: trigger });
+
+  act(() => vi.advanceTimersByTime(20));
+
+  expect(screen.getByRole("dialog")).toBeTruthy();
+
+  fireEvent.blur(screen.getByRole("dialog"), { relatedTarget: document.body });
+
+  act(() => vi.advanceTimersByTime(9));
+
+  expect(screen.getByRole("dialog")).toBeTruthy();
+
+  act(() => vi.advanceTimersByTime(1));
+
+  expect(screen.queryByRole("dialog")).toBeNull();
+});
