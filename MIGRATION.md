@@ -259,6 +259,7 @@ and keyboard handlers) and derives whether the item is a branch from `item.child
 The caller places `role="treeitem"`, `aria-level`, and `aria-expanded` on the element that
 represents the tree item, because that element depends on the markup. Use
 `isExpanded(id)` and `isFocused(id)` to read the state for those attributes and styles.
+
 ## Headless GridraSidebarToggle
 
 Import `useGridraSidebarToggle` from `@gridra-ui/headless` for custom markup. The existing
@@ -290,6 +291,7 @@ floating element now also carries an inline `position: fixed` that overrides `st
 
 `@gridra-ui/headless` exports `useFloatingPosition` and `useDocumentEvent` by name only. Their
 option/result types (`UseFloatingPositionOptions`, `UseFloatingPositionResult`) are not exported.
+
 ## Headless GridraTooltip
 
 Import `useGridraTooltip` from `@gridra-ui/headless` for custom markup. The existing
@@ -301,6 +303,7 @@ The component documentation includes a live custom-markup example.
 ref, and the structural `position: fixed` / `top` / `left` style. `GridraTooltip` uses the same
 getter, so the tooltip element now also carries an inline `position: fixed` that overrides
 `style.position`. The default `showDelay` (120 ms) is defined only by `useGridraTooltip`.
+
 ## Headless GridraHoverCard
 
 Import `useGridraHoverCard` from `@gridra-ui/headless` for custom markup. The existing
@@ -313,6 +316,7 @@ the `id`, `role="dialog"`, the ref, the card's hover/focus handlers, and the str
 `position: fixed` / `top` / `left` style. `GridraHoverCard` uses the same getter, so the card
 element now also carries an inline `position: fixed` that overrides `style.position`. The default
 `showDelay` and `hideDelay` (120 ms each) are defined only by `useGridraHoverCard`.
+
 ## Headless GridraDialog
 
 Import `useGridraDialog` from `@gridra-ui/headless` for custom markup. The existing
@@ -324,6 +328,7 @@ Render the backdrop and close button with `getBackdropProps()` and `getCloseProp
 on the backdrop element instead. Pass `id` to `useGridraDialog` to set the dialog id; the
 trigger's `aria-controls` uses the same id. An `id` passed directly to `getDialogProps()` is
 no longer overwritten. `GridraDialog` keeps an `id` prop on the dialog element.
+
 ## Headless GridraDropdownMenu
 
 Import `useGridraDropdownMenu` from `@gridra-ui/headless` for custom markup. The existing
