@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { isValidNumber } from "../internal/number";
+import { isFiniteNumber } from "../internal/number";
 
 export interface GridraPropertyFieldSchema {
   id: string;
@@ -26,7 +26,7 @@ export type GridraPropertiesPatch = Partial<GridraNodePropertiesValue>;
 
 function formatNumberValue(value: unknown): number | "" {
   // 不正な値はinputへNaNを渡さず、未入力として表示する。
-  return isValidNumber(value) ? value : "";
+  return isFiniteNumber(value) ? value : "";
 }
 
 export interface UseGridraPropertiesPanelOptions {
@@ -75,7 +75,7 @@ export function useGridraPropertiesPanel({
     const parsed = Number(raw);
 
     // 空文字はNumber("")が0になるため、数値として扱わず除外する。
-    if (raw.trim() === "" || !isValidNumber(parsed)) return;
+    if (raw.trim() === "" || !isFiniteNumber(parsed)) return;
 
     handleChange(id, parsed);
   };

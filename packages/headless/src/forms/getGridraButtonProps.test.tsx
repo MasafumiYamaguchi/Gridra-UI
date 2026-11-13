@@ -1,14 +1,19 @@
 import { expect, it } from "vitest";
 import { getGridraButtonProps } from "./getGridraButtonProps";
 
-it("locks loading buttons and exposes pressed state", () => {
+it("locks loading buttons even when disabled is false", () => {
   expect(
-    getGridraButtonProps({ loading: true, disabled: false, pressed: true }),
+    getGridraButtonProps({ loading: true, disabled: false }),
   ).toMatchObject({
     disabled: true,
     "aria-busy": true,
-    "aria-pressed": true,
     type: "button",
+  });
+});
+
+it("exposes pressed state", () => {
+  expect(getGridraButtonProps({ pressed: true })).toMatchObject({
+    "aria-pressed": true,
   });
 });
 

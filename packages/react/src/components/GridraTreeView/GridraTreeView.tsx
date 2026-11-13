@@ -1,25 +1,9 @@
-import { useGridraTreeView } from "@gridra-ui/headless";
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type HTMLAttributes,
-  type KeyboardEvent,
-  type ReactNode,
-} from "react";
-import { useControllableValue } from "@gridra-ui/headless";
+import { useGridraTreeView, type GridraTreeItem } from "@gridra-ui/headless";
+import { useId, type HTMLAttributes, type ReactNode } from "react";
+
+export type { GridraTreeItem } from "@gridra-ui/headless";
 
 export type GridraTreeViewSize = "sm" | "md" | "lg";
-
-export interface GridraTreeItem {
-  id: string;
-  label: ReactNode;
-  children?: GridraTreeItem[];
-  disabled?: boolean;
-}
 
 export interface GridraTreeViewProps extends HTMLAttributes<HTMLDivElement> {
   items: GridraTreeItem[];
@@ -53,14 +37,15 @@ export function GridraTreeView({
   size = "md",
   ...props
 }: GridraTreeViewProps) {
-  const { baseId, flatItems, focusedId, expandedSet, getRowProps } =
-    useGridraTreeView({
-      items,
-      expandedIds: expandedIdsProp,
-      defaultExpandedIds,
-      onExpandedIdsChange,
-      onItemClick,
-    });
+  const { flatItems, isExpanded, isFocused, getRowProps } = useGridraTreeView({
+    items,
+    expandedIds: expandedIdsProp,
+    defaultExpandedIds,
+    onExpandedIdsChange,
+    onItemClick,
+  });
+  // groupのidを他のtreeと衝突させないための基点。
+  const baseId = useId();
   if (items.length === 0) {
     // 空の場合はtree roleを作らず、任意のemptyStateだけを表示する。
     return (
@@ -89,16 +74,15 @@ export function GridraTreeView({
         {flatItems.map(({ item, depth, hasChildren, key }) => {
           // disabled項目は表示に残すが、フォーカス・クリック・展開の対象外にする。
           const isDisabled = item.disabled ?? false;
-          const isExpanded =
-            !isDisabled && hasChildren && expandedSet.has(item.id);
-          const isFocused = focusedId === item.id;
+          const expanded = !isDisabled && hasChildren && isExpanded(item.id);
+          const focused = isFocused(item.id);
           const groupId = `${baseId}-group-${key}`;
           const itemContent = renderItem ? (
             renderItem(item, {
               depth,
               disabled: isDisabled,
-              expanded: isExpanded,
-              focused: isFocused,
+              expanded,
+              focused,
               hasChildren,
             })
           ) : (
@@ -108,7 +92,7 @@ export function GridraTreeView({
           return (
             <li
               key={key}
-              aria-expanded={hasChildren ? isExpanded : undefined}
+              aria-expanded={hasChildren ? expanded : undefined}
               aria-level={depth + 1}
               className={[
                 "gridra-tree-view__item",
@@ -119,10 +103,10 @@ export function GridraTreeView({
               role="treeitem"
             >
               <div
-                {...getRowProps(item, hasChildren)}
+                {...getRowProps(item)}
                 className={[
                   "gridra-tree-view__row",
-                  isFocused ? "gridra-tree-view__row--focused" : null,
+                  focused ? "gridra-tree-view__row--focused" : null,
                 ]
                   .filter(Boolean)
                   .join(" ")}
@@ -136,7 +120,7 @@ export function GridraTreeView({
                     aria-hidden="true"
                     className={[
                       "gridra-tree-view__chevron",
-                      isExpanded ? "gridra-tree-view__chevron--expanded" : null,
+                      expanded ? "gridra-tree-view__chevron--expanded" : null,
                     ]
                       .filter(Boolean)
                       .join(" ")}
@@ -149,7 +133,7 @@ export function GridraTreeView({
               {hasChildren && item.children && item.children.length > 0 ? (
                 <ul
                   className="gridra-tree-view__group"
-                  hidden={!isExpanded}
+                  hidden={!expanded}
                   id={groupId}
                   role="group"
                 />
