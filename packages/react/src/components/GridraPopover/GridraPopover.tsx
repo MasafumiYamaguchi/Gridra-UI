@@ -6,10 +6,10 @@ import {
   type HTMLAttributes,
   type ReactElement,
   type ReactNode,
-  type Ref,
 } from "react";
 import { createPortal } from "react-dom";
 import { cx } from "../../internal/classNames";
+import { getChildRef } from "../../internal/getChildRef";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
 
@@ -71,12 +71,7 @@ export function GridraPopover({
   });
   const anchorProps = getTriggerProps<HTMLElement>(
     isValidElement(children)
-      ? {
-          ...children.props,
-          ref:
-            (children.props.ref as Ref<HTMLElement> | undefined) ??
-            (children as ReactElement & { ref?: Ref<HTMLElement> }).ref,
-        }
+      ? { ...children.props, ref: getChildRef<HTMLElement>(children) }
       : {},
   );
   // Portal化してもテーマが揃うよう、アンカー側のテーマclassを引き継ぐ。
