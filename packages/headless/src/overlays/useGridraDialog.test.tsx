@@ -66,3 +66,37 @@ it("keeps controlled state external and ignores pointerdown inside content", () 
   expect(onOpenChange).toHaveBeenCalledWith(false, true);
   expect(screen.getByRole("dialog")).toBeTruthy();
 });
+
+function IdExample({ id, dialogId }: { id?: string; dialogId?: string }) {
+  const d = useGridraDialog({ defaultOpen: true, id });
+
+  return (
+    <>
+      <button {...d.getTriggerProps()}>Open</button>
+      <div {...d.getDialogProps({ id: dialogId })}>
+        <h2 id={d.titleId}>Title</h2>
+      </div>
+    </>
+  );
+}
+
+it("uses the id option for both the dialog and the trigger's aria-controls", () => {
+  render(<IdExample id="custom-dialog" />);
+
+  expect(screen.getByRole("dialog").id).toBe("custom-dialog");
+  expect(
+    screen.getByRole("button", { name: "Open" }).getAttribute("aria-controls"),
+  ).toBe("custom-dialog");
+});
+
+it("does not overwrite an id passed to getDialogProps", () => {
+  render(<IdExample dialogId="direct-id" />);
+
+  expect(screen.getByRole("dialog").id).toBe("direct-id");
+});
+
+it("focuses the dialog itself when it has no focusable content", () => {
+  render(<IdExample />);
+
+  expect(document.activeElement).toBe(screen.getByRole("dialog"));
+});
