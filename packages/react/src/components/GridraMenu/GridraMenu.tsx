@@ -1,42 +1,22 @@
-import { useGridraMenu } from "@gridra-ui/headless";
 import {
-  useMemo,
-  useRef,
-  type HTMLAttributes,
-  type KeyboardEvent,
-  type ReactNode,
-} from "react";
-import { useControllableValue } from "@gridra-ui/headless";
+  useGridraMenu,
+  type GridraMenuCommandItem,
+  type GridraMenuItem,
+  type GridraMenuItemState,
+  type GridraMenuOrientation,
+} from "@gridra-ui/headless";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
-import { clampIndex } from "@gridra-ui/core";
 
-export type GridraMenuOrientation = "vertical" | "horizontal";
+export type {
+  GridraMenuCommandItem,
+  GridraMenuItem,
+  GridraMenuItemState,
+  GridraMenuOrientation,
+  GridraMenuSeparatorItem,
+} from "@gridra-ui/headless";
 
 export type GridraMenuSize = "sm" | "md" | "lg";
-
-export interface GridraMenuCommandItem {
-  id: string;
-  label: ReactNode;
-  href?: string;
-  disabled?: boolean;
-  destructive?: boolean;
-}
-
-// separatorは操作対象ではないため、idなしでも描画できる。
-export interface GridraMenuSeparatorItem {
-  type: "separator";
-  id?: string;
-}
-
-export type GridraMenuItem = GridraMenuCommandItem | GridraMenuSeparatorItem;
-
-export interface GridraMenuItemState {
-  active: boolean;
-  disabled: boolean;
-  destructive: boolean;
-  hasHref: boolean;
-  orientation: GridraMenuOrientation;
-}
 
 export interface GridraMenuProps extends HTMLAttributes<HTMLElement> {
   items: GridraMenuItem[];
@@ -55,10 +35,6 @@ export interface GridraMenuProps extends HTMLAttributes<HTMLElement> {
   size?: GridraMenuSize;
 }
 
-function isCommand(item: GridraMenuItem): item is GridraMenuCommandItem {
-  return !("type" in item) || item.type !== "separator";
-}
-
 export function GridraMenu({
   activeId,
   "aria-label": ariaLabel = "Menu",
@@ -72,14 +48,16 @@ export function GridraMenu({
   size = "md",
   ...props
 }: GridraMenuProps) {
-  const { safeActiveId, getRootProps, getItemProps } = useGridraMenu({
-    items,
-    activeId,
-    defaultActiveId,
-    onActiveIdChange,
-    onAction,
-    orientation,
-  });
+  const { safeActiveId, getRootProps, getItemProps, isCommand } = useGridraMenu(
+    {
+      items,
+      activeId,
+      defaultActiveId,
+      onActiveIdChange,
+      onAction,
+      orientation,
+    },
+  );
   const rootClassName = cx(
     "gridra-menu",
     `gridra-menu--${orientation}`,
@@ -142,8 +120,6 @@ export function GridraMenu({
                   className={tagClassName}
                   href={item.href}
                   {...getItemProps<HTMLAnchorElement>(item.id)}
-                  tabIndex={isActive ? 0 : -1}
-                  {...(isActive ? { "aria-current": "page" as const } : {})}
                 >
                   {content}
                 </a>
@@ -156,9 +132,7 @@ export function GridraMenu({
               <button
                 className={tagClassName}
                 {...getItemProps(item.id)}
-                tabIndex={isActive ? 0 : -1}
                 type="button"
-                {...(isActive ? { "aria-current": "page" as const } : {})}
               >
                 {content}
               </button>
