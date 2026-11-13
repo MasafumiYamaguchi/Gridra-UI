@@ -1,6 +1,5 @@
 import { useGridraSlider } from "@gridra-ui/headless";
 import type { InputHTMLAttributes, ReactNode } from "react";
-import { useState } from "react";
 
 export type GridraSliderSize = "sm" | "md" | "lg";
 
