@@ -1,18 +1,14 @@
 import { useGridraToastQueue, GridraToastContext } from "@gridra-ui/headless";
 import type { GridraThemeName } from "../../theme";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
 import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
 
 export type GridraToastPosition = "top" | "bottom";
+
+// packages/theme/src/base.css の .gridra-toast--exiting にある gridra-toast-out / gridra-toast-out-top の
+// アニメーション時間 (150ms) と揃え、退出アニメーションの完了後に次の Toast へ進める。
+const EXIT_ANIMATION_DURATION = 150;
 
 export type {
   GridraToastOptions,
@@ -31,7 +27,7 @@ export function GridraToastProvider({
   theme?: GridraThemeName;
 }) {
   const { currentToast, exiting, show } = useGridraToastQueue({
-    exitDuration: 150,
+    exitDuration: EXIT_ANIMATION_DURATION,
   });
   const portalTheme = useGridraPortalTheme(
     undefined,

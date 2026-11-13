@@ -1,36 +1,23 @@
 import { useGridraHoverCard } from "@gridra-ui/headless";
-import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
-  type FocusEvent as ReactFocusEvent,
-  type MouseEvent as ReactMouseEvent,
   type CSSProperties,
   type HTMLAttributes,
   type ReactElement,
   type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
-import { composeHandlers } from "@gridra-ui/headless";
-import { mergeRefs } from "@gridra-ui/headless";
+import { getChildRef } from "../../internal/getChildRef";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
-import { useDocumentEvent } from "@gridra-ui/headless";
-import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraHoverCardPlacement = "top" | "right" | "bottom" | "left";
 
 export type GridraHoverCardSize = "sm" | "md" | "lg";
 
-// HTML属性とぶつかるcontent/children/onChangeは、anchor・card内容・開閉状態の意味に合わせて独自定義する。
+// HTML属性とぶつかるcontent/children/onChangeは、アンカー・カード内容・開閉状態の意味に合わせて独自定義する。
 export interface GridraHoverCardProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   "content" | "children" | "onChange"
@@ -56,10 +43,6 @@ export interface GridraHoverCardProps extends Omit<
 
 const HOVER_CARD_OFFSET = 4;
 
-const DEFAULT_SHOW_DELAY = 120;
-
-const DEFAULT_HIDE_DELAY = 120;
-
 export function GridraHoverCard({
   children,
   className,
@@ -68,7 +51,7 @@ export function GridraHoverCard({
   defaultOpen = false,
   disabled = false,
   height,
-  hideDelay = DEFAULT_HIDE_DELAY,
+  hideDelay,
   maxHeight,
   maxWidth,
   minHeight,
@@ -76,7 +59,7 @@ export function GridraHoverCard({
   onOpenChange,
   open,
   placement = "bottom",
-  showDelay = DEFAULT_SHOW_DELAY,
+  showDelay,
   size = "md",
   style,
   width,
@@ -93,14 +76,9 @@ export function GridraHoverCard({
     currentOpen,
     portalMounted,
     anchorRef,
-    cardRef,
-    cardId,
-    coords,
     resolvedPlacement,
-    handleCardBlur,
-    cancelHide,
-    startHide,
     getTriggerProps,
+    getContentProps,
   } = useGridraHoverCard({
     open,
     defaultOpen,
@@ -114,9 +92,7 @@ export function GridraHoverCard({
   });
   const anchorProps = getTriggerProps<HTMLElement>({
     ...children.props,
-    ref:
-      (children.props.ref as Ref<HTMLElement> | undefined) ??
-      (children as ReactElement & { ref?: Ref<HTMLElement> }).ref,
+    ref: getChildRef<HTMLElement>(children),
   });
   const portalTheme = useGridraPortalTheme(
     anchorRef,
@@ -132,35 +108,23 @@ export function GridraHoverCard({
     className,
   );
 
-  // ユーザー指定の style を保ちつつ、計算済み座標とサイズ指定用 CSS 変数を付与する。
+  // ユーザー指定の style を保ちつつ、サイズ指定用 CSS 変数を付与する。
   // 任意サイズはCSS変数でtheme側へ渡し、classの種類を増やさない。
-  const cardStyle = useMemo(
-    () =>
-      ({
-        ...portalTheme.style,
-        ...style,
-        top: `${coords.top}px`,
-        left: `${coords.left}px`,
-        "--gridra-hover-card-width": width,
-        "--gridra-hover-card-min-width": minWidth,
-        "--gridra-hover-card-max-width": maxWidth,
-        "--gridra-hover-card-height": height,
-        "--gridra-hover-card-min-height": minHeight,
-        "--gridra-hover-card-max-height": maxHeight,
-      }) as CSSProperties,
-    [
-      portalTheme.style,
-      coords.left,
-      coords.top,
-      height,
-      maxHeight,
-      maxWidth,
-      minHeight,
-      minWidth,
-      style,
-      width,
-    ],
-  );
+  // id / role / ref、カード側のhover・focus処理、座標(top / left)・位置指定はgetContentPropsが付与する。
+  const contentProps = getContentProps({
+    ...props,
+    className: cardClassName,
+    style: {
+      ...portalTheme.style,
+      ...style,
+      "--gridra-hover-card-width": width,
+      "--gridra-hover-card-min-width": minWidth,
+      "--gridra-hover-card-max-width": maxWidth,
+      "--gridra-hover-card-height": height,
+      "--gridra-hover-card-min-height": minHeight,
+      "--gridra-hover-card-max-height": maxHeight,
+    } as CSSProperties,
+  });
   const portalTarget = getPortalTarget();
 
   return (
@@ -168,40 +132,7 @@ export function GridraHoverCard({
       {cloneElement(children, anchorProps)}
       {currentOpen && !disabled && portalMounted && portalTarget
         ? createPortal(
-            <div
-              {...props}
-              className={cardClassName}
-              id={cardId}
-              onBlur={composeHandlers(
-                props.onBlur as
-                  | ((event: ReactFocusEvent<HTMLDivElement>) => void)
-                  | undefined,
-                handleCardBlur,
-              )}
-              onFocus={composeHandlers(
-                props.onFocus as
-                  | ((event: ReactFocusEvent<HTMLDivElement>) => void)
-                  | undefined,
-                cancelHide,
-              )}
-              onMouseEnter={composeHandlers(
-                props.onMouseEnter as
-                  | ((event: ReactMouseEvent<HTMLDivElement>) => void)
-                  | undefined,
-                cancelHide,
-              )}
-              onMouseLeave={composeHandlers(
-                props.onMouseLeave as
-                  | ((event: ReactMouseEvent<HTMLDivElement>) => void)
-                  | undefined,
-                startHide,
-              )}
-              ref={cardRef}
-              role="dialog"
-              style={cardStyle}
-            >
-              {content}
-            </div>,
+            <div {...contentProps}>{content}</div>,
             portalTarget,
           )
         : null}

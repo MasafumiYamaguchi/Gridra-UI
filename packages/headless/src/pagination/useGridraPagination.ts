@@ -3,9 +3,10 @@ import {
   useMemo,
   useState,
   type ChangeEvent,
-  type HTMLAttributes,
 } from "react";
 import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
   generatePages,
   normalizePage,
   normalizePageSize,
@@ -27,10 +28,6 @@ export interface UseGridraPaginationOptions {
   boundaryCount?: number;
   disabled?: boolean;
 }
-
-const DEFAULT_PAGE = 1;
-
-const DEFAULT_PAGE_SIZE = 25;
 
 const DEFAULT_SIBLING_COUNT = 1;
 
