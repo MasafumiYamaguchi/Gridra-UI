@@ -9,7 +9,10 @@ export interface GridraToolbarAction {
   disabled?: boolean;
 }
 
-/** 操作のメタデータを独自buttonに接続する。フォーカス移動はnativeのTab順序を使う。 */
+/**
+ * 操作のメタデータを独自buttonに接続する。フォーカス移動はnativeのTab順序を使う。
+ * `getActionProps` は、actionsに存在しないidと `disabled` なactionをdisabledとして扱い、onActionも呼ばない。
+ */
 export function getGridraToolbar({
   actions = [],
   onAction,

@@ -13,6 +13,7 @@ import { wrapIndex } from "@gridra-ui/core";
 import { useControllableValue } from "../useControllableValue";
 import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
+import { uniqueById } from "../internal/uniqueById";
 
 export type GridraTabsOrientation = "horizontal" | "vertical";
 
@@ -49,17 +50,7 @@ export function useGridraTabs<TItem extends GridraTabsItem>({
 }: UseGridraTabsOptions<TItem>) {
   const baseId = useId();
 
-  const items = useMemo(() => {
-    const seen = new Set<string>();
-
-    return inputItems.filter((item) => {
-      if (seen.has(item.id)) return false;
-
-      seen.add(item.id);
-
-      return true;
-    });
-  }, [inputItems]);
+  const items = useMemo(() => uniqueById(inputItems), [inputItems]);
 
   const enabledIds = useMemo(
     () => items.filter((item) => !item.disabled).map((item) => item.id),

@@ -24,6 +24,17 @@ function Example({ value }: { value?: number }) {
   );
 }
 
+function MinExample({ min }: { min?: number }) {
+  const s = useGridraSlider({ min });
+
+  return (
+    <>
+      <input {...s.inputProps} />
+      <output>{s.displayNumericValue}</output>
+    </>
+  );
+}
+
 it("updates uncontrolled display from native events", () => {
   render(<Example />);
 
@@ -42,4 +53,14 @@ it("keeps controlled display and normalizes nonfinite values", () => {
   const { result } = renderHook(() => useGridraSlider({ value: NaN }));
 
   expect(result.current.displayNumericValue).toBe(0);
+});
+
+it("falls back to min, then 0, when defaultValue is omitted", () => {
+  const { rerender } = render(<MinExample min={10} />);
+
+  expect(screen.getByText("10")).toBeTruthy();
+
+  rerender(<MinExample key="no-min" />);
+
+  expect(screen.getByText("0")).toBeTruthy();
 });

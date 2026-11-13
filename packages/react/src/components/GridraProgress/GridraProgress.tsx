@@ -1,6 +1,5 @@
 import { getGridraProgress } from "@gridra-ui/headless";
 import type { HTMLAttributes } from "react";
-import { clampNumber } from "@gridra-ui/core";
 
 export type GridraProgressSize = "sm" | "md" | "lg";
 
@@ -40,7 +39,6 @@ export function GridraProgress({
     .filter(Boolean)
     .join(" ");
 
-  // indeterminate時は、確定値を示すARIA属性を公開しない。
   return (
     <div className={rootClassName} {...rootProps} {...props}>
       <div

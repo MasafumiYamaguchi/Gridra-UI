@@ -6,38 +6,38 @@ import { afterEach } from "vitest";
 afterEach(cleanup);
 
 it("dispatches enabled actions through native buttons", () => {
-  const action = vi.fn(),
-    t = getGridraToolbar({
-      actions: [{ id: "save", label: "Save", pressed: true }],
-      onAction: action,
-    });
+  const onAction = vi.fn();
+  const toolbar = getGridraToolbar({
+    actions: [{ id: "save", label: "Save", pressed: true }],
+    onAction,
+  });
   render(
-    <div {...t.rootProps}>
-      <button {...t.getActionProps("save")}>Save</button>
+    <div {...toolbar.rootProps}>
+      <button {...toolbar.getActionProps("save")}>Save</button>
     </div>,
   );
 
   fireEvent.click(screen.getByRole("button"));
 
-  expect(action).toHaveBeenCalledWith("save");
+  expect(onAction).toHaveBeenCalledWith("save");
   expect(screen.getByRole("button").getAttribute("aria-pressed")).toBe("true");
 });
 
 it("blocks unknown, disabled and cancelled actions", () => {
-  const action = vi.fn(),
-    t = getGridraToolbar({
-      actions: [
-        { id: "off", label: "Off", disabled: true },
-        { id: "on", label: "On" },
-      ],
-      onAction: action,
-    });
+  const onAction = vi.fn();
+  const toolbar = getGridraToolbar({
+    actions: [
+      { id: "off", label: "Off", disabled: true },
+      { id: "on", label: "On" },
+    ],
+    onAction,
+  });
   render(
     <>
-      <button {...t.getActionProps("off")}>Off</button>
-      <button {...t.getActionProps("missing")}>Missing</button>
+      <button {...toolbar.getActionProps("off")}>Off</button>
+      <button {...toolbar.getActionProps("missing")}>Missing</button>
       <button
-        {...t.getActionProps("on", { onClick: (e) => e.preventDefault() })}
+        {...toolbar.getActionProps("on", { onClick: (e) => e.preventDefault() })}
       >
         On
       </button>
@@ -45,5 +45,5 @@ it("blocks unknown, disabled and cancelled actions", () => {
   );
   for (const button of screen.getAllByRole("button")) fireEvent.click(button);
 
-  expect(action).not.toHaveBeenCalled();
+  expect(onAction).not.toHaveBeenCalled();
 });

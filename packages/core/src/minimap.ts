@@ -12,6 +12,7 @@ export interface GridraMinimapNode {
   placement: GridraMinimapPlacement;
 }
 
+// viewportはミニマップ上の表示領域を、グリッド座標系で表す。
 export interface GridraMinimapViewport {
   x: number;
   y: number;
@@ -58,23 +59,33 @@ export function getGridraMinimap({
         selected: selectedSet.has(node.id),
         placement,
         rect: {
-          left: ((placement.column - 1) / safeColumns) * 100,
-          top: ((placement.row - 1) / safeRows) * 100,
-          width: (placement.columnSpan / safeColumns) * 100,
-          height: (placement.rowSpan / safeRows) * 100,
+          left: toPercent(placement.column - 1, safeColumns),
+          top: toPercent(placement.row - 1, safeRows),
+          width: toPercent(placement.columnSpan, safeColumns),
+          height: toPercent(placement.rowSpan, safeRows),
         },
       };
     }),
     viewport: viewport
       ? {
-          left: (clampNumber(viewport.x, 0, safeColumns) / safeColumns) * 100,
-          top: (clampNumber(viewport.y, 0, safeRows) / safeRows) * 100,
-          width:
-            (clampNumber(viewport.width, 0, safeColumns) / safeColumns) * 100,
-          height: (clampNumber(viewport.height, 0, safeRows) / safeRows) * 100,
+          left: toPercent(clampNumber(viewport.x, 0, safeColumns), safeColumns),
+          top: toPercent(clampNumber(viewport.y, 0, safeRows), safeRows),
+          width: toPercent(
+            clampNumber(viewport.width, 0, safeColumns),
+            safeColumns,
+          ),
+          height: toPercent(
+            clampNumber(viewport.height, 0, safeRows),
+            safeRows,
+          ),
         }
       : undefined,
   };
+}
+
+// グリッド上のセル数を、全体に対する0〜100の割合へ変換する。
+function toPercent(value: number, total: number): number {
+  return (value / total) * 100;
 }
 
 function normalizePlacement(
