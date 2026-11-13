@@ -78,7 +78,6 @@ export function GridraAccordion({
               {...accordion.getTriggerProps(item.id, {
                 className: "gridra-accordion__header",
               })}
-              data-accordion-id={item.id}
             >
               <span className="gridra-accordion__title">{item.title}</span>
               <span aria-hidden="true" className="gridra-accordion__icon" />
