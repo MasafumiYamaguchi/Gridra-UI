@@ -5,6 +5,7 @@ import {
   type KeyboardEvent,
   type HTMLAttributes,
   type Ref,
+  type RefCallback,
 } from "react";
 import { useControllableValue } from "../useControllableValue";
 import { composeHandlers } from "../internal/composeHandlers";
@@ -36,6 +37,14 @@ export interface GridraMenuItemState {
   hasHref: boolean;
   orientation: GridraMenuOrientation;
 }
+
+/** 項目要素へ展開する props。roving focus 用の tabIndex と aria-current は getter が決める。 */
+export type GridraMenuItemProps<TElement extends HTMLElement> =
+  HTMLAttributes<TElement> & {
+    ref: RefCallback<TElement>;
+    tabIndex: number;
+    disabled: boolean;
+  };
 
 export interface UseGridraMenuOptions {
   items: GridraMenuItem[];
@@ -96,12 +105,6 @@ export function useGridraMenu({
     [defaultActiveId, commandItems],
   );
 
-  // controlledなactiveIdも、有効なcommand itemだけを選択状態として受け入れる。
-  const safeActiveIdProp = useMemo(
-    () => normalizeActiveId(activeId, commandItems),
-    [activeId, commandItems],
-  );
-
   const [currentActiveId, setActiveId] = useControllableValue(
     activeId,
     safeDefaultActiveId,
@@ -109,7 +112,8 @@ export function useGridraMenu({
       onActiveIdChange?.(next, normalizeActiveId(previous, commandItems)),
   );
 
-  // items変更で現在のactiveIdが無効になる場合があるため、描画直前にも正規化する。
+  // controlledなactiveIdも、items変更で無効になったactiveIdも、描画直前に正規化して
+  // 有効なcommand itemだけを選択状態として受け入れる。
   const safeActiveId = useMemo(
     () => normalizeActiveId(currentActiveId, commandItems),
     [currentActiveId, commandItems],
@@ -189,7 +193,9 @@ export function useGridraMenu({
     }
   };
 
-  const getRootProps = (props: HTMLAttributes<HTMLElement> = {}) => ({
+  const getRootProps = (
+    props: HTMLAttributes<HTMLElement> = {},
+  ): HTMLAttributes<HTMLElement> => ({
     ...props,
     onKeyDown: composeHandlers(props.onKeyDown, handleKeyDown),
   });
@@ -197,7 +203,7 @@ export function useGridraMenu({
   const getItemProps = <TElement extends HTMLElement = HTMLButtonElement>(
     id: string,
     props: HTMLAttributes<TElement> & { ref?: Ref<TElement> } = {},
-  ) => {
+  ): GridraMenuItemProps<TElement> => {
     const item = commandItems.find((item) => item.id === id);
     const disabled = !item || Boolean(item.disabled);
 
