@@ -1,12 +1,7 @@
-import { useGridraStepper } from "@gridra-ui/headless";
-import {
-  useId,
-  useMemo,
-  useState,
-  type CSSProperties,
-  type HTMLAttributes,
-  type ReactNode,
-} from "react";
+import { useGridraStepper, type GridraStepperItem } from "@gridra-ui/headless";
+import { useId, type CSSProperties, type HTMLAttributes } from "react";
+
+export type { GridraStepperItem } from "@gridra-ui/headless";
 
 export type GridraStepperOrientation = "horizontal" | "vertical";
 
@@ -46,13 +41,6 @@ const defaultLabels: GridraStepperLabels = {
   summary: (percentage, position) =>
     `${percentage}% · ${position.toUpperCase()}`,
 };
-
-export interface GridraStepperItem {
-  id: string;
-  label: ReactNode;
-  description?: ReactNode;
-  disabled?: boolean;
-}
 
 export interface GridraStepperProps extends HTMLAttributes<HTMLElement> {
   items: GridraStepperItem[];
@@ -101,21 +89,14 @@ export function GridraStepper({
   const text = { ...defaultLabels, ...labels };
   const navLabel = ariaLabel ?? text.navigation;
   const progressLabelId = useId();
-  const {
-    currentId,
-    currentIndex,
-    progress,
-    steps,
-    positionOf,
-    handleStepClick,
-    getStepProps,
-  } = useGridraStepper({
-    items,
-    currentId: currentIdProp,
-    defaultCurrentId,
-    disabled,
-    onStepChange,
-  });
+  const { currentIndex, progress, steps, positionOf, getStepProps } =
+    useGridraStepper({
+      items,
+      currentId: currentIdProp,
+      defaultCurrentId,
+      disabled,
+      onStepChange,
+    });
   const positionText =
     currentIndex < 0
       ? text.noCurrentStep
@@ -155,10 +136,16 @@ export function GridraStepper({
             current,
             pending,
             buttonDisabled,
-            canGoBack,
-            traversed,
-            connectorState,
           }) => {
+            // 接続線は現在位置までの区間を塗るため、開始側が locked でも通過済みとして扱う。
+            const traversed = index < currentIndex;
+            const connectorState = traversed
+              ? "completed"
+              : current
+                ? "current"
+                : pending
+                  ? "pending"
+                  : "locked";
             const stateClasses = [
               completed && "completed",
               current && "current",
@@ -269,10 +256,10 @@ export function GridraStepper({
             aria-valuetext={positionText}
           >
             <span className="gridra-stepper__ruler-track" aria-hidden="true" />
-            {steps.map(({ item, index, traversed, current }) => (
+            {steps.map(({ item, index }) => (
               <span
                 key={item.id}
-                className={`gridra-stepper__ruler-tick${traversed || current ? " gridra-stepper__ruler-tick--reached" : ""}`}
+                className={`gridra-stepper__ruler-tick${index <= currentIndex ? " gridra-stepper__ruler-tick--reached" : ""}`}
                 aria-hidden="true"
                 style={{
                   [orientation === "horizontal" ? "left" : "top"]:
