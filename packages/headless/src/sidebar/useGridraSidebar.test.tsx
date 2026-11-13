@@ -54,3 +54,38 @@ it("keeps controlled open state and makes unavailable separators inert", () => {
   expect(result.current.getSeparatorProps()["aria-disabled"]).toBe(true);
   expect(result.current.getSeparatorProps().onKeyDown).toBeUndefined();
 });
+
+function DragExample({ side }: { side: "left" | "right" }) {
+  const s = useGridraSidebar({ resizable: true, side });
+
+  return <div {...s.getSeparatorProps()} />;
+}
+
+it("resizes by dragging the separator on the left side", () => {
+  render(<DragExample side="left" />);
+  const sep = screen.getByRole("separator");
+
+  fireEvent.mouseDown(sep, { clientX: 100 });
+  fireEvent.mouseMove(sep, { clientX: 140 });
+
+  expect(sep.getAttribute("aria-valuenow")).toBe("320");
+
+  fireEvent.mouseUp(sep);
+  fireEvent.mouseMove(sep, { clientX: 200 });
+
+  expect(sep.getAttribute("aria-valuenow")).toBe("320");
+});
+
+it("inverts the drag direction for right-side sidebars", () => {
+  render(<DragExample side="right" />);
+  const sep = screen.getByRole("separator");
+
+  fireEvent.mouseDown(sep, { clientX: 100 });
+  fireEvent.mouseMove(sep, { clientX: 140 });
+
+  expect(sep.getAttribute("aria-valuenow")).toBe("240");
+
+  fireEvent.mouseMove(sep, { clientX: 20 });
+
+  expect(sep.getAttribute("aria-valuenow")).toBe("360");
+});
