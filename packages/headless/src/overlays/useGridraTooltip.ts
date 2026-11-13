@@ -10,6 +10,7 @@ import { useControllableValue } from "../useControllableValue";
 import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
 import { useFloatingPosition } from "../internal/useFloatingPosition";
+import type { Placement } from "../internal/floating";
 
 export interface UseGridraTooltipOptions {
   open?: boolean;
@@ -17,7 +18,7 @@ export interface UseGridraTooltipOptions {
   onOpenChange?: (next: boolean, previous: boolean) => void;
   showDelay?: number;
   disabled?: boolean;
-  placement?: "top" | "right" | "bottom" | "left";
+  placement?: Placement;
   offset?: number;
 }
 
@@ -84,7 +85,7 @@ export function useGridraTooltip({
     );
   };
 
-  const closeImmediately = () => {
+  const close = () => {
     // 表示前に離れた場合は待機タイマーも取り消す。
     if (openTimerRef.current !== null) {
       window.clearTimeout(openTimerRef.current);
@@ -103,14 +104,19 @@ export function useGridraTooltip({
         ? [props["aria-describedby"], tooltipId].filter(Boolean).join(" ")
         : props["aria-describedby"],
     onMouseEnter: composeHandlers(props.onMouseEnter, openWithDelay),
-    onMouseLeave: composeHandlers(props.onMouseLeave, closeImmediately),
+    onMouseLeave: composeHandlers(props.onMouseLeave, close),
     onFocus: composeHandlers(props.onFocus, openWithDelay),
-    onBlur: composeHandlers(props.onBlur, closeImmediately),
+    onBlur: composeHandlers(props.onBlur, close),
     ref: mergeRefs(props.ref, (element: T | null) => {
       anchorRef.current = element;
     }),
   });
 
+  /**
+   * Tooltip本体へ渡すprops。
+   * `position: fixed` と `top` / `left` は計測した座標を画面へ反映するための構造的なCSSなので、
+   * 見た目を持たないheadless側で付与し、利用側の `style` より優先する。
+   */
   const getContentProps = (
     props: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> } = {},
   ) => ({
@@ -132,12 +138,9 @@ export function useGridraTooltip({
     currentOpen,
     portalMounted,
     anchorRef,
-    tooltipRef,
-    tooltipId,
-    coords,
     resolvedPlacement,
     getTriggerProps,
     getContentProps,
-    close: closeImmediately,
+    close,
   };
 }

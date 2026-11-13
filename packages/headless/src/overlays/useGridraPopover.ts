@@ -12,6 +12,7 @@ import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
 import { useDocumentEvent } from "../internal/useDocumentEvent";
 import { useFloatingPosition } from "../internal/useFloatingPosition";
+import type { Placement } from "../internal/floating";
 
 export interface UseGridraPopoverOptions {
   open?: boolean;
@@ -20,7 +21,7 @@ export interface UseGridraPopoverOptions {
   disabled?: boolean;
   closeOnEscape?: boolean;
   closeOnOutsidePointerDown?: boolean;
-  placement?: "top" | "right" | "bottom" | "left";
+  placement?: Placement;
   offset?: number;
 }
 
@@ -102,6 +103,7 @@ export function useGridraPopover({
     setCurrentOpen(!currentOpen);
   };
 
+  // 元のイベントやrefを壊さず、Popover用の処理をアンカーへ合成する。
   const getTriggerProps = <T extends HTMLElement = HTMLButtonElement>(
     props: HTMLAttributes<T> & { ref?: Ref<T> } = {},
   ) => ({
@@ -114,6 +116,11 @@ export function useGridraPopover({
     }),
   });
 
+  /**
+   * Popover本体へ渡すprops。
+   * `position: fixed` と `top` / `left` は計測した座標を画面へ反映するための構造的なCSSなので、
+   * 見た目を持たないheadless側で付与し、利用側の `style` より優先する。
+   */
   const getContentProps = (
     props: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> } = {},
   ) => ({
@@ -134,9 +141,6 @@ export function useGridraPopover({
     currentOpen,
     portalMounted,
     anchorRef,
-    popoverRef,
-    popoverId,
-    coords,
     resolvedPlacement,
     getTriggerProps,
     getContentProps,
