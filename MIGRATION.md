@@ -318,3 +318,6 @@ The component documentation includes a live custom-markup example.
 Import `useGridraToastQueue` from `@gridra-ui/headless` for custom markup. The existing
 `GridraToast` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+`useToast` and `GridraToastContext` are also exported from `@gridra-ui/headless` so that a
+custom provider can supply the same `show` function that `useToast()` reads. `dismiss()` does
+nothing while no toast is visible.
