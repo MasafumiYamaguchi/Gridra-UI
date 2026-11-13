@@ -440,3 +440,8 @@ The component documentation includes a live custom-markup example.
 Import `useGridraBreadcrumb` from `@gridra-ui/headless` for custom markup. The existing
 `GridraBreadcrumb` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+`visibleItems` is typed as `GridraBreadcrumbVisibleEntry[]`, a discriminated union exported from
+`@gridra-ui/headless`: `{ type: "item"; item; index }` or `{ type: "ellipsis"; index }`. Check
+`entry.type === "item"` before reading `entry.item`; the ellipsis entry has no `item` and its
+`index` is `-1`.
