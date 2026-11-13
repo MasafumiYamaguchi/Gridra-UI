@@ -4,6 +4,7 @@ import {
   useRef,
   useState,
   type HTMLAttributes,
+  type PointerEvent,
   type Ref,
   type RefObject,
   type ButtonHTMLAttributes,
@@ -11,7 +12,7 @@ import {
 import { useControllableValue } from "../useControllableValue";
 import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
-import { FOCUSABLE_SELECTOR, getFocusableElements } from "../internal/focus";
+import { FOCUSABLE_SELECTOR, trapTabFocus } from "../internal/focus";
 
 export interface UseGridraDialogOptions {
   open?: boolean;
@@ -21,6 +22,8 @@ export interface UseGridraDialogOptions {
   closeOnBackdropPointerDown?: boolean;
   initialFocusRef?: RefObject<HTMLElement | null>;
   hasDescription?: boolean;
+  /** dialog要素のid。省略時は自動生成し、triggerのaria-controlsも同じidを指す。 */
+  id?: string;
 }
 
 /** モーダルの開閉、初期フォーカス、循環と復帰を管理する。 */
@@ -32,6 +35,7 @@ export function useGridraDialog({
   closeOnBackdropPointerDown = true,
   initialFocusRef,
   hasDescription = false,
+  id,
 }: UseGridraDialogOptions = {}) {
   const triggerRef = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -73,20 +77,13 @@ export function useGridraDialog({
 
     previousFocusRef.current = document.activeElement as HTMLElement | null;
 
-    // initialFocusRefを優先し、なければdialog内の最初の操作可能要素へfocusを移す。
-    if (initialFocusRef?.current) {
-      initialFocusRef.current.focus();
-    } else {
-      const dialog = dialogRef.current;
-      if (dialog) {
-        const focusable = dialog.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-        if (focusable) {
-          focusable.focus();
-        } else {
-          dialog.focus();
-        }
-      }
-    }
+    // initialFocusRefを優先し、なければdialog内の最初の操作可能要素、それもなければdialog自体へfocusを移す。
+    const dialog = dialogRef.current;
+    const initialFocusTarget =
+      initialFocusRef?.current ??
+      dialog?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ??
+      dialog;
+    initialFocusTarget?.focus();
 
     return () => {
       // 閉じた後は開く前のfocus、なければtriggerへ戻して操作の文脈を保つ。
@@ -114,42 +111,10 @@ export function useGridraDialog({
         return;
       }
 
-      if (event.key !== "Tab") {
-        return;
-      }
-
       // Tabはdialog内で循環させ、背後のページへfocusが抜けないようにする。
       const dialog = dialogRef.current;
-      if (!dialog) {
-        return;
-      }
-
-      const focusable = getFocusableElements(dialog);
-      if (focusable.length === 0) {
-        event.preventDefault();
-
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (event.shiftKey) {
-        if (
-          document.activeElement === first ||
-          !dialog.contains(document.activeElement)
-        ) {
-          event.preventDefault();
-          last.focus();
-        }
-      } else {
-        if (
-          document.activeElement === last ||
-          !dialog.contains(document.activeElement)
-        ) {
-          event.preventDefault();
-          first.focus();
-        }
+      if (dialog) {
+        trapTabFocus(dialog, event);
       }
     };
 
@@ -160,17 +125,19 @@ export function useGridraDialog({
     };
   }, [currentOpen, closeOnEscape, setCurrentOpen]);
 
-  const handleBackdropPointerDown = (event: React.PointerEvent) => {
+  const handleBackdropPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (!closeOnBackdropPointerDown) {
       return;
     }
 
+    // dialog内のpointerdownはbubbleしてくるため、backdrop自体を押した時だけ閉じる。
     if (event.target === event.currentTarget) {
       close();
     }
   };
 
-  const dialogId = useId();
+  const generatedDialogId = useId();
+  const dialogId = id ?? generatedDialogId;
 
   const getTriggerProps = <T extends HTMLElement = HTMLButtonElement>(
     props: HTMLAttributes<T> & { ref?: Ref<T> } = {},
@@ -189,7 +156,9 @@ export function useGridraDialog({
     props: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> } = {},
   ) => ({
     ...props,
-    id: dialogId,
+    // triggerのaria-controlsと食い違わないよう、通常はoptionsのidで指定する。
+    // 直接渡されたidも利用者の指定として上書きしない。
+    id: props.id ?? dialogId,
     role: "dialog" as const,
     "aria-modal": true as const,
     "aria-labelledby": titleId,
@@ -224,7 +193,6 @@ export function useGridraDialog({
     titleId,
     descriptionId,
     close,
-    handleBackdropPointerDown,
     getTriggerProps,
     getDialogProps,
     getBackdropProps,
