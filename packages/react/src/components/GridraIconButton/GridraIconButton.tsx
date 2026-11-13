@@ -44,8 +44,6 @@ export function GridraIconButton({
     (children ?? label.slice(0, 1))
   );
 
-  // loading中とdisabled中を同時に管理して、ボタンのdisabled属性を制御する
-
   return (
     <button
       {...getGridraIconButtonProps({

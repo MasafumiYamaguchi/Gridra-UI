@@ -8,10 +8,10 @@ it("associates labels and gives errors precedence over hints", () => {
   );
   const f = result.current;
 
-  expect(f.labelProps.htmlFor).toBe(f.controlProps.id);
-  expect(f.controlProps["aria-describedby"]).toBe(f.errorProps.id);
-  expect(f.controlProps["aria-invalid"]).toBe(true);
-  expect(f.controlProps.required).toBe(true);
+  expect(f.labelProps.htmlFor).toBe(f.controlBindings.id);
+  expect(f.controlBindings["aria-describedby"]).toBe(f.errorProps.id);
+  expect(f.controlBindings["aria-invalid"]).toBe(true);
+  expect(f.controlBindings.required).toBe(true);
 });
 
 it("preserves explicit control state and deduplicates descriptions", () => {
@@ -30,10 +30,10 @@ it("preserves explicit control state and deduplicates descriptions", () => {
     }),
   );
 
-  expect(result.current.controlProps["aria-describedby"]).toBe(
+  expect(result.current.controlBindings["aria-describedby"]).toBe(
     "external x-hint",
   );
-  expect(result.current.controlProps.disabled).toBe(false);
-  expect(result.current.controlProps["aria-invalid"]).toBe(false);
-  expect(result.current.controlProps["aria-required"]).toBe(true);
+  expect(result.current.controlBindings.disabled).toBe(false);
+  expect(result.current.controlBindings["aria-invalid"]).toBe(false);
+  expect(result.current.controlBindings["aria-required"]).toBe(true);
 });
