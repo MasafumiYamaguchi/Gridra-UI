@@ -19,23 +19,23 @@ const items = [
 
 it("activates caller-owned items and moves focus past disabled items", () => {
   function Example() {
-    const m = useGridraMenu({ items, defaultActiveId: "a" });
+    const menu = useGridraMenu({ items, defaultActiveId: "a" });
 
     return (
-      <nav {...m.getRootProps()}>
-        {items.map((i) => (
-          <button key={i.id} {...m.getItemProps(i.id)}>
-            {i.label}
+      <nav {...menu.getRootProps()}>
+        {items.map((item) => (
+          <button key={item.id} {...menu.getItemProps(item.id)}>
+            {item.label}
           </button>
         ))}
       </nav>
     );
   }
   render(<Example />);
-  const a = screen.getByRole("button", { name: "A" });
-  a.focus();
+  const firstButton = screen.getByRole("button", { name: "A" });
+  firstButton.focus();
 
-  fireEvent.keyDown(a, { key: "ArrowDown" });
+  fireEvent.keyDown(firstButton, { key: "ArrowDown" });
 
   expect(document.activeElement).toBe(
     screen.getByRole("button", { name: "B" }),
@@ -49,8 +49,8 @@ it("activates caller-owned items and moves focus past disabled items", () => {
 });
 
 it("sanitizes invalid controlled ids and ignores disabled actions", () => {
-  const onAction = vi.fn(),
-    onActiveIdChange = vi.fn();
+  const onAction = vi.fn();
+  const onActiveIdChange = vi.fn();
   const { result } = renderHook(() =>
     useGridraMenu({ items, activeId: "missing", onAction, onActiveIdChange }),
   );

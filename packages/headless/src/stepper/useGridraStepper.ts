@@ -58,15 +58,8 @@ export function useGridraStepper({
     const pending = !locked && (currentIndex < 0 || index > currentIndex);
     // pendingは未到達を表す表示状態。明示的に無効化しない限り、先の手順もクリックで選べる。
     const buttonDisabled = disabled || locked || currentIndex < 0;
-    const traversed = index < currentIndex;
-    const connectorState = traversed
-      ? "completed"
-      : current
-        ? "current"
-        : pending
-          ? "pending"
-          : "locked";
 
+    // 接続線などの描画用の派生値は、見た目を持つ利用側で組み立てる。
     return {
       item,
       index,
@@ -75,9 +68,6 @@ export function useGridraStepper({
       current,
       pending,
       buttonDisabled,
-      traversed,
-      connectorState,
-      canGoBack: completed && !buttonDisabled,
     };
   });
 
