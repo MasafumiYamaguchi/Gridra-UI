@@ -252,3 +252,9 @@ The component documentation includes a live custom-markup example.
 Import `useGridraTreeView` from `@gridra-ui/headless` for custom markup. The existing
 `GridraTreeView` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+
+`getRowProps(item, props)` returns the focusable row bindings (roving `tabIndex`, click,
+and keyboard handlers) and derives whether the item is a branch from `item.children`.
+The caller places `role="treeitem"`, `aria-level`, and `aria-expanded` on the element that
+represents the tree item, because that element depends on the markup. Use
+`isExpanded(id)` and `isFocused(id)` to read the state for those attributes and styles.
