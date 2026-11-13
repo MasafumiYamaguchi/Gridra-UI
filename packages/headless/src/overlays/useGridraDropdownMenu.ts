@@ -1,12 +1,9 @@
 import {
   useEffect,
   useId,
-  useMemo,
   useRef,
   useState,
-  type ReactNode,
   type HTMLAttributes,
-  type ButtonHTMLAttributes,
   type KeyboardEvent,
   type Ref,
 } from "react";
@@ -14,22 +11,11 @@ import { useControllableValue } from "../useControllableValue";
 import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
 import { useFloatingPosition } from "../internal/useFloatingPosition";
-import { clampIndex } from "@gridra-ui/core";
-
-export type GridraDropdownMenuCommandItem = {
-  id: string;
-  label: ReactNode;
-  disabled?: boolean;
-  destructive?: boolean;
-};
-
-export type GridraDropdownMenuSeparatorItem = {
-  type: "separator";
-  id?: string;
-};
-
-export type GridraDropdownMenuItem =
-  GridraDropdownMenuCommandItem | GridraDropdownMenuSeparatorItem;
+import {
+  useMenuNavigation,
+  type MenuItemButtonProps,
+} from "../internal/useMenuNavigation";
+import type { GridraDropdownMenuItem } from "../menu/menuItems";
 
 export interface UseGridraDropdownMenuOptions {
   items: GridraDropdownMenuItem[];
@@ -43,12 +29,6 @@ export interface UseGridraDropdownMenuOptions {
   closeOnEscape?: boolean;
   closeOnOutsidePointerDown?: boolean;
   closeOnAction?: boolean;
-}
-
-function isCommand(
-  item: GridraDropdownMenuItem,
-): item is GridraDropdownMenuCommandItem {
-  return !("type" in item) || item.type !== "separator";
 }
 
 /** メニューの開閉・項目操作とキーボードフォーカスを共有する。 */
@@ -67,13 +47,11 @@ export function useGridraDropdownMenu({
 }: UseGridraDropdownMenuOptions) {
   const triggerRef = useRef<HTMLElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
   const [currentOpen, setCurrentOpen] = useControllableValue(
     open,
     defaultOpen,
     onOpenChange,
   );
-  const [activeIndex, setActiveIndex] = useState(0);
   const [portalMounted, setPortalMounted] = useState(false);
   const menuId = useId();
 
@@ -82,18 +60,26 @@ export function useGridraDropdownMenu({
     setPortalMounted(true);
   }, []);
 
-  // separatorを描画対象に残しつつ、実行・focus対象はcommand itemだけに限定する。
-  const commandItems = useMemo(() => items.filter(isCommand), [items]);
-  const enabledItems = useMemo(
-    () => commandItems.filter((item) => !item.disabled),
-    [commandItems],
-  );
-  const enabledIds = useMemo(
-    () => enabledItems.map((item) => item.id),
-    [enabledItems],
-  );
+  const close = () => {
+    setCurrentOpen(false);
+    triggerRef.current?.focus();
+  };
 
-  const safeActiveIndex = clampIndex(activeIndex, enabledIds.length);
+  const {
+    enabledIds,
+    safeActiveIndex,
+    setActiveIndex,
+    activateItem,
+    handleMenuKeyDown,
+    getItemProps: getNavigationItemProps,
+  } = useMenuNavigation({
+    items,
+    open: currentOpen,
+    disabled,
+    onAction,
+    closeOnAction,
+    close,
+  });
 
   // 開くたびにactiveIndexを先頭へ戻し、前回hoverしていたitemへ誤ってfocusしないようにする。
   const openMenu = () => {
@@ -105,32 +91,11 @@ export function useGridraDropdownMenu({
     setActiveIndex(0);
   };
 
-  const close = () => {
-    setCurrentOpen(false);
-    triggerRef.current?.focus();
-  };
-
   const toggleOpen = () => {
     if (currentOpen) {
       close();
     } else {
       openMenu();
-    }
-  };
-
-  const activateItem = (id: string) => {
-    if (disabled) {
-      return;
-    }
-
-    const item = commandItems.find((c) => c.id === id);
-    if (!item || item.disabled) {
-      return;
-    }
-
-    onAction?.(id);
-    if (closeOnAction) {
-      close();
     }
   };
 
@@ -144,32 +109,6 @@ export function useGridraDropdownMenu({
     open: currentOpen,
     placement,
   });
-
-  useEffect(() => {
-    if (!currentOpen) {
-      return;
-    }
-
-    if (enabledIds.length === 0) {
-      return;
-    }
-
-    const firstId = enabledIds[0];
-    const el = itemRefs.current.get(firstId);
-    el?.focus();
-  }, [currentOpen, JSON.stringify(enabledIds)]);
-
-  const focusItemByIndex = (index: number) => {
-    if (enabledIds.length === 0) {
-      return;
-    }
-
-    const clamped = clampIndex(index, enabledIds.length);
-    setActiveIndex(clamped);
-    const id = enabledIds[clamped];
-    const el = itemRefs.current.get(id);
-    el?.focus();
-  };
 
   useEffect(() => {
     if (!currentOpen) {
@@ -210,66 +149,6 @@ export function useGridraDropdownMenu({
       );
     };
   }, [closeOnEscape, closeOnOutsidePointerDown, currentOpen, setCurrentOpen]);
-
-  const handleMenuKeyDown = (event: KeyboardEvent) => {
-    if (enabledIds.length === 0) {
-      return;
-    }
-
-    let handled = true;
-
-    switch (event.key) {
-      case "ArrowDown": {
-        event.preventDefault();
-        const nextIndex = (safeActiveIndex + 1) % enabledIds.length;
-        focusItemByIndex(nextIndex);
-        break;
-      }
-
-      case "ArrowUp": {
-        event.preventDefault();
-        const prevIndex =
-          (safeActiveIndex - 1 + enabledIds.length) % enabledIds.length;
-        focusItemByIndex(prevIndex);
-        break;
-      }
-
-      case "Home": {
-        event.preventDefault();
-        focusItemByIndex(0);
-        break;
-      }
-
-      case "End": {
-        event.preventDefault();
-        focusItemByIndex(enabledIds.length - 1);
-        break;
-      }
-
-      case "Enter":
-      case " ": {
-        event.preventDefault();
-        const activeId = enabledIds[safeActiveIndex];
-        if (activeId) {
-          activateItem(activeId);
-        }
-
-        break;
-      }
-
-      case "Tab": {
-        close();
-        break;
-      }
-
-      default:
-        handled = false;
-    }
-
-    if (handled) {
-      event.stopPropagation();
-    }
-  };
 
   const handleTriggerKeyDown = (event: KeyboardEvent) => {
     if (disabled) {
@@ -335,59 +214,24 @@ export function useGridraDropdownMenu({
     },
   });
 
+  // DropdownMenuのitemは従来どおりitemのidをDOMのidにも使う。
   const getItemProps = (
     id: string,
-    props: ButtonHTMLAttributes<HTMLButtonElement> & {
-      ref?: Ref<HTMLButtonElement>;
-    } = {},
-  ): ButtonHTMLAttributes<HTMLButtonElement> & {
-    ref?: Ref<HTMLButtonElement>;
-  } => {
-    const item = commandItems.find((item) => item.id === id) ?? {
-      id,
-      label: null,
-      disabled: true,
-    };
-    const isActive = enabledIds[safeActiveIndex] === item.id;
-
-    return {
-      ...props,
-      "disabled": item.disabled,
-      "id": item.id,
-      "onClick": composeHandlers(props.onClick, () => activateItem(item.id)),
-      "onMouseEnter": composeHandlers(props.onMouseEnter, () => {
-        if (!item.disabled) {
-          const idx = enabledIds.indexOf(item.id);
-          if (idx !== -1) {
-            setActiveIndex(idx);
-          }
-        }
-      }),
-      "ref": mergeRefs<HTMLButtonElement>(props.ref, (el) => {
-        if (el) {
-          itemRefs.current.set(item.id, el);
-        } else {
-          itemRefs.current.delete(item.id);
-        }
-      }),
-      "role": "menuitem",
-      "tabIndex": isActive ? 0 : -1,
-      "type": "button",
-    };
-  };
+    props: MenuItemButtonProps = {},
+  ): MenuItemButtonProps => ({
+    ...getNavigationItemProps(id, props),
+    id,
+  });
 
   return {
     currentOpen,
     portalMounted,
     triggerRef,
-    menuRef,
     menuId,
     coords,
     resolvedPlacement,
     enabledIds,
     safeActiveIndex,
-    handleMenuKeyDown,
-    isCommand,
     getTriggerProps,
     getMenuProps,
     getItemProps,

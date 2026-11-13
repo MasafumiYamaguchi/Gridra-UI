@@ -16,7 +16,7 @@ import { useControllableValue } from "../useControllableValue";
 import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
 import { clampIndex, clampNumber } from "@gridra-ui/core";
-import type { GridraDropdownMenuItem } from "./useGridraDropdownMenu";
+import type { GridraDropdownMenuItem } from "../menu/menuItems";
 
 export interface UseGridraContextMenuOptions {
   items: GridraDropdownMenuItem[];
