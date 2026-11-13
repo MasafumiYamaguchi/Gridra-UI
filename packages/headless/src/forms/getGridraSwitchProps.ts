@@ -1,5 +1,4 @@
 import type { ButtonHTMLAttributes } from "react";
-import { resolveAriaInvalid } from "../internal/formControl";
 
 export interface GridraSwitchBehaviorOptions extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -21,14 +20,17 @@ export function getGridraSwitchProps({
 }: GridraSwitchBehaviorOptions = {}): ButtonHTMLAttributes<HTMLButtonElement> {
   return {
     "aria-checked": checked,
-    "aria-invalid": resolveAriaInvalid(undefined, invalid),
+    "aria-invalid": invalid || undefined,
     role: "switch",
     type,
     ...props,
     onClick: (event) => {
       onClick?.(event);
-      if (!event.defaultPrevented && !props.disabled)
+      // 利用側のonClickがpreventDefaultした場合は、状態変更通知を行わない。
+      // disabledはネイティブbuttonではclickが発火しないが、通知を確実に止めるため明示的にも確認する。
+      if (!event.defaultPrevented && !props.disabled) {
         onCheckedChange?.(!checked);
+      }
     },
   };
 }

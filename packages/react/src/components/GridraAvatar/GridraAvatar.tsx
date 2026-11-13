@@ -39,7 +39,6 @@ export function GridraAvatar({
     ...style,
     ...getCustomSizeStyle(size),
   } as CSSProperties;
-  // 画像がない場合だけfallback側にアクセシブル名を付与し、imgのaltと名前が二重にならないようにする。
   const avatar = getGridraAvatar({ src, alt, fallback });
 
   return (

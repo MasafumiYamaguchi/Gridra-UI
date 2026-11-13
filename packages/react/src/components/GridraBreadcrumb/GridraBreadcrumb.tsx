@@ -1,23 +1,17 @@
-import { useGridraBreadcrumb } from "@gridra-ui/headless";
-import { useEffect, useMemo, type HTMLAttributes, type ReactNode } from "react";
+import {
+  useGridraBreadcrumb,
+  type GridraBreadcrumbHierarchyIssue,
+  type GridraBreadcrumbItem,
+} from "@gridra-ui/headless";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cx } from "../../internal/classNames";
 
 export type GridraBreadcrumbSize = "sm" | "md" | "lg";
 
-export interface GridraBreadcrumbHierarchyIssue {
-  itemId: string;
-  index: number;
-  reason: "missing-parent" | "broken-chain";
-}
-
-export interface GridraBreadcrumbItem {
-  id: string;
-  label: ReactNode;
-  href?: string;
-  current?: boolean;
-  disabled?: boolean;
-  parentId?: string;
-}
+export type {
+  GridraBreadcrumbHierarchyIssue,
+  GridraBreadcrumbItem,
+} from "@gridra-ui/headless";
 
 export interface GridraBreadcrumbProps extends HTMLAttributes<HTMLElement> {
   items: GridraBreadcrumbItem[];
@@ -75,7 +69,7 @@ export function GridraBreadcrumb({
             );
           }
 
-          const item = entry.item!;
+          const { item } = entry;
           const isLast = visibleIndex === visibleItems.length - 1;
           const isCurrent = item.current;
           const itemState = getItemState(item);

@@ -10,11 +10,14 @@ import { useControllableValue } from "../useControllableValue";
 import { composeHandlers } from "../internal/composeHandlers";
 import { clampNumber, resolveCssLengthToPx } from "@gridra-ui/core";
 
-const DEFAULT_OPEN_WIDTH = 280;
+/** Sidebar の既定の開幅 (px)。react 側の既定値と共有する。 */
+export const DEFAULT_SIDEBAR_OPEN_WIDTH = 280;
 
-const DEFAULT_MIN_WIDTH = 180;
+/** Sidebar の既定の最小幅 (px)。 */
+export const DEFAULT_SIDEBAR_MIN_WIDTH = 180;
 
-const DEFAULT_MAX_WIDTH = 480;
+/** Sidebar の既定の最大幅 (px)。 */
+export const DEFAULT_SIDEBAR_MAX_WIDTH = 480;
 
 const KEYBOARD_STEP = 8;
 
@@ -27,6 +30,7 @@ export interface UseGridraSidebarOptions {
   resizable?: boolean;
   minWidth?: number;
   maxWidth?: number;
+  /** separator のキー操作の前に呼ばれる。preventDefault すると既定のキー操作を行わない。 */
   onKeyDown?: KeyboardEventHandler<HTMLDivElement>;
 }
 
@@ -36,10 +40,10 @@ export function useGridraSidebar({
   open,
   defaultOpen = true,
   onOpenChange,
-  width = DEFAULT_OPEN_WIDTH,
+  width = DEFAULT_SIDEBAR_OPEN_WIDTH,
   resizable = false,
-  minWidth = DEFAULT_MIN_WIDTH,
-  maxWidth = DEFAULT_MAX_WIDTH,
+  minWidth = DEFAULT_SIDEBAR_MIN_WIDTH,
+  maxWidth = DEFAULT_SIDEBAR_MAX_WIDTH,
   onKeyDown,
 }: UseGridraSidebarOptions = {}) {
   const contentId = useId();
@@ -50,7 +54,7 @@ export function useGridraSidebar({
     onOpenChange,
   );
   const [resizedWidth, setResizedWidth] = useState(() =>
-    resolveCssLengthToPx(width, DEFAULT_OPEN_WIDTH),
+    resolveCssLengthToPx(width, DEFAULT_SIDEBAR_OPEN_WIDTH),
   );
   // ドラッグ開始時のポインター位置と幅を固定し、移動差分から次の幅を求める。
   const dragStartXRef = useRef<number | null>(null);
@@ -58,7 +62,7 @@ export function useGridraSidebar({
 
   useEffect(() => {
     // 外部からwidthが変わった場合は、次のリサイズ開始値も同期する。
-    setResizedWidth(resolveCssLengthToPx(width, DEFAULT_OPEN_WIDTH));
+    setResizedWidth(resolveCssLengthToPx(width, DEFAULT_SIDEBAR_OPEN_WIDTH));
   }, [width]);
 
   const updateWidthFromClientX = (clientX: number) => {
@@ -88,6 +92,20 @@ export function useGridraSidebar({
     if (!currentOpen) {
       setCurrentOpen(true);
     }
+  };
+
+  const beginDrag = (clientX: number) => {
+    if (!Number.isFinite(clientX)) {
+      return;
+    }
+
+    dragStartXRef.current = clientX;
+    dragStartWidthRef.current = clampWidth(resizedWidth, minWidth, maxWidth);
+  };
+
+  const endDrag = () => {
+    dragStartXRef.current = null;
+    dragStartWidthRef.current = null;
   };
 
   const toggleOpen = () => {
@@ -166,22 +184,10 @@ export function useGridraSidebar({
         );
         event.preventDefault();
       }),
-      "onPointerCancel": composeHandlers(props.onPointerCancel, () => {
-        dragStartXRef.current = null;
-        dragStartWidthRef.current = null;
-      }),
+      "onPointerCancel": composeHandlers(props.onPointerCancel, endDrag),
       "onPointerDown": composeHandlers(props.onPointerDown, (event) => {
         event.preventDefault();
-        if (!Number.isFinite(event.clientX)) {
-          return;
-        }
-
-        dragStartXRef.current = event.clientX;
-        dragStartWidthRef.current = clampWidth(
-          resizedWidth,
-          minWidth,
-          maxWidth,
-        );
+        beginDrag(event.clientX);
         // 要素外へポインターが出てもmove/upを受け取れるようcaptureする。
         if (typeof event.currentTarget.setPointerCapture === "function") {
           event.currentTarget.setPointerCapture(event.pointerId);
@@ -190,36 +196,18 @@ export function useGridraSidebar({
       "onPointerMove": composeHandlers(props.onPointerMove, (event) => {
         updateWidthFromClientX(event.clientX);
       }),
-      "onPointerUp": composeHandlers(props.onPointerUp, () => {
-        dragStartXRef.current = null;
-        dragStartWidthRef.current = null;
-      }),
+      "onPointerUp": composeHandlers(props.onPointerUp, endDrag),
       "onMouseDown": composeHandlers(props.onMouseDown, (event) => {
         event.preventDefault();
-        if (!Number.isFinite(event.clientX)) {
-          return;
-        }
-
-        dragStartXRef.current = event.clientX;
-        dragStartWidthRef.current = clampWidth(
-          resizedWidth,
-          minWidth,
-          maxWidth,
-        );
+        beginDrag(event.clientX);
       }),
       "onMouseMove": composeHandlers(props.onMouseMove, (event) => {
         updateWidthFromClientX(event.clientX);
       }),
-      "onMouseUp": composeHandlers(props.onMouseUp, () => {
-        dragStartXRef.current = null;
-        dragStartWidthRef.current = null;
-      }),
+      "onMouseUp": composeHandlers(props.onMouseUp, endDrag),
       "role": "separator",
       "tabIndex": 0,
-      onLostPointerCapture: composeHandlers(props.onLostPointerCapture, () => {
-        dragStartXRef.current = null;
-        dragStartWidthRef.current = null;
-      }),
+      onLostPointerCapture: composeHandlers(props.onLostPointerCapture, endDrag),
     };
   };
 

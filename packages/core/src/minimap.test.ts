@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { getGridraMinimap } from "./getGridraMinimap";
+import { getGridraMinimap } from "./minimap";
 
 it("normalizes grid and placements without mutation", () => {
   const nodes = [
