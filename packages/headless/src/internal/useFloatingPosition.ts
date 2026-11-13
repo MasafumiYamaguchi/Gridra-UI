@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useState, type RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
+import { useClientLayoutEffect } from "./useClientLayoutEffect";
 import {
   computeFloatingPosition,
   isOutOfViewport,
@@ -42,7 +43,9 @@ export function useFloatingPosition<TPlacement extends Placement>({
   }, [placement]);
 
   // Portalの初回mountと継承トークン変更でも、描画後の実寸を再計測する。
-  useLayoutEffect(() => {
+  // 内容やテーマの変化で実寸が変わる契機を依存配列で網羅できないため、依存配列を省いて毎レンダー計測する。
+  // 座標が同じときは前回の値を返すので、再計測で再レンダーが連鎖することはない。
+  useClientLayoutEffect(() => {
     if (!open || disabled) {
       return;
     }

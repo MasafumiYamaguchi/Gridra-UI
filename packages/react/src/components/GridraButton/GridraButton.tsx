@@ -37,8 +37,6 @@ export function GridraButton({
     className,
   );
 
-  // loading中は二重送信を避けるため、disabledと同じ操作ロックとして扱う。
-
   return (
     <button
       {...getGridraButtonProps({ loading, pressed, disabled, type, ...props })}

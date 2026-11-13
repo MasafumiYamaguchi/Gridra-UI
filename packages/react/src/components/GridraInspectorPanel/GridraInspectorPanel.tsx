@@ -1,27 +1,19 @@
-import { useGridraInspectorPanel } from "@gridra-ui/headless";
-import { useId, type HTMLAttributes, type ReactNode } from "react";
+import {
+  useGridraInspectorPanel,
+  type GridraInspectorPatch,
+  type GridraInspectorValue,
+} from "@gridra-ui/headless";
+import type { HTMLAttributes } from "react";
 import { cx } from "../../internal/classNames";
 import { GridraField } from "../GridraField";
 import { GridraInput } from "../GridraInput";
 import { GridraPanel } from "../GridraPanel";
 
-export interface GridraInspectorPlacement {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
-export interface GridraInspectorValue {
-  id: string;
-  label?: ReactNode;
-  placement: GridraInspectorPlacement;
-}
-
-export type GridraInspectorPatch = Partial<{
-  label: ReactNode;
-  placement: Partial<GridraInspectorPlacement>;
-}>;
+export type {
+  GridraInspectorPatch,
+  GridraInspectorPlacement,
+  GridraInspectorValue,
+} from "@gridra-ui/headless";
 
 // HTML属性とぶつかるため、HTMLAttributesからonChangeを除外して独自定義する
 // onChangeとonCommitに?オプションがついているのは、表示のみのときにonChangeやonCommitを指定しない場合があるため
@@ -45,7 +37,7 @@ export function GridraInspectorPanel({
 }: GridraInspectorPanelProps) {
   const {
     fieldId,
-    hasSelection,
+    selectedNode: node,
     handleLabelChange,
     handlePlacementChange,
     commit,
@@ -58,7 +50,7 @@ export function GridraInspectorPanel({
       heading="Inspector"
       {...props}
     >
-      {hasSelection ? (
+      {node ? (
         <div className="gridra-inspector-panel__fields">
           <GridraField htmlFor={`${fieldId}-label`} label="Label">
             <GridraInput
@@ -72,7 +64,7 @@ export function GridraInspectorPanel({
                 }
               }}
               type="text"
-              value={String(selectedNode!.label ?? "")}
+              value={String(node.label ?? "")}
             />
           </GridraField>
           <GridraField htmlFor={`${fieldId}-x`} label="X">
@@ -84,7 +76,7 @@ export function GridraInspectorPanel({
                 handlePlacementChange("x", event.target.value)
               }
               type="number"
-              value={selectedNode!.placement.x}
+              value={node.placement.x}
             />
           </GridraField>
           <GridraField htmlFor={`${fieldId}-y`} label="Y">
@@ -96,7 +88,7 @@ export function GridraInspectorPanel({
                 handlePlacementChange("y", event.target.value)
               }
               type="number"
-              value={selectedNode!.placement.y}
+              value={node.placement.y}
             />
           </GridraField>
           <GridraField htmlFor={`${fieldId}-w`} label="W">
@@ -108,7 +100,7 @@ export function GridraInspectorPanel({
                 handlePlacementChange("w", event.target.value)
               }
               type="number"
-              value={selectedNode!.placement.w}
+              value={node.placement.w}
             />
           </GridraField>
           <GridraField htmlFor={`${fieldId}-h`} label="H">
@@ -120,7 +112,7 @@ export function GridraInspectorPanel({
                 handlePlacementChange("h", event.target.value)
               }
               type="number"
-              value={selectedNode!.placement.h}
+              value={node.placement.h}
             />
           </GridraField>
         </div>
