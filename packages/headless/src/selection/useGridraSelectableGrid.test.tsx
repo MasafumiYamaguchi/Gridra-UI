@@ -51,3 +51,37 @@ it("sanitizes removed ids, ignores missing ids and preserves controlled state", 
   expect(onSelectionChange).toHaveBeenCalledWith("a", null);
   expect(result.current.selectedId).toBeNull();
 });
+
+it("composes consumer onClick and respects preventDefault", () => {
+  const onClick = vi.fn();
+  const onPreventedClick = vi.fn((event: { preventDefault: () => void }) =>
+    event.preventDefault(),
+  );
+  function Example() {
+    const grid = useGridraSelectableGrid({
+      items: [{ id: "a" }, { id: "b" }],
+    });
+
+    return (
+      <>
+        <button {...grid.getItemProps("a", { onClick })}>A</button>
+        <button {...grid.getItemProps("b", { onClick: onPreventedClick })}>
+          B
+        </button>
+      </>
+    );
+  }
+  render(<Example />);
+  const [a, b] = screen.getAllByRole("button");
+
+  fireEvent.click(a);
+
+  expect(onClick).toHaveBeenCalledTimes(1);
+  expect(a.getAttribute("aria-selected")).toBe("true");
+
+  fireEvent.click(b);
+
+  expect(onPreventedClick).toHaveBeenCalledTimes(1);
+  expect(b.getAttribute("aria-selected")).toBe("false");
+  expect(a.getAttribute("aria-selected")).toBe("true");
+});

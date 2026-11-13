@@ -16,20 +16,21 @@ const items = [
   { id: "d", label: "Disabled", disabled: true },
 ];
 
-it("expands custom rows and moves focus into a visible child", () => {
-  function Example() {
-    const tree = useGridraTreeView({ items });
+function Example() {
+  const tree = useGridraTreeView({ items });
 
-    return (
-      <>
-        {tree.flatItems.map((row) => (
-          <div key={row.key} {...tree.getRowProps(row.item, row.hasChildren)}>
-            {row.item.label}
-          </div>
-        ))}
-      </>
-    );
-  }
+  return (
+    <>
+      {tree.flatItems.map((row) => (
+        <div key={row.key} {...tree.getRowProps(row.item)}>
+          {row.item.label}
+        </div>
+      ))}
+    </>
+  );
+}
+
+it("expands custom rows and moves focus into a visible child", () => {
   render(<Example />);
 
   fireEvent.click(screen.getByText("Parent"));
@@ -39,6 +40,22 @@ it("expands custom rows and moves focus into a visible child", () => {
   fireEvent.keyDown(screen.getByText("Parent"), { key: "ArrowDown" });
 
   expect(document.activeElement).toBe(screen.getByText("Child"));
+});
+
+it("moves ArrowLeft focus from a child to its parent, then collapses the parent", () => {
+  render(<Example />);
+
+  fireEvent.click(screen.getByText("Parent"));
+  fireEvent.keyDown(screen.getByText("Parent"), { key: "ArrowDown" });
+  fireEvent.keyDown(screen.getByText("Child"), { key: "ArrowLeft" });
+
+  expect(document.activeElement).toBe(screen.getByText("Parent"));
+  expect(screen.getByText("Child")).toBeTruthy();
+
+  fireEvent.keyDown(screen.getByText("Parent"), { key: "ArrowLeft" });
+
+  expect(screen.queryByText("Child")).toBeNull();
+  expect(document.activeElement).toBe(screen.getByText("Parent"));
 });
 
 it("rejects missing, disabled and leaf expansion and leaves controlled state to the owner", () => {
@@ -57,5 +74,5 @@ it("rejects missing, disabled and leaf expansion and leaves controlled state to 
   act(() => result.current.toggleExpand("p"));
 
   expect(onExpandedIdsChange).toHaveBeenCalledWith(["p"], []);
-  expect(result.current.expandedSet.size).toBe(0);
+  expect(result.current.isExpanded("p")).toBe(false);
 });

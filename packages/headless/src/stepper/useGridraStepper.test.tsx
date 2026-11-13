@@ -19,13 +19,13 @@ const items = [
 
 it("moves forward and backward through caller-owned buttons", () => {
   function Example() {
-    const s = useGridraStepper({ items, defaultCurrentId: "b" });
+    const stepper = useGridraStepper({ items, defaultCurrentId: "b" });
 
     return (
       <>
-        {s.steps.map((x) => (
-          <button key={x.item.id} {...s.getStepProps(x.item.id)}>
-            {x.item.label}
+        {stepper.steps.map((step) => (
+          <button key={step.item.id} {...stepper.getStepProps(step.item.id)}>
+            {step.item.label}
           </button>
         ))}
       </>
