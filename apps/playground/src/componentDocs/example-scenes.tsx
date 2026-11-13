@@ -2378,7 +2378,7 @@ function ExampleHeadlessGridraField() {
   return (
     <section>
       <label {...field.labelProps}>Custom field</label>
-      <input {...field.controlProps} />
+      <input {...field.controlBindings} />
       <p {...field.hintProps}>A helpful description</p>
     </section>
   );

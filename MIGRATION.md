@@ -324,3 +324,6 @@ The component documentation includes a live custom-markup example.
 Import `useGridraField` from `@gridra-ui/headless` for custom markup. The existing
 `GridraField` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+Spread `controlBindings` onto the control, and `labelProps` / `hintProps` / `errorProps` onto the
+label, hint and error elements. The `controlProps` option carries the control's own explicit props;
+the resolved output is named `controlBindings` so the two are not confused.
