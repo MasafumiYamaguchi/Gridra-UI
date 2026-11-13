@@ -10,6 +10,7 @@ import {
 } from "react";
 import { composeHandlers } from "../internal/composeHandlers";
 import { mergeRefs } from "../internal/mergeRefs";
+import { uniqueById } from "../internal/uniqueById";
 
 export type GridraAccordionType = "single" | "multiple";
 
@@ -48,21 +49,14 @@ export function useGridraAccordion<TItem extends GridraAccordionItemState>({
   collapsible = false,
 }: UseGridraAccordionOptions<TItem>) {
   const baseId = useId();
-  const items = useMemo(() => {
-    const seen = new Set<string>();
-
-    return inputItems.filter((item) => {
-      if (seen.has(item.id)) return false;
-
-      seen.add(item.id);
-
-      return true;
-    });
-  }, [inputItems]);
+  // 重複idは最初の項目だけを有効扱いにする。
+  const items = useMemo(() => uniqueById(inputItems), [inputItems]);
+  // 開閉対象とキーボード移動対象を同じ定義にそろえ、disabled itemを除外する。
   const enabledIds = items
     .filter((item) => !item.disabled)
     .map((item) => item.id);
 
+  // 外部APIはsingle/multipleのどちらの形でも値を受け取れるため、string[]へ寄せ、現在有効なidだけに絞る。
   const normalize = (raw: GridraAccordionValue): string[] => {
     const ids =
       typeof raw === "string"
@@ -78,6 +72,8 @@ export function useGridraAccordion<TItem extends GridraAccordionItemState>({
     );
   };
 
+  // defaultValueはitems/type変更で無効になり得るため、初期状態として安全なidに正規化する。
+  // useControllableValueは使わない: 値がstring/string[]の両形式で、描画のたびに有効idへの正規化も要るため。
   const [internalValue, setInternalValue] = useState<GridraAccordionValue>(
     () => {
       if (type === "multiple") return defaultValue ?? [];
