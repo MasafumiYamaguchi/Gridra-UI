@@ -1,13 +1,12 @@
-import { useGridraSidebar } from "@gridra-ui/headless";
-import type { CSSProperties, HTMLAttributes } from "react";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { useControllableValue } from "@gridra-ui/headless";
 import {
-  clampNumber,
-  formatCssLength,
-  formatCssLengthWithMin,
-  resolveCssLengthToPx,
-} from "@gridra-ui/core";
+  DEFAULT_SIDEBAR_MAX_WIDTH,
+  DEFAULT_SIDEBAR_MIN_WIDTH,
+  DEFAULT_SIDEBAR_OPEN_WIDTH,
+  useGridraSidebar,
+} from "@gridra-ui/headless";
+import type { CSSProperties, HTMLAttributes } from "react";
+import { useMemo } from "react";
+import { formatCssLength, formatCssLengthWithMin } from "@gridra-ui/core";
 
 import { GridraSidebarToggle } from "./GridraSidebarToggle";
 
@@ -29,23 +28,15 @@ export interface GridraSidebarProps extends Omit<
   toggleSize?: number | string;
 }
 
-const DEFAULT_OPEN_WIDTH = 280;
-
-const DEFAULT_MIN_WIDTH = 180;
-
-const DEFAULT_MAX_WIDTH = 480;
-
 const DEFAULT_TOGGLE_SIZE = 20;
-
-const KEYBOARD_STEP = 8;
 
 export function GridraSidebar({
   children,
   className,
   collapsedWidth = 0,
   defaultOpen = true,
-  maxWidth = DEFAULT_MAX_WIDTH,
-  minWidth = DEFAULT_MIN_WIDTH,
+  maxWidth = DEFAULT_SIDEBAR_MAX_WIDTH,
+  minWidth = DEFAULT_SIDEBAR_MIN_WIDTH,
   onKeyDown,
   onOpenChange,
   open,
@@ -53,7 +44,7 @@ export function GridraSidebar({
   side = "left",
   style,
   toggleSize = DEFAULT_TOGGLE_SIZE,
-  width = DEFAULT_OPEN_WIDTH,
+  width = DEFAULT_SIDEBAR_OPEN_WIDTH,
   ...props
 }: GridraSidebarProps) {
   const {

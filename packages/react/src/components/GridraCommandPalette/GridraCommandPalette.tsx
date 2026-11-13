@@ -1,47 +1,22 @@
-import { useGridraCommandPalette } from "@gridra-ui/headless";
-import type { GridraThemeName } from "../../theme";
 import {
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type CSSProperties,
-  type HTMLAttributes,
-  type KeyboardEvent,
-  type ReactNode,
-} from "react";
+  useGridraCommandPalette,
+  type GridraCommandPaletteCommandItem,
+  type GridraCommandPaletteItem,
+} from "@gridra-ui/headless";
+import type { GridraThemeName } from "../../theme";
+import { useMemo, type HTMLAttributes, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
-import { getFocusableElements } from "@gridra-ui/headless";
-import { clampIndex } from "@gridra-ui/core";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
 
+export type {
+  GridraCommandPaletteCommandItem,
+  GridraCommandPaletteItem,
+  GridraCommandPaletteSeparatorItem,
+} from "@gridra-ui/headless";
+
 export type GridraCommandPaletteSize = "sm" | "md" | "lg";
-
-// idは選択状態・action通知・ref管理をつなぐ安定したコマンド識別子として使う。
-export interface GridraCommandPaletteCommandItem {
-  id: string;
-  label: ReactNode;
-  description?: ReactNode;
-  group?: string;
-  keywords?: string[];
-  disabled?: boolean;
-  destructive?: boolean;
-}
-
-// separatorにも安定したkeyを与えたい場合があるため、任意idを許可する。
-export type GridraCommandPaletteSeparatorItem = {
-  type: "separator";
-  id?: string;
-};
-
-export type GridraCommandPaletteItem =
-  GridraCommandPaletteCommandItem | GridraCommandPaletteSeparatorItem;
 
 // HTML属性とぶつかるonChange/titleは、検索queryと見出しの意味に合わせて独自propsとして定義する。
 export interface GridraCommandPaletteProps extends Omit<
@@ -89,19 +64,13 @@ export function GridraCommandPalette({
 }: GridraCommandPaletteProps) {
   const {
     currentOpen,
-    currentQuery,
     portalMounted,
-    dialogRef,
-    inputRef,
-    listRef,
     titleId,
-    inputId,
     filteredCommands,
     enabledIds,
     safeActiveIndex,
     close,
-    handleKeyDown,
-    handleBackdropPointerDown,
+    getBackdropProps,
     getInputProps,
     getItemProps,
     getDialogProps,
@@ -153,9 +122,10 @@ export function GridraCommandPalette({
   return currentOpen && portalMounted && portalTarget
     ? createPortal(
         <div
-          className={backdropClassName}
-          style={portalTheme.style}
-          onPointerDown={handleBackdropPointerDown}
+          {...getBackdropProps({
+            className: backdropClassName,
+            style: portalTheme.style,
+          })}
         >
           <div
             {...getDialogProps(props)}
@@ -183,7 +153,7 @@ export function GridraCommandPalette({
                 className="gridra-command-palette__input"
               />
             </div>
-            <div className="gridra-command-palette__list" ref={listRef}>
+            <div className="gridra-command-palette__list">
               {filteredCommands.length === 0 ? (
                 <div className="gridra-command-palette__empty">
                   {emptyLabel}

@@ -1,47 +1,31 @@
-import { useGridraDropdownMenu } from "@gridra-ui/headless";
-import type { Ref } from "react";
+import {
+  isCommand,
+  useGridraDropdownMenu,
+  type GridraDropdownMenuItem,
+} from "@gridra-ui/headless";
 import {
   cloneElement,
   isValidElement,
-  useEffect,
-  useId,
   useMemo,
-  useRef,
-  useState,
   type CSSProperties,
   type HTMLAttributes,
-  type KeyboardEvent,
   type ReactElement,
-  type ReactNode,
+  type Ref,
 } from "react";
 import { createPortal } from "react-dom";
-import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
-import { composeHandlers } from "@gridra-ui/headless";
-import { mergeRefs } from "@gridra-ui/headless";
-import { clampIndex } from "@gridra-ui/core";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
-import { useFloatingPosition } from "@gridra-ui/headless";
+
+export type {
+  GridraDropdownMenuCommandItem,
+  GridraDropdownMenuItem,
+  GridraDropdownMenuSeparatorItem,
+} from "@gridra-ui/headless";
 
 export type GridraDropdownMenuPlacement = "top" | "right" | "bottom" | "left";
 
 export type GridraDropdownMenuSize = "sm" | "md" | "lg";
-
-export type GridraDropdownMenuCommandItem = {
-  id: string;
-  label: ReactNode;
-  disabled?: boolean;
-  destructive?: boolean;
-};
-
-export type GridraDropdownMenuSeparatorItem = {
-  type: "separator";
-  id?: string;
-};
-
-export type GridraDropdownMenuItem =
-  GridraDropdownMenuCommandItem | GridraDropdownMenuSeparatorItem;
 
 // HTML属性とぶつかるonChange/childrenは、menu状態とtrigger要素の意味に合わせて独自propsとして定義する。
 export interface GridraDropdownMenuProps extends Omit<
@@ -89,15 +73,11 @@ export function GridraDropdownMenu({
     currentOpen,
     portalMounted,
     triggerRef,
-    menuRef,
-    menuId,
-    coords,
     resolvedPlacement,
     enabledIds,
     safeActiveIndex,
-    handleMenuKeyDown,
-    isCommand,
     getTriggerProps,
+    getMenuProps,
     getItemProps,
   } = useGridraDropdownMenu({
     items,
@@ -137,13 +117,12 @@ export function GridraDropdownMenu({
     className,
   );
 
+  // menuの位置（top/left）はgetMenuPropsが付けるため、ここではtheme・利用者style・幅の変数だけを組み立てる。
   const menuStyle = useMemo(
     () =>
       ({
         ...portalTheme.style,
         ...style,
-        top: `${coords.top}px`,
-        left: `${coords.left}px`,
         // min/max幅は任意値なのでCSS変数でtheme側へ渡し、classの種類を増やさない。
         "--gridra-dropdown-menu-min-width":
           minWidth === undefined
@@ -158,7 +137,7 @@ export function GridraDropdownMenu({
               ? `${maxWidth}px`
               : maxWidth,
       }) as CSSProperties,
-    [portalTheme.style, coords.top, coords.left, minWidth, maxWidth, style],
+    [portalTheme.style, minWidth, maxWidth, style],
   );
   const portalTarget = getPortalTarget();
 
@@ -172,13 +151,11 @@ export function GridraDropdownMenu({
       {currentOpen && !disabled && portalMounted && portalTarget
         ? createPortal(
             <div
-              {...props}
-              className={menuClassName}
-              id={menuId}
-              onKeyDown={handleMenuKeyDown}
-              ref={menuRef}
-              role="menu"
-              style={menuStyle}
+              {...getMenuProps({
+                ...props,
+                className: menuClassName,
+                style: menuStyle,
+              })}
             >
               {items.map((item, index) => {
                 if (!isCommand(item)) {

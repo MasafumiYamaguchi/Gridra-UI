@@ -9,6 +9,10 @@ export interface UseGridraSidebarToggleOptions {
   onOpenChange?: (next: boolean, previous: boolean) => void;
 }
 
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  ref?: Ref<HTMLButtonElement>;
+};
+
 /** 開閉状態とトグルボタンの意味属性を提供する。 */
 export function useGridraSidebarToggle({
   open,
@@ -22,19 +26,19 @@ export function useGridraSidebarToggle({
     onOpenChange,
   );
 
-  const getToggleProps = (
-    props: ButtonHTMLAttributes<HTMLButtonElement> & {
-      ref?: Ref<HTMLButtonElement>;
-    } = {},
-  ) => ({
-    ...props,
-    type: props.type ?? ("button" as const),
-    disabled: disabled || props.disabled,
-    "aria-expanded": currentOpen,
-    onClick: composeHandlers(props.onClick, () => {
-      if (!disabled && !props.disabled) setCurrentOpen(!currentOpen);
-    }),
-  });
+  const getToggleProps = (props: ButtonProps = {}) => {
+    const isDisabled = disabled || props.disabled;
+
+    return {
+      ...props,
+      type: props.type ?? ("button" as const),
+      disabled: isDisabled,
+      "aria-expanded": currentOpen,
+      onClick: composeHandlers(props.onClick, () => {
+        if (!isDisabled) setCurrentOpen(!currentOpen);
+      }),
+    };
+  };
 
   return { currentOpen, setCurrentOpen, getToggleProps };
 }

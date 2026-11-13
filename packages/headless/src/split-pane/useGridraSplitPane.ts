@@ -32,16 +32,33 @@ export interface UseGridraSplitPaneOptions {
 
 const KEYBOARD_STEP = 2;
 
+/** 2pane時の先頭paneの既定の割合 (%)。react 側の既定値と共有する。 */
+export const DEFAULT_SPLIT_PANE_SIZE = 50;
+
+/** paneの既定の最小割合 (%)。 */
+export const DEFAULT_SPLIT_PANE_MIN_SIZE = 10;
+
+/** paneの既定の最大割合 (%)。 */
+export const DEFAULT_SPLIT_PANE_MAX_SIZE = 90;
+
+// 矢印キーごとの割合の増減。キー入力のたびに生成しないようモジュール定数にする。
+const KEYBOARD_DELTA_BY_KEY: Record<string, number> = {
+  ArrowLeft: -KEYBOARD_STEP,
+  ArrowUp: -KEYBOARD_STEP,
+  ArrowRight: KEYBOARD_STEP,
+  ArrowDown: KEYBOARD_STEP,
+};
+
 /** paneの割合とポインター・キーボードによる境界操作を管理する。 */
 export function useGridraSplitPane({
   paneCount: rawPaneCount = 2,
   orientation = "horizontal",
   size,
-  defaultSize = 50,
+  defaultSize = DEFAULT_SPLIT_PANE_SIZE,
   sizes,
   defaultSizes,
-  minSize = 10,
-  maxSize = 90,
+  minSize = DEFAULT_SPLIT_PANE_MIN_SIZE,
+  maxSize = DEFAULT_SPLIT_PANE_MAX_SIZE,
   onSizeChange,
   onSizesChange,
   onKeyDown,
@@ -57,7 +74,7 @@ export function useGridraSplitPane({
       onSizeChange?.(next, clampSize(previous, minSize, maxSize)),
   );
 
-  // pane数は2〜3に制限し、不足時は空pane、超過時は先頭3件だけを使う。
+  // pane数は2〜3に制限する。不足時は空paneを描画し、超過分の切り詰めは呼び出し側(react)が行う。
   const paneCount = Number.isFinite(rawPaneCount)
     ? Math.min(Math.max(2, Math.floor(rawPaneCount)), 3)
     : 2;
@@ -161,6 +178,30 @@ export function useGridraSplitPane({
       ]
     : currentSizes;
 
+  const beginDrag = (
+    separatorIndex: number,
+    event: { clientX: number; clientY: number },
+  ) => {
+    draggingSeparatorIndexRef.current = separatorIndex;
+    updateSizeFromPointer(separatorIndex, event);
+  };
+
+  // ドラッグ中のseparatorだけが移動を反映する。
+  const moveDrag = (
+    separatorIndex: number,
+    event: { clientX: number; clientY: number },
+  ) => {
+    if (draggingSeparatorIndexRef.current !== separatorIndex) {
+      return;
+    }
+
+    updateSizeFromPointer(separatorIndex, event);
+  };
+
+  const endDrag = () => {
+    draggingSeparatorIndexRef.current = null;
+  };
+
   const getSeparatorValue = (separatorIndex: number) =>
     Math.round(sumBeforeIndex(effectiveSizes, separatorIndex + 1));
 
@@ -193,13 +234,6 @@ export function useGridraSplitPane({
           return;
         }
 
-        const deltaByKey: Record<string, number> = {
-          ArrowLeft: -KEYBOARD_STEP,
-          ArrowUp: -KEYBOARD_STEP,
-          ArrowRight: KEYBOARD_STEP,
-          ArrowDown: KEYBOARD_STEP,
-        };
-
         const current = isThreePane
           ? currentSizes[separatorIndex]
           : clampSize(currentSize, minSize, maxSize);
@@ -207,7 +241,7 @@ export function useGridraSplitPane({
           ? currentSizes[separatorIndex] + currentSizes[separatorIndex + 1]
           : 100;
 
-        const delta = deltaByKey[event.key];
+        const delta = KEYBOARD_DELTA_BY_KEY[event.key];
         const requested =
           event.key === "Home"
             ? minSize
@@ -228,48 +262,27 @@ export function useGridraSplitPane({
       }),
       "onPointerDown": composeHandlers(props.onPointerDown, (event) => {
         event.preventDefault();
-        draggingSeparatorIndexRef.current = separatorIndex;
         // separator外へ移動してもドラッグを継続できるようpointerをcaptureする。
         if (typeof event.currentTarget.setPointerCapture === "function") {
           event.currentTarget.setPointerCapture(event.pointerId);
         }
 
-        updateSizeFromPointer(separatorIndex, event);
+        beginDrag(separatorIndex, event);
       }),
       "onPointerMove": composeHandlers(props.onPointerMove, (event) => {
-        if (draggingSeparatorIndexRef.current !== separatorIndex) {
-          return;
-        }
-
-        updateSizeFromPointer(separatorIndex, event);
+        moveDrag(separatorIndex, event);
       }),
-      "onPointerUp": composeHandlers(props.onPointerUp, () => {
-        draggingSeparatorIndexRef.current = null;
-      }),
-      "onLostPointerCapture": composeHandlers(
-        props.onLostPointerCapture,
-        () => {
-          draggingSeparatorIndexRef.current = null;
-        },
-      ),
-      "onPointerCancel": composeHandlers(props.onPointerCancel, () => {
-        draggingSeparatorIndexRef.current = null;
-      }),
+      "onPointerUp": composeHandlers(props.onPointerUp, endDrag),
+      "onLostPointerCapture": composeHandlers(props.onLostPointerCapture, endDrag),
+      "onPointerCancel": composeHandlers(props.onPointerCancel, endDrag),
       "onMouseDown": composeHandlers(props.onMouseDown, (event) => {
         event.preventDefault();
-        draggingSeparatorIndexRef.current = separatorIndex;
-        updateSizeFromPointer(separatorIndex, event);
+        beginDrag(separatorIndex, event);
       }),
       "onMouseMove": composeHandlers(props.onMouseMove, (event) => {
-        if (draggingSeparatorIndexRef.current !== separatorIndex) {
-          return;
-        }
-
-        updateSizeFromPointer(separatorIndex, event);
+        moveDrag(separatorIndex, event);
       }),
-      "onMouseUp": composeHandlers(props.onMouseUp, () => {
-        draggingSeparatorIndexRef.current = null;
-      }),
+      "onMouseUp": composeHandlers(props.onMouseUp, endDrag),
       "role": "separator",
       "tabIndex": 0,
     };

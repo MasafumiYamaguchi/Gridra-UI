@@ -34,6 +34,7 @@ export function useGridraSelectableGrid<TItem extends GridraSelectableItem>({
 
   const select = (id: GridraId | null) => {
     const next = resolve(id);
+    // 存在しないidは無視する。null（選択解除）だけは許可する。
     if (id !== null && next === null) return;
 
     if (next !== currentSelectedId) setRaw(next);
@@ -46,6 +47,7 @@ export function useGridraSelectableGrid<TItem extends GridraSelectableItem>({
     ...props,
     type: "button",
     "aria-selected": id === currentSelectedId,
+    // 選択済みの項目を再度押すと、未選択状態へ戻す。
     onClick: composeHandlers(props.onClick, () => {
       if (!props.disabled) select(id === currentSelectedId ? null : id);
     }),

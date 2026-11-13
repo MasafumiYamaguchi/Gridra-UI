@@ -45,6 +45,11 @@ function validateHierarchy(
   return issues;
 }
 
+/** 表示用エントリ。省略記号のindexは-1で、元のitemとは対応しない。 */
+export type GridraBreadcrumbVisibleEntry =
+  | { type: "item"; item: GridraBreadcrumbItem; index: number }
+  | { type: "ellipsis"; index: number };
+
 export interface UseGridraBreadcrumbOptions {
   items: GridraBreadcrumbItem[];
   maxItems?: number;
@@ -66,26 +71,19 @@ export function useGridraBreadcrumb({
     }
   }, [issues, onHierarchyInvalid]);
 
+  // maxItemsは小数を切り捨て、有限でない値は無視する。省略表示には先頭・省略記号・末尾1件の最低3件が必要なため下限は3。
   const effectiveMaxItems =
     maxItems != null && Number.isFinite(maxItems)
       ? Math.max(3, Math.floor(maxItems))
       : undefined;
 
   // 省略表示でも現在地の文脈を失わないよう、先頭と末尾側のitemは必ず残す。
-  const visibleItems = useMemo(() => {
+  const visibleItems = useMemo((): GridraBreadcrumbVisibleEntry[] => {
     if (effectiveMaxItems == null || items.length <= effectiveMaxItems) {
-      return items.map((item, i) => ({
-        type: "item" as const,
-        item,
-        index: i,
-      }));
+      return items.map((item, i) => ({ type: "item", item, index: i }));
     }
 
-    const result: {
-      type: "item" | "ellipsis";
-      item?: GridraBreadcrumbItem;
-      index: number;
-    }[] = [];
+    const result: GridraBreadcrumbVisibleEntry[] = [];
 
     result.push({ type: "item", item: items[0], index: 0 });
 
