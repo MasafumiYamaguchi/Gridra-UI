@@ -26,6 +26,18 @@ describe("useControlDescriptionIds", () => {
     });
   });
 
+  it("keeps a generated control id stable across renders", () => {
+    const { result, rerender } = renderHook(() =>
+      useControlDescriptionIds(undefined, true),
+    );
+    const id = result.current.controlId;
+
+    rerender();
+
+    expect(result.current.controlId).toBe(id);
+    expect(result.current.descriptionId).toBe(`${id}-description`);
+  });
+
   it("omits description id when there is no description", () => {
     const { result } = renderHook(() =>
       useControlDescriptionIds("field", false),

@@ -24,9 +24,8 @@ The package boundary is `react → headless → core`. `react` supplies the Grid
 design and DOM composition; `headless` can be used with your own markup and CSS,
 without importing `@gridra-ui/react` or `@gridra-ui/theme`. Native element semantics and structural
 interaction geometry may still be required. `theme` supplies the optional Gridra
-design CSS. Existing interaction behavior has been separated in the component PR stack;
-see [the complete API and coverage guide](./HEADLESS.md). UI screenshots remain
-pending in Draft PRs. Publication is a separate step.
+design CSS. Existing interaction behavior has been separated into `@gridra-ui/headless`;
+see [the complete API and coverage guide](./HEADLESS.md).
 
 Install the published runtime packages with:
 

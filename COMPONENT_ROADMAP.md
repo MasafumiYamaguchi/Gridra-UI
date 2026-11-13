@@ -30,7 +30,6 @@ Radix or another behavior library as part of this separation.
 - [x] Breadcrumb, inspector/property editing, Toolbar action bindings and Minimap layout.
 
 All existing components have been audited. See [the complete API/coverage matrix](./HEADLESS.md).
-Implementation and automated checks are recorded per PR; browser screenshots remain pending.
 
 Presentational/native components such as Box, Card, Badge, Input, and Textarea
 stay in the styled package. Extract reusable behavior only where it exists;

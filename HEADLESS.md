@@ -1,7 +1,6 @@
 # Headless and styled APIs
 
-Gridra has four public workspace packages. The new headless package is not yet
-published to npm; this guide describes the source in this PR stack.
+Gridra has four public workspace packages.
 
 | Package | Responsibility | Runtime dependencies |
 | --- | --- | --- |
@@ -18,47 +17,42 @@ styles express geometry, not Gridra colors, spacing presets or visual variants.
 
 ## Migrated behavior and models
 
-Review [the package foundation](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/20)
-first, then these PRs in order. Each PR targets the previous branch so its diff
-contains one component's extraction. Review and merge from the base upwards.
-Do not change a later PR's base to main before its prerequisites have landed.
-
-| Styled API | Headless API | Component PR |
-| --- | --- | --- |
-| Canvas / GridraCanvasOverlay | `useGridraCanvas` | [#21](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/21) |
-| GridraTabs | `useGridraTabs` | [#22](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/22) |
-| GridraAccordion | `useGridraAccordion` | [#23](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/23) |
-| GridraSelectableGrid | `useGridraSelectableGrid` | [#24](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/24) |
-| GridraPagination | `useGridraPagination` | [#25](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/25) |
-| GridraStepper | `useGridraStepper` | [#26](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/26) |
-| GridraMenu | `useGridraMenu` | [#27](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/27) |
-| GridraTreeView | `useGridraTreeView` | [#28](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/28) |
-| GridraSidebarToggle | `useGridraSidebarToggle` | [#29](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/29) |
-| GridraSidebar | `useGridraSidebar` | [#30](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/30) |
-| GridraSplitPane | `useGridraSplitPane` | [#31](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/31) |
-| GridraPopover | `useGridraPopover` | [#32](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/32) |
-| GridraTooltip | `useGridraTooltip` | [#33](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/33) |
-| GridraHoverCard | `useGridraHoverCard` | [#34](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/34) |
-| GridraDialog | `useGridraDialog` | [#35](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/35) |
-| GridraDropdownMenu | `useGridraDropdownMenu` | [#36](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/36) |
-| GridraContextMenu | `useGridraContextMenu` | [#37](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/37) |
-| GridraCommandPalette | `useGridraCommandPalette` | [#38](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/38) |
-| GridraToastProvider / useToast | `useGridraToastQueue` | [#39](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/39) |
-| GridraField | `useGridraField` | [#40](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/40) |
-| GridraCheckbox | `useGridraCheckbox` | [#41](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/41) |
-| GridraRadio | `useGridraRadio` | [#42](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/42) |
-| GridraSwitch | `getGridraSwitchProps` | [#43](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/43) |
-| GridraSlider | `useGridraSlider` | [#44](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/44) |
-| GridraButton | `getGridraButtonProps` | [#45](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/45) |
-| GridraIconButton | `getGridraIconButtonProps` | [#46](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/46) |
-| GridraBreadcrumb | `useGridraBreadcrumb` | [#47](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/47) |
-| GridraInspectorPanel | `useGridraInspectorPanel` | [#48](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/48) |
-| GridraPropertiesPanel | `useGridraPropertiesPanel` | [#49](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/49) |
-| GridraProgress | `getGridraProgress` | [#50](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/50) |
-| GridraAvatar | `getGridraAvatar` | [#51](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/51) |
-| GridraMinimap | `getGridraMinimap` | [#52](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/52) |
-| GridraInput | `useControlDescriptionIds` | [#53](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/53) |
-| GridraToolbar | `getGridraToolbar` | [#54](https://github.com/MasafumiYamaguchi/Gridra-UI/pull/54) |
+| Styled API | Headless API |
+| --- | --- |
+| Canvas / GridraCanvasOverlay | `useGridraCanvas` |
+| GridraTabs | `useGridraTabs` |
+| GridraAccordion | `useGridraAccordion` |
+| GridraSelectableGrid | `useGridraSelectableGrid` |
+| GridraPagination | `useGridraPagination` |
+| GridraStepper | `useGridraStepper` |
+| GridraMenu | `useGridraMenu` |
+| GridraTreeView | `useGridraTreeView` |
+| GridraSidebarToggle | `useGridraSidebarToggle` |
+| GridraSidebar | `useGridraSidebar` |
+| GridraSplitPane | `useGridraSplitPane` |
+| GridraPopover | `useGridraPopover` |
+| GridraTooltip | `useGridraTooltip` |
+| GridraHoverCard | `useGridraHoverCard` |
+| GridraDialog | `useGridraDialog` |
+| GridraDropdownMenu | `useGridraDropdownMenu` |
+| GridraContextMenu | `useGridraContextMenu` |
+| GridraCommandPalette | `useGridraCommandPalette` |
+| GridraToastProvider / useToast | `useGridraToastQueue` |
+| GridraField | `useGridraField` |
+| GridraCheckbox | `useGridraCheckbox` |
+| GridraRadio | `useGridraRadio` |
+| GridraSwitch | `getGridraSwitchProps` |
+| GridraSlider | `useGridraSlider` |
+| GridraButton | `getGridraButtonProps` |
+| GridraIconButton | `getGridraIconButtonProps` |
+| GridraBreadcrumb | `useGridraBreadcrumb` |
+| GridraInspectorPanel | `useGridraInspectorPanel` |
+| GridraPropertiesPanel | `useGridraPropertiesPanel` |
+| GridraProgress | `getGridraProgress` |
+| GridraAvatar | `getGridraAvatar` |
+| GridraMinimap | `getGridraMinimap` |
+| GridraInput | `useControlDescriptionIds` |
+| GridraToolbar | `getGridraToolbar` |
 
 `getGridraMinimap` is calculated in core and re-exported by headless. It returns
 percentage rectangles suitable for custom SVG or HTML. `GridraToolbarButton`
@@ -112,16 +106,4 @@ created by this migration.
 
 The playground includes custom-markup examples beside the styled examples.
 `MIGRATION.md` records individual import paths. Existing styled props and CSS
-classes remain available; this work does not publish new npm releases.
-
-## Verification and outstanding visual review
-
-Each component PR records its focused headless, styled and live-example tests,
-build and typecheck. The final coverage PR records the combined workspace run
-and standalone documentation-snippet compilation.
-
-UI PRs remain Draft until real browser before/after mobile and desktop images
-are attached using GitHub user-attachments and verified visible to reviewers.
-The current environment has no connected browser, so screenshots, attachment
-upload and GitHub image display verification are outstanding. Detailed missing
-images, target sizes, states and exact commits are recorded in each PR body.
+classes remain available.
