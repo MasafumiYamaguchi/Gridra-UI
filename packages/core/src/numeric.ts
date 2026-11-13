@@ -1,4 +1,4 @@
-/** 数値・グリッド位置・CSS長さの共通処理をまとめるヘルパー。 */
+/* 数値・グリッド位置・CSS長さの共通処理をまとめるヘルパー。 */
 /** 数値を指定範囲に収める。NaNや無限大は下限値に置き換える。 */
 export function clampNumber(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) {

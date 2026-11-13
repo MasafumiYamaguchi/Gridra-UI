@@ -1,4 +1,4 @@
-/** ポップアップの実寸とアンカー位置を測り、表示方向と座標を管理するヘルパー。 */
+/* ポップアップの実寸とアンカー位置を測り、表示方向と座標を管理するヘルパー。 */
 import { useEffect, useLayoutEffect, useState, type RefObject } from "react";
 import {
   computeFloatingPosition,

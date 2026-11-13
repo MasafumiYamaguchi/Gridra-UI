@@ -1,4 +1,4 @@
-/** フォーム部品のエラー状態と説明文をアクセシビリティ属性へ対応付けるヘルパー。 */
+/* フォーム部品のエラー状態と説明文をアクセシビリティ属性へ対応付けるヘルパー。 */
 import { useId, type AriaAttributes } from "react";
 
 type AriaInvalid = AriaAttributes["aria-invalid"];

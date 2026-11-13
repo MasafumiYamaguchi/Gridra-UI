@@ -1,4 +1,4 @@
-/** テーマクラスの生成・抽出・祖先探索と、Portal先の取得を行うヘルパー。 */
+/* テーマクラスの生成・抽出・祖先探索と、Portal先の取得を行うヘルパー。 */
 import type { GridraThemeName } from "../theme";
 
 export const GRIDRA_THEME_CLASS_PREFIX = "gridra-theme-";
@@ -35,7 +35,7 @@ export function removeGridraThemeClassNames(className: string): string {
     .join(" ");
 }
 
-/** アンカー自身から祖先へたどり、最も近いテーマクラスを返す。DOMがない環境ではundefinedを返す。 */
+/** アンカー自身から祖先へたどり、最も近いテーマクラスを返す。アンカー未指定の場合はbody(なければdocumentElement)から探索し、DOMがない環境ではundefinedを返す。 */
 export function getGridraThemeClassName(anchor?: HTMLElement | null): string | undefined {
   if (typeof document === "undefined") {
     return undefined;

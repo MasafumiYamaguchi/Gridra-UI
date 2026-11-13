@@ -1,4 +1,4 @@
-/** 条件付きのクラス名をまとめ、コンポーネントのclassNameを組み立てるヘルパー。 */
+/* 条件付きのクラス名をまとめ、コンポーネントのclassNameを組み立てるヘルパー。 */
 type ClassValue = string | false | null | undefined;
 
 /** 空文字やfalse・null・undefinedを除き、有効なクラス名だけに絞り込む。 */

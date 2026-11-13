@@ -1,4 +1,4 @@
-/** アンカーに隣接するポップアップの座標と配置方向を計算するヘルパー。 */
+/* アンカーに隣接するポップアップの座標と配置方向を計算するヘルパー。 */
 export type Placement = "top" | "right" | "bottom" | "left";
 
 export interface PositionCoords {

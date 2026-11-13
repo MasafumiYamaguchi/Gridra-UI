@@ -1,4 +1,4 @@
-/** 要素と祖先のclass・style、およびDOM移動を監視して継承情報の再計算を促すヘルパー。 */
+/* 要素と祖先のclass・style、およびDOM移動を監視して継承情報の再計算を促すヘルパー。 */
 import { useRef } from "react";
 import { useClientLayoutEffect } from "./useClientLayoutEffect";
 
