@@ -1,7 +1,6 @@
 import {
   useCallback,
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
@@ -89,8 +88,6 @@ export function useGridraTreeView({
   onExpandedIdsChange,
   onItemClick,
 }: UseGridraTreeViewOptions) {
-  // treeitem内の関連要素に衝突しないidを付けるための基点。
-  const baseId = useId();
   // roving tabIndexで移動先の行を直接focusするため、idとDOMを対応付ける。
   const rowRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
@@ -261,15 +258,22 @@ export function useGridraTreeView({
     ],
   );
 
+  // 有効な展開idに含まれるかを返す。idは重複し得るため、枝かどうかは行ごとに判定する。
+  const isExpanded = (id: string) => expandedSet.has(id);
+
+  // roving tabIndexで現在Tab停止位置になっている行かどうかを返す。
+  const isFocused = (id: string) => focusedId === id;
+
+  // role="treeitem"・aria-level・aria-expandedは、treeitemをどの要素に置くかが
+  // 描画側の構造に依存するため、行propsには含めず利用側が付与する。
   const getRowProps = (
     item: GridraTreeItem,
-    hasChildren = Boolean(item.children?.length),
     props: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> } = {},
   ): HTMLAttributes<HTMLDivElement> & {
     ref?: (element: HTMLDivElement | null) => void;
   } => {
     const isDisabled = Boolean(item.disabled);
-    const isFocused = focusedId === item.id;
+    const hasChildren = (item.children?.length ?? 0) > 0;
 
     return {
       ...props,
@@ -278,7 +282,7 @@ export function useGridraTreeView({
         if (el) rowRefs.current.set(item.id, el);
         else rowRefs.current.delete(item.id);
       }),
-      "tabIndex": isFocused ? 0 : -1,
+      "tabIndex": isFocused(item.id) ? 0 : -1,
       "onClick": composeHandlers(props.onClick, () => {
         if (!isDisabled) {
           onItemClick?.(item.id);
@@ -293,10 +297,9 @@ export function useGridraTreeView({
   };
 
   return {
-    baseId,
     flatItems,
-    focusedId,
-    expandedSet,
+    isExpanded,
+    isFocused,
     toggleExpand,
     getRowProps,
   };

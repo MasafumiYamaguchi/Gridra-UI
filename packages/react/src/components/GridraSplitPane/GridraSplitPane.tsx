@@ -3,12 +3,16 @@ import {
   type CSSProperties,
   type HTMLAttributes,
   useMemo,
-  useRef,
 } from "react";
-import { useControllableValue } from "@gridra-ui/headless";
-import { useGridraSplitPane } from "@gridra-ui/headless";
+import {
+  DEFAULT_SPLIT_PANE_MAX_SIZE,
+  DEFAULT_SPLIT_PANE_MIN_SIZE,
+  DEFAULT_SPLIT_PANE_SIZE,
+  useGridraSplitPane,
+  type GridraSplitPaneOrientation,
+} from "@gridra-ui/headless";
 
-export type GridraSplitPaneOrientation = "horizontal" | "vertical";
+export type { GridraSplitPaneOrientation } from "@gridra-ui/headless";
 
 export interface GridraSplitPaneProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
@@ -25,15 +29,13 @@ export interface GridraSplitPaneProps extends Omit<
   onSizesChange?: (next: number[], previous: number[]) => void;
 }
 
-const KEYBOARD_STEP = 2;
-
 export function GridraSplitPane({
   children,
   className,
-  defaultSize = 50,
+  defaultSize = DEFAULT_SPLIT_PANE_SIZE,
   defaultSizes,
-  maxSize = 90,
-  minSize = 10,
+  maxSize = DEFAULT_SPLIT_PANE_MAX_SIZE,
+  minSize = DEFAULT_SPLIT_PANE_MIN_SIZE,
   onSizeChange,
   onSizesChange,
   onKeyDown,
@@ -47,7 +49,6 @@ export function GridraSplitPane({
   const {
     paneCount,
     isThreePane,
-    currentSize,
     currentSizes,
     effectiveSizes,
     getSeparatorProps,
@@ -86,7 +87,7 @@ export function GridraSplitPane({
           }
         : null),
     } as CSSProperties;
-  }, [currentSize, currentSizes, isThreePane, maxSize, minSize, style]);
+  }, [currentSizes, effectiveSizes, isThreePane, style]);
 
   const splitPaneClassName = [
     "gridra-split-pane",

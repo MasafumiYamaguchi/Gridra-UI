@@ -27,9 +27,8 @@ export * from "./sidebar/useGridraSidebar";
 
 export * from "./split-pane/useGridraSplitPane";
 
-export * from "./internal/useFloatingPosition";
-
-export * from "./internal/useDocumentEvent";
+export { useFloatingPosition } from "./internal/useFloatingPosition";
+export { useDocumentEvent } from "./internal/useDocumentEvent";
 
 export * from "./overlays/useGridraPopover";
 

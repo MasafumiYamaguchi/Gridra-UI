@@ -234,6 +234,7 @@ The component documentation includes a live custom-markup example.
 Import `useGridraPagination` from `@gridra-ui/headless` for custom markup. The existing
 `GridraPagination` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
+`useGridraPagination` returns state and handlers only, without prop getters. `aria-current`, `aria-label` and `disabled` stay in the markup you render.
 
 ## Headless GridraStepper
 
@@ -253,6 +254,11 @@ Import `useGridraTreeView` from `@gridra-ui/headless` for custom markup. The exi
 `GridraTreeView` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
 
+`getRowProps(item, props)` returns the focusable row bindings (roving `tabIndex`, click,
+and keyboard handlers) and derives whether the item is a branch from `item.children`.
+The caller places `role="treeitem"`, `aria-level`, and `aria-expanded` on the element that
+represents the tree item, because that element depends on the markup. Use
+`isExpanded(id)` and `isFocused(id)` to read the state for those attributes and styles.
 ## Headless GridraSidebarToggle
 
 Import `useGridraSidebarToggle` from `@gridra-ui/headless` for custom markup. The existing
@@ -277,6 +283,13 @@ Import `useGridraPopover` from `@gridra-ui/headless` for custom markup. The exis
 `GridraPopover` export keeps the Gridra design and delegates to the same behavior.
 The component documentation includes a live custom-markup example.
 
+`useGridraPopover` does not return `popoverRef`, `popoverId`, or `coords`. Spread
+`getContentProps()` on the floating element instead; it supplies the `id`, the ref, and the
+structural `position: fixed` / `top` / `left` style. `GridraPopover` uses the same getter, so the
+floating element now also carries an inline `position: fixed` that overrides `style.position`.
+
+`@gridra-ui/headless` exports `useFloatingPosition` and `useDocumentEvent` by name only. Their
+option/result types (`UseFloatingPositionOptions`, `UseFloatingPositionResult`) are not exported.
 ## Headless GridraTooltip
 
 Import `useGridraTooltip` from `@gridra-ui/headless` for custom markup. The existing

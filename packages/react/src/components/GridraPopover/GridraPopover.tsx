@@ -1,5 +1,4 @@
 import { useGridraPopover } from "@gridra-ui/headless";
-import type { Ref } from "react";
 import {
   cloneElement,
   isValidElement,
@@ -7,22 +6,12 @@ import {
   type HTMLAttributes,
   type ReactElement,
   type ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
+  type Ref,
 } from "react";
 import { createPortal } from "react-dom";
-import { useControllableValue } from "@gridra-ui/headless";
 import { cx } from "../../internal/classNames";
-import { composeHandlers } from "@gridra-ui/headless";
-import { mergeRefs } from "@gridra-ui/headless";
 import { getPortalTarget } from "../../internal/theme";
 import { useGridraPortalTheme } from "../../internal/portalTheme";
-import { useDocumentEvent } from "@gridra-ui/headless";
-import { useFloatingPosition } from "@gridra-ui/headless";
 
 export type GridraPopoverPlacement = "top" | "right" | "bottom" | "left";
 
@@ -67,11 +56,9 @@ export function GridraPopover({
     currentOpen,
     portalMounted,
     anchorRef,
-    popoverRef,
-    popoverId,
-    coords,
     resolvedPlacement,
     getTriggerProps,
+    getContentProps,
   } = useGridraPopover({
     open,
     defaultOpen,
@@ -92,6 +79,7 @@ export function GridraPopover({
         }
       : {},
   );
+  // Portal化してもテーマが揃うよう、アンカー側のテーマclassを引き継ぐ。
   const portalTheme = useGridraPortalTheme(
     anchorRef,
     undefined,
@@ -106,22 +94,21 @@ export function GridraPopover({
     className,
   );
 
-  const popoverStyle = useMemo(
-    () =>
-      ({
-        ...portalTheme.style,
-        ...style,
-        top: `${coords.top}px`,
-        left: `${coords.left}px`,
-        "--gridra-popover-max-width":
-          maxWidth === undefined
-            ? undefined
-            : typeof maxWidth === "number"
-              ? `${maxWidth}px`
-              : maxWidth,
-      }) as CSSProperties,
-    [portalTheme.style, coords.left, coords.top, maxWidth, style],
-  );
+  // 座標(top / left)と位置指定はgetContentPropsが付与する。
+  const contentProps = getContentProps({
+    ...props,
+    className: popoverClassName,
+    style: {
+      ...portalTheme.style,
+      ...style,
+      "--gridra-popover-max-width":
+        maxWidth === undefined
+          ? undefined
+          : typeof maxWidth === "number"
+            ? `${maxWidth}px`
+            : maxWidth,
+    } as CSSProperties,
+  });
   const portalTarget = getPortalTarget();
 
   // cloneElementできないchildrenはアンカーとして成立しないため描画しない。
@@ -131,24 +118,14 @@ export function GridraPopover({
 
   return (
     <>
+      {/* アンカーは元のDOM位置に残し、浮動部分だけをPortal先へ分離する。 */}
       {cloneElement(children, anchorProps)}
-      {/* Portal化してもテーマが揃うよう、アンカー側のテーマclassを引き継ぐ。 */}
       {currentOpen && !disabled && portalMounted && portalTarget
         ? createPortal(
-            <div
-              {...props}
-              className={popoverClassName}
-              id={popoverId}
-              ref={popoverRef}
-              style={popoverStyle}
-            >
-              {content}
-            </div>,
+            <div {...contentProps}>{content}</div>,
             portalTarget,
           )
         : null}
     </>
   );
 }
-
-// アンカーは元のDOM位置に残し、浮動部分だけをPortal先へ分離する。

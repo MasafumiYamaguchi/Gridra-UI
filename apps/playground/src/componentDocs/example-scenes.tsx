@@ -2190,10 +2190,10 @@ function ExampleHeadlessGridraTreeView() {
           key={row.key}
           role="treeitem"
           aria-expanded={
-            row.hasChildren ? tree.expandedSet.has(row.item.id) : undefined
+            row.hasChildren ? tree.isExpanded(row.item.id) : undefined
           }
         >
-          <div {...tree.getRowProps(row.item, row.hasChildren)}>
+          <div {...tree.getRowProps(row.item)}>
             {row.item.label}
           </div>
         </div>
